@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
 Created on Thu Oct  1 14:07:59 2020
 
-@author: Ramadas
+@author: Bharat
 """
-#Needed at the beginning to use pywin32 to call ActiveX compliant programs as COM automation servers
-from win32com.client import DispatchEx 
+
+from win32com.client import DispatchEx  #module needed for opening MagNet
 
 def launch():
     MN = DispatchEx("MagNet.Application")   #open MagNet
@@ -27,40 +26,15 @@ def drawCircle(View, x, y, r):
     
 def selectSection(View, MNConsts, x, y):
     #select section containing coordinate (x,y)
-    View.selectAt(x, y, MNConsts.infoSetSelection)
+    View.selectAt(x, y, MNConsts.infoSetSelection, [MNConsts.infoSliceSurface])
 
-'''
-def makeComponentInALine(View, MNConsts, sweepDist, sectionName, material, flag=5):
-    if flag ==1:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentUnionSurfaces)
-    elif flag ==2:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentIgnoreHoles)
-    elif flag ==3:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentRemoveVertices)
-    elif flag ==4:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentUnionSurfaces or 
-                                  MNConsts.infoMakeComponentIgnoreHoles)
-    elif flag ==5:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentUnionSurfaces or 
-                                  MNConsts.infoMakeComponentRemoveVertices)
-    elif flag ==6:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentIgnoreHoles or 
-                                  MNConsts.infoMakeComponentRemoveVertices)
-    else:
-        View.makeComponentInALine(sweepDist, sectionName, "Name="+material, MNConsts.infoMakeComponentUnionSurfaces or 
-                                  MNConsts.infoMakeComponentIgnoreHoles or MNConsts.infoMakeComponentRemoveVertices)       
-'''
 
-def makeComponentInALine(MN, MNConsts, sweepDist, sectionName, material):
+def makeComponentInALine(View, MNConsts, sweepDist, ArrayOfValues, material):
     '''command to extrude a selected section by 'sweepDis't and assign to the component the 'sectionName' and 'material' 
     as specified, returns 0 if extrusion is succesful, 1 if extrusion failed'''
-    MN.processCommand("REDIM ArrayOfValues(0)")
-    MN.processCommand("ArrayOfValues(0) = \"{}\"".format(sectionName))
-    MN.processCommand("ret = getDocument.getView.makeComponentInALine({}, ArrayOfValues, \"Name={}\")"
-                      .format(sweepDist,material))
-    MN.processCommand("Call setVariant(0, ret)")    
-    err = MN.getVariant(0)
-    return err
+    y = View.makeComponentInALine(sweepDist, ArrayOfValues, "Name="+material, MNConsts.infoMakeComponentUnionSurfaces 
+                                  or MNConsts.infoMakeComponentRemoveVertices)
+    return y
 
 
 def makeSimpleCoil(Doc, ProblemID, ArrayOfValues):
@@ -88,3 +62,13 @@ def makeMotionComponent(Doc,ArrayOfValues):
     #makes a Motion component of 'ArrayOfValues', returns path of the Motion component
     motion = Doc.makeMotionComponent(ArrayOfValues)
     return motion
+
+def getParameter(MN, path, parameter):
+    MN.processCommand("REDIM strArray(0)")
+    MN.processCommand("DIM pType")
+    MN.processCommand("pType = getDocument.getParameter(\"{}\", \"{}\", strArray)".format(path,parameter))
+    MN.processCommand('Call setVariant(0, strArray,"PYTHON")')    
+    param = MN.getVariant(0,"PYTHON")
+    MN.processCommand('Call setVariant(0, pType,"PYTHON")')    
+    param_type = MN.getVariant(0,"PYTHON")
+    return param, param_type

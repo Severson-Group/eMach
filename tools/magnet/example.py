@@ -24,26 +24,27 @@ MagnetFunc.drawCircle(View, 0, 0, 50)
 #select section 
 MagnetFunc.selectSection(View, MNConsts,-1, 0)
 #assign parameters needed for extrusion
-section1 = "conductor"
+section1 = ["conductor"]
 material = 'Copper: 100% IACS'
 sweepDist = 10
 #extrude selected section by the distance specified in sweepDist with material and section name as provided. 
-sweep1Status = MagnetFunc.makeComponentInALine(MN, MNConsts, sweepDist, section1, material)
-
+sweep1Status = MagnetFunc.makeComponentInALine(View, MNConsts, sweepDist, section1, material)
 
 MagnetFunc.selectSection(View, MNConsts,-25, 0)
-section2 = "air"
+section2 = ["air"]
 material = 'AIR'
 sweepDist = 10
 #extrude selected section by the distance specified in sweepDist with material and section name as provided
-sweep2Status = MagnetFunc.makeComponentInALine(MN, MNConsts, sweepDist, section2, material)
+sweep2Status = MagnetFunc.makeComponentInALine(View, MNConsts, sweepDist, section2, material)
 
 MagnetFunc.selectSection(View, MNConsts,-35, 0,)
-section3 = "iron"
+section3 = ["iron"]
 material = 'Arnon 5'
 sweepDist = 10
 #extrude selected section by the distance specified in sweepDist with material and section name as provided
-sweep3Status = MagnetFunc.makeComponentInALine(MN, MNConsts, sweepDist, section3, material)
+sweep3Status = MagnetFunc.makeComponentInALine(View, MNConsts, sweepDist, section3, material)
+
+mat = MagnetFunc.getParameter(MN, section3[0], "Material")
 
 #make a simple coil
 coil1 = MagnetFunc.makeSimpleCoil(Doc, 1, section1)
@@ -53,6 +54,7 @@ Idc = 10
 MagnetFunc.setParameter(Doc, coil1, "WaveFormType", "DC", MNConsts)
 MagnetFunc.setParameter(Doc, coil1, "Current", Idc, MNConsts)
 
+curr = MagnetFunc.getParameter(MN, coil1, "Current")
 '''
 sin_offset = 0
 sin_mag = 10
@@ -78,5 +80,6 @@ MagnetFunc.setParameter(Doc, motion, 'PositionAtStartup',positionAtStartup, MNCo
 MagnetFunc.setParameter(Doc, motion, 'SpeedAtStartup',speedAtStartup, MNConsts)
 MagnetFunc.setParameter(Doc, motion, 'SpeedVsTime', timespeed, MNConsts)
 MagnetFunc.setParameter(Doc, motion, 'MotionDirection', direction, MNConsts)
+
 
 
