@@ -18,17 +18,17 @@ class ToolBase(ABC):
 # define abstract base class for DrawerBase
 class DrawerBase(ABC):
     @abstractmethod
-    def drawLine(self): pass
+    def draw_line(self): pass
     
     @abstractmethod
-    def drawArc(self): pass
+    def draw_arc(self): pass
 
     @abstractmethod
     def select(self): pass
 
 class MakerBase(ABC):
     @abstractmethod
-    def prepareSection(self): pass
+    def prepare_section(self): pass
 
 # define abstract base class for MakerExtrudeBase
 class MakerExtrudeBase(MakerBase):

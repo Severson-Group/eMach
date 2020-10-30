@@ -4,26 +4,27 @@ Created on Fri Oct 16 16:54:12 2020
 
 @author: Bharat
 """
-import ToolBaseClasses as tbc
+import emach as em
 # create an instance of the MagNet class
-MN = tbc.MagNet()
-MN.open(iVisible = True)
+mn = em.MagNet()
+mn.open(i_visible=True)
 
 # passing incorrect argument to drawLine to show error handling
-l2 = MN.drawLine(1,2)
+#l2 = MN.drawLine('e1','2y')
 
-# set coordinated to draw line and arc
+# set coordinates to draw line and arc
 center = [0, 0]
 start = [-11.5, 0]
-end = [11.5,0]
+end = [11.5, 0]
 
 # draw line and arc
-l1 = MN.drawLine(start,end)
-arc1 = MN.drawArc(center,start,end)
+l1 = mn.draw_line(start, end)
+arc1 = mn.draw_arc(center, start, end)
 
 # select section which contains the coordinates provided
-innerCoord = [0, -5]
-MN.prepareSection(innerCoord)
+inner_coord = [0, -5]
+mn.prepare_section(inner_coord)
+
 # set properties of the material to be extruded
 name1 = ["conductor"]
 material1 = "Copper: 100% IACS"
@@ -38,4 +39,4 @@ axis1 = [1, 0]
 angle1 = 90
 
 #revlove section, comment out extrude if you want to see revolve in action
-revolve1 = MN.revolve(name1, material1, center1, axis1, angle1)
+revolve1 = mn.revolve(name1, material1, center1, axis1, angle1)
