@@ -14,6 +14,8 @@ __all__ = []
 __all__ += document.__all__
 __all__ += ["MagNet"]
 
+for i in range(len(document.document.__all__)):
+    __all__.remove(document.document.__all__[i])
 
 class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase):
     """ A class to represent a MAGNET file

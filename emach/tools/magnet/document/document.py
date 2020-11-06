@@ -4,7 +4,7 @@ Created on Fri Oct 23 02:12:19 2020
 
 @author: Bharat
 """
-__all__ = ['make_simple_coil', 'set_parameter', 'make_motion_component']
+__all__ = ['make_simple_coil', 'set_parameter', 'make_motion_component', 'get_parameter']
 
 def make_simple_coil(doc, problem_id, array_values):
     """ function to make a simple coil with 'ArrayOfValues' and 'ProblemID',

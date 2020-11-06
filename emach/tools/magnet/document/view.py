@@ -4,7 +4,7 @@ Created on Fri Oct 23 02:27:35 2020
 
 @author: Bharat
 """
-__all__ = ['draw_circle', 'select_section', 'make_component_in_a_line']
+__all__ = []
 
 def draw_circle(view, centre_x, centre_y, circle_r):
     """draw circle with centre_x, centre_y as the coordinates of the centre,
