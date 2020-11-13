@@ -7,7 +7,7 @@ Created on Fri Oct 16 16:54:12 2020
 import tools.magnet as mn
 # create an instance of the MagNet class
 MN = mn.MagNet()
-MN.open(i_visible=True)
+MN.open(visible=True)
 
 # passing incorrect argument to drawLine to show error handling
 #l2 = MN.drawLine('e1','2y')

@@ -8,7 +8,7 @@ import tools.magnet as mn
 
 # create an instance of the MagNet class
 MN = mn.MagNet()
-MN.open(i_visible=True)
+MN.open(visible=True)
 
 
 # draw circles with x,y as the coordinates of the centre, r as the radius

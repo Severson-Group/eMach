@@ -24,15 +24,15 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
     def __init__(self):
         pass
 
-    def open(self, i_filename=None, i_visible=False):
+    def open(self, filename=None, visible=False):
         """ opens a new MAGNET session and assigns variables neccessary for further
         operations
         """
 
         self.disp_ex = DispatchEx("MagNet.Application")  # Opens a new MAGNET session
-        self.disp_ex.visible = i_visible  # Makes MAGNET window visible
-        if i_filename is str:
-            self.doc = self.disp_ex.openDocument(i_filename)
+        self.disp_ex.visible = visible  # Makes MAGNET window visible
+        if filename is str:
+            self.doc = self.disp_ex.openDocument(filename)
         else:
             self.doc = self.disp_ex.newDocument()
         self.view = self.doc.getView()
@@ -162,3 +162,6 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
                 token,
             )
         return ret
+    
+    def view_all(self):
+        self.view.viewAll()
