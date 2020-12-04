@@ -4,6 +4,10 @@ Created on Fri Oct 16 16:54:12 2020
 
 @author: Bharat
 """
+# add the directory immediately above this file's directory to path for module import
+import sys
+sys.path.append("..")
+
 import tools.magnet as mn
 # create an instance of the MagNet class
 MN = mn.MagNet()
