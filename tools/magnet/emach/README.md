@@ -1,10 +1,10 @@
 # Description
 
-This document provides instructions to eMach contributers writing scripts for MagNet in Python.
+This document provides instructions to eMach contributers working with MagNet in Python.
 
 # Getting Started
 
-Before getting started, contributers should ensure that their systems are setup appropriately in order to interface Python with MagNet. A step by step procedure of the getting started with Python scripting for MagNet has been provided below:
+Before getting started, contributers should ensure that their systems are setup appropriately in order to interface Python with MagNet. A step by step procedure of getting started with Python scripting for MagNet has been provided below:
 - In order for Python to communicate with MagNet, the pywin32 module has to be imported to call ActiveX compliant programs as Component Object Model (COM) automation servers. The pywin32 module comes with Anaconda3 installation and can be imported with the following command `from win32com.client import DispatchEx`
 - The below example illustrates how handles to the MagNet scripting interface can be obtained in Python.
 ```python
@@ -22,10 +22,10 @@ Running the above script should open a MagNet window on the user's system. If th
 
 # Function Returns
 
-MagNet APIs can be broadly classfied into 2 categories depending on the function signature: APIs which have output arguments and APIs which don't. The syntax for accessing the return values of both categories of APIS has been summarised below.
-- APIs whose return values are not tied to an output argument can be directly called in Python. `makeSimpleCoil` is an example of such a function. Obtaining its return value in Python is as easy as: `coil = Doc.makeSimpleCoil(ProblemID, ArrayOfValues)`
-- Accessing the return value of APIs with `Output Argument` functions can be more convoluted. The return values of some of these functions can be accessed similar to the prior example. One such API is `getFluxLinkageThroughCoil`. This API has 2 `output arguments` i.e, `magnitude` and `phase`. Its return values can be obtained with the following syntax: `magnitude, phase = Sol.getFluxLinkageThroughCoil(problem_id, 'Coil#1')`. 
-However, using the above syntax format to certain APIs belonging to this category will not work. Implementations of this sort could result in a `com_error`. In order to access the return value of these functions, a VBScript wrapper of the same will have to be written in Python. `getParameter` is an example of a MagNet API whose return value can be accessed only via VBScript wrappers. The below code snippet illustrates the implementation of `getParamter` in Python:
+Functions in the MagNet API can be broadly classfied into two categories depending on the function signature: functions which have output arguments and funtions which do not. The syntax for accessing the return values of both categories of functions has been summarized below.
+- Functions whose return values are not tied to an output argument can be directly called in Python. `makeSimpleCoil` is an example of such a function. Obtaining its return value in Python is as easy as: `coil = Doc.makeSimpleCoil(ProblemID, ArrayOfValues)`
+- Functions that make use of output arguments to return data. Using these functions can be more convoluted. Certain functions of this type can be utilized similarly to the prior example. One such example is `getFluxLinkageThroughCoil`. This function has 2 `output arguments` specified in the MagNet documentation: `magnitude` and `phase`. The documentation specifies the VBScript syntax to use this function as `getFluxLinkageThroughCoil (solution ID, solver coil ID or name, magnitude, phase)`. In Python, this function can actually be called by treating the output arguments as return values, for example: `magnitude, phase = Sol.getFluxLinkageThroughCoil(problem_id, 'Coil#1')`.  
+However, using the above syntax format is not compatible with all functions in this category and will throw a `com_error` when called in this manner. In order to utilize these functions, a VBScript wrapper must be written in Python. `getParameter` is an example of a MagNet function whose return value can be accessed only via VBScript wrappers. The below code snippet illustrates the implementation of `getParamter` in Python:
 ```python
     MN.processCommand("REDIM strArray(0)")
     MN.processCommand("DIM pType")
