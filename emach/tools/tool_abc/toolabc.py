@@ -8,7 +8,7 @@ Created on Fri Oct 16 16:48:15 2020
 from abc import ABC, abstractmethod
 from typing import Tuple, List
 
-Coord2D = Tuple[int, int]
+Coord2D = Tuple[float, float]
 
 # define abstract base class for ToolBase
 class ToolBase(ABC):
