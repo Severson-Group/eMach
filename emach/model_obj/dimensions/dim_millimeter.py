@@ -14,11 +14,6 @@ class DimMillimeter(DimLinear):
     def to_inch(self):
         return self / 25.4
 
-    def _to_dimesionless(self):
-
-        return float(self)
-
-    def _from_dimesionless(var):
-
-        x = var
-        return DimMillimeter(x)
+    @property
+    def conversion_factor(self):
+        return 1

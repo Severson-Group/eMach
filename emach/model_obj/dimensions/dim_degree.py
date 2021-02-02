@@ -15,10 +15,10 @@ class DimDegree(DimAngular):
         return self*3.14/180
 
 
-    # def _to_dimes(self):
+    # def _to_dimensionless(self):
     #     return float(self)
     #
-    # def _from_dimes(num1):
+    # def _from_dimensionless(num1):
     #     x = num1
     #     return DimDegree(x)
 

@@ -1,5 +1,4 @@
 from .dim_linear import DimLinear
-from abc import abstractmethod, ABC
 
 __all__ = ['DimInch']
 
@@ -14,15 +13,10 @@ class DimInch(DimLinear):
 
     def to_inch(self):
         return self
-
-    def _to_dimesionless(self):
-
-        return float(self.data * 25.4)
-
-    def _from_dimesionless(num1):
-        x = num1 / 25.4
-        return DimInch(x)
-
-
+    
+    @property
+    def conversion_factor(self):
+        return 25.4
+    
 
 
