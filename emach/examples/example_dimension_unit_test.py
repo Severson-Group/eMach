@@ -1,8 +1,8 @@
-from dim_millimeter import DimMillimeter
-from dim_inch import DimInch
+# add the directory immediately above this file's directory to path for module import
+import sys
+sys.path.append("..")  
 
-from dim_degree import DimDegree
-from dim_radian import DimRadian
+from model_obj import DimMillimeter, DimInch, DimDegree, DimRadian
 
 inchObject = DimInch(1)
 milObject = DimMillimeter(25.4)

@@ -1,6 +1,6 @@
+from .dim_linear import DimLinear
 
-from dim_linear import DimLinear
-
+__all__ = ['DimMillimeter']
 
 class DimMillimeter(DimLinear):
     def __new__(cls, value):

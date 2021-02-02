@@ -1,4 +1,4 @@
-from dim_base import DimBase
+from .dim_base import DimBase
 
 from abc import abstractmethod, ABC
 

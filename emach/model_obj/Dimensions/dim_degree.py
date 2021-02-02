@@ -1,5 +1,6 @@
-from dim_angular import DimAngular
+from .dim_angular import DimAngular
 
+__all__ = ['DimDegree']
 
 class DimDegree(DimAngular):
     def __new__(cls, value):
