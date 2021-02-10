@@ -26,3 +26,8 @@ class Objectives(ABC):
         """
     
         return objs
+
+    def get_nobj(self):
+        "return number of objectives"
+        
+        return nobj
