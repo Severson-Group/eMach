@@ -2,8 +2,8 @@
 This repository houses the current code base used by the Severson Research Group to design, evaluate, and optimize electrical machines. The following links can be used to navigate to documentation on sub-sections of this repository.
 
 1. [Machine Design Framework](MachineDesign.md)
-1. [Machine Evaluation Framework](MachineDesign.md)
-1. [Machine Optimization Framework](MachineDesign.md)
+1. [Machine Analysis Framework](MachineAnalysis.md)
+1. [Machine Optimization Framework](MachineOptimization.md)
 
 Some example optimization code for various machine topologies are provided in [here](/Examples).
 
