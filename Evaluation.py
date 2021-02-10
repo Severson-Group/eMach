@@ -6,19 +6,17 @@ Created on Fri Jan 15 09:27:04 2021
 """
 
 
-class Evaluation:
-    
-    def __init__(self,machine,op_point,results):
-        """Creates Evaluation object 
+class MachineEvaluation:
+    """This class stores the results of from an MachineEvaluator"""
+    def __init__(self,,specification: "Specification",analysis_results: "AnalysisResults"):
+        """Creates MachineEvaluation object 
         
         Keyword Arguments:
-            machine: Machine
-            specification: dict
-            results: dict
+            specification: Specification
+            analysis_results: AnalysisResults
         """
-        self.machine = machine
-        self.op_point = op_point
-        self.results = results
+        self.specification = specification
+        self.analysis_results = analysis_results
     
 
     

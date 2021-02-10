@@ -16,10 +16,10 @@ class Objectives(ABC):
         """Creates objectives object"""
     
     @abstractmethod
-    def get_objectives(self,design_evaluation):
-        """ Calculates objectives from a design_evaluation
+    def get_objectives(self,machine_evaluation: "MachineEvaluation"):
+        """ Calculates objectives from a machine_evaluation
         Keyword Arguments:
-            design_evaluation: Evaluation 
+            machine_evaluation: MachineEvaluation 
             
         Return Values:
             objs: list
