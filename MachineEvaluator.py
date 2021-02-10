@@ -30,7 +30,7 @@ class MachineEvaluator:
         Return Values
             machine_evaluation: Evaluation Object
         """
-        op_point=self.specification
+        op_point=self.specification.op_point
         machine=self.architect.create_new_design(free_variables,specification)
         machine_evaluation=self.analyze.analyze(machine,op_point)
         return machine_evaluation
