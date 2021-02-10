@@ -12,5 +12,6 @@ class Specification(ABC):
     @abstractmethod
     def __init__(self):
         """Create Specification class"""
+        self.op_point: "OperatingPoint"
         
     

@@ -12,4 +12,8 @@ class Machine(ABC):
     def __init__(self):
         pass
     
+    @abstractmethod
+    def check_for_required_values():
+        pass
+    
 
