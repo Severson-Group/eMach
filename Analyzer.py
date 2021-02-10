@@ -18,7 +18,7 @@ class Analyzer(ABC):
         pass
     
     @abstractmethod
-    def analyze(self,machine,op_point):
+    def analyze(self,machine: "Machine",op_point: "OperatingPoint") -> "AnalysisResults":
         """This function takes in the machine to be analyzed, and an operating
         point, completes some calculation and returns an Evaluation Object
         
@@ -27,10 +27,10 @@ class Analyzer(ABC):
             op_point: Dict
             
         Return Value:
-            evaluation: Evaluation
+            analysis_results: AnalysisResults
         """
         
-        return evaluation
+        return analysis_results
     
     
     
