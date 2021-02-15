@@ -12,8 +12,19 @@ class Machine(ABC):
     def __init__(self):
         pass
     
-    @abstractmethod
-    def check_for_required_values():
-        pass
-    
+        
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
 
+class MissingValueError(Error):
+    """Exception raised for errors in the input.
+
+    Attributes:
+        expression -- input expression in which the error occurred
+        message -- explanation of the error
+    """
+
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
