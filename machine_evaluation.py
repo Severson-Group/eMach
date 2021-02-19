@@ -8,7 +8,7 @@ Created on Fri Jan 15 09:27:04 2021
 
 class MachineEvaluation:
     """This class stores the results of from an MachineEvaluator"""
-    def __init__(self,,specification: "Specification",analysis_results: "AnalysisResults"):
+    def __init__(self,specification: "Specification",analysis_results: "AnalysisResults"):
         """Creates MachineEvaluation object 
         
         Keyword Arguments:
