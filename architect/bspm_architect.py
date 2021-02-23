@@ -40,7 +40,6 @@ class BSPMArchitectType1(Architect):
         self.__sleeve_material = specification.sleeve_material
         self.__coil_material = specification.coil_material
         self.__rotor_hub = specification.rotor_hub
-        self.__air = specification.air
         self.__magnet_material = specification.magnet_material
         self.__shaft_material = specification.shaft_material
         
@@ -97,7 +96,6 @@ class BSPMArchitectType1(Architect):
             }
         
         bspm_material = {
-            'air_mat'           : self.__air,
             'rotor_iron_mat'    : self.__rotor_material,
             'stator_iron_mat'   : self.__stator_material,
             'magnet_mat'        : self.__magnet_material,
