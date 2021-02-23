@@ -21,7 +21,7 @@ Steel, Copper, Hub, Air
 
 machine_spec = BSPMMachineSpec(design_spec = DesignSpec, rotor_core = Arnon5, \
                          stator_core = Arnon5, magnet = N40H, conductor = Copper, \
-                         shaft = Steel, air = Air, sleeve = CarbonFiber, hub = Hub)
+                         shaft = Steel, sleeve = CarbonFiber, hub = Hub)
 
 arch = BSPMArchitectType1(machine_spec)
 free_var = [0.00390399,0.00964596,35.9925,0.00358376,0.00722451,0.0128492,\
