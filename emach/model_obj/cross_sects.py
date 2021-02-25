@@ -5,7 +5,6 @@ Created on Thu Nov 12 22:56:54 2020
 @author: Bharat
 """
 import numpy as np
-from jsonschema import validate
 
 from .cross_sect_base import CrossSectBase, CrossSectToken
 
