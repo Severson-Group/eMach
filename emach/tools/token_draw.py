@@ -11,7 +11,7 @@ class TokenDraw():
     or an arc using emach
     '''
     
-    def __init__(self, segment_indices: any, segment_type: int) -> None :
+    def __init__(self, draw_token: any, geometry_type: int) -> None :
         '''
         
 
@@ -30,5 +30,14 @@ class TokenDraw():
         None.
 
         '''
-        self.segment_indices = segment_indices
-        self.segment_type = segment_type
+        self.__draw_token = draw_token
+        self.__geometry_type = geometry_type
+
+    @property
+    def draw_token(self):
+        return self.__draw_token
+    
+    @property
+    def geometry_type(self):
+        return self.__geometry_type   
+        
