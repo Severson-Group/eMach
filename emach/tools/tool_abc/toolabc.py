@@ -6,7 +6,7 @@ Created on Fri Oct 16 16:48:15 2020
 """
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Tuple
 
 
 # define abstract base class for ToolBase
@@ -37,11 +37,11 @@ class MakerBase(ABC):
 # define abstract base class for MakerExtrudeBase
 class MakerExtrudeBase(MakerBase):
     @abstractmethod
-    def extrude(self, name: List[str], material: str, depth: float) -> any:
+    def extrude(self, name: Tuple[str], material: str, depth: float) -> any:
         pass
 
 # define abstract base class for MakerRevolveBase 
 class MakerRevolveBase(MakerBase):
     @abstractmethod
-    def revolve(self, name: List[str], material: str, center: 'Location2D', \
+    def revolve(self, name: Tuple[str], material: str, center: 'Location2D', \
                 axis: 'Location2D', angle: float) -> any: pass
