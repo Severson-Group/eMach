@@ -1,9 +1,6 @@
 from .dim_base import DimBase
 
-from abc import abstractmethod, ABC
-
-
-class DimAngular(DimBase, ABC):
+class DimAngular(DimBase):
     def __new__(cls, value):
         return DimBase.__new__(cls, value)
 
@@ -18,11 +15,3 @@ class DimAngular(DimBase, ABC):
             return self * -1
         else:
             return self
-
-    @abstractmethod
-    def to_degrees(self):
-        pass
-
-    @abstractmethod
-    def to_radians(self):
-        pass

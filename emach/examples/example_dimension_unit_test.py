@@ -61,8 +61,10 @@ print('Dividing inch object with mil object')
 print(inchObject/milObject)
 print(type(inchObject/milObject))
 print('Dividing inch object by scalar')
-print(inchObject*5)
-print(type(inchObject*5))
+print(inchObject/5)
+print(type(inchObject/5))
+
+###### Uncomment this to check exception #######
 # print('Dividing scalar object by inch object')
 # print(5/inchObject)
 # print(type(inchObject/5))
