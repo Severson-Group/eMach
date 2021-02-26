@@ -13,15 +13,12 @@ class TokenDraw():
     
     def __init__(self, draw_token: any, geometry_type: int) -> None :
         '''
-        
-
         Parameters
         ----------
-        segment_indices : Any
+        draw_token : Any
             This is the return value obtained from the drawer tool upon drawing
             a line or an arc.
-            
-        segment_type : int
+        geometry_type : int
             This specifies whether the segment drawn is a line or an arc. 1 
             represents arcs and 0 represents lines
 
