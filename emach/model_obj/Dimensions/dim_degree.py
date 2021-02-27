@@ -9,5 +9,5 @@ class DimDegree(DimAngular):
 
     @property
     def conversion_factor(self):
-        return 3.14/180
+        return 3.14159265359/180
 
