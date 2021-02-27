@@ -1,8 +1,8 @@
 from .dim_base import DimBase
-from abc import abstractmethod, ABC
 
 
-class DimLinear(DimBase, ABC):
+
+class DimLinear(DimBase):
     def __new__(cls, value):
         return DimBase.__new__(cls, value)
 
