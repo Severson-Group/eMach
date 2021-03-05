@@ -28,7 +28,7 @@ class MachineComponent(ABC):
     """Base Class for Machine Components"""
     
     @abstractmethod
-    def required_geometry():
+    def required_parameters():
         pass
     
     @abstractmethod
@@ -38,10 +38,48 @@ class MachineComponent(ABC):
 class Winding(MachineComponent):
     """Base Class for Machine Components"""
     
-    @abstractmethod
-    def required_winding():
-        pass
-
+    def required_parameters():
+        return ('no_of_layers', 'layer_phases', 'layer_polarity', 'pitch', \
+                'Z_q', 'Kov', 'Kcu',)
+    def required_materials():
+        return ('coil_mat',)
+    
+    @property
+    def no_of_layers(self):
+        return self._machine_parameter_dict['no_of_layers']
+    
+    @property
+    def layer_phases(self):
+        return self._machine_parameter_dict['layer_phases']
+    
+    @property
+    def layer_polarity(self):
+        return self._machine_parameter_dict['layer_polarity']
+    
+    @property
+    def pitch(self):
+        return self._machine_parameter_dict['pitch']
+    
+    @property
+    def Z_q(self):
+        return self._machine_parameter_dict['Z_q']
+    
+    @property
+    def Kov(self):
+        return self._machine_parameter_dict['Kov']
+    
+    @property
+    def Kcu(self):
+        return self._machine_parameter_dict['Kcu']
+    
+    @property
+    def coil_mat(self):
+        return self._materials_dict['coil_mat']
+    
+    
+    
+    
+    
     
 class Error(Exception):
     """Base class for exceptions in this module."""
