@@ -23,7 +23,7 @@ class DimLinear(DimBase):
         if (isinstance(self, DimLinear) and isinstance(other, DimLinear)):
             raise Exception('Multiplication Not valid')
 
-        if isinstance(self, DimLinear):
+        else:
             mul = (other) * (self._to_dimensionless())
             self.result = mul 
             return type(self)._from_dimensionless(self)
@@ -32,7 +32,7 @@ class DimLinear(DimBase):
         if (isinstance(self, DimLinear) and isinstance(other, DimLinear)):
             raise Exception('Multiplication Not valid')
 
-        if isinstance(self, DimLinear):
+        else:
             mul = (other) * (self._to_dimensionless())
             self.result = mul
             return type(self)._from_dimensionless(self)
@@ -51,13 +51,8 @@ class DimLinear(DimBase):
         raise Exception('Division not valid')
 
 
-    def __neg__(self):
-        return self * -1
 
-    def __pos__(self):
-        if self < 0:
-            return self * -1
-        else:
-            return self
+
+
 
         

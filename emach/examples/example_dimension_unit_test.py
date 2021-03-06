@@ -69,6 +69,11 @@ print(type(inchObject/5))
 # print(5/inchObject)
 # print(type(inchObject/5))
 
+###### Uncomment this to check exception #######
+# print('********Power Demo*****')
+# print(inchObject**2)
+# print(inchObject**milObject)
+
 print('*******Angle Demo******')
 degObject = DimDegree(180)
 print(type(degObject))
@@ -80,6 +85,7 @@ print(DimDegree(radObject))
 
 print('Angle Unary operation')
 print(-degObject)
+
 
 
 
