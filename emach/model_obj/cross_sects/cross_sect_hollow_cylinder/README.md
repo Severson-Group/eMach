@@ -1,3 +1,3 @@
 # Hollow Cylinder Cross Section
 
-<img src="./CrossSectHollowCylinder.svg" width="500" height="500" />
+<img src="./CrossSectHollowCylinder.svg" width="5000" height="5000" />
