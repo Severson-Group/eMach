@@ -71,7 +71,8 @@ print(type(inchObject/5))
 
 ###### Uncomment this to check exception #######
 # print('********Power Demo*****')
-# print(inchObject**2)
+#print(inchObject**2)
+#print(2**inchObject)
 # print(inchObject**milObject)
 
 print('*******Angle Demo******')
