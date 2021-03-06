@@ -1,6 +1,6 @@
-# add the directory immediately above this file's directory to path for module import
+# # add the directory immediately above this file's directory to path for module import
 import sys
-sys.path.append("..")  
+sys.path.append("..")
 
 from model_obj import DimMillimeter, DimInch, DimDegree, DimRadian
 
@@ -24,7 +24,7 @@ print(type(inchObject-milObject))
 print('Subracting Millimeter - Inch Object')
 print(milObject-inchObject)
 print(type(milObject-inchObject))
-#
+
 print('*********Multiply Demo**********')
 print('Multiplying Inch * int object')
 print(inchObject*5)
@@ -32,7 +32,7 @@ print(type(inchObject*5))
 print('Multiplying int * Inch object')
 print(5*inchObject)
 print(type(5*inchObject))
-#
+
 print('Multiplying Inch * float object')
 print(inchObject*5.58)
 print(type(inchObject*5.58))
@@ -64,6 +64,10 @@ print('Dividing inch object by scalar')
 print(inchObject/5)
 print(type(inchObject/5))
 
+print('******Nested Dimension Demo*********')
+print(DimMillimeter(inchObject))
+print(DimInch(milObject))
+
 ###### Uncomment this to check exception #######
 # print('Dividing scalar object by inch object')
 # print(5/inchObject)
@@ -80,16 +84,4 @@ print(DimDegree(radObject))
 
 print('Angle Unary operation')
 print(-degObject)
-
-
-
-
-
-
-
-
-
-
-
-
 
