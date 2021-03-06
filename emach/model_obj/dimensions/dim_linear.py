@@ -1,8 +1,8 @@
 from .dim_base import DimBase
-from abc import abstractmethod, ABC
 
 
-class DimLinear(DimBase, ABC):
+
+class DimLinear(DimBase):
     def __new__(cls, value):
         return DimBase.__new__(cls, value)
 
@@ -51,7 +51,6 @@ class DimLinear(DimBase, ABC):
         raise Exception('Division not valid')
 
 
-
     def __neg__(self):
         return self * -1
 
@@ -61,25 +60,4 @@ class DimLinear(DimBase, ABC):
         else:
             return self
 
-    @abstractmethod
-    def to_millimeter(self):
-        pass
-
-    @abstractmethod
-    def to_inch(self):
-        pass
-
-    @property
-    @abstractmethod
-    def conversion_factor(self):
-        pass
-    
-    @abstractmethod
-    def _to_dimensionless(self):
-        return float(self.data*self.conversion_factor)
-
-    @abstractmethod    
-    def _from_dimensionless(self):
-        x = self.result/self.conversion_factor
-        return self.__class__(x)
         
