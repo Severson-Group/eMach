@@ -15,7 +15,7 @@ x = mo.DimMillimeter(4)
 y = mo.DimMillimeter(80)
 
 
-hollowCylinder1 = mo.cross_sects.HollowCylinder(name = 'hollowCylinder1',
+hollowCylinder1 = mo.cross_sects.CrossSectHollowCylinder(name = 'hollowCylinder1',
                                                 dim_d_a = x, dim_r_o = y,
                                                 location = mo.Location2D())
 
