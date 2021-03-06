@@ -8,13 +8,23 @@ class DimBase(float, ABC):
     def __init__(self,data):
         self.data = float(data)
 
+
+    def __pow__(self, other):
+        raise Exception('Power operation is not valid')
+
+    def __neg__(self):
+        return self * -1
+
+    def __pos__(self):
+        if self < 0:
+            return self * -1
+        else:
+            return self
+
     @property
     @abstractmethod
     def conversion_factor(self):
         pass
-
-    def __pow__(self, other):
-        raise Exception('Power operation is not valid')
 
 
     def _to_dimensionless(self):

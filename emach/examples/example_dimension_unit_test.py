@@ -85,6 +85,8 @@ print(DimDegree(radObject))
 
 print('Angle Unary operation')
 print(-degObject)
+negDegObject = DimDegree(-180)
+print(-negDegObject)
 
 
 
