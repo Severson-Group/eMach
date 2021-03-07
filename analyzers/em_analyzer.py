@@ -1,6 +1,7 @@
 from time import time as clock_time
 import os
 import numpy as np
+import pandas as pd
 
 from . import data_handler as dh
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
@@ -56,7 +57,7 @@ class BSPM_EM_Analysis(Analyzer):
         # Add study and run
         valid_design = self.pre_process(app, model)
         if valid_design != True:
-            return False
+            return None
         study = self.add_magnetic_transient_study(app, model, self.configuration['JMAG_csv_folder'], self.study_name) # Change here and there 
         self.mesh_study(app, model, study)
         self.run_study(app, study, clock_time())
@@ -71,34 +72,15 @@ class BSPM_EM_Analysis(Analyzer):
         # 03 Load FEA output
         ####################################################
         
-        fea_rated_output = dh.read_csv_results(self.study_name, self.configuration['JMAG_csv_folder'], self.configuration)
+        fea_rated_output = self.extract_JMAG_results(self.configuration['JMAG_csv_folder'], self.study_name) 
+        # dh.read_csv_results(self.study_name, self.configuration['JMAG_csv_folder'], self.configuration)
         
         ####################################################
         # 04 Update stack length for rated torque, update design param and performance accordingly
         ####################################################
-        fea_rated_output = self.apply_stack_length_correction(fea_rated_output)
         
-        return valid_design, fea_rated_output
+        return fea_rated_output
 
-    def apply_stack_length_correction(self, fea_rated_output):
-        # Rated torque
-        rated_torque = self.machine_variant.mech_power/self.machine_variant.mech_omega
-        # FEA torque
-        range_2TS = int(self.configuration['number_of_steps_per_rev_2TS']*self.configuration['number_of_revolution_2TS'])
-        torque_fea = fea_rated_output['torque_list']
-        torque_avg = sum(torque_fea[-range_2TS:])/len(torque_fea[-range_2TS:])
-        # rated ratio
-        rated_ratio  = rated_torque/torque_avg
-        # self.machine_variant.l_st           = rated_ratio * self.machine_variant.l_st
-        # self.machine_variant.V_r             = rated_ratio * self.machine_variant.V_r
-        fea_rated_output['torque_list']       = (rated_ratio * np.array(fea_rated_output['torque_list'])).tolist()
-        fea_rated_output['forceX_list']       = (rated_ratio * np.array(fea_rated_output['forceX_list'])).tolist()
-        fea_rated_output['forceY_list']       = (rated_ratio * np.array(fea_rated_output['forceY_list'])).tolist()
-        fea_rated_output['magnet_loss']       = rated_ratio * fea_rated_output['magnet_loss']
-        fea_rated_output['stator_iron_loss']  = rated_ratio * fea_rated_output['stator_iron_loss']
-        fea_rated_output['rotor_iron_loss']   = rated_ratio * fea_rated_output['rotor_iron_loss']
-
-        return fea_rated_output  
     
     def initial_excitation_bias_compensation_deg(self):
         return 0
@@ -849,200 +831,38 @@ class BSPM_EM_Analysis(Analyzer):
         app.ExportImageWithSize(self.design_results_folder + self.project_name + 'mesh.png', 2000, 2000)
         app.View().ShowModel() # 1st btn. close mesh view, and note that mesh data will be deleted if only ouput table results are selected.              
 
-    @property
-    def copper_loss(self):
-        return 6*((self.current_trms/2)**2 + self.current_srms**2)*self.R_coil
 
-    @property
-    def V_rsh(self):
-        r_sh = self.machine_variant.r_sh
-        l_st = self.machine_variant.l_st
-        return np.pi*(r_sh**2)*l_st
-
-    @property
-    def V_rfe(self):
-        r_ro    = self.machine_variant.r_ro
-        alpha_m = self.machine_variant.alpha_m*np.pi/180
-        d_m     = self.machine_variant.d_m
-        d_mp    = self.machine_variant.d_mp
-        r_sh    = self.machine_variant.r_sh
-        l_st    = self.machine_variant.l_st
-        p       = self.machine_variant.p
-        return np.pi*((r_ro-d_m)**2-r_sh**2)*l_st + (np.pi - p*alpha_m)*((r_ro-d_mp)**2 - (r_ro-d_m)**2)*l_st
-
-    @property
-    def V_rPM(self):
-        r_ro    = self.machine_variant.r_ro
-        alpha_m = self.machine_variant.alpha_m*np.pi/180
-        d_m     = self.machine_variant.d_m
-        l_st    = self.machine_variant.l_st
-        p       = self.machine_variant.p
-        return p*alpha_m*(r_ro**2 - (r_ro-d_m)**2)*l_st
-
-    @property
-    def V_rsl(self):
-        r_ro    = self.machine_variant.r_ro
-        d_sl    = self.machine_variant.d_sl
-        l_st    = self.machine_variant.l_st
-        return np.pi*((r_ro+d_sl)**2 - r_ro**2)*l_st
-
-    @property
-    def V_scu(self):
-        return 3*self.l_coil*self.machine_variant.Kcu*self.machine_variant.s_slot
-
-    @property
-    def V_sfe(self):
-        r_so    = self.machine_variant.r_so
-        r_si    = self.machine_variant.r_si
-        l_st    = self.machine_variant.l_st
-        s_slot  = self.machine_variant.s_slot
-        return np.pi*(r_so**2 - r_si**2)*l_st - 6*s_slot*l_st    
-
-    def get_performance_metrics(self,fea_rated_output):
-
-        torque_avg, torque_ripple, torque = self.process_torque_data(fea_rated_output)
-        force_avg_magnitude, Em, Ea, force_err_abs, force_err_ang = self.process_force_data(fea_rated_output)
-        TRV = self.get_TRV(torque_avg)
-        FRW = self.get_FRW(force_avg_magnitude)
-        print('Em:', Em, '\tEa:', Ea, '\tFRW:', FRW, '\tTRV:', TRV)
+    def extract_JMAG_results(self, path, study_name):
+        current_csv_path = path + study_name + '_circuit_current.csv'
+        voltage_csv_path = path + study_name + '_circuit_voltage.csv'
+        torque_csv_path = path + study_name + '_torque.csv'
+        force_csv_path = path + study_name + '_force.csv'
+        iron_loss_path = path + study_name + '_iron_loss_loss.csv'
+        joule_loss_path = path + study_name + '_joule_loss_loss.csv'
+        hysterisis_loss_path = path + study_name + '_hysteresis_loss_loss.csv'
+        magnet_loss_path = path + study_name + '_joule_loss.csv'
         
-        P_out = torque_avg*self.machine_variant.mech_omega
-        P_loss = self.copper_loss+fea_rated_output['stator_iron_loss']+fea_rated_output['rotor_iron_loss']+fea_rated_output['magnet_loss']+self.windage_loss
-        efficiency = P_out*100/(P_out+P_loss)
-
-        phase_voltage_rms = self.compute_vrms(fea_rated_output)
-        power_factor = self.compute_power_factor(fea_rated_output, targetFreq=self.excitation_freq)
-
-        performance_dict = {    #currents
-                                'Id_pk'      : 0,
-                                'Iq_pk'      : self.current_trms*np.sqrt(2),
-                                'Ix_pk'      : 0,
-                                'Iy_pk'      : self.current_srms*np.sqrt(2),
-                                # torque and forces
-                                'mech_omega'      : self.machine_variant.mech_omega,
-                                'torque_average'   : torque_avg,
-                                'torque_ripple'   : torque_ripple,
-                                'Em'              : Em,
-                                'Ea'              : Ea,
-                                'force_magnitude' : force_avg_magnitude,
-                                'TRV'             : TRV,
-                                'FRW'             : FRW,
-                                # losses
-                                'copper_loss'      : self.copper_loss,
-                                'stator_iron_loss' : fea_rated_output['stator_iron_loss'],
-                                'rotor_iron_loss'  : fea_rated_output['rotor_iron_loss'],
-                                'magnet_loss'      : fea_rated_output['magnet_loss'],
-                                'windage_loss'     : self.windage_loss,
-                                'total_loss'       : P_loss,
-                                'efficiency'       : efficiency,
-                                # volumes and other
-                                'V_rsh' : self.V_rsh,
-                                'V_rfe' : self.V_rfe,
-                                'V_rPM' : self.V_rPM,
-                                'V_rsl' : self.V_rsl,
-                                'V_scu' : self.V_scu,
-                                'V_sfe' : self.V_sfe,
-                                'R_coil': self.R_coil,
-                                # voltage and power factor
-                                'phase_rms_voltage': phase_voltage_rms,
-                                'pf'               : power_factor
-                            }
-
-        return performance_dict
-
-    def process_torque_data(self, fea_rated_output):
-        range_2TS = int(self.configuration['number_of_steps_per_rev_2TS']*self.configuration['number_of_revolution_2TS'])
-        torque = fea_rated_output['torque_list']        
-        # Average torque
-        torque_avg = sum(torque[-range_2TS:])/len(torque[-range_2TS:])
-        # Torque ripple
-        torque_error = np.array(torque) - torque_avg
-        ss_max_torque_error = max(torque_error[-range_2TS:]), min(torque_error[-range_2TS:])
-        torque_ripple   = abs(ss_max_torque_error[0] - ss_max_torque_error[1]) / torque_avg 
-        return torque_avg, torque_ripple, torque
-
-    def process_force_data(self, fea_rated_output):
-        range_2TS = int(self.configuration['number_of_steps_per_rev_2TS']*self.configuration['number_of_revolution_2TS'])
-        force_x = np.asarray(fea_rated_output['forceX_list'])
-        force_y = np.asarray(fea_rated_output['forceY_list'])
-        # correct JMAG offset
-        theta_offset = -np.pi/2
-        force = (force_x + 1j*force_y)*np.exp(1j*theta_offset)
-        force_x = np.real(force).tolist()
-        force_y = np.imag(force).tolist()
-        fea_rated_output['forceX_list'] = force_x
-        fea_rated_output['forceY_list'] = force_y
-        # force magnitude and angle
-        force_ang = []
-        temp_force_ang = np.arctan2(force_y, force_x) / np.pi * 180 # [deg]
-        for angle in temp_force_ang:
-            force_ang.append(angle)
-        force_abs = np.sqrt(np.array(force_x)**2 + np.array(force_y)**2 )
-        # average force
-        force_average_angle     = sum(force_ang)/len(force_ang)
-        force_avg_magnitude     = sum(force_abs)/len(force_abs)
-        # Error magnitude
-        force_err_abs = (force_abs - force_avg_magnitude)/force_avg_magnitude
-        Em = max(abs(force_err_abs))
-        # error angle
-        print(force_ang)
-        print(force_average_angle)
-        force_err_ang = self.compute_angle_error(np.ones(len(force_ang))*force_average_angle, np.array(force_ang))
-        print(force_err_ang)
-        Ea = max(abs(force_err_ang[-range_2TS:]))
-        return force_avg_magnitude, Em, Ea, force_err_abs, force_err_ang
-
-    def compute_angle_error(self, alpha_star, alpha_actual):
-    
-        N = alpha_star.shape[0] #determine number of input angles
-        vectors_star = np.zeros((N,2))
-        vectors =      np.zeros((N,2))
-        #unit vectors for desired angle
-        vectors_star[:,0] = np.cos( np.deg2rad(alpha_star) )
-        vectors_star[:,1] = np.sin( np.deg2rad(alpha_star) )
-        #unit vectors for actual angle
-        vectors[:,0] = np.cos( np.deg2rad(alpha_actual) )
-        vectors[:,1] = np.sin( np.deg2rad(alpha_actual) )
-        #determine angle between vectors in degrees (note that this is only the angle magnitude):
-        #This is just doing the cross product between all corresponding unit vectors
-        error_angle_mag = np.rad2deg( np.arccos((vectors_star*vectors).sum(axis = 1)) )
-        #to determine the error angle direction we can use the cross product between the vectors
-        #positive cross product means the desired vector lags the actual vector and the error angle
-        #is positive
-        sign = np.sign( np.cross(vectors_star, vectors) )
-        return sign*error_angle_mag
-
-    def get_TRV(self, torque_mag):
-        TRV = torque_mag/self.machine_variant.V_r
-        return TRV
-
-    def get_FRW(self, force_mag,gravity=9.8):
-        W_rsh = self.V_rsh*self.machine_variant.shaft_mat['shaft_material_density']
-        W_rfe = self.V_rfe*self.machine_variant.stator_iron_mat['core_material_density']
-        W_rPM = self.V_rPM*self.machine_variant.magnet_mat['magnet_material_density']
-        W_rsl = self.V_rsl*self.machine_variant.rotor_sleeve_mat['sleeve_material_density']
-        W_rtot= W_rsh + W_rfe + W_rPM + W_rsl
-        FRW = force_mag/(W_rtot*gravity)
-        return FRW
-
-    def compute_power_factor(self, fea_rated_output, targetFreq=1e3, numPeriodicalExtension=1000):
-
-        number_of_steps_2TS = int(self.configuration['number_of_steps_per_rev_2TS']*self.configuration['number_of_revolution_2TS'])
-        mytime  =  fea_rated_output['current_voltage_dict']['Time(s)'][-number_of_steps_2TS:]
-        voltage =  fea_rated_output['current_voltage_dict']['Terminal_Wt [Case 1]'][-number_of_steps_2TS:]
-        current =  fea_rated_output['current_voltage_dict']['coil_Wb'][-number_of_steps_2TS:]
-
-        power_factor = dh.compute_power_factor_from_half_period(voltage, current, mytime, targetFreq=targetFreq, numPeriodicalExtension=numPeriodicalExtension)
-        return power_factor
-
-    def compute_vrms(self, fea_rated_output):
-
-        number_of_steps_2TS = int(self.configuration['number_of_steps_per_rev_2TS']*self.configuration['number_of_revolution_2TS'])
-        voltage =  fea_rated_output['current_voltage_dict']['Terminal_Wt [Case 1]'][-number_of_steps_2TS:]
-        rms_voltage = np.sqrt(sum(np.square(voltage))/len(voltage))
-
-        return rms_voltage
-
+        curr_df = pd.read_csv(current_csv_path, skiprows=6)
+        volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
+        tor_df = pd.read_csv(torque_csv_path, skiprows=6)
+        force_df = pd.read_csv(force_csv_path, skiprows=6)
+        iron_df = pd.read_csv(iron_loss_path, skiprows=6)
+        joule_df = pd.read_csv(joule_loss_path, skiprows=6)
+        hyst_df = pd.read_csv(hysterisis_loss_path, skiprows=6)
+        magnet_df = pd.read_csv(magnet_loss_path, skiprows=6)
+        
+        fea_data = {
+            'Current': curr_df,
+            'Voltage': volt_df,
+            'Torque': tor_df,
+            'Force': force_df,
+            'Iron Loss': iron_df,
+            'Joule Loss': joule_df,
+            'Hysterisis Loss': hyst_df,
+            'Magnet Loss': magnet_df,
+            }
+        
+        return fea_data
 
     
 

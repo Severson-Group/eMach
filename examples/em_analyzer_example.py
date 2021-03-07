@@ -17,7 +17,7 @@ from specifications.materials.jmag_library_magnets import N40H
 from specifications.materials.miscellaneous_materials import CarbonFiber, \
 Steel, Copper, Hub, Air
 from operating_points.bspm_op_point import BSPM_EMAnalyzer_Op_Point
-from analyzers.em_analyzer import  BSPM_EM_Analysis
+from analyzers.em_analyzer import BSPM_EM_Analysis
 from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 
 
@@ -38,10 +38,11 @@ machine_variant = arch.create_new_design(free_var)
 em_op = BSPM_EMAnalyzer_Op_Point(Id = 0, Iq = 0.95, Ix = 0, Iy = 0.05, speed =2000,\
                                  magnet_temp = 80)
 
+# intialize em analyzer class with FEA configuration
+em_analysis = BSPM_EM_Analysis(JMAG_FEA_Configuration)
+# print(Arnon5['core_bh_file'])
 
-design = BSPM_EM_Analysis(JMAG_FEA_Configuration)
-
-y = design.analyze(machine_variant, em_op,counter = 3)
+results = em_analysis.analyze(machine_variant, em_op,counter = 4)
 
 
 
