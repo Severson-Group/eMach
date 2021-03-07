@@ -5,17 +5,24 @@ class DimBase(float, ABC):
     def __new__(cls, value):
         return float.__new__(cls, value)
 
-    def __init__(self, data):
-        self.data = float(data)
-
     @property
     @abstractmethod
     def conversion_factor(self):
         pass
 
     def _to_dimensionless(self):
-        return float(self.data * self.conversion_factor)
+        return float(self) * self.conversion_factor
 
     def _from_dimensionless(self):
-        x = self.result / self.conversion_factor
+        x = float(self) / self.conversion_factor
         return self.__class__(x)
+
+
+    def __neg__(self):
+        return self * -1
+
+    def __pos__(self):
+        if self < 0:
+            return self * -1
+        else:
+            return self
