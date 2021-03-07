@@ -85,3 +85,11 @@ print(DimDegree(radObject))
 print('Angle Unary operation')
 print(-degObject)
 
+
+print('******Nested Dimension Demo*********')
+print(DimMillimeter(inchObject))
+print(DimInch(milObject))
+print(DimRadian(degObject))
+print(DimDegree(radObject))
+
+
