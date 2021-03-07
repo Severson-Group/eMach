@@ -64,9 +64,6 @@ print('Dividing inch object by scalar')
 print(inchObject/5)
 print(type(inchObject/5))
 
-print('******Nested Dimension Demo*********')
-print(DimMillimeter(inchObject))
-print(DimInch(milObject))
 
 ###### Uncomment this to check exception #######
 # print('Dividing scalar object by inch object')
