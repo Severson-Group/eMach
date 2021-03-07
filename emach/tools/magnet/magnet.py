@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 16 16:51:18 2020
-
-@author: Bharat
-"""
 from win32com.client import DispatchEx
 
 from ..tool_abc import toolabc as abc
