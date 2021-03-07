@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 20 13:35:27 2021
-
-@author: Bharat
-"""
 
 class TokenDraw():
     '''
