@@ -128,7 +128,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             [self.consts.infoSliceSurface],
         )
 
-    def extrude(self, name, material, depth):
+    def extrude(self, name, material, depth, token = None):
         """
         Extrudes, assigns a material and name to a selected section in MAGNET
         """
@@ -142,7 +142,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
 
         return ret
 
-    def revolve(self, name, material, center, axis, angle):
+    def revolve(self, name, material, center, axis, angle, token = None):
         """
         Revloves, assigns a material and name to a selected section in MAGNET
         """
