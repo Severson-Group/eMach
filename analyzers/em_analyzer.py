@@ -3,7 +3,6 @@ import os
 import numpy as np
 import pandas as pd
 
-from . import data_handler as dh
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
