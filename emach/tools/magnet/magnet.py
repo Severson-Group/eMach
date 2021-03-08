@@ -4,16 +4,15 @@ from ..tool_abc import toolabc as abc
 from ..token_draw import TokenDraw
 from . import document
 from .document import *
+from ...model_obj.dimensions import *
+
 
 __all__ = []
-__all__ += document.__all__
 __all__ += ["MagNet"]
 
-for i in range(len(document.document.__all__)):
-    __all__.remove(document.document.__all__[i])
 
 class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase):
-    """ A class to represent a MAGNET file
+    """ A class to handle MagNet applications
     """
 
     def __init__(self):
@@ -22,6 +21,8 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         self.view = None
         self.sol = None
         self.consts = None
+        self.default_length = 'DimMillimeter'
+        self.default_angle = 'DimDegree'
 
     def open(self, filename=None, visible=False):
         """ opens a new MAGNET session and assigns variables neccessary for further
@@ -63,12 +64,17 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             0 if successful 1 if failed.
 
         """
-        ret = self.view.newLine(startxy[0], startxy[1], endxy[0], endxy[1])
+        start_x = eval(self.default_length)(startxy[0])
+        start_y = eval(self.default_length)(startxy[1])
+        end_x = eval(self.default_length)(endxy[0])
+        end_y = eval(self.default_length)(endxy[1])
+
+        ret = self.view.newLine(start_x, start_y, end_x, end_y)
         
         self.disp_ex.setVariant(0, 'line', 'python')
         line = self.disp_ex.getVariant(0, 'python');
         
-        return TokenDraw(line,1)
+        return TokenDraw(line,0)
 
 
     def draw_arc(self, centrexy, startxy, endxy):
@@ -89,8 +95,15 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         ret : TokenDraw object
 
         """
+        centre_x = eval(self.default_length)(centrexy[0])
+        centre_y = eval(self.default_length)(centrexy[1])
+        start_x = eval(self.default_length)(startxy[0])
+        start_y = eval(self.default_length)(startxy[1])
+        end_x = eval(self.default_length)(endxy[0])
+        end_y = eval(self.default_length)(endxy[1])
+        
         ret = self.view.newArc(
-            centrexy[0], centrexy[1], startxy[0], startxy[1], endxy[0], endxy[1]
+            centre_x, centre_y, start_x, start_y, end_x, end_y
         )
         
         self.disp_ex.setVariant(0, 'arc', 'python')
@@ -115,9 +128,12 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         None.
 
         """
+        inner_coord_x = eval(self.default_length)(inner_coord[0])
+        inner_coord_y = eval(self.default_length)(inner_coord[1])
+        
         self.view.selectAt(
-            inner_coord[0],
-            inner_coord[1],
+            inner_coord_x,
+            inner_coord_y,
             self.consts.infoSetSelection,
             [self.consts.infoSliceSurface],
         )
@@ -126,9 +142,10 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         """
         Extrudes, assigns a material and name to a selected section in MAGNET
         """
-
+        depth_actual = eval(self.default_length)(depth)
+        
         ret = self.view.makeComponentInALine(
-                depth,
+                depth_actual,
                 name,
                 "Name=" + material,
                 self.consts.infoMakeComponentRemoveVertices
@@ -140,13 +157,18 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         """
         Revloves, assigns a material and name to a selected section in MAGNET
         """
-
+        center_x = eval(self.default_length)(center[0])
+        center_y = eval(self.default_length)(center[1])
+        axis_x = eval(self.default_length)(axis[0])
+        axis_y = eval(self.default_length)(axis[1])
+        angle_actual = eval(self.default_length)(angle)
+        
         ret = self.view.makeComponentInAnArc(
-                center[0],
-                center[1],
-                axis[0],
-                axis[1],
-                angle,
+                center_x,
+                center_y,
+                axis_x,
+                axis_y,
+                angle_actual,
                 name,
                 "Name=" + material,
                 self.consts.infoMakeComponentRemoveVertices,
@@ -155,4 +177,42 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         return ret
     
     def view_all(self):
+        '''
+        Function to view entire cross-section of drawing made in MagNer
+
+        '''
         self.view.viewAll()
+        
+    def set_default_length(self, user_unit, make_app_default):
+        '''
+        Function to set the default length unit in MagNet. Supports millimeters
+        and inches.
+
+        Parameters
+        ----------
+        user_unit : str
+            DESCRIPTION. String representing the unit the user wishes to set
+            as default.
+        make_app_default : bool
+            DESCRIPTION. Boolean with which user can set a unit as the default
+            unit employed in MagNet
+
+        Raises
+        ------
+        TypeError
+            DESCRIPTION. Raise a TypeError if incorrent dimension is passed
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        if (user_unit == 'millimeters'):
+            self.default_length = 'DimMillimeter'
+        elif (user_unit == 'inches'):
+            self.default_length = 'DimInch'
+        else:
+            raise TypeError
+        
+        self.doc.setDefaultLengthUnit(user_unit, make_app_default)

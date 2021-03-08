@@ -4,11 +4,8 @@ Created on Fri Oct 23 02:35:48 2020
 
 @author: Bharat
 """
-# add the directory immediately above this file's directory to path for module import
-import sys
-sys.path.append("..")  
 
-import tools.magnet as mn
+import emach.tools.magnet as mn
 
 # create an instance of the MagNet class
 MN = mn.MagNet()
