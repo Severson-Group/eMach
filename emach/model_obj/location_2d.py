@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 12 23:35:50 2020
 
-@author: Bharat
-"""
 import numpy as np
 
 from .dimensions import DimMillimeter, DimRadian

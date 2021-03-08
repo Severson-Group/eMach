@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 13 01:02:08 2020
-
-@author: Bharat
-"""
 # add the directory immediately above this file's directory to path for module import
 import sys
 sys.path.append("..")

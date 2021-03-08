@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 12 23:22:49 2020
 
-@author: Bharat
-"""
 from abc import ABC, abstractmethod
 from typing import List
 
