@@ -7,8 +7,8 @@ Created on Fri Oct 16 16:54:12 2020
 
 import emach.tools.magnet as mn
 # create an instance of the MagNet class
-MN = mn.MagNet()
-MN.open(visible=True)
+MN = mn.MagNet(visible=True)
+MN.open()
 
 # passing incorrect argument to drawLine to show error handling
 #l2 = MN.drawLine('e1','2y')
@@ -44,3 +44,4 @@ angle1 = 90
 
 #revlove section, comment out extrude if you want to see revolve in action
 # revolve1 = MN.revolve(name1, material1, center1, axis1, angle1)
+del MN

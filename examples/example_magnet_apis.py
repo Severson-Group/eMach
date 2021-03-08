@@ -8,8 +8,8 @@ Created on Fri Oct 23 02:35:48 2020
 import emach.tools.magnet as mn
 
 # create an instance of the MagNet class
-MN = mn.MagNet()
-MN.open(visible=True)
+MN = mn.MagNet(visible=True)
+MN.open()
 
 
 # draw circles with x,y as the coordinates of the centre, r as the radius
@@ -87,3 +87,5 @@ mn.document.set_parameter(MN.doc, motion, "PositionAtStartup",
 mn.document.set_parameter(MN.doc, motion, "SpeedAtStartup", speed_at_startup, MN.consts)
 mn.document.set_parameter(MN.doc, motion, "MotionDirection", direction, MN.consts)
 mn.document.set_parameter(MN.doc, motion, "SpeedVsTime", time_speed, MN.consts)
+
+del MN

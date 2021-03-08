@@ -15,22 +15,25 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
     """ A class to handle MagNet applications
     """
 
-    def __init__(self):
-        self.disp_ex = None
-        self.doc = None
+    def __init__(self, visible = False):
+        self.disp_ex = DispatchEx("MagNet.Application")
+        self.disp_ex.visible = visible 
         self.view = None
         self.sol = None
         self.consts = None
         self.default_length = 'DimMillimeter'
         self.default_angle = 'DimDegree'
+    
+    def __del__(self, filepath = None):
+        if filepath is str:
+            self.doc.save(filepath)
+        self.disp_ex.close(False)
 
-    def open(self, filename=None, visible=False):
+    def open(self, filename=None):
         """ opens a new MAGNET session and assigns variables neccessary for further
         operations
         """
 
-        self.disp_ex = DispatchEx("MagNet.Application")  # Opens a new MAGNET session
-        self.disp_ex.visible = visible  # Makes MAGNET window visible
         if filename is str:
             self.doc = self.disp_ex.openDocument(filename)
         else:
@@ -39,8 +42,10 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         self.sol = self.doc.getSolution()
         self.consts = self.disp_ex.getConstants()  # Get MAGNET Constants
 
-    def close(self):
-        pass
+    def close(self, filepath = None):
+        if filepath is str:
+            self.doc.save(filepath)
+        self.view.close(False)
 
     def draw_line(self, startxy, endxy):
         """
