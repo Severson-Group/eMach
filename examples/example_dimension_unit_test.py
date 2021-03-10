@@ -1,4 +1,7 @@
 
+import sys
+sys.path.append('..')
+                
 from emach.model_obj import DimMillimeter, DimInch, DimDegree, DimRadian
 
 inchObject = DimInch(1)

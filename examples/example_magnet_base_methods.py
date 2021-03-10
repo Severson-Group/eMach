@@ -4,6 +4,8 @@ Created on Fri Oct 16 16:54:12 2020
 
 @author: Bharat
 """
+import sys
+sys.path.append('..')
 
 import emach.tools.magnet as mn
 # create an instance of the MagNet class
