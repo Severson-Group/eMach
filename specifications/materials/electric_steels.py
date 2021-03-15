@@ -18,5 +18,7 @@ Arnon5 = {
     'core_ironloss_Ke'           : 0.0372, # W/m3
     'core_therm_conductivity'    : 28, # W/m-k
     'core_stacking_factor'       : 96, # percentage
-    'core_bh_file'               : None
+    'core_bh_file'               : os.path.dirname(__file__) + '/Arnon5.BH',
     }
+
+# os.path.abspath('')

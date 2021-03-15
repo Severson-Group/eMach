@@ -9,6 +9,7 @@ import numpy as np
 
 from .architect import Architect
 from .machines import BSPM_Machine
+from .winding_layout import WindingLayout
 
 __all__ = ['BSPMArchitectType1']
 
@@ -40,8 +41,11 @@ class BSPMArchitectType1(Architect):
         self.__sleeve_material = specification.sleeve_material
         self.__coil_material = specification.coil_material
         self.__rotor_hub = specification.rotor_hub
+        self.__air = specification.air
         self.__magnet_material = specification.magnet_material
         self.__shaft_material = specification.shaft_material
+        self.__winding = WindingLayout(DPNV_or_SEPA=True, Qs = self.__design_spec['Q'], \
+                                       p = self.__design_spec['p'])
         
     def create_new_design(self, x):
         '''
@@ -63,7 +67,7 @@ class BSPMArchitectType1(Architect):
         
         free_variables = self.x_to_dict(x) 
         
-        bspm_geometry = {
+        bspm_parameters = {
             # free variables
             'delta_e'      : free_variables['delta_e'],
             'r_ro'         : free_variables['r_ro'],
@@ -88,14 +92,25 @@ class BSPMArchitectType1(Architect):
             'p'            : self.__design_spec['p'],
             'V_r'          : self.__get_V_r(free_variables),
             'l_st'         : self.__get_l_st(free_variables),
-            'd_sl'         : 0,
+            'd_sl'         : 0.001,
             'delta_sl'     : 0,
             'delta'        : free_variables['delta_e'],
             'Q'            : self.__design_spec['Q'],
-            'n_m'          : 1
+            'n_m'          : 1,
+ 
+            # winding parameters
+            'coil_groups'       : self.__winding.grouping_a,
+            'no_of_layers'      : self.__winding.no_winding_layer,
+            'layer_phases'      : [self.__winding.rightlayer_phase, self.__winding.leftlayer_phase],
+            'layer_polarity'    : [self.__winding.rightlayer_polarity, self.__winding.leftlayer_polarity],
+            'pitch'             : self.__winding.y,
+            'Z_q'               : self.__get_zQ(free_variables),
+            'Kov'               : self.__design_spec['Kov'],
+            'Kcu'               : self.__design_spec['Kcu'],
             }
         
         bspm_material = {
+            'air_mat'           : self.__air,
             'rotor_iron_mat'    : self.__rotor_material,
             'stator_iron_mat'   : self.__stator_material,
             'magnet_mat'        : self.__magnet_material,
@@ -105,20 +120,17 @@ class BSPMArchitectType1(Architect):
             'rotor_hub'         : self.__rotor_hub
             }
         
-        winding = {
-            'Z_q'          : self.__get_zQ(free_variables),
-            'ps'           : self.__design_spec['ps']
-            }
-        
         bspm_nameplate = {
         
             'mech_omega'        : self.__design_spec['rated_speed'],
             'mech_power'        : self.__design_spec['rated_power'],
             'voltage_rating'    : self.__design_spec['voltage_rating'],
-            'Iq_rated_ratio'   : 0.95
+            'Iq_rated_ratio'    : 0.95,
+            'Rated_current'     : self.__current_coil,
+            'ps'                : self.__design_spec['ps'],
             }
         
-        machine_variant = BSPM_Machine(bspm_geometry, bspm_material, winding, bspm_nameplate)
+        machine_variant = BSPM_Machine(bspm_parameters, bspm_material, bspm_nameplate)
         return machine_variant
         
 
@@ -202,53 +214,6 @@ class BSPMArchitectType1(Architect):
                             'd_ri'         : x[10],
                         }
         return free_variables
-
-        # bspm_machine_dict = {
-        #     # free variables
-        #     'delta_e'      : free_variables['delta_e'],
-        #     'r_ro'         : free_variables['r_ro'],
-        #     'alpha_st'     : free_variables['alpha_st'],
-        #     'd_so'         : free_variables['d_so'],
-        #     'w_st'         : free_variables['w_st'],
-        #     'd_st'         : free_variables['d_st'],
-        #     'd_sy'         : free_variables['d_sy'],
-        #     'alpha_m'      : free_variables['alpha_m'],
-        #     'd_m'          : free_variables['d_m'],
-        #     'd_mp'         : free_variables['d_mp'],
-        #     'd_ri'         : free_variables['d_ri'],
-        #     # dependant variables 
-        #     'alpha_so'     : self.__get_alpha_so(free_variables),
-        #     'd_sp'         : self.__get_d_sp(free_variables),
-        #     'r_si'         : self.__get_r_si(free_variables),            
-        #     'alpha_ms'     : self.__get_alpha_ms(free_variables), 
-        #     'd_ms'         : self.__get_d_ms(free_variables),
-        #     'r_sh'         : self.__get_r_sh(free_variables),
-        #     'r_so'         : self.__get_r_so(free_variables),
-        #     's_slot'       : self.__get_s_slot(free_variables),
-        #     'zQ'           : self.__get_zQ(free_variables),
-        #     # 'A'            : self.__get_A(free_variables),
-        #     # 'B_delta'      : self.__get_B_delta(free_variables),
-        #     'l_st'         : self.__get_l_st(free_variables),
-        #     # Independant variable
-        #     'rated_current' : self.__current_coil,
-        #     'V_r'          : self.__get_V_r(free_variables),
-        #     # other design variable
-        #     'Q_flow'       : 0,
-        #     'd_sl'         : 0,
-        #     'delta_sl'     : 0,
-        #     'v_axial'      : 0,
-        #     # machine configuration details
-        #     'p'            : self.__design_spec['p'],
-        #     'ps'           : self.__design_spec['ps'],
-        #     'winding'      : self.__winding(),
-        #     'rated_speed'  : self.__design_spec['rated_speed'],
-        #     'rated_power'  : self.__design_spec['rated_power'],
-        #     'rotor_mat'    : self.__rotor_material,
-        #     'stator_mat'   : self.__stator_material,
-        #     'sleeve_mat'   : self.__sleeve_material,
-        #     'coil_mat'     : self.__coil_material,
-        #     'rotor_hub'    : self.__rotor_hub
-        # } 
 
 
     
