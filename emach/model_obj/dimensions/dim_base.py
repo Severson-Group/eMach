@@ -52,6 +52,7 @@ class DimBase(float, ABC):
 
     def __pow__(self, other):
         raise Exception('Power operation is not valid')
+        
     def __rpow__(self, other):
         raise Exception('Power operation is not valid')
 
