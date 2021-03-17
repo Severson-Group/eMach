@@ -6,7 +6,7 @@ from ..cross_sect_base import CrossSectBase, CrossSectToken
 __all__ = ['CrossSectHollowCylinder']
 class CrossSectHollowCylinder(CrossSectBase):
     
-    def __init__(self, name: str, dim_d_a: 'DimLinear', dim_r_o: 'DimLinear', \
+    def __init__(self, name: str, dim_t: 'DimLinear', dim_r_o: 'DimLinear', \
                  location: 'Location2D') -> None: 
         '''
         Intialization function for HollowCylinder class. This function takes in
@@ -18,7 +18,7 @@ class CrossSectHollowCylinder(CrossSectBase):
         name : str
             DESCRIPTION. This is the name the user wishes to provide to the 
             hollow cylinder cross-section.
-        dim_d_a : DimLinear
+        t : DimLinear
             DESCRIPTION. Thickness of the cylinder.
         dim_r_o : DimLinear
             DESCRIPTION. Outer radius of the cylinder: class type dimLinear
@@ -32,13 +32,13 @@ class CrossSectHollowCylinder(CrossSectBase):
         None
         '''
         self.__name = name;
-        self.__dim_d_a = dim_d_a;
+        self.__dim_t = dim_t;
         self.__dim_r_o = dim_r_o;
         self.__location = location;
     
     @property
-    def dim_d_a(self):
-        return self.__dim_d_a
+    def dim_t(self):
+        return self.__dim_t
     
     @property
     def dim_r_o(self):
@@ -55,7 +55,7 @@ class CrossSectHollowCylinder(CrossSectBase):
     def draw(self, drawer):
 
         r = self.__dim_r_o # outer radius of hollow cylinder
-        t = self.__dim_d_a # thickness of hollow cylinder
+        t = self.__dim_t # thickness of hollow cylinder
         
         x_out = type(r)(0) # assign intial origin as DimLinear object of 0
         x_in = type(r)(0)

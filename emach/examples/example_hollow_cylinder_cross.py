@@ -10,7 +10,7 @@ y = mo.DimMillimeter(80)
 
 
 hollowCylinder1 = mo.cross_sects.CrossSectHollowCylinder(name = 'hollowCylinder1',
-                                                dim_d_a = x, dim_r_o = y,
+                                                dim_t = x, dim_r_o = y,
                                                 location = mo.Location2D())
 
 # create an instance of the MagNet class
