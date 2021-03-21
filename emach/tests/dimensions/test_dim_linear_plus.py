@@ -1,6 +1,7 @@
 import unittest
 
-from eMach.python import DimInch, DimMillimeter
+
+from eMach.python.emach.model_obj import DimInch, DimMillimeter
 
 oneInch = DimInch(1)
 twoInches = DimInch(2)
