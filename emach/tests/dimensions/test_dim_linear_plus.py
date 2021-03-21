@@ -12,7 +12,7 @@ twoMillimeters = DimMillimeter(2)
 threeMillimeters = DimMillimeter(3)
 
 
-class test_addition(unittest.TestCase):
+class TestAddition(unittest.TestCase):
     def test_single_dimension(self):
         self.assertAlmostEqual((oneInch + oneInch), DimInch(2), 5, 'Inch Addition Fail')
         self.assertEqual(type(oneInch + oneInch), type(oneInch), 'Inch Addition Fail')
