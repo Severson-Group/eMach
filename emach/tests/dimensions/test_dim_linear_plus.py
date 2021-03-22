@@ -5,11 +5,11 @@ from eMach.python.emach.model_obj import DimInch, DimMillimeter
 
 oneInch = DimInch(1)
 twoInches = DimInch(2)
-threeInches = DimInch(3)
+
 
 oneMillimeter = DimMillimeter(1)
 twoMillimeters = DimMillimeter(2)
-threeMillimeters = DimMillimeter(3)
+
 
 
 class TestAddition(unittest.TestCase):
