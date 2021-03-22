@@ -29,17 +29,20 @@ class TestSubtraction(unittest.TestCase):
 
     def test_different_dimension(self):
         self.assertAlmostEqual((elevenInches - two54Millimeters), DimInch(1), 5, 'Inch-Millimeter Subtraction Fail')
-        self.assertAlmostEqual(type(elevenInches - two54Millimeters), type(elevenInches), 5, 'Inch-Millimeter Subtraction Fail')
+        self.assertAlmostEqual(type(elevenInches - two54Millimeters), type(elevenInches), 5, 'Inch-Millimeter '
+                                                                                             'Subtraction Fail')
 
         self.assertAlmostEqual((fiftyMillimeters - oneInch), DimMillimeter(24.6), 5, 'Millimeter-Inch Subtraction Fail')
-        self.assertAlmostEqual(type(fiftyMillimeters - oneInch), type(fiftyMillimeters), 5, 'Millimeter-Inch Subtraction Fail')
+        self.assertAlmostEqual(type(fiftyMillimeters - oneInch), type(fiftyMillimeters), 5, 'Millimeter-Inch '
+                                                                                            'Subtraction Fail')
 
         self.assertAlmostEqual((elevenInches - two54Millimeters - oneInch), DimInch(0), 5,
-                               'Inch-Millimeter-Millimeter Subtraction Fail')
+                               'Inch-Millimeter-Inch Subtraction Fail')
         self.assertAlmostEqual(type(elevenInches - two54Millimeters - oneInch), type(elevenInches), 5,
-                               'Inch-Millimeter-Millimeter Subtraction Fail')
+                               'Inch-Millimeter-Inch Subtraction Fail')
 
-        self.assertAlmostEqual((fiftyMillimeters - twoInches), DimMillimeter(-0.8), 5, 'Millimeter-Inch Subtraction Fail')
+        self.assertAlmostEqual((fiftyMillimeters - twoInches), DimMillimeter(-0.8), 5, 'Millimeter-Inch Subtraction '
+                                                                                       'Fail')
         self.assertAlmostEqual(type(fiftyMillimeters - twoInches), type(fiftyMillimeters), 5,
                                'Millimeter-Inch Subtraction Fail')
 
