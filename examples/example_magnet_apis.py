@@ -4,8 +4,6 @@ Created on Fri Oct 23 02:35:48 2020
 
 @author: Bharat
 """
-import sys
-sys.path.append('..')
 
 import emach.tools.magnet as mn
 
@@ -49,7 +47,7 @@ sweep3Status = mn.document.view.make_component_in_a_line(
     MN.view, MN.consts, sweep_dist, section3, material
 )
 
-mat = mn.document.get_parameter(MN.disp_ex,
+mat = mn.document.get_parameter(MN.mn,
                                          section3[0], "Material")
 
 # make a simple coil
@@ -60,7 +58,7 @@ i_dc = 10
 mn.document.set_parameter(MN.doc, coil1, "WaveFormType", "DC", MN.consts)
 mn.document.set_parameter(MN.doc, coil1, "Current", i_dc, MN.consts)
 
-curr = mn.document.get_parameter(MN.disp_ex, coil1, "Current")
+curr = mn.document.get_parameter(MN.mn, coil1, "Current")
 
 """
 sin_offset = 0

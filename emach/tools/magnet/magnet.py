@@ -16,37 +16,40 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
     """
 
     def __init__(self, visible = False):
-        self.disp_ex = DispatchEx("MagNet.Application")
-        self.disp_ex.visible = visible 
+        self.mn = DispatchEx("MagNet.Application")
+        self.mn.visible = visible 
+        self.doc = None
         self.view = None
         self.sol = None
         self.consts = None
-        self.default_length = 'DimMillimeter'
-        self.default_angle = 'DimDegree'
-    
-    def __del__(self, filepath = None):
-        if filepath is str:
-            self.doc.save(filepath)
-        self.disp_ex.close(False)
+        
+    def __del__(self):
+        self.mn.close(False)
 
-    def open(self, filename=None):
+    def open(self, filename=None, length_unit = 'DimMillimeter', angle_unit = 'DimDegree'):
         """ opens a new MAGNET session and assigns variables neccessary for further
         operations
         """
-
+        self.default_length = length_unit
+        self.default_angle = angle_unit
+        
         if filename is str:
-            self.doc = self.disp_ex.openDocument(filename)
+            self.doc = self.mn.openDocument(filename)
         else:
-            self.doc = self.disp_ex.newDocument()
+            self.doc = self.mn.newDocument()
         self.view = self.doc.getView()
         self.sol = self.doc.getSolution()
-        self.consts = self.disp_ex.getConstants()  # Get MAGNET Constants
-
-    def close(self, filepath = None):
-        if filepath is str:
-            self.doc.save(filepath)
-        self.view.close(False)
-
+        self.consts = self.mn.getConstants()  # Get MAGNET Constants
+        
+        self.set_default_length(length_unit, False)
+        
+    def close(self):
+        self.doc.close(False)
+        
+    def save(self, path, filename):
+        filepath = path+filename
+        self.doc.save(filepath)
+        
     def draw_line(self, startxy, endxy):
         """
         Draws a line in MAGNET
@@ -76,8 +79,8 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
 
         ret = self.view.newLine(start_x, start_y, end_x, end_y)
         
-        self.disp_ex.setVariant(0, 'line', 'python')
-        line = self.disp_ex.getVariant(0, 'python');
+        self.mn.setVariant(0, 'line', 'python')
+        line = self.mn.getVariant(0, 'python');
         
         return TokenDraw(line,0)
 
@@ -100,26 +103,26 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         ret : TokenDraw object
 
         """
-        centre_x = eval(self.default_length)(centrexy[0])
-        centre_y = eval(self.default_length)(centrexy[1])
+        center_x = eval(self.default_length)(centrexy[0])
+        center_y = eval(self.default_length)(centrexy[1])
         start_x = eval(self.default_length)(startxy[0])
         start_y = eval(self.default_length)(startxy[1])
         end_x = eval(self.default_length)(endxy[0])
         end_y = eval(self.default_length)(endxy[1])
         
         ret = self.view.newArc(
-            centre_x, centre_y, start_x, start_y, end_x, end_y
+            center_x, center_y, start_x, start_y, end_x, end_y
         )
         
-        self.disp_ex.setVariant(0, 'arc', 'python')
-        arc = self.disp_ex.getVariant(0, 'python');
+        self.mn.setVariant(0, 'arc', 'python')
+        arc = self.mn.getVariant(0, 'python');
         
         return TokenDraw(arc,1)
 
     def select(self):
         pass
 
-    def prepare_section(self, inner_coord):
+    def prepare_section(self, cs_token):
         """
         Selects a section in MAGNET
 
@@ -133,8 +136,8 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         None.
 
         """
-        inner_coord_x = eval(self.default_length)(inner_coord[0])
-        inner_coord_y = eval(self.default_length)(inner_coord[1])
+        inner_coord_x = eval(self.default_length)(cs_token.inner_coord[0])
+        inner_coord_y = eval(self.default_length)(cs_token.inner_coord[1])
         
         self.view.selectAt(
             inner_coord_x,
@@ -142,7 +145,9 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             self.consts.infoSetSelection,
             [self.consts.infoSliceSurface],
         )
-
+        new = 1
+        return new
+    
     def extrude(self, name, material, depth, token = None):
         """
         Extrudes, assigns a material and name to a selected section in MAGNET
@@ -213,11 +218,16 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
 
         '''
         
-        if (user_unit == 'millimeters'):
-            self.default_length = 'DimMillimeter'
-        elif (user_unit == 'inches'):
-            self.default_length = 'DimInch'
-        else:
-            raise TypeError
         
-        self.doc.setDefaultLengthUnit(user_unit, make_app_default)
+        if (user_unit == 'DimMillimeter'):
+            app_unit = 'millimeter'
+        elif (user_unit == 'DimInch'):
+            app_unit = 'inches'
+        else:
+            raise TypeError ("Dimension not supported")
+        self.default_length = user_unit
+        
+        self.doc.setDefaultLengthUnit(app_unit, make_app_default)
+    
+    def set_visibility(self, visible):
+        self.mn.visible = visible 

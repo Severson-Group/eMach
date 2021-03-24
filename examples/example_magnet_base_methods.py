@@ -4,8 +4,6 @@ Created on Fri Oct 16 16:54:12 2020
 
 @author: Bharat
 """
-import sys
-sys.path.append('..')
 
 import emach.tools.magnet as mn
 # create an instance of the MagNet class
@@ -16,7 +14,7 @@ MN.open()
 #l2 = MN.drawLine('e1','2y')
 
 #set default dimension to millimeter
-MN.set_default_length('millimeters', False)
+MN.set_default_length('DimMillimeter', False)
 
 # set coordinates to draw line and arc
 center = [0, 0]
@@ -28,8 +26,14 @@ l1 = MN.draw_line(start, end)
 arc1 = MN.draw_arc(center, start, end)
 
 # select section which contains the coordinates provided
+# create dummy class to replicate CSToken
+class DummyToken:
+    pass
+dt = DummyToken()
 inner_coord = [0, -5]
-MN.prepare_section(inner_coord)
+
+setattr(dt, 'inner_coord', inner_coord)
+MN.prepare_section(dt)
 
 # set properties of the material to be extruded
 name1 = ["conductor"]
