@@ -4,7 +4,7 @@ import model_obj
 from model_obj.dimensions import DimInch, DimMillimeter
 
 
-class TestAddition(unittest.TestCase):
+class TestNestedDimensions(unittest.TestCase):
     def test_nested_dimensions(self):
         val = DimMillimeter(DimInch(1))
         expected = DimMillimeter(25.4)

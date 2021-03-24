@@ -7,7 +7,7 @@ oneInch = DimInch(1)
 
 
 class TestPower(unittest.TestCase):
-    def test_fail_conditions_divide(self):
+    def test_fail_conditions_power(self):
         with self.assertRaises(Exception):
             oneInch ** 2
 
