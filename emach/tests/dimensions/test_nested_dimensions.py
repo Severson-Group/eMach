@@ -1,22 +1,25 @@
 import unittest
 
-from eMach.python.emach.model_obj import DimInch, DimMillimeter
+import model_obj
+from model_obj.dimensions import DimInch, DimMillimeter
 
 
 class TestAddition(unittest.TestCase):
     def test_nested_dimensions(self):
-        self.assertAlmostEqual((DimMillimeter(DimInch(1))), DimInch(25.4), 5, 'Millimeter(Inch) Fail')
-        self.assertEqual(type(DimMillimeter(DimInch(1))), type(DimInch(25.4)), 'Millimeter(Inch) Fail')
+        val = DimMillimeter(DimInch(1))
+        expected = DimMillimeter(25.4)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((DimMillimeter(DimMillimeter(DimMillimeter(25.4)))), DimInch(25.4), 5, 'Millimeter('
-                                                                                                      'Millimeter('
-                                                                                                      'Inch)) Fail')
-        self.assertEqual(type(DimMillimeter(DimMillimeter(DimMillimeter(25.4)))), type(DimInch(25.4)), 'Millimeter('
-                                                                                                       'Millimeter('
-                                                                                                       'Inch)) Fail')
+        val = DimMillimeter(DimMillimeter(DimMillimeter(25.4)))
+        expected = DimMillimeter(25.4)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((DimInch(DimMillimeter(DimInch(25.4)))), DimInch(25.4), 5, 'Inch(Millimeter(Inch)) Fail')
-        self.assertEqual(type(DimInch(DimMillimeter(DimInch(25.4)))), type(DimInch(25.4)), 'Inch(Millimeter(Inch)) Fail')
+        val = DimInch(DimMillimeter(DimInch(25.4)))
+        expected = DimInch(25.4)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
 
 if __name__ == '__main__':

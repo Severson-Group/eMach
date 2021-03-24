@@ -1,7 +1,8 @@
 import unittest
 
 
-from eMach.python.emach.model_obj import DimInch, DimMillimeter
+import model_obj
+from model_obj.dimensions import DimInch, DimMillimeter
 
 oneInch = DimInch(1)
 twoInches = DimInch(2)
@@ -15,36 +16,46 @@ two54Millimeters = DimMillimeter(254)
 
 class TestSubtraction(unittest.TestCase):
     def test_single_dimension(self):
-        self.assertAlmostEqual((oneInch - oneInch), DimInch(0), 5, 'Inch Subtraction Fail')
-        self.assertEqual(type(oneInch - oneInch), type(oneInch), 'Inch Subtraction Fail')
+        val = oneInch - oneInch
+        expected = DimInch(0)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((twoInches - oneInch), DimInch(1), 5, 'Inch Subtraction Fail')
-        self.assertEqual(type(twoInches - oneInch), type(twoInches), 'Inch Subtraction Fail')
+        val = twoInches - oneInch
+        expected = DimInch(1)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((oneMillimeter - oneMillimeter), DimMillimeter(0), 5, 'Millimeter Subtraction Fail')
-        self.assertEqual(type(oneMillimeter - oneMillimeter), type(oneMillimeter), 'Millimeter Subtraction Fail')
+        val = oneMillimeter - oneMillimeter
+        expected = DimMillimeter(0)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((twoMillimeters - oneMillimeter), DimMillimeter(1), 5, 'Millimeter Subtraction Fail')
-        self.assertEqual(type(twoMillimeters - oneMillimeter), type(twoMillimeters), 'Millimeter Subtraction Fail')
+        val = twoMillimeters - oneMillimeter
+        expected = DimMillimeter(1)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
     def test_different_dimension(self):
-        self.assertAlmostEqual((elevenInches - two54Millimeters), DimInch(1), 5, 'Inch-Millimeter Subtraction Fail')
-        self.assertAlmostEqual(type(elevenInches - two54Millimeters), type(elevenInches), 5, 'Inch-Millimeter '
-                                                                                             'Subtraction Fail')
+        val = elevenInches - two54Millimeters
+        expected = DimInch(1)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((fiftyMillimeters - oneInch), DimMillimeter(24.6), 5, 'Millimeter-Inch Subtraction Fail')
-        self.assertAlmostEqual(type(fiftyMillimeters - oneInch), type(fiftyMillimeters), 5, 'Millimeter-Inch '
-                                                                                            'Subtraction Fail')
+        val = elevenInches - two54Millimeters - oneInch
+        expected = DimInch(0)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((elevenInches - two54Millimeters - oneInch), DimInch(0), 5,
-                               'Inch-Millimeter-Inch Subtraction Fail')
-        self.assertAlmostEqual(type(elevenInches - two54Millimeters - oneInch), type(elevenInches), 5,
-                               'Inch-Millimeter-Inch Subtraction Fail')
+        val = fiftyMillimeters - oneInch
+        expected = DimMillimeter(24.6)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((fiftyMillimeters - twoInches), DimMillimeter(-0.8), 5, 'Millimeter-Inch Subtraction '
-                                                                                       'Fail')
-        self.assertAlmostEqual(type(fiftyMillimeters - twoInches), type(fiftyMillimeters), 5,
-                               'Millimeter-Inch Subtraction Fail')
+        val = fiftyMillimeters - twoInches
+        expected = DimMillimeter(-0.8)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
 
 if __name__ == '__main__':

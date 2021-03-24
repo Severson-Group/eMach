@@ -1,48 +1,57 @@
 import unittest
 
-
-from eMach.python.emach.model_obj import DimInch, DimMillimeter
+import model_obj
+from model_obj.dimensions import DimInch, DimMillimeter
 
 oneInch = DimInch(1)
 twoInches = DimInch(2)
-
 
 oneMillimeter = DimMillimeter(1)
 twoMillimeters = DimMillimeter(2)
 
 
-
 class TestAddition(unittest.TestCase):
     def test_single_dimension(self):
-        self.assertAlmostEqual((oneInch + oneInch), DimInch(2), 5, 'Inch Addition Fail')
-        self.assertEqual(type(oneInch + oneInch), type(DimInch(2)), 'Inch Addition Fail')
+        val = oneInch + oneInch
+        expected = DimInch(2)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((oneInch + twoInches), DimInch(3), 5, 'Inch Addition Fail')
-        self.assertEqual(type(oneInch + twoInches), type(DimInch(3)), 'Inch Addition Fail')
+        val = oneInch + twoInches
+        expected = DimInch(3)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((oneMillimeter + oneMillimeter), DimMillimeter(2), 5, 'Millimeter Addition Fail')
-        self.assertEqual(type(oneMillimeter + oneMillimeter), type(DimMillimeter(2)), 'Millimeter Addition Fail')
+        val = oneMillimeter + oneMillimeter
+        expected = DimMillimeter(2)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((oneMillimeter + twoMillimeters), DimMillimeter(3), 5, 'Millimeter Addition Fail')
-        self.assertEqual(type(oneMillimeter + twoMillimeters), type(DimMillimeter(3)), 'Millimeter Addition Fail')
+        val = oneMillimeter + twoMillimeters
+        expected = DimMillimeter(3)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
     def test_different_dimension(self):
-        self.assertAlmostEqual((oneInch + oneMillimeter), DimInch(1.0393701), 5, 'Inch+Millimeter Addition Fail')
-        self.assertAlmostEqual(type(oneInch + oneMillimeter), type(DimInch(1.0393701)), 5, 'Inch+Millimeter Addition '
-                                                                                           'Fail')
+        val = oneInch + oneMillimeter
+        expected = DimInch(1.0393701)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((oneMillimeter + oneInch), DimMillimeter(26.4), 5, 'Millimeter+Inch Addition Fail')
-        self.assertAlmostEqual(type(oneMillimeter + oneInch), type(DimMillimeter(26.4)), 5, 'Millimeter+Inch Addition '
-                                                                                            'Fail')
+        val = oneInch + oneMillimeter + oneMillimeter
+        expected = DimInch(1.0787402)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((oneInch + oneMillimeter + oneMillimeter), DimInch(1.0787402), 5,
-                               'Inch+Millimeter+Millimeter Addition Fail')
-        self.assertAlmostEqual(type(oneInch + oneMillimeter + oneMillimeter), type(DimInch(1.0787402)), 5,
-                               'Inch+Millimeter+Millimeter Addition Fail')
+        val = oneMillimeter + oneInch
+        expected = DimMillimeter(26.4)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((twoMillimeters + twoInches), DimMillimeter(52.8), 5, 'Millimeter+Inch Addition Fail')
-        self.assertAlmostEqual(type(twoMillimeters + twoInches), type(twoMillimeters), 5,
-                               'Millimeter+Inch Addition Fail')
+        val = twoMillimeters + twoInches
+        expected = DimMillimeter(52.8)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
 
 if __name__ == '__main__':

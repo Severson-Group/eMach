@@ -1,6 +1,7 @@
 import unittest
 
-from eMach.python.emach.model_obj import DimInch, DimMillimeter
+import model_obj
+from model_obj.dimensions import DimInch, DimMillimeter
 
 oneInch = DimInch(1)
 twoInches = DimInch(2)
@@ -14,17 +15,25 @@ two54Millimeters = DimMillimeter(254)
 
 class TestUSubtraction(unittest.TestCase):
     def test_single_dimension(self):
-        self.assertAlmostEqual((-oneInch), DimInch(-1), 5, 'uMinus Inch Fail')
-        self.assertEqual(type(-oneInch), type(DimInch(-1)), 'uMinus Inch Fail')
+        val = -oneInch
+        expected = DimInch(-1)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((-twoInches), DimInch(-2), 5, 'uMinus Inch Fail')
-        self.assertEqual(type(-twoInches), type(DimInch(-2)), 'uMinus Inch Fail')
+        val = -twoInches
+        expected = DimInch(-2)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((-oneMillimeter), DimMillimeter(-1), 5, 'uMinus Millimeter Fail')
-        self.assertEqual(type(-oneMillimeter), type(DimMillimeter(-1)), 'uMinus Millimeter Fail')
+        val = -oneMillimeter
+        expected = DimMillimeter(-1)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
-        self.assertAlmostEqual((-two54Millimeters), DimMillimeter(-254), 5, 'uMinus Millimeter Fail')
-        self.assertEqual(type(-two54Millimeters), type(DimMillimeter(-254)), 'uMinus Millimeter Fail')
+        val = -two54Millimeters
+        expected = DimMillimeter(-254)
+        self.assertAlmostEqual(val, expected, 5)
+        self.assertEqual(type(val), type(expected))
 
 
 if __name__ == '__main__':
