@@ -1,62 +1,54 @@
 
 import numpy as np
 
+from ...dimensions.dim_linear import DimLinear
 from ..cross_sect_base import CrossSectBase, CrossSectToken
 
 __all__ = ['CrossSectHollowCylinder']
 class CrossSectHollowCylinder(CrossSectBase):
     
-    def __init__(self, name: str, dim_t: 'DimLinear', dim_r_o: 'DimLinear', \
-                 location: 'Location2D') -> None: 
+    def __init__(self, **kwargs: any) -> None: 
         '''
         Intialization function for HollowCylinder class. This function takes in
         arguments and saves the information passed to private variable to make
         them read-only
-
         Parameters
         ----------
-        name : str
-            DESCRIPTION. This is the name the user wishes to provide to the 
-            hollow cylinder cross-section.
-        t : DimLinear
-            DESCRIPTION. Thickness of the cylinder.
-        dim_r_o : DimLinear
-            DESCRIPTION. Outer radius of the cylinder: class type dimLinear
-        location : Location2D
-            DESCRIPTION. Object of Location2D class providing information on 
-            cross-sect anchor and angle of orientation with respect to the 
-            origin
-
+        **kwargs : any
+            DESCRIPTION. Keyword arguments provided to the initialization funcntion.
+            The following argument names have to be included in order for the code
+            to execute: name, dim_t, dim_r_o, location. 
+            
         Returns
         -------
         None
         '''
-        self.__name = name;
-        self.__dim_t = dim_t;
-        self.__dim_r_o = dim_r_o;
-        self.__location = location;
+        self._create_attr(kwargs)  
+        
+        super()._validate_attr()
+        self._validate_attr()
     
     @property
     def dim_t(self):
-        return self.__dim_t
+        return self._dim_t
     
     @property
     def dim_r_o(self):
-        return self.__dim_r_o
+        return self._dim_r_o
     
     @property
     def name(self):
-        return self.__name
+        return self._name
     
     @property
     def location(self):
-        return self.__location
+        return self._location
     
     def draw(self, drawer):
 
-        r = self.__dim_r_o # outer radius of hollow cylinder
-        t = self.__dim_t # thickness of hollow cylinder
-        
+        r = self._dim_r_o # outer radius of hollow cylinder
+        t = self._dim_t # thickness of hollow cylinder
+    
         x_out = type(r)(0) # assign intial origin as DimLinear object of 0
         x_in = type(r)(0)
         x = [x_out, x_out, x_in, x_in]
@@ -85,4 +77,14 @@ class CrossSectHollowCylinder(CrossSectBase):
         cs_token = CrossSectToken(inner_coord[0,:], token) # create CrossSectToken object
         return cs_token
         
+    def _validate_attr(self):
         
+        if isinstance(self._dim_r_o, DimLinear):
+            pass
+        else:
+            raise TypeError("dim_r_o not of type DimLinear")
+            
+        if isinstance(self._dim_t, DimLinear):
+            pass
+        else:
+            raise TypeError("dim_t not of type DimLinear")     
