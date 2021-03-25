@@ -4,13 +4,11 @@ __all__ = ['DimInch']
 
 
 class DimInch(DimLinear):
+    conversion_factor = 25.4
+
     def __new__(cls, value):
         if isinstance(value, DimLinear):
-            tmp = DimInch(value._to_dimensionless())
-            return DimLinear.__new__(cls, DimInch._from_dimensionless(tmp))
+            result = value._to_dimensionless()
+            return DimLinear.__new__(cls, DimInch._from_dimensionless(cls, result))
         else:
             return DimLinear.__new__(cls, value)
-
-    @property
-    def conversion_factor(self):
-        return 25.4
