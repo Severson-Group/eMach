@@ -4,7 +4,7 @@ __all__ = ['DimDegree']
 
 
 class DimDegree(DimAngular):
-    conversion_factor = 0.017453293
+    _conversion_factor = 0.017453293
 
     def __new__(cls, value):
         if isinstance(value, DimAngular):

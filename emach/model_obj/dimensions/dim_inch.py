@@ -4,7 +4,7 @@ __all__ = ['DimInch']
 
 
 class DimInch(DimLinear):
-    conversion_factor = 25.4
+    _conversion_factor = 25.4
 
     def __new__(cls, value):
         if isinstance(value, DimLinear):

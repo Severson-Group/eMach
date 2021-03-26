@@ -4,7 +4,7 @@ __all__ = ['DimRadian']
 
 
 class DimRadian(DimAngular):
-    conversion_factor = 1
+    _conversion_factor = 1
 
     def __new__(cls, value):
         if isinstance(value, DimAngular):

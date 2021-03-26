@@ -2,6 +2,11 @@ from abc import abstractmethod, ABC
 
 
 class DimBase(float, ABC):
+
+    @abstractmethod
+    def _conversion_factor(self):
+        pass
+
     def __new__(cls, value):
         return float.__new__(cls, value)
 
@@ -41,10 +46,10 @@ class DimBase(float, ABC):
         raise Exception('Division not valid')
 
     def _to_dimensionless(self):
-        return float(self) * self.conversion_factor
+        return float(self) * self._conversion_factor
 
     def _from_dimensionless(cls, value):
-        x = value / cls.conversion_factor
+        x = value / cls._conversion_factor
         return cls(x)
 
     def __neg__(self):
