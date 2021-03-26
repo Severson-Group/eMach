@@ -60,3 +60,4 @@ class DimBase(float, ABC):
             return self * -1
         else:
             return self
+
