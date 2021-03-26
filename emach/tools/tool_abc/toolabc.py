@@ -15,9 +15,13 @@ class ToolBase(ABC):
     def open(self, filename: str, length_unit: str, angle_unit: str) -> any: pass
     
     @abstractmethod 
-    def save(self, path: str, filename: str):
+    def save(self):
         pass
         
+    @abstractmethod 
+    def save_as(self, filename: str):
+        pass
+    
     @abstractmethod
     def close(self): pass
 

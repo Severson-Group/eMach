@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 23 02:35:48 2020
 
-@author: Bharat
-"""
-
+import sys
+sys.path.append("..")  
 import emach.tools.magnet as mn
 
 # create an instance of the MagNet class

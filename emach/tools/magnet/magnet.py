@@ -22,6 +22,9 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         self.view = None
         self.sol = None
         self.consts = None
+        self.default_length = None
+        self.default_angle = None
+        self.filename = None
         
     def __del__(self):
         self.mn.close(False)
@@ -35,6 +38,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         
         if filename is str:
             self.doc = self.mn.openDocument(filename)
+            self.filename = filename
         else:
             self.doc = self.mn.newDocument()
         self.view = self.doc.getView()
@@ -46,9 +50,15 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
     def close(self):
         self.doc.close(False)
         
-    def save(self, path, filename):
-        filepath = path+filename
-        self.doc.save(filepath)
+    def save_as(self, filename):
+        self.filename = filename
+        self.save()
+        
+    def save(self):
+        if self.filename is str:
+            self.doc.save(self.filename)
+        else:
+            raise AttributeError('Unable to save file. Use the save_as() function')
         
     def draw_line(self, startxy, endxy):
         """
