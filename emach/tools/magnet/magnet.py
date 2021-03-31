@@ -97,7 +97,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
     def select(self):
         pass
 
-    def prepare_section(self, inner_coord):
+    def prepare_section(self, cs_token):
         """
         Selects a section in MAGNET
 
@@ -111,9 +111,12 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         None.
 
         """
+        inner_coord_x = cs_token.inner_coord[0]
+        inner_coord_y = cs_token.inner_coord[1]
+        
         self.view.selectAt(
-            inner_coord[0],
-            inner_coord[1],
+            inner_coord_x,
+            inner_coord_y,
             self.consts.infoSetSelection,
             [self.consts.infoSliceSurface],
         )

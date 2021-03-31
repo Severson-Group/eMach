@@ -23,14 +23,14 @@ hollowCylinder2 = hollowCylinder1.clone(name = 'hollowCylinder2',
                                         np.array([mo.DimMillimeter(-70), mo.DimMillimeter(100)])),
                                         dim_r_o = z)
 
+
+# create hollowcylinder component
+comp1 = mo.Component(name = ['comp1'], cross_sections = [hollowCylinder1], \
+                     material = mo.MaterialGeneric(name ='pm'), make_solid = mo.MakeExtrude(x))
+
 # create an instance of the MagNet class
 toolMn = mn.MagNet()
 toolMn.open(visible=True)
 
-# draw hollowcylinders
-c1 = hollowCylinder1.draw(toolMn)
-c2 = hollowCylinder2.draw(toolMn)
-
+comp1.make(toolMn,toolMn)
 toolMn.view_all()
-# select inner coordinate of a hollow cylinder
-toolMn.prepare_section(c2.inner_coord)
