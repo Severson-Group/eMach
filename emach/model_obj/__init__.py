@@ -1,5 +1,5 @@
 
-from . import cross_sects
+from .cross_sects import *
 from .location_2d import *
 from .dimensions import *
 

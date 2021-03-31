@@ -11,7 +11,7 @@ y = mo.DimMillimeter(80)
 z = mo.DimMillimeter(40)
 
 # create hollowcylinder crossection object
-hollowCylinder1 = mo.cross_sects.CrossSectHollowCylinder(name = 'hollowCylinder1',
+hollowCylinder1 = mo.CrossSectHollowCylinder(name = 'hollowCylinder1',
                                                 location = mo.Location2D(),
                                                 dim_t = x, dim_r_o = y)
 
