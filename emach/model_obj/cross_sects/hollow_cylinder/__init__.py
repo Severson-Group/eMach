@@ -36,13 +36,7 @@ class CrossSectHollowCylinder(CrossSectBase):
     def dim_r_o(self):
         return self._dim_r_o
     
-    @property
-    def name(self):
-        return self._name
-    
-    @property
-    def location(self):
-        return self._location
+        
     
     def draw(self, drawer):
 
@@ -60,7 +54,7 @@ class CrossSectHollowCylinder(CrossSectBase):
         
         coords = np.transpose(z)# convert coordinates to a form of [[x1,y1]..]
         
-        p = self.location.trans_coord(coords) # shift coordinates based on anchor and theta given in location
+        p = self.location.transform_coords(coords) # shift coordinates based on anchor and theta given in location
         
         # draw hollow cylinder
         arc_out1 = drawer.draw_arc(self.location.anchor_xy, p[0,:], p[1,:])
@@ -70,7 +64,7 @@ class CrossSectHollowCylinder(CrossSectBase):
         
         # get coordinate within hollow cylinder
         rad = r - t*0.5 
-        inner_coord = self.location.trans_coord(np.array([[rad, type(r)(0)]]))
+        inner_coord = self.location.transform_coords(np.array([[rad, type(r)(0)]]))
         
         token = [arc_out1, arc_out2, arc_out3, arc_out4] # compile tokens
         
