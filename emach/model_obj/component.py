@@ -3,7 +3,7 @@ __all__ = ['Component']
 
 class Component():
     '''
-    A logical group of components that make up a component
+    A logical group of cross sections that make up a component
     '''
     
     def __init__(self, name, cross_sections, material, make_solid):
@@ -29,10 +29,7 @@ class Component():
         return self._make_solid
         
     def make(self, drawer, maker):
-        cs = []
-        for i in range(len(self._cross_sections)):
-            cs.append(self._cross_sections[i].draw(drawer))
-        
+        cs = self.draw(drawer)
         token_make = self._make_solid.run(self._name, self._material._name, cs, maker)
         return token_make
     

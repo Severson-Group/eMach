@@ -1,10 +1,11 @@
 # add the directory immediately above this file's directory to path for module import
 import sys
 sys.path.append("..")
-
-import tools.magnet as mn
-import model_obj as mo
 import numpy as np
+
+import emach.tools.magnet as mn
+import emach.model_obj as mo
+
 
 x = mo.DimMillimeter(4)
 y = mo.DimMillimeter(80)
@@ -25,8 +26,9 @@ hollowCylinder2 = hollowCylinder1.clone(name = 'hollowCylinder2',
 
 
 # create hollowcylinder component
-comp1 = mo.Component(name = ['comp1'], cross_sections = [hollowCylinder1], \
-                     material = mo.MaterialGeneric(name ='pm'), make_solid = mo.MakeExtrude(x))
+comp1 = mo.Component(name = ['comp1'], cross_sections = [hollowCylinder1,hollowCylinder2], \
+                     material = mo.MaterialGeneric(name ='pm'), \
+                     make_solid = mo.MakeExtrude(location = mo.Location3D(), dim_depth = x))
 
 # create an instance of the MagNet class
 toolMn = mn.MagNet()
