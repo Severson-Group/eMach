@@ -23,7 +23,15 @@ class CrossSectBase(ABC):
             pass
         else:
             raise TypeError ("cross_sect location not of type Location2D")
-            
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def location(self):
+        return self._location
+    
     @abstractmethod
     def draw(self, drawer: any) -> 'CrossSectToken': 
         '''

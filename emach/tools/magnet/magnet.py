@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 16 16:51:18 2020
-
-@author: Bharat
-"""
 from win32com.client import DispatchEx
-from ..tool_abc import toolabc as abc
 
+from ..tool_abc import toolabc as abc
+from ..token_draw import TokenDraw
 from . import document
 from .document import *
 
@@ -22,7 +17,11 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
     """
 
     def __init__(self):
-        pass
+        self.disp_ex = None
+        self.doc = None
+        self.view = None
+        self.sol = None
+        self.consts = None
 
     def open(self, filename=None, visible=False):
         """ opens a new MAGNET session and assigns variables neccessary for further
@@ -64,11 +63,13 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             0 if successful 1 if failed.
 
         """
-        try:
-            ret = self.view.newLine(startxy[0], startxy[1], endxy[0], endxy[1])
-            return ret
-        except:
-            raise TypeError
+        ret = self.view.newLine(startxy[0], startxy[1], endxy[0], endxy[1])
+        
+        self.disp_ex.setVariant(0, 'line', 'python')
+        line = self.disp_ex.getVariant(0, 'python');
+        
+        return TokenDraw(line,1)
+
 
     def draw_arc(self, centrexy, startxy, endxy):
         """
@@ -85,14 +86,17 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
 
         Returns
         -------
-        ret : int
-            0 if successful 1 if failed.
+        ret : TokenDraw object
 
         """
         ret = self.view.newArc(
             centrexy[0], centrexy[1], startxy[0], startxy[1], endxy[0], endxy[1]
         )
-        return ret
+        
+        self.disp_ex.setVariant(0, 'arc', 'python')
+        arc = self.disp_ex.getVariant(0, 'python');
+        
+        return TokenDraw(arc,1)
 
     def select(self):
         pass
@@ -121,28 +125,26 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             [self.consts.infoSliceSurface],
         )
 
-    def extrude(self, name, material, depth, token=None):
+    def extrude(self, name, material, depth, token = None):
         """
         Extrudes, assigns a material and name to a selected section in MAGNET
         """
-        if token is None:
-            ret = self.view.makeComponentInALine(
+
+        ret = self.view.makeComponentInALine(
                 depth,
                 name,
                 "Name=" + material,
-                self.consts.infoMakeComponentUnionSurfaces
-                or self.consts.infoMakeComponentRemoveVertices,
+                self.consts.infoMakeComponentRemoveVertices
             )
-        else:
-            ret = self.View.makeComponentInALine(depth, name, "Name=" + material, token)
+
         return ret
 
-    def revolve(self, name, material, center, axis, angle, token=None):
+    def revolve(self, name, material, center, axis, angle, token = None):
         """
         Revloves, assigns a material and name to a selected section in MAGNET
         """
-        if token is None:
-            ret = self.view.makeComponentInAnArc(
+
+        ret = self.view.makeComponentInAnArc(
                 center[0],
                 center[1],
                 axis[0],
@@ -150,20 +152,9 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
                 angle,
                 name,
                 "Name=" + material,
-                self.consts.infoMakeComponentUnionSurfaces
-                or self.consts.infoMakeComponentRemoveVertices,
+                self.consts.infoMakeComponentRemoveVertices,
             )
-        else:
-            ret = self.view.makeComponentInAnArc(
-                center[0],
-                center[1],
-                axis[0],
-                axis[1],
-                angle,
-                name,
-                "Name=" + material,
-                token,
-            )
+        
         return ret
     
     def view_all(self):

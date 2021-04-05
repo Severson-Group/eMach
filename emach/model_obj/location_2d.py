@@ -45,7 +45,7 @@ class Location2D():
     def rot(self):
         return self.__rot
     
-    def trans_coord(self, coords, add_theta = None):
+    def transform_coords(self, coords, add_theta = None):
         '''
         This function takes in an nx2 array of coordinates of the form [x,y] 
         and returns rotated and translated coordinates. The translation and 

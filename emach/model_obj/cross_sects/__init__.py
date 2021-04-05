@@ -1,6 +1,6 @@
 
-from .cross_sect_hollow_cylinder import *
+from .hollow_cylinder import *
 
 __all__ = []
-__all__ += cross_sect_hollow_cylinder.__all__
+__all__ += hollow_cylinder.__all__
 
