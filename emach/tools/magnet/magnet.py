@@ -95,14 +95,14 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         return TokenDraw(line,0)
 
 
-    def draw_arc(self, centrexy, startxy, endxy):
+    def draw_arc(self, centerxy, startxy, endxy):
         """
         Draws an arc in MAGNET
 
         Parameters
         ----------
-        centrexy : integer list of len 2
-            the centre coordinate of the arc.
+        centerxy : integer list of len 2
+            the center coordinate of the arc.
         startxy : integer list of len 2
             the starting coordinate of the arc
         endxy : Tinteger list of len 2
@@ -113,8 +113,8 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         ret : TokenDraw object
 
         """
-        center_x = eval(self.default_length)(centrexy[0])
-        center_y = eval(self.default_length)(centrexy[1])
+        center_x = eval(self.default_length)(centerxy[0])
+        center_y = eval(self.default_length)(centerxy[1])
         start_x = eval(self.default_length)(startxy[0])
         start_y = eval(self.default_length)(startxy[1])
         end_x = eval(self.default_length)(endxy[0])
