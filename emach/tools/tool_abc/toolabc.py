@@ -12,7 +12,15 @@ from typing import Tuple
 # define abstract base class for ToolBase
 class ToolBase(ABC):
     @abstractmethod
-    def open(self, filename: str, visible: bool) -> any: pass
+    def open(self, filename: str, length_unit: str, angle_unit: str) -> any: pass
+    
+    @abstractmethod 
+    def save(self):
+        pass
+        
+    @abstractmethod 
+    def save_as(self, filename: str):
+        pass
     
     @abstractmethod
     def close(self): pass
@@ -32,7 +40,7 @@ class DrawerBase(ABC):
 
 class MakerBase(ABC):
     @abstractmethod
-    def prepare_section(self, inner_coord: 'Location2D') -> any: pass
+    def prepare_section(self, cs_token: 'CrossSectToken') -> any: pass
 
 # define abstract base class for MakerExtrudeBase
 class MakerExtrudeBase(MakerBase):

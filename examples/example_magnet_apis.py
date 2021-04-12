@@ -1,18 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 23 02:35:48 2020
 
-@author: Bharat
-"""
-# add the directory immediately above this file's directory to path for module import
 import sys
 sys.path.append("..")  
-
-import tools.magnet as mn
+import emach.tools.magnet as mn
 
 # create an instance of the MagNet class
-MN = mn.MagNet()
-MN.open(visible=True)
+MN = mn.MagNet(visible=True)
+MN.open()
 
 
 # draw circles with x,y as the coordinates of the centre, r as the radius
@@ -50,7 +43,7 @@ sweep3Status = mn.document.view.make_component_in_a_line(
     MN.view, MN.consts, sweep_dist, section3, material
 )
 
-mat = mn.document.get_parameter(MN.disp_ex,
+mat = mn.document.get_parameter(MN.mn,
                                          section3[0], "Material")
 
 # make a simple coil
@@ -61,7 +54,7 @@ i_dc = 10
 mn.document.set_parameter(MN.doc, coil1, "WaveFormType", "DC", MN.consts)
 mn.document.set_parameter(MN.doc, coil1, "Current", i_dc, MN.consts)
 
-curr = mn.document.get_parameter(MN.disp_ex, coil1, "Current")
+curr = mn.document.get_parameter(MN.mn, coil1, "Current")
 
 """
 sin_offset = 0
@@ -90,3 +83,5 @@ mn.document.set_parameter(MN.doc, motion, "PositionAtStartup",
 mn.document.set_parameter(MN.doc, motion, "SpeedAtStartup", speed_at_startup, MN.consts)
 mn.document.set_parameter(MN.doc, motion, "MotionDirection", direction, MN.consts)
 mn.document.set_parameter(MN.doc, motion, "SpeedVsTime", time_speed, MN.consts)
+
+del MN

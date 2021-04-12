@@ -1,9 +1,8 @@
-# # add the directory immediately above this file's directory to path for module import
+# add the directory immediately above this file's directory to path for module import
 import sys
-
-sys.path.append("..")
-
-from model_obj import DimMillimeter, DimInch, DimDegree, DimRadian
+sys.path.append('..')
+                
+from emach.model_obj import DimMillimeter, DimInch, DimDegree, DimRadian
 
 inchObject = DimInch(5)
 milObject = DimMillimeter(20)
