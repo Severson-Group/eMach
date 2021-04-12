@@ -1,17 +1,17 @@
+from .make_solid.make_solid_base import MakeSolidBase
+from .materials.material_generic import MaterialGeneric
 
-__all__ = ['Component']
+_all__ = ['Component']
 
 class Component():
     '''
     A logical group of cross sections that make up a component
     '''
     
-    def __init__(self, name, cross_sections, material, make_solid):
-        self._name = name
-        self._cross_sections = cross_sections
-        self._material = material
-        self._make_solid = make_solid
-    
+    def __init__(self, **kwargs):
+        self._create_attr(kwargs)
+        self._validate_attr()
+        
     @property
     def name(self):
         return self._name
@@ -39,4 +39,25 @@ class Component():
             cs.append(self._cross_sections[i].draw(drawer))
         
         return cs
+    
+    def _create_attr(self, dictionary):
+        for name, value in dictionary.items():
+            setattr(self,'_'+name, value)
+    
+    def _validate_attr(self):
+        
+        if isinstance(self._name, str):
+            pass
+        else:
+            raise TypeError ("Component name not of type str")
+        
+        if isinstance(self._make_solid, MakeSolidBase):
+            pass
+        else:
+            raise TypeError ("Component make solid function not of type MakeSolidBase")
+        
+        if isinstance(self._material, MaterialGeneric):
+            pass
+        else:
+            raise TypeError ("Component material not of type MaterialGeneric")
         

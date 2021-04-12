@@ -21,8 +21,9 @@ class MakeExtrude(MakeSolidBase):
     
     def run(self, name, material, cs_token, maker):
         
+        token1 = []
         for i in range(len(cs_token)):
-            token1 = maker.prepare_section(cs_token[i])
+            token1.append(maker.prepare_section(cs_token[i]))
         
         token2 = maker.extrude(name, material, self._dim_depth, token1)
         
