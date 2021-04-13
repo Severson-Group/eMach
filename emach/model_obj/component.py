@@ -1,7 +1,7 @@
 from .make_solid.make_solid_base import MakeSolidBase
 from .materials.material_generic import MaterialGeneric
 
-_all__ = ['Component']
+__all__ = ['Component']
 
 class Component():
     '''
