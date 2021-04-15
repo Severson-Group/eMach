@@ -113,7 +113,7 @@ function output and `lhs+rhs` using `assertEqual`. List of commonly used assert 
 
 ## Running Unittest
 A recomended way to run unittest is to run it from terminal.
-1. Navigate to the working folder
+1. Navigate to the working directory.
 2. Run `python -m unittest discover -v`
 
 ## More Reads
