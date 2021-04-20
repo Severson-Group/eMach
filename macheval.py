@@ -7,7 +7,8 @@ Created on Mon Apr 19 09:54:48 2021
 
 from typing import Protocol,runtime_checkable,Any
 from abc import abstractmethod,ABC
-from mach_opt import EvaluationStep,State,Design
+from mach_opt import Design,Evaluator,Designer
+from copy import deepcopy
 
 
 
@@ -15,7 +16,16 @@ from mach_opt import EvaluationStep,State,Design
 class MachineDesign(Design):
     def __init__(self,machine:'Machine',setting: Any):
         self.machine=machine
-        self.setting=setting     
+        self.setting=setting 
+        
+class MachineDesigner(Designer):
+    def __init__(self,arch:'Architect',settings:'Any'):
+        self.arch=arch
+        self.settings=settings
+    def createDesign(self,x:'tuple')->'Design':
+        machine=self.arch.create_new_design(x)
+        design=MachineDesign(machine,self.settings)
+        return design
         
 class Architect(Protocol):
     """The architect abc class. This class is the interface between a 
@@ -46,7 +56,36 @@ class Machine(ABC):
     @abstractmethod
     def get_missing_properties():
         pass
+
+class MachineEvaluator(Evaluator):
+    def __init__(self,steps:list('EvaluationStep')):
+        self.steps=steps
     
+    def evaluate(self,design:Any):
+        stateCondition = StateConditions()
+        state_in = State(design,stateCondition)
+        fullResults = []
+        for evalStep in self.steps:
+            [results,state_out] = evalStep.step(state_in)
+            fullResults.append(deepcopy([state_in,results,state_out]))
+            state_in = state_out
+        return fullResults
+
+@runtime_checkable
+class EvaluationStep(Protocol):
+    """Protocol for an evaluation step"""
+    @abstractmethod
+    def step(self,stateIn:'State')->[Any,'State']:
+        pass
+    
+class StateConditions:
+    def __init__(self):
+        pass
+
+class State:
+    def __init__(self,design:'Design',stateConditions:'StateConditions'):
+        self.design = design
+        self.stateConditions=stateConditions
 
 class AnalysisStep(EvaluationStep):
     def __init__(self,problemDefinition,analyzer,postAnalyzer):

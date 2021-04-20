@@ -7,7 +7,8 @@ Created on Mon Apr 19 09:43:59 2021
 import pygmo as pg
 from typing import Protocol,runtime_checkable,Any
 from abc import abstractmethod,ABC
-
+import numpy as np
+import traceback
 
 class MachineOptimizationMOEAD:
     def __init__(self,machine_design_problem):
@@ -38,10 +39,16 @@ class MachineDesignProblem:
         self.bounds=bounds
         self.n_obj=n_obj
     def fitness(self,x:'tuple')->'tuple':
-        design=self.designer.createDesign(x)
-        fullResults=self.evaluator.evaluate(design)
-        objs=self.objectives.getObjectives(fullResults)
-        self.dh.save(design,fullResults,objs)
+        try:
+            design=self.designer.createDesign(x)
+            fullResults=self.evaluator.evaluate(design)
+            objs=self.objectives.getObjectives(fullResults)
+            self.dh.save(design,fullResults,objs)
+        except Exception as e:
+            print(e)
+            print(traceback.format_exc())
+            temp=tuple(map(tuple,1E20*np.ones([1,self.get_nobj()])))
+            objs=temp[0]
         return objs
     def get_bounds(self):
         """Returns bounds for optimization problem""" 
@@ -59,37 +66,10 @@ class Design(ABC):
     pass
 
         
-class Evaluator:
-    def __init__(self,steps:list('EvaluationStep')):
-        self.steps=steps
-    
-    def evaluate(self,design:Any):
-        stateCondition = StateConditions()
-        state_in = State(design,stateCondition)
-        fullResults = []
-        for evalStep in self.steps:
-            [results,state_out] = evalStep.step(state_in)
-            fullResults.append([state_in,results])
-            state_in = state_out
-        fullResults.append([state_out,[]])
-        return fullResults
-
-@runtime_checkable
-class EvaluationStep(Protocol):
-    """Protocol for an evaluation step"""
+class Evaluator(Protocol):
     @abstractmethod
-    def step(self,stateIn:'State')->[Any,'State']:
+    def evaluate(self,design:'Design')->Any:
         pass
-    
-class StateConditions:
-    def __init__(self):
-        pass
-
-class State:
-    def __init__(self,design:'Design',stateConditions:'StateConditions'):
-        self.design = design
-        self.stateConditions=stateConditions
-
 
 class Objective(Protocol):
     @abstractmethod
