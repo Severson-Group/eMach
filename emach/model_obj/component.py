@@ -1,5 +1,8 @@
+from copy import deepcopy
+
 from .make_solid.make_solid_base import MakeSolidBase
 from .materials.material_generic import MaterialGeneric
+from .cross_sects.cross_sect_base import CrossSectBase
 
 __all__ = ['Component']
 
@@ -40,6 +43,14 @@ class Component():
         
         return cs
     
+    def clone(self, name, **kwargs):
+        if(self._name == name):
+            raise AttributeError("name of clone same as name of original")
+        cln = deepcopy(self)
+        cln._name = name
+        cln._create_attr(kwargs)
+        return cln
+    
     def _create_attr(self, dictionary):
         for name, value in dictionary.items():
             setattr(self,'_'+name, value)
@@ -60,4 +71,10 @@ class Component():
             pass
         else:
             raise TypeError ("Component material not of type MaterialGeneric")
+        
+        for i in range(len(self._cross_sections)):
+            if isinstance(self._cross_sections[i],CrossSectBase):
+                pass
+            else:
+                raise TypeError("Component cross-sections not of type CrossSectBase")
         

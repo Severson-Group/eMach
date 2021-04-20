@@ -14,7 +14,7 @@ class MakeSolidBase(ABC):
         if isinstance(self._location, Location3D):
             pass
         else:
-            raise TypeError ("component location not of type Location3D")  
+            raise TypeError ("Component location not of type Location3D")  
             
     @abstractmethod 
     def run(self, name, material, cs_token, maker):

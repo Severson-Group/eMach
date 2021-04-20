@@ -17,17 +17,17 @@ class MakeRevolve(MakeSolidBase):
         if isinstance(self._dim_angle, DimAngular):
             pass
         else:
-            raise TypeError ("component angle not of type DimAngular")
+            raise TypeError ("Component angle not of type DimAngular")
             
         if isinstance(self._dim_center, Location2D):
             pass
         else:
-            raise TypeError ("component angle not of type Location2D") 
+            raise TypeError ("Component angle not of type Location2D") 
             
         if isinstance(self._dim_axis, Location2D):
             pass
         else:
-            raise TypeError ("component angle not of type Location2D")  
+            raise TypeError ("Component angle not of type Location2D")  
     
     
     def run(self, name, material, cs_token, maker):

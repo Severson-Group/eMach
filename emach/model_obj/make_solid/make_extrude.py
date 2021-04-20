@@ -16,7 +16,7 @@ class MakeExtrude(MakeSolidBase):
         if isinstance(self._dim_depth, DimLinear):
             pass
         else:
-            raise TypeError ("component depth not of type DimLinear")  
+            raise TypeError ("Component depth not of type DimLinear")  
     
     
     def run(self, name, material, cs_token, maker):
