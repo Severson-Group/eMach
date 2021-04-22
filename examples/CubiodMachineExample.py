@@ -135,16 +135,7 @@ class ConstraintAnalyzer(me.Analyzer):
     """"Class evaluates the cubiod object for volume and Surface Areas"""
     
     def analyze(self,problem:'ConstraintProblem'):
-        """Evalute area and perimeter of cubiod
 
-        Args:
-            cubiod (Cubiod): Cubiod Object
-
-        Returns:
-            [V,SA,total,SA_Lateral] (List[float,float]): 
-                Area and Perimeter of cubiodangle
-
-        """
         value=problem.W+problem.L+.1*problem.H-problem.weight
         if value >=0:
             raise ConstraintError(value)
@@ -165,7 +156,7 @@ class ConstraintEvaluationStep(me.EvaluationStep):
     def step(self,stateIn):
         cubiod=stateIn.design.machine
         weight=stateIn.design.setting
-        value=cubiod.W+cubiod.L+.1*cubiod.H-weight
+        value=cubiod.W**.5+cubiod.L**2.2+.1*cubiod.H-weight
         if value >=0:
             raise ConstraintError(value)
         else:
@@ -223,14 +214,15 @@ if __name__ == '__main__':
     pop=opt.run_optimization(496,10)
     fits, vectors = pop.get_f(), pop.get_x()
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
+    
     fig1 = plt.figure()
     ax1 = fig1.add_subplot()
     im1=ax1.scatter(fits[ndf[0],0],fits[ndf[0],1],c=fits[ndf[0],2],marker='x')
     ax1.set_xlabel('Volume')
     ax1.set_ylabel('Total Surface Area')
     ax1.set_title('Pareto Front')
-    cb=fig1.colorbar(im1, ax=ax1,)
-    cb.set_label('Lateral Surface Area')
+    cb1=fig1.colorbar(im1, ax=ax1,)
+    cb1.set_label('Lateral Surface Area')
 
     fig2 = plt.figure()
     ax2 = fig2.add_subplot()
@@ -238,6 +230,15 @@ if __name__ == '__main__':
     ax2.set_xlabel('Total Surface Area')
     ax2.set_ylabel('Lateral Surface Area')
     ax2.set_title('Pareto Front')
-    cb=fig2.colorbar(im2, ax=ax2,)
-    cb.set_label('Volume')
+    cb2=fig2.colorbar(im2, ax=ax2,)
+    cb2.set_label('Volume')
+    
+    fig3 = plt.figure()
+    ax3 = fig3.add_subplot()
+    im3=ax3.scatter(fits[ndf[0],2],fits[ndf[0],0],c=fits[ndf[0],1],marker='x')
+    ax3.set_xlabel('Lateral Surface Area')
+    ax3.set_ylabel('Volume')
+    ax3.set_title('Pareto Front')
+    cb3=fig3.colorbar(im3, ax=ax3,)
+    cb3.set_label('Total Surface Area')
     

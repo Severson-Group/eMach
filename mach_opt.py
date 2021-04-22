@@ -45,8 +45,8 @@ class MachineDesignProblem:
             objs=self.objectives.getObjectives(fullResults)
             self.dh.save(design,fullResults,objs)
         except Exception as e:
-            print(e)
-            print(traceback.format_exc())
+            # print(e)
+            # print(traceback.format_exc())
             temp=tuple(map(tuple,1E20*np.ones([1,self.get_nobj()])))
             objs=temp[0]
         return objs
