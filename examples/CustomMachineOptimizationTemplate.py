@@ -8,7 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import sys
 sys.path.append("..")
-import mach_opt as mo
+import desopt as do
 import macheval as me
 import pygmo as pg
 from typing import List,Tuple,Any
@@ -35,6 +35,12 @@ class TemplateArchitect(me.Architect):
         #TODO Define Architect
         machine=TemplateMachine()
         return machine
+    
+class TemplateSettingsHanlder(me.SettingsHandler):
+    """Settings hanlder for design creation"""
+    def getSettings(self,x):
+        settings = NotImplementedError
+        return settings
     
 class TemplateMachine(me.Machine):
     """Class defines a Machine object 
@@ -95,7 +101,7 @@ class TemplateProblem():
 class TemplateAnalyzer(me.Analyzer):
     """"Class Analyzes the CubiodProblem  for volume and Surface Areas"""
     
-    def analyze(self,Problem:'me.Problem'):
+    def analyze(self,problem:'me.Problem'):
         """Performs Analysis on a problem
 
         Args:
@@ -143,7 +149,7 @@ class TemplateConstraintEvaluationStep(me.EvaluationStep):
             stateOut.stateConditions.constraintValue=value
             return [value,stateOut]
     
-class TemplateObjective(mo.Objective):
+class TemplateObjective(do.Objective):
     """Class defines objectives of cubiod optimization"""
 
     def getObjectives(self,results:"List[float,float]"):
@@ -169,8 +175,7 @@ class DataHandler:
 if __name__ == '__main__':
     
     #Create Designer
-    settings=None #TODO define settings
-    des=me.MachineDesigner(TemplateArchitect(),settings)
+    des=me.MachineDesigner(TemplateArchitect(),TemplateSettingsHanlder())
 
     #Create evaluation steps
     evalSteps=[TemplateConstraintEvaluationStep(),
@@ -188,11 +193,11 @@ if __name__ == '__main__':
     n_obj=3
     
     #Create Machine Design Problem
-    machDesProb=mo.MachineDesignProblem(des,evaluator,objectives,dh,
+    machDesProb=do.DesignProblem(des,evaluator,objectives,dh,
                                         bounds,n_obj)
     
     #Run Optimization
-    opt=mo.MachineOptimizationMOEAD(machDesProb)
+    opt=do.DesignOptimizationMOEAD(machDesProb)
     pop=opt.run_optimization(496,10)
     fits, vectors = pop.get_f(), pop.get_x()
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
