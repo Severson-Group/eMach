@@ -10,7 +10,7 @@ from abc import abstractmethod,ABC
 import numpy as np
 import traceback
 
-class MachineOptimizationMOEAD:
+class DesignOptimizationMOEAD:
     def __init__(self,machine_design_problem):
         self.machine_design_problem = machine_design_problem
 
@@ -28,7 +28,7 @@ class MachineOptimizationMOEAD:
         return pop
 
     
-class MachineDesignProblem:
+class DesignProblem:
     def __init__(self,designer:'Designer',
                  evaluator:'Evaluator', objectives:'Objective',
                  dh:'DataHandler', bounds:'tuple', n_obj:'int'):

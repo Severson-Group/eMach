@@ -10,7 +10,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import sys
 sys.path.append("..")
-import mach_opt as mo
+import desopt as do
 import macheval as me
 import pygmo as pg
 from typing import List,Tuple,Any
@@ -164,7 +164,7 @@ class ConstraintEvaluationStep(me.EvaluationStep):
             stateOut.stateConditions.constraintValue=value
             return [value,stateOut]
     
-class CubiodObj(mo.Objective):
+class CubiodObj(do.Objective):
     """Class defines objectives of cubiod optimization"""
 
     def getObjectives(self,results:"List[float,float]"):
@@ -208,9 +208,9 @@ if __name__ == '__main__':
     dh=DataHandler()
     bounds=([.5,.1,.25],[10,3,5])
     n_obj=3
-    machDesProb=mo.MachineDesignProblem(des,evaluator,objectives,dh,
+    machDesProb=do.DesignProblem(des,evaluator,objectives,dh,
                                         bounds,n_obj)
-    opt=mo.MachineOptimizationMOEAD(machDesProb)
+    opt=do.DesignOptimizationMOEAD(machDesProb)
     pop=opt.run_optimization(496,10)
     fits, vectors = pop.get_f(), pop.get_x()
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 

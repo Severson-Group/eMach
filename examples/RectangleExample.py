@@ -8,11 +8,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 import sys
 sys.path.append("..")
-import mach_opt as mo
+import desopt as do
 import pygmo as pg
 from typing import List,Tuple
 
-class RectDesigner(mo.Designer):
+class RectDesigner(do.Designer):
     """Class converts input tuple x into a Rectangle object"""
     
     def createDesign(self,x:tuple)->"Rectangle":
@@ -31,7 +31,7 @@ class RectDesigner(mo.Designer):
         rect=Rectangle(L,W)
         return rect
     
-class Rectangle(mo.Design):
+class Rectangle(do.Design):
     """Class defines a rectangle object of Length and width
     
     Attributes:
@@ -50,7 +50,7 @@ class Rectangle(mo.Design):
         self.L=L
         self.W=W
 
-class RectEval(mo.Evaluator):
+class RectEval(do.Evaluator):
     """"Class evaluates the rectangle object for area and perimeter"""
     
     def evaluate(self,rect):
@@ -67,7 +67,7 @@ class RectEval(mo.Evaluator):
         Per=2*rect.L+2*rect.W 
         return [A,Per]
 
-class RectObj(mo.Objective):
+class RectObj(do.Objective):
     """Class defines objectives of rectangle optimization"""
 
     def getObjectives(self,results:"List[float,float]"):
@@ -96,9 +96,9 @@ if __name__ == '__main__':
     dh=DataHandler()
     bounds=([0,0],[1,1])
     n_obj=2
-    machDesProb=mo.MachineDesignProblem(des,evaluator,objectives,dh,
+    machDesProb=do.DesignProblem(des,evaluator,objectives,dh,
                                         bounds,n_obj)
-    opt=mo.MachineOptimizationMOEAD(machDesProb)
+    opt=do.DesignOptimizationMOEAD(machDesProb)
     pop=opt.run_optimization(500,10)
     fits, vectors = pop.get_f(), pop.get_x()
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
