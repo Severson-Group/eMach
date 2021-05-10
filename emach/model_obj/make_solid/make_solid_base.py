@@ -10,11 +10,15 @@ class MakeSolidBase(ABC):
             
     @abstractmethod
     def _validate_attr(self):
-        
-        if isinstance(self._location, Location3D):
-            pass
-        else:
-            raise TypeError ("Component location not of type Location3D")  
+        if not isinstance(self._location, Location3D):
+            raise TypeError ("Expected input to be one of the following type: \
+                             Location3D. Instead it was of type " + \
+                             str(type(self._location)))  
+            
+    
+    @property
+    def location(self):
+        return self._location
             
     @abstractmethod 
     def run(self, name, material, cs_token, maker):

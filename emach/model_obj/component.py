@@ -57,24 +57,24 @@ class Component():
     
     def _validate_attr(self):
         
-        if isinstance(self._name, str):
-            pass
-        else:
-            raise TypeError ("Component name not of type str")
-        
-        if isinstance(self._make_solid, MakeSolidBase):
-            pass
-        else:
-            raise TypeError ("Component make solid function not of type MakeSolidBase")
-        
-        if isinstance(self._material, MaterialGeneric):
-            pass
-        else:
-            raise TypeError ("Component material not of type MaterialGeneric")
-        
+        if not isinstance(self._name, str):
+            raise TypeError ("Expected input to be one of the following type: \
+                             str. Instead it was of type " + \
+                             str(type(self._name)))
+                
+        if not isinstance(self._make_solid, MakeSolidBase):
+            raise TypeError ("Expected input to be one of the following type: \
+                             MakeSolidBase. Instead it was of type " + \
+                             str(type(self._make_solid)))
+                
+        if not isinstance(self._material, MaterialGeneric):
+            raise TypeError ("Expected input to be one of the following type: \
+                             MaterialGeneric. Instead it was of type " + \
+                             str(type(self._material)))
+                
         for i in range(len(self._cross_sections)):
-            if isinstance(self._cross_sections[i],CrossSectBase):
-                pass
-            else:
-                raise TypeError("Component cross-sections not of type CrossSectBase")
+            if not isinstance(self._cross_sections[i],CrossSectBase):
+                raise TypeError ("Expected input to be one of the following type: \
+                             CrossSectBase. Instead it was of type " + \
+                             str(type(self._cross_sections[i])))
         
