@@ -43,7 +43,7 @@ class CrossSectSolidRectangle(CrossSectBase):
 
         axis = [type(w)(0), type(w)(0)]
         x = [axis[0], axis[0], axis[0] + w, axis[0] + w]
-        y = [axis[1], axis[1], axis[1] + h, axis[1] + h]
+        y = [axis[1], axis[1]+h, axis[1] + h, axis[1]]
 
         p = np.array([x, y])
 
