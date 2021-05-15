@@ -129,8 +129,10 @@ class CrossSectOuterRotorStator(CrossSectBase):
         x_arr = [x1, x1, x2, x2, x3, x4, x3, x4, x5, x5, x6, x6]
         y_arr = [y1, -y1, y2, -y2, y3, y4, -y3, -y4, y5, -y5, y6, -y6]
 
-        x_arr_transpose = np.transpose(x_arr)
-        y_arr_transpose = np.transpose(y_arr)
+        points = np.array([x_arr, y_arr])
+
+        points = np.transpose(points)
+
 
         arc1 = []
         arc2 = []
@@ -145,42 +147,51 @@ class CrossSectOuterRotorStator(CrossSectBase):
         seg6 = []
 
         for i in range(Q):
-            print(i)
-            p = self.location.transform_coords([x_arr_transpose, y_arr_transpose], DimRadian(i * alpha_total))
+            
+            p = self.location.transform_coords(points, DimRadian(3.14))
 
-            x = p[:, 1]
-            y = p[:, 2]
+            x = p[:, 0]
+            y = p[:, 1]
 
-            p1 = [x(2), y(2)]
-            p2 = [x(1), y(1)]
+            p1 = [x[1], y[1]]
+            p2 = [x[0], y[0]]
 
-            p3 = [x(4), y(4)]
-            p4 = [x(3), y(3)]
+            p3 = [x[3], y[3]]
+            p4 = [x[2], y[2]]
 
-            p5 = [x(6), y(6)]
-            p6 = [x(5), y(5)]
+            p5 = [x[5], y[5]]
+            p6 = [x[4], y[4]]
 
-            p7 = [x(7), y(7)]
-            p8 = [x(8), y(8)]
+            p7 = [x[6], y[6]]
+            p8 = [x[7], y[7]]
 
-            p9 = [x(9), y(9)]
-            p10 = [x(10), y(10)]
+            p9 = [x[8], y[8]]
+            p10 = [x[9], y[9]]
 
-            p11 = [x(11), y(11)]
-            p12 = [x(12), y(12)]
+            p11 = [x[10], y[10]]
+            p12 = [x[11], y[11]]
 
-            arc1.append(drawer.drawArc(obj.location.anchor_xy, p1, p2))
-            arc2.append(drawer.drawArc(obj.location.anchor_xy, p3, p4))
-            arc3.append(drawer.drawArc(obj.location.anchor_xy, p5, p6))
-            arc4.append(drawer.drawArc(obj.location.anchor_xy, p7, p8))
+            arc1.append(drawer.draw_arc(self.location.anchor_xy, p1, p2))
+            arc2.append(drawer.draw_arc(self.location.anchor_xy, p3, p4))
+            arc3.append(drawer.draw_arc(self.location.anchor_xy, p5, p6))
+            arc4.append(drawer.draw_arc(self.location.anchor_xy, p7, p8))
 
-            seg1.append(drawer.drawLine(p5, p9))
-            seg2.append(drawer.drawLine(p8, p10))
-            seg3.append(drawer.drawLine(p4, p11))
-            seg4.append(drawer.drawLine(p3, p12))
-            seg5.append(drawer.drawLine(p11, p9))
-            seg6.append(drawer.drawLine(p12, p10))
-        end
+            seg1.append(drawer.draw_line(p5, p9))
+            seg2.append(drawer.draw_line(p8, p10))
+            seg3.append(drawer.draw_line(p4, p11))
+            seg4.append(drawer.draw_line(p3, p12))
+            seg5.append(drawer.draw_line(p11, p9))
+            seg6.append(drawer.draw_line(p12, p10))
+
+
+        rad = r_si + (d_sy / 2)
+        ic = np.array([[rad, type(rad)(0)]])
+        inner_coord = self.location.transform_coords(np.array(ic))
+
+        segments  = [arc1, arc2, arc3, arc4, seg1, seg2, seg3, seg4, seg5, seg6]
+
+        cs_token = CrossSectToken(inner_coord[0, :], segments )  # create CrossSectToken object
+        return cs_token
 
     def _validate_attr(self):
 
