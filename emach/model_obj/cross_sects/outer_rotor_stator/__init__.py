@@ -3,6 +3,7 @@ import numpy as np
 from ...dimensions.dim_linear import DimLinear
 from ...dimensions.dim_angular import DimAngular
 from ...dimensions import DimDegree
+from ...dimensions import DimRadian
 from ..cross_sect_base import CrossSectBase, CrossSectToken
 
 __all__ = ['CrossSectOuterRotorStator']
@@ -91,7 +92,7 @@ class CrossSectOuterRotorStator(CrossSectBase):
         r_sb = self.dim_r_sb
         Q = self.dim_Q
 
-        alpha_total = DimDegree(360 / Q).toRadians()
+        alpha_total = DimRadian(DimDegree(360 / Q))
 
         # Inner Arc
         x1 = r_si * np.cos(alpha_total / 2)
@@ -119,7 +120,7 @@ class CrossSectOuterRotorStator(CrossSectBase):
 
         # Left point of d_so line
         theta = alpha_st / 2
-        phi = DimDegree(180).toRadians() - alpha_so + theta
+        phi = DimRadian(DimDegree(180)) - alpha_so + theta
         L = r_si + d_sy + d_st + d_sp
         R = d_so
         x6 = L * np.cos(theta) + R * np.cos(phi)
@@ -143,8 +144,9 @@ class CrossSectOuterRotorStator(CrossSectBase):
         seg5 = []
         seg6 = []
 
-        for i in Q:
-            p = obj.location.transformCoords([x_arr_transpose, y_arr_transpose], DimRadian((i - 1) * alpha_total));
+        for i in range(Q):
+            print(i)
+            p = self.location.transform_coords([x_arr_transpose, y_arr_transpose], DimRadian(i * alpha_total))
 
             x = p[:, 1]
             y = p[:, 2]
@@ -215,5 +217,5 @@ class CrossSectOuterRotorStator(CrossSectBase):
         if not isinstance(self._dim_r_sb, DimLinear):
             raise TypeError('dim_r_sb is not of DimLinear')
 
-        if not isinstance(self._dim_Q, float):
-            raise TypeError('dim_Q is not of float')
+        if not isinstance(self._dim_Q, int):
+            raise TypeError('dim_Q is not of int')
