@@ -2,7 +2,7 @@ import numpy as np
 
 from ...dimensions.dim_linear import DimLinear
 from ...dimensions.dim_angular import DimAngular
-from ...dimensions import DimRadian
+from ...dimensions import DimDegree
 from ..cross_sect_base import CrossSectBase, CrossSectToken
 
 __all__ = ['CrossSectOuterRotorStator']
@@ -182,11 +182,11 @@ class CrossSectOuterRotorStator(CrossSectBase):
 
     def _validate_attr(self):
 
-        if not isinstance(self._dim_alpha_st, DimLinear):
-            raise TypeError('dim_alpha_st is not of DimLinear')
+        if not isinstance(self._dim_alpha_st, DimAngular):
+            raise TypeError('dim_alpha_st is not of DimAngular')
 
-        if not isinstance(self._dim_alpha_so, DimLinear):
-            raise TypeError('dim_alpha_so is not of DimLinear')
+        if not isinstance(self._dim_alpha_so, DimAngular):
+            raise TypeError('dim_alpha_so is not of DimAngular')
 
         if not isinstance(self._dim_r_si, DimLinear):
             raise TypeError('dim_r_si is not of DimLinear')
@@ -215,5 +215,5 @@ class CrossSectOuterRotorStator(CrossSectBase):
         if not isinstance(self._dim_r_sb, DimLinear):
             raise TypeError('dim_r_sb is not of DimLinear')
 
-        if not isinstance(self._dim_Q, DimLinear):
-            raise TypeError('dim_Q is not of DimLinear')
+        if not isinstance(self._dim_Q, float):
+            raise TypeError('dim_Q is not of float')
