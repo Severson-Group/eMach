@@ -79,8 +79,8 @@ class CrossSectOuterRotorStator(CrossSectBase):
         return self._dim_Q
 
     def draw(self, drawer):
-        alpha_st = self.dim_alpha_st
-        alpha_so = self.dim_alpha_so
+        alpha_st = DimRadian(self.dim_alpha_st)
+        alpha_so = DimRadian(self.dim_alpha_so)
         r_si = self.dim_r_si
         d_so = self.dim_d_so
         d_sp = self.dim_d_sp
@@ -147,8 +147,8 @@ class CrossSectOuterRotorStator(CrossSectBase):
         seg6 = []
 
         for i in range(Q):
-            
-            p = self.location.transform_coords(points, DimRadian(3.14))
+            angle = alpha_total*i
+            p = self.location.transform_coords(points, DimRadian(angle))
 
             x = p[:, 0]
             y = p[:, 1]
