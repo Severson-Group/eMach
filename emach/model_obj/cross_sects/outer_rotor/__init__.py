@@ -32,35 +32,35 @@ class CrossSectOuterRotor(CrossSectBase):
 
     @property
     def dim_alpha_rs(self):
-        self._dim_alpha_rs
+        return self._dim_alpha_rs
 
     @property
     def dim_alpha_rm(self):
-        self._dim_alpha_rm
+        return self._dim_alpha_rm
 
     @property
     def dim_r_ro(self):
-        self._dim_r_ro
+        return self._dim_r_ro
 
     @property
     def dim_d_rp(self):
-        self._dim_d_rp
+        return self._dim_d_rp
 
     @property
     def dim_d_ri(self):
-        self._dim_d_ri
+        return self._dim_d_ri
 
     @property
     def dim_d_rs(self):
-        self._dim_d_rs
+        return self._dim_d_rs
 
     @property
-    def dim_p(self):
-        self._dim_p
+    def dim_pole_pair(self):
+        return self._dim_pole_pair
 
     @property
-    def dim_S(self):
-        self._dim_S
+    def dim_segments(self):
+        return self._dim_segments
 
     def draw(self, drawer):
         alpha_rs = DimRadian(self.dim_alpha_rs)
@@ -69,8 +69,8 @@ class CrossSectOuterRotor(CrossSectBase):
         d_rp = self.dim_d_rp
         d_ri = self.dim_d_ri
         d_rs = self.dim_d_rs
-        pole_pair = self.dim_p
-        segments = self.dim_S
+        pole_pair = self.dim_pole_pair
+        segments = self.dim_segments
 
         alpha_total = DimRadian(DimDegree(180 / pole_pair))
 
@@ -139,8 +139,9 @@ class CrossSectOuterRotor(CrossSectBase):
 
         rad = r_ro - (d_ri / 2);
         ic = np.array([[rad, type(rad)(0)]])
-        segments = [arc1]
-        cs_token = CrossSectToken(inner_coord[0, :], segments)  # create CrossSectToken object
+        inner_coord = self.location.transform_coords(np.array(ic))
+        data = [arc1]
+        cs_token = CrossSectToken(inner_coord[0, :], data)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
