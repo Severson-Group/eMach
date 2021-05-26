@@ -12,6 +12,14 @@ class Location3D():
         
         self._anchor_xyz = anchor_xyz  # Distance from global origin xyz coordinate to component's origin xyz coordinate
         self._rotate_xyz = rotate_xyz # Angles about global xyz axes to rotate component's xyz axes in radians
+        
+    @property
+    def anchor_xyz(self):
+        return self._anchor_xyz
+    
+    @property
+    def rotate_xyz(self):
+        return self._rotate_xyz
     
     def _validate_attr(self):
         
@@ -37,10 +45,4 @@ class Location3D():
                              DimAngular. Instead it was of type " + \
                              str(type(self._rotate_xyz[i])))
                 
-    @property
-    def anchor_xyz(self):
-        return self._anchor_xyz
     
-    @property
-    def rotate_xyz(self):
-        return self._rotate_xyz

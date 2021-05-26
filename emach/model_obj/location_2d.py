@@ -38,6 +38,17 @@ class Location2D():
         self._rot = np.array([[np.cos(self._theta), -np.sin(self._theta)],
                              [np.sin(self._theta), np.cos(self._theta)]])
         
+    @property
+    def anchor_xy(self):
+        return self._anchor_xy
+    
+    @property
+    def theta(self):
+        return self._theta
+    
+    @property
+    def rot(self):
+        return self._rot
     
     def _validate_attr(self):
         
@@ -56,18 +67,6 @@ class Location2D():
             raise TypeError ("Expected input to be one of the following type: \
                              DimAngular. Instead it was of type " + \
                              str(type(self._theta)))
-        
-    @property
-    def anchor_xy(self):
-        return self._anchor_xy
-    
-    @property
-    def theta(self):
-        return self._theta
-    
-    @property
-    def rot(self):
-        return self._rot
     
     def transform_coords(self, coords, add_theta = None):
         '''

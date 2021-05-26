@@ -13,6 +13,18 @@ class MakeRevolve(MakeSolidBase):
         super()._validate_attr()
         self._validate_attr()
         
+    @property
+    def dim_angle(self):
+        return self._dim_angle
+    
+    @property
+    def dim_center(self):
+        return self._dim_center
+    
+    @property
+    def dim_axis(self):
+        return self._dim_axis  
+    
     def _validate_attr(self):
         if not isinstance(self._dim_angle, DimAngular):
             raise TypeError ("Expected input to be one of the following type: \
@@ -28,18 +40,6 @@ class MakeRevolve(MakeSolidBase):
             raise TypeError ("Expected input to be one of the following type: \
                              Location2D. Instead it was of type " + \
                              str(type(self._dim_axis)))
-    
-    @property
-    def dim_angle(self):
-        return self._dim_angle
-    
-    @property
-    def dim_center(self):
-        return self._dim_center
-    
-    @property
-    def dim_axis(self):
-        return self._dim_axis
     
     def run(self, name, material, cs_token, maker):
         

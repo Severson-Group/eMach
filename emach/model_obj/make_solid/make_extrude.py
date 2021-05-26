@@ -12,15 +12,17 @@ class MakeExtrude(MakeSolidBase):
         super()._validate_attr()
         self._validate_attr()
         
+    @property
+    def dim_depth(self):
+        return self._dim_depth    
+    
     def _validate_attr(self):
         if not isinstance(self._dim_depth, DimLinear):
             raise TypeError ("Expected input to be one of the following type: \
                              DimLinear. Instead it was of type " + \
                              str(type(self._dim_depth)))  
     
-    @property
-    def dim_depth(self):
-        return self._dim_depth
+    
     
     def run(self, name, material, cs_token, maker):
         

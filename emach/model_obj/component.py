@@ -31,27 +31,27 @@ class Component():
     def make_solid(self):
         return self._make_solid
         
-    def make(self, drawer, maker):
+    def make(self, drawer: 'DrawerBase', maker: 'MakerBase'):
         cs = self.draw(drawer)
         token_make = self.make_solid.run(self.name, self.material.name, cs, maker)
         return token_make
     
-    def draw(self, drawer):
+    def draw(self, drawer: 'DrawerBase'):
         cs = []
         for i in range(len(self.cross_sections)):
             cs.append(self.cross_sections[i].draw(drawer))
         
         return cs
     
-    def clone(self, name, **kwargs):
+    def clone(self, name: str, **kwargs):
         if(self.name == name):
-            raise AttributeError("name of clone same as name of original")
+            raise AttributeError("A new name must be specified for the cloned object")
         cln = deepcopy(self)
         cln._name = name
         cln._create_attr(kwargs)
         return cln
     
-    def _create_attr(self, dictionary):
+    def _create_attr(self, dictionary: dict):
         for name, value in dictionary.items():
             setattr(self,'_'+name, value)
     

@@ -3,7 +3,7 @@ __all__ = ['MaterialGeneric']
 
 class MaterialGeneric():
     
-    def __init__(self, name):
+    def __init__(self, name: str):
         self._name = name
     
     @property
