@@ -33,18 +33,18 @@ class Component():
         
     def make(self, drawer, maker):
         cs = self.draw(drawer)
-        token_make = self._make_solid.run(self._name, self._material._name, cs, maker)
+        token_make = self.make_solid.run(self.name, self.material.name, cs, maker)
         return token_make
     
     def draw(self, drawer):
         cs = []
-        for i in range(len(self._cross_sections)):
-            cs.append(self._cross_sections[i].draw(drawer))
+        for i in range(len(self.cross_sections)):
+            cs.append(self.cross_sections[i].draw(drawer))
         
         return cs
     
     def clone(self, name, **kwargs):
-        if(self._name == name):
+        if(self.name == name):
             raise AttributeError("name of clone same as name of original")
         cln = deepcopy(self)
         cln._name = name
