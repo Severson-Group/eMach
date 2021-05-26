@@ -55,12 +55,12 @@ class CrossSectOuterRotor(CrossSectBase):
         return self._dim_d_rs
 
     @property
-    def dim_pole_pair(self):
-        return self._dim_pole_pair
+    def dim_p(self):
+        return self._dim_p
 
     @property
-    def dim_segments(self):
-        return self._dim_segments
+    def dim_S(self):
+        return self._dim_S
 
     def draw(self, drawer):
         alpha_rs = DimRadian(self.dim_alpha_rs)
@@ -69,8 +69,8 @@ class CrossSectOuterRotor(CrossSectBase):
         d_rp = self.dim_d_rp
         d_ri = self.dim_d_ri
         d_rs = self.dim_d_rs
-        pole_pair = self.dim_pole_pair
-        segments = self.dim_segments
+        pole_pair = self.dim_p
+        segments = self.dim_S
 
         alpha_total = DimRadian(DimDegree(180 / pole_pair))
 
@@ -163,10 +163,10 @@ class CrossSectOuterRotor(CrossSectBase):
         if not isinstance(self._dim_d_rs, DimLinear):
             raise TypeError('dim_d_rs is not of DimLinear')
 
-        if not isinstance(self._dim_pole_pair, int):
-            raise TypeError('dim_pole_pair is not of int')
+        if not isinstance(self._dim_p, int):
+            raise TypeError('dim_p is not of int')
 
-        if not isinstance(self._dim_segments, int):
-            raise TypeError('dim_segments is not of int')
+        if not isinstance(self._dim_S, int):
+            raise TypeError('dim_S is not of int')
 
 

@@ -14,8 +14,8 @@ rotor1 = mo.CrossSectOuterRotor(
     dim_d_rp=mo.DimMillimeter(5),
     dim_d_ri=mo.DimMillimeter(5),
     dim_d_rs=mo.DimMillimeter(8),
-    dim_pole_pair=2,
-    dim_segments=1,
+    dim_p=2,
+    dim_S=1,
     location=mo.Location2D()
 )
 
