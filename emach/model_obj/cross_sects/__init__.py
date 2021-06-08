@@ -8,7 +8,7 @@ from .outer_rotor_stator import *
 from .outer_rotor import *
 from .linear_motor_stator import *
 from .inner_rotor_stator import *
-from .inner_notched_rectangle import *
+# from .inner_notched_rectangle import *
 from .hollow_rectangle import *
 from .breadloaf import *
 from .arc import*
