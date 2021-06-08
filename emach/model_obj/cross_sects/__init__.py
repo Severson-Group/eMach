@@ -1,4 +1,5 @@
 from .hollow_cylinder import *
+from .parallelogram import *
 from .notched_rectangle import *
 from .trapezoid import *
 from .solid_rectangle import *
@@ -11,6 +12,7 @@ from .inner_notched_rectangle import *
 from .hollow_rectangle import *
 from .breadloaf import *
 from .arc import*
+
 
 
 __all__ = []
