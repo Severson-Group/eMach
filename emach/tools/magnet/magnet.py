@@ -158,12 +158,13 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         new = 1
         return new
     
+    
     def extrude(self, name, material, depth, token = None):
         """
         Extrudes, assigns a material and name to a selected section in MAGNET
         """
         depth_actual = eval(self.default_length)(depth)
-        
+        name = [name]
         ret = self.view.makeComponentInALine(
                 depth_actual,
                 name,
