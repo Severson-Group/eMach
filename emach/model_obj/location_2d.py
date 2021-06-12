@@ -2,11 +2,13 @@
 import numpy as np
 
 from .dimensions import DimMillimeter, DimRadian
+from .dimensions.dim_linear import DimLinear
+from .dimensions.dim_angular import DimAngular
 
 __all__ = ['Location2D']
 class Location2D():
     
-    def __init__(self, anchor_xy = np.array([DimMillimeter(0), DimMillimeter(0)]), \
+    def __init__(self, anchor_xy = [DimMillimeter(0), DimMillimeter(0)], \
                  theta = DimRadian(0)):
         '''
         Initialization function for Location2D class. It assigns the value of 
@@ -28,22 +30,43 @@ class Location2D():
         None.
 
         '''
-        self.__anchor_xy = anchor_xy; 
-        self.__theta = DimRadian(theta);
-        self.__rot = np.array([[np.cos(self.__theta), -np.sin(self.__theta)],
-                             [np.sin(self.__theta), np.cos(self.__theta)]])
-    
+        self._anchor_xy = anchor_xy; 
+        self._theta = theta;
+        self._validate_attr()
+        
+        self._theta = DimRadian(theta);
+        self._rot = np.array([[np.cos(self._theta), -np.sin(self._theta)],
+                             [np.sin(self._theta), np.cos(self._theta)]])
+        
     @property
     def anchor_xy(self):
-        return self.__anchor_xy
+        return self._anchor_xy
     
     @property
     def theta(self):
-        return self.__theta
+        return self._theta
     
     @property
     def rot(self):
-        return self.__rot
+        return self._rot
+    
+    def _validate_attr(self):
+        
+        if not len(self._anchor_xy) == 2:
+            raise TypeError ("Expected input to be one of length 2. \
+                             Instead it was of length " + \
+                             str(len(self._anchor_xy)))
+                
+        for i in range(len(self._anchor_xy)):
+            if not isinstance(self._anchor_xy[i], DimLinear):
+                raise TypeError ("Expected input to be one of the following type: \
+                             DimLinear. Instead it was of type " + \
+                             str(type(self._anchor_xy[i])))
+                    
+        if not isinstance(self._theta, DimAngular):
+            raise TypeError ("Expected input to be one of the following type: \
+                             DimAngular. Instead it was of type " + \
+                             str(type(self._theta)))
     
     def transform_coords(self, coords, add_theta = None):
         '''
@@ -68,16 +91,16 @@ class Location2D():
 
         '''
         if add_theta is None:
-            trans = self.__rot
+            trans = self._rot
         else:
-            add_theta = DimRadian(add_theta) + self.__theta
+            add_theta = DimRadian(add_theta) + self._theta
             trans = np.array([[np.cos(add_theta), -np.sin(add_theta)],
                                    [np.sin(add_theta), np.cos(add_theta)]])
         rot_coords = np.transpose(np.matmul(trans,np.transpose(coords)))
         trans_coords = np.zeros(coords.shape)
 
-        trans_coords[:,0] = rot_coords[:,0] + self.__anchor_xy[0]
-        trans_coords[:,1] = rot_coords[:,1] + self.__anchor_xy[1]
+        trans_coords[:,0] = rot_coords[:,0] + self._anchor_xy[0]
+        trans_coords[:,1] = rot_coords[:,1] + self._anchor_xy[1]
         return trans_coords
     
         
