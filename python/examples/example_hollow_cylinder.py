@@ -6,7 +6,6 @@ import numpy as np
 import emach.tools.magnet as mn
 import emach.model_obj as mo
 
-
 x = mo.DimMillimeter(4)
 y = mo.DimMillimeter(80)
 z = mo.DimMillimeter(40)
@@ -15,8 +14,6 @@ z = mo.DimMillimeter(40)
 hollowCylinder1 = mo.CrossSectHollowCylinder(name = 'hollowCylinder1',
                                                 location = mo.Location2D(),
                                                 dim_t = x, dim_r_o = y)
-
-
 
 # create hollowcylinder component
 comp1 = mo.Component(name = 'comp1', cross_sections = [hollowCylinder1], \
@@ -29,3 +26,4 @@ toolMn.open()
 
 comp1.make(toolMn,toolMn)
 toolMn.view_all()
+
