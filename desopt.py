@@ -60,7 +60,7 @@ class DesignProblem:
 @runtime_checkable
 class Designer(Protocol):
     @abstractmethod
-    def createDesign(self,x:'tuple')->'Design':
+    def create_design(self,x:'tuple')->'Design':
         raise NotImplementedError
         
 class Design(ABC):

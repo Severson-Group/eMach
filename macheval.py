@@ -19,19 +19,19 @@ class MachineDesign(Design):
         self.settings=settings 
         
 class MachineDesigner(Designer):
-    def __init__(self,arch:'Architect',settingsHandler:'SettingsHandler'):
-        self.arch=arch
-        self.settingsHandler=settingsHandler
-    def createDesign(self,x:'tuple')->'Design':
-        machine=self.arch.create_new_design(x)
-        settings=self.settingsHandler.getSettings(x)
-        design=MachineDesign(machine,settings)
+    def __init__(self,arch:'Architect',settings_handler:'SettingsHandler'):
+        self.arch = arch
+        self.settings_handler = settings_handler
+    def create_design(self,x:'tuple')->'Design':
+        machine = self.arch.create_new_design(x)
+        settings = self.settings_handler.get_settings(x)
+        design = MachineDesign(machine,settings)
         return design
 
 class SettingsHandler(Protocol):
     
     @abstractmethod
-    def getSettings(self,x:'tuple'):
+    def get_settings(self,x:'tuple'):
         raise NotImplementedError
     
         
@@ -86,25 +86,25 @@ class EvaluationStep(Protocol):
     def step(self,stateIn:'State')->[Any,'State']:
         pass
     
-class StateConditions:
+class Conditions:
     def __init__(self):
         pass
 
 class State:
-    def __init__(self,design:'Design',stateConditions:'StateConditions'):
+    def __init__(self,design:'Design',conditions:'Conditions'):
         self.design = design
-        self.stateConditions=stateConditions
+        self.conditions = conditions
 
 class AnalysisStep(EvaluationStep):
-    def __init__(self,problemDefinition,analyzer,postAnalyzer):
-        self.problemDefinition=problemDefinition
-        self.analyzer= analyzer
-        self.postAnalyzer=postAnalyzer
+    def __init__(self,problem_definition,analyzer,post_analyzer):
+        self.problem_definition = problem_definition
+        self.analyzer = analyzer
+        self.post_analyzer = post_analyzer
     def step(self,stateIn:'State')->[Any,'State']:
-        problem=self.problemDefinition.getProblem(stateIn)
+        problem=self.problem_definition.get_problem(stateIn)
         results=self.analyzer.analyze(problem)
-        stateOut=self.postAnalyzer.getNextState(results,stateIn)
-        return results,stateOut
+        state_out=self.post_analyzer.get_next_state(results,stateIn)
+        return results,state_out
 
 class ProblemDefinition(Protocol):
     @abstractmethod
