@@ -44,9 +44,29 @@ classdef Location2D
             transCoords(:,1) = rotateCoords(:,1) + obj.anchor_xy(1);
             transCoords(:,2) = rotateCoords(:,2) + obj.anchor_xy(2);
         end
+    
+        function locObj = relative(obj, relLinear, relAngular)
+            
+        %This function takes in a relative linear (relLinear) and relative
+        %angular (relAngular) displacement and returns a new location
+        %object that has been displaced relatively to this location object
+    
+        validateattributes(relLinear, {'DimLinear'}, {'size',[1,2]})
+        validateattributes(relAngular, {'DimAngular'}, {'size',[1,1]})
+        
+        anchor = obj.anchor_xy + relLinear;
+        angle = obj.theta + relAngular;
+        
+        disp(class(anchor))
+        disp(class(angle))
+        
+        locObj = Location2D('anchor_xy', anchor, ...
+                                'theta', angle );
+        
+        end
         
     end
-    
+   
      methods(Access = protected)
          function obj = createProperties(obj, len, args)
              validateattributes(len, {'numeric'}, {'even'});
