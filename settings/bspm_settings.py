@@ -5,7 +5,7 @@ Created on Sun Feb 28 17:37:05 2021
 @author: Bharat
 """
 
-class BSPM_EMAnalyzer_Op_Point():
+class BSPM_EMAnalyzer_Settings():
     ''' This is a wrapper class designed to contain all relevant information
     on the operting point for obtaining eletrical performance evaluation of 
     bearingless permanent magnet eletric machines
