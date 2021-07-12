@@ -6,19 +6,18 @@ import pandas as pd
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
-from .analyzer import Analyzer
 
 EPS = 1e-2 # unit: mm
 
-class BSPM_EM_Analysis(Analyzer):
+class BSPM_EM_Analysis():
 
     def __init__(self, configuration):
         self.configuration = configuration
     
-    def analyze(self, machine_variant, operating_point, counter = 0):
+    def analyze(self, problem, counter = 0):
         
-        self.machine_variant = machine_variant
-        self.operating_point = operating_point
+        self.machine_variant = problem.machine
+        self.operating_point = problem.operating_point
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
@@ -107,8 +106,12 @@ class BSPM_EM_Analysis(Analyzer):
     @property
     def R_coil(self):
         a_wire = (self.machine_variant.s_slot*self.machine_variant.Kcu)/(2*self.machine_variant.Z_q)
-        return (self.l_coil*self.machine_variant.Z_q)/(self.machine_variant.coil_mat['copper_elec_conductivity']*a_wire)
-
+        return (self.l_coil*self.machine_variant.Z_q*self.machine_variant.Q/6)/(self.machine_variant.coil_mat['copper_elec_conductivity']*a_wire)
+    
+    @property
+    def copper_loss(self):
+        return self.machine_variant.Q*((self.current_trms/2)**2 + self.current_srms**2)*self.R_coil
+    
     def draw_machine(self, toolJd):
         ####################################################
         # Adding parts object
@@ -691,11 +694,11 @@ class BSPM_EM_Analysis(Analyzer):
 
             # Terminal Voltage/Circuit Voltage: Check for outputing CSV results 
             study.GetCircuit().CreateTerminalLabel("Terminal_Us", 6, -14)
-            study.GetCircuit().CreateTerminalLabel("Terminal_Vs", 0, -6)
-            study.GetCircuit().CreateTerminalLabel("Terminal_Ws", 20, -6)
+            study.GetCircuit().CreateTerminalLabel("Terminal_Ws", 0, -6)
+            study.GetCircuit().CreateTerminalLabel("Terminal_Vs", 20, -6)
             study.GetCircuit().CreateTerminalLabel("Terminal_Ut", 8, -18)
-            study.GetCircuit().CreateTerminalLabel("Terminal_Vt", 2, -2)
-            study.GetCircuit().CreateTerminalLabel("Terminal_Wt", 18, -2)
+            study.GetCircuit().CreateTerminalLabel("Terminal_Wt", 2, -2)
+            study.GetCircuit().CreateTerminalLabel("Terminal_Vt", 18, -2)
 
 
         current_tpeak = self.current_trms*np.sqrt(2) # It, max current at torque terminal
@@ -837,28 +840,37 @@ class BSPM_EM_Analysis(Analyzer):
         torque_csv_path = path + study_name + '_torque.csv'
         force_csv_path = path + study_name + '_force.csv'
         iron_loss_path = path + study_name + '_iron_loss_loss.csv'
-        joule_loss_path = path + study_name + '_joule_loss_loss.csv'
         hysterisis_loss_path = path + study_name + '_hysteresis_loss_loss.csv'
-        magnet_loss_path = path + study_name + '_joule_loss.csv'
-        
+        eddy_current_loss_path = path + study_name + '_joule_loss.csv'
+         
         curr_df = pd.read_csv(current_csv_path, skiprows=6)
         volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
         tor_df = pd.read_csv(torque_csv_path, skiprows=6)
         force_df = pd.read_csv(force_csv_path, skiprows=6)
         iron_df = pd.read_csv(iron_loss_path, skiprows=6)
-        joule_df = pd.read_csv(joule_loss_path, skiprows=6)
         hyst_df = pd.read_csv(hysterisis_loss_path, skiprows=6)
-        magnet_df = pd.read_csv(magnet_loss_path, skiprows=6)
+        eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
+        
+        range_2TS = int(self.configuration['number_of_steps_per_rev_2TS']*self.configuration['number_of_revolution_2TS'])
+        
+        curr_df = curr_df.set_index('Time(s)')
+        tor_df = tor_df.set_index('Time(s)')
+        volt_df = volt_df.set_index('Time(s)')
+        force_df = force_df.set_index('Time(s)')
+        eddy_df = eddy_df.set_index('Time(s)')
+        hyst_df = hyst_df.set_index('Frequency(Hz)')
+        iron_df = iron_df.set_index('Frequency(Hz)')
         
         fea_data = {
-            'Current': curr_df,
-            'Voltage': volt_df,
-            'Torque': tor_df,
-            'Force': force_df,
-            'Iron Loss': iron_df,
-            'Joule Loss': joule_df,
-            'Hysterisis Loss': hyst_df,
-            'Magnet Loss': magnet_df,
+            'current'           : curr_df,
+            'voltage'           : volt_df,
+            'torque'            : tor_df,
+            'force'             : force_df,
+            'iron_loss'         : iron_df,
+            'hysterisis_loss'   : hyst_df,
+            'eddy_current_loss' : eddy_df,
+            'copper_loss'       : self.copper_loss,
+            'range_fine_step'   : range_2TS
             }
         
         return fea_data
