@@ -3,6 +3,7 @@
 ## We have git for backups!
 ##---------------------------------------------------
 
+.idea/
 # Windows default autosave extension
 *.asv
 

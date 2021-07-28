@@ -9,6 +9,6 @@ class BSPM_Settings_Handler():
         pass
     
     def get_settings(self,x):
-        em_op = BSPM_EMAnalyzer_Settings(Id=x[11], Iq=x[12], Ix=x[13], Iy=x[13],\
-                                         speed=x[14], magnet_temp=x[15])
+        em_op = BSPM_EMAnalyzer_Settings(Id=x[11], Iq=x[12], Ix=x[13], Iy=x[14],
+                                         speed=x[15], magnet_temp=x[16])
         return em_op

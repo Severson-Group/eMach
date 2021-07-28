@@ -1,93 +1,98 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 30 11:00:02 2021
 
-@author: Martin Johnson
-"""
-
-import numpy as np
-from matplotlib import pyplot as plt
 import sys
-from typing import List,Tuple,Any
-from copy import deepcopy
-import pygmo as pg
 
 sys.path.append("..")
-import desopt as do
-import macheval as me
 
-from MachineDesign.bspm_architect import BSPMArchitectType1 as Architect
-from MachineDesign.bspm_settingshandler import BSPMSettingsHandler 
+from machine_design import BSPMArchitectType1
+from specifications.bspm_specification import BSPMMachineSpec
 
-from MachineEvaluation.Structural import SleeveDesignStep
-from MachineEvaluation.EM import EMStep
-from MachineEvaluation.Misc import LengthScaleStep
-from MachineEvaluation.Thermal import ThermalStep
-from AnalyzerSettings import (SleeveDesignSettings,EMStepSettings,
-                              LengthScaleStepSettings,ThermalStepSettings)
+from specifications.machine_specs.bp1_machine_specs import DesignSpec
+from specifications.materials.electric_steels import Arnon5
+from specifications.materials.jmag_library_magnets import N40H
+from specifications.materials.miscellaneous_materials import CarbonFiber, Steel, Copper, Hub, Air
+from settings.bspm_settings_handler import BSPM_Settings_Handler
+from analyzers import structrual_analyzer as sta
+from analyzers.em import BSPM_EM_Analysis
+from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 
-from Objectives.bspm_objective import BSPMObjective1 as Objective
+from problems.bspm_em_problem import BSPM_EM_Problem
+from post_analyzers.bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
+from length_scale_step import LengthScaleStep
+from mach_eval import AnalysisStep, State, MachineDesigner, MachineEvaluator
 
-from DataHandler import DataHandler
+##############################################################################
+############################ Define Design ###################################
+##############################################################################
+
+# create specification object for the BSPM machine
+machine_spec = BSPMMachineSpec(design_spec=DesignSpec, rotor_core=Arnon5,
+                               stator_core=Arnon5, magnet=N40H, conductor=Copper,
+                               shaft=Steel, air=Air, sleeve=CarbonFiber, hub=Hub)
+
+# initialize BSPMArchitect with machine specification
+arch = BSPMArchitectType1(machine_spec)
+set_handler = BSPM_Settings_Handler()
+
+bspm_designer = MachineDesigner(arch, set_handler)
+# create machine variant using architect
+free_var = (0.00390399, 0.00964596, 35.9925, 0.00358376, 0.00722451, 0.0128492,
+            0.0143288, 180.0, 0.00514122, 0.00308507, 0.00363824, 0.0, 0.95, 0,
+            0.05, 200000, 80)
+# set operating point for BSPM machine
+
+design_variant = bspm_designer.create_design(free_var)
+
+##############################################################################
+############################ Define struct AnalysisStep ######################
+##############################################################################
+
+stress_limits={'rad_sleeve': -100E6,
+               'tan_sleeve': 1300E6,
+               'rad_magnets': 0,
+               'tan_magnets': 80E6}
+
+# spd = sta.SleeveProblemDef(design_variant)
+# problem = spd.get_problem()
+ana = sta.SleeveAnalyzer(stress_limits)
+# sleeve_dim = ana.analyze(problem)
+# print(sleeve_dim)
 
 
-#Create Designer
-settingsHandler=BSPMSettingsHandler() #TODO define settings
-arch=Architect()
-des=me.MachineDesigner(arch,settingsHandler)
+class StructPostAnalyzer:
+    """Converts a State into a problem"""
+    def __init__(self):
+        pass
 
-#Create evaluation steps
-sleeveDesignStep = SleeveDesignStep(SleeveDesignSettings)
-emStep = EMStep(EMStepSettings)
-lengthScaleStep = LengthScaleStep(LengthScaleStepSettings)
-thermalStep = ThermalStep(ThermalStepSettings)
-evalSteps=[sleeveDesignStep,emStep,lengthScaleStep,thermalStep]
+    def get_next_state(results, in_state):
+        state_out = in_state
+        return state_out
 
-#Create Evaluator
-evaluator=me.MachineEvaluator(evalSteps)
-objectives=Objective()
-dh=DataHandler()#TODO Define Datahandler
 
-#set evaluation bounds
-bounds=([.1,10E3,.1E-3,10E-3,1000*2*np.pi/60],
-        [1,100E3,10E-3,95.5E-3,15000*2*np.pi/60])#TODO Define bounds
+struct_step = AnalysisStep(sta.SleeveProblemDef, ana, StructPostAnalyzer)
 
-#set number of objectives
-n_obj=3 #TODO Define bounds
+##############################################################################
+############################ Define em AnalysisStep ##########################
+##############################################################################
 
-#Create Machine Design Problem
-machDesProb=do.DesignProblem(des,evaluator,objectives,dh,
-                                    bounds,n_obj)
 
-#Run Optimization
-opt=do.DesignOptimizationMOEAD(machDesProb)
-pop=opt.run_optimization(496,500)
-fits, vectors = pop.get_f(), pop.get_x()
-ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
+class BSPM_EM_ProblemDefinition():
+    """Converts a State into a problem"""
 
-fig1 = plt.figure()
-ax1 = fig1.add_subplot()
-im1=ax1.scatter(fits[ndf[0],0],fits[ndf[0],1],c=fits[ndf[0],2],marker='x')
-ax1.set_xlabel('-Efficiency')
-ax1.set_ylabel('Cost [$]')
-ax1.set_title('Pareto Front')
-cb1=fig1.colorbar(im1, ax=ax1,)
-cb1.set_label('Torque Ripple [ ]')
+    def __init__(self):
+        pass
 
-fig2 = plt.figure()
-ax2 = fig2.add_subplot()
-im2=ax2.scatter(fits[ndf[0],1],fits[ndf[0],2],c=fits[ndf[0],0],marker='x')
-ax2.set_xlabel('Cost [$]')
-ax2.set_ylabel('Torque Ripple [ ]')
-ax2.set_title('Pareto Front')
-cb2=fig2.colorbar(im2, ax=ax2,)
-cb2.set_label('-Efficiency')
+    def get_problem(state):
+        problem = BSPM_EM_Problem(state.design.machine, state.design.settings)
+        return problem
 
-fig3 = plt.figure()
-ax3 = fig3.add_subplot()
-im3=ax3.scatter(fits[ndf[0],2],fits[ndf[0],0],c=fits[ndf[0],1],marker='x')
-ax3.set_xlabel('Torque Ripple [ ]')
-ax3.set_ylabel('-Efficiency')
-ax3.set_title('Pareto Front')
-cb3=fig3.colorbar(im3, ax=ax3,)
-cb3.set_label('Cost [$]')
+
+# initialize em analyzer class with FEA configuration
+em_analysis = BSPM_EM_Analysis(JMAG_FEA_Configuration)
+
+# define em step
+em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
+
+# evaluate machine design
+evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep])
+results = evaluator.evaluate(design_variant)
+
