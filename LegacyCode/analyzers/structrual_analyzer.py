@@ -6,7 +6,6 @@ Created on Tue Jul 20 10:39:47 2021
 """
 
 import numpy as np
-from spec_USmotor_Q6p1 import fea_config_dict
 import scipy.optimize as op
 
 class StructuralProblem:
@@ -56,7 +55,7 @@ class StructuralProblemDef:
         """
         self.mat_dict=mat_dict
     
-    def getProblem(self,r_sh: float,d_m: float,r_ro: float,d_sl : float,
+    def get_problem(self,r_sh: float,d_m: float,r_ro: float,d_sl : float,
                    delta_sl: float, deltaT: float,N: float)->'StructuralProblem':
         """Creates StructuralProblem object from input
 
@@ -501,7 +500,7 @@ class SleeveProblem:
         d_m=self.d_m
         deltaT=self.deltaT
         struc_prob_def=StructuralProblemDef(self.mat_dict)
-        problem=struc_prob_def.getProblem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
+        problem=struc_prob_def.get_problem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
         analyzer=StructuralAnalyzer()
         sigmas=analyzer.analyze(problem)
         x_sl=np.linspace(R_ro,R_ro+d_sl,50)
@@ -519,7 +518,7 @@ class SleeveProblem:
         d_m=self.d_m
         deltaT=self.deltaT
         struc_prob_def=StructuralProblemDef(self.mat_dict)
-        problem=struc_prob_def.getProblem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
+        problem=struc_prob_def.get_problem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
         analyzer=StructuralAnalyzer()
         sigmas=analyzer.analyze(problem)
         x_sl=np.linspace(R_ro,R_ro+d_sl,50)
@@ -536,7 +535,7 @@ class SleeveProblem:
         d_m=self.d_m
         deltaT=self.deltaT
         struc_prob_def=StructuralProblemDef(self.mat_dict)
-        problem=struc_prob_def.getProblem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
+        problem=struc_prob_def.get_problem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
         analyzer=StructuralAnalyzer()
         sigmas=analyzer.analyze(problem)
         x_pm=np.linspace(R_ro-d_m,R_ro,50)
@@ -553,7 +552,7 @@ class SleeveProblem:
         d_m=self.d_m
         deltaT=self.deltaT
         struc_prob_def=StructuralProblemDef(self.mat_dict)
-        problem=struc_prob_def.getProblem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
+        problem=struc_prob_def.get_problem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
         analyzer=StructuralAnalyzer()
         sigmas=analyzer.analyze(problem)
         x_pm=np.linspace(R_ro-d_m,R_ro,50)
@@ -564,13 +563,31 @@ class SleeveProblem:
         return x[0]
     
 class SleeveProblemDef:
-    
-    def __init__(self,mat_dict: dict):
-        self.mat_dict  =mat_dict
-        
-    def getProblem(self,r_sh: float,d_m: float,r_ro: float,
-                   deltaT: float,N: float)->'StructuralProblem':
-        problem=SleeveProblem(r_sh,d_m,r_ro,deltaT,self.mat_dict,N)
+    def get_problem(state) -> 'StructuralProblem':
+        design = state.design
+        material_dict = {}
+        for key, value in design.machine.rotor_iron_mat.items():
+            material_dict[key] = value
+        for key, value in design.machine.magnet_mat.items():
+            material_dict[key] = value
+        for key, value in design.machine.rotor_sleeve_mat.items():
+            material_dict[key] = value
+        for key, value in design.machine.shaft_mat.items():
+            material_dict[key] = value
+
+        material_dict['alpha_sh'] = 1.2E-5
+        material_dict['alpha_rc'] = 1.2E-5
+        material_dict['alpha_pm'] = 5E-6
+        material_dict['alpha_sl_t'] = -4.7E-7
+        material_dict['alpha_sl_r'] = 0.3E-6
+
+        r_sh = design.machine.r_sh
+        r_ro = design.machine.r_ro
+        d_m = design.machine.d_m
+        N = design.settings.speed
+        deltaT = 10
+
+        problem = SleeveProblem(r_sh, d_m, r_ro, deltaT, material_dict, N)
         return problem
     
 class SleeveAnalyzer:
@@ -598,7 +615,7 @@ class SleeveAnalyzer:
     
 
 if __name__ == "__main__":
-    mat_dict=fea_config_dict
+    mat_dict = fea_config_dict
     stress_limits={'rad_sleeve':-100E6,
                    'tan_sleeve':1300E6,
                    'rad_magnets':0,
@@ -614,7 +631,7 @@ if __name__ == "__main__":
     deltaT=10
     N=10E3
     spd=SleeveProblemDef(mat_dict)   
-    problem=spd.getProblem(r_sh, d_m, r_ro, deltaT, N)
+    problem=spd.get_problem(r_sh, d_m, r_ro, deltaT, N)
     ana=SleeveAnalyzer(stress_limits)
     sleeve_dim=ana.analyze(problem)
     print(sleeve_dim)
