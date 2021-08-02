@@ -23,3 +23,7 @@
 # Python files
 *.pyc
 __pycache__/
+
+# Sphinx documentation
+docs/build/
+docs/source/_templates/
