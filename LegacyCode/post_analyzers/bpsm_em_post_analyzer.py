@@ -64,7 +64,7 @@ class BSPM_EM_PostAnalyzer():
         ############################ post processing #################################
         ##############################################################################
         torque_avg, torque_ripple = process_torque_data(results['torque'])
-        f_x, f_y, force_avg, Em, Ea  = process_force_data(results['force'])
+        f_x, f_y, force_avg, Em, Ea = process_force_data(results['force'])
 
         post_processing = {}
         post_processing['torque_avg'] = torque_avg
@@ -77,15 +77,14 @@ class BSPM_EM_PostAnalyzer():
         post_processing['Ea'] = Ea
 
         post_processing['copper_loss'] = results['copper_loss']
-        post_processing['rotor_loss'] = results['iron_loss']['NotchedRotor'][0] \
+        post_processing['rotor_iron_loss'] = results['iron_loss']['NotchedRotor'][0] \
             + results['eddy_current_loss']['NotchedRotor'].mean()
-        post_processing['stator_loss'] = results['iron_loss']['StatorCore'][0] \
+        post_processing['stator_iron_loss'] = results['iron_loss']['StatorCore'][0] \
             + results['eddy_current_loss']['StatorCore'].mean()
         post_processing['magnet_loss'] = results['eddy_current_loss']['Magnet'].mean()
 
         post_processing['phase_voltage_rms'] = compute_vrms(results['voltage'])
-        post_processing['power_factor'] = compute_power_factor(results['voltage'],
-                                                               results['current'],
+        post_processing['power_factor'] = compute_power_factor(results['voltage'], results['current'],
                                                                target_freq=machine.mech_omega*machine.p/(2*np.pi))
 
         state_out.conditions.em = post_processing
