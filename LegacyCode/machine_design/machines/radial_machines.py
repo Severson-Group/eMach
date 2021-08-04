@@ -36,8 +36,29 @@ class Rotor_Iron(MachineComponent):
     @property
     def rotor_iron_mat(self):
         return self._materials_dict['rotor_iron_mat']
-    
+
+class IM_Rotor_Iron(MachineComponent):
+
+    def required_parameters():
+        return ('d_ro','w_rt',)
+    def required_materials():
+        return ('rotor_iron_mat',)
+
+    @property
+    def d_ro(self):
+        return self._machine_parameter_dict['d_ro']
+    @property
+    def w_rt(self):
+        return self._machine_parameter_dict['w_rt']
+
+    @property
+    def rotor_iron_mat(self):
+        return self._materials_dict['rotor_iron_mat']
+
+
 class PM(MachineComponent):
+
+
 
     def required_parameters():
         return ('d_m','alpha_ms','alpha_m','n_m')
@@ -77,6 +98,27 @@ class RotorSleeve(MachineComponent):
     @property
     def rotor_sleeve_mat(self):
         return self._materials_dict['rotor_sleeve_mat']
+
+# class Rotor_bar(MachineComponent):
+#     def required_parameters():
+#         return ()
+#     def required_materials():
+
+
+class IM_Rotor(Shaft, IM_Rotor_Iron, MachineComponent):
+
+# Add bar component a bit later
+    def required_parameters():
+        for cl in IM_Rotor.__bases__:
+            if cl.required_parameters() is not None:
+                req_param=req_param+cl.required_parameters()
+        return req_param
+
+    def required_materials():
+        for cl in IM_Rotor.__bases__:
+            if cl.required_materials() is not None:
+                req_mat=req_mat+cl.required_materials()
+        return req_mat
      
 class PM_Rotor(Shaft,Rotor_Iron,PM,MachineComponent):
 
