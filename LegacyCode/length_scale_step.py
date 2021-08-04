@@ -19,9 +19,9 @@ class LengthScaleStep():
         state_out.conditions.em['force_avg'] = state_out.conditions.em['force_avg'] \
                                             * scale_ratio
         
-        state_out.conditions.em['rotor_loss'] = state_out.conditions.em['rotor_loss'] \
+        state_out.conditions.em['rotor_iron_loss'] = state_out.conditions.em['rotor_iron_loss'] \
                                             * scale_ratio
-        state_out.conditions.em['stator_loss'] = state_out.conditions.em['stator_loss'] \
+        state_out.conditions.em['stator_iron_loss'] = state_out.conditions.em['stator_iron_loss'] \
                                             * scale_ratio
         state_out.conditions.em['magnet_loss'] = state_out.conditions.em['magnet_loss'] \
                                             * scale_ratio

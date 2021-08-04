@@ -7,15 +7,14 @@ Created on Tue Feb 23 00:41:26 2021
 
 from .machine import Machine, MissingValueError
 from .radial_machines import DPNVWinding, PM_Rotor_Sleeved, Stator, MachineComponent
-    
-    
+from copy import deepcopy
 
 __all__ = ['BSPM_Machine']
 
     
 class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
     
-    def __init__(self,machine_parameter_dict:dict,materials_dict:dict, nameplate_dict:dict)->"BSPM_Machine":
+    def __init__(self, machine_parameter_dict: dict, materials_dict: dict, nameplate_dict: dict):
         """ Creates a BSPM_Machine object
         Keyword Argumets:
             machine_geometry_dict: dict
@@ -26,30 +25,22 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
         """
         cls = BSPM_Machine
         
-        #first checks to see if the input dictionarys have the required values
-        if cls.check_required_values(cls,machine_parameter_dict,
-                                              materials_dict,
-                                              nameplate_dict)== True:
-            setattr(self, '_machine_parameter_dict',machine_parameter_dict)
-            setattr(self, '_materials_dict',materials_dict) 
-            setattr(self, '_nameplate_dict',nameplate_dict) 
+        # first checks to see if the input dictionarys have the required values
+
+        if cls.check_required_values(cls, machine_parameter_dict, materials_dict, nameplate_dict)== True:
+            setattr(self, '_machine_parameter_dict', machine_parameter_dict)
+            setattr(self, '_materials_dict', materials_dict)
+            setattr(self, '_nameplate_dict', nameplate_dict)
 
         else:
-            #If required values are missing, collect them and raise execption
-            missing_values=cls.get_missing_required_values(cls,machine_parameter_dict,
-                                                                     materials_dict,
-                                                                     nameplate_dict)
-            raise(MissingValueError(missing_values,
-                                    ('Missing inputs to initilize in'+str(cls))))
-        
+            # If required values are missing, collect them and raise execption
+            missing_values=cls.get_missing_required_values(cls, machine_parameter_dict, materials_dict, nameplate_dict)
+            raise(MissingValueError(missing_values, ('Missing inputs to initialize in'+str(cls))))
 
-    
-    def get_missing_required_values(cls,machine_geometry_dict:dict,
-                                              materials_dict:dict,
-                                              nameplate_dict:dict)->list:
-        """returns missing requried values from input dictionary 
+    def get_missing_required_values(cls, machine_geometry_dict:dict, materials_dict:dict, nameplate_dict:dict) -> list:
+        """returns missing required values from input dictionary
         
-        Keyword Argumets:
+        Keyword Arguments:
             cls: Class
             machine_geometry_dict: dict
             materials_dict: dict
@@ -59,20 +50,17 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
             missing_values: list
         """
         missing_values=[]
-        for a in [[cls.required_parameters(),machine_geometry_dict],
-                  [cls.required_materials(),materials_dict],
-                  [cls.required_nameplate(),nameplate_dict]]:
+        for a in [[cls.required_parameters(), machine_geometry_dict],
+                  [cls.required_materials(), materials_dict],
+                  [cls.required_nameplate(), nameplate_dict]]:
             for value in a[0] :
                 if value in a[1]:
                     pass
                 else:
                     missing_values.append(value)
         return missing_values
-    
 
-    def check_required_values(cls,machine_geometry_dict:dict,
-                                              materials_dict:dict,
-                                              nameplate_dict:dict)->bool:
+    def check_required_values(cls, machine_geometry_dict: dict, materials_dict: dict, nameplate_dict: dict) -> bool:
         """Checks to see if input dictionary have required values
         
         Keyword Argumets:
@@ -83,10 +71,7 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
         Return Values
             bool
         """
-        
-        if cls.get_missing_required_values(cls,machine_geometry_dict,
-                                              materials_dict,
-                                              nameplate_dict)==[]:
+        if cls.get_missing_required_values(cls, machine_geometry_dict, materials_dict, nameplate_dict) == []:
             return True
         else:
             return False
@@ -116,7 +101,30 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
                 'Rated_current',
                 'ps'
                 )
-    
+
+    def clone(self, **kwargs) -> 'BSPM_Machine':
+        """Creates a clone of the machine with updated parameters using *kwars.
+
+        Args:
+            **kwargs: Machine dictionary to be updated.
+        Returns:
+            Cloned BSPM_Machine object.
+        """
+        cloned_machine = deepcopy(self)
+        for dict_to_update, updated_values in kwargs.items():
+            if dict_to_update == 'machine_parameter_dict':
+                for key, value in updated_values.items():
+                    cloned_machine._machine_parameter_dict[key] = value
+
+            if dict_to_update == 'nameplate_dict':
+                for key, value in updated_values.items():
+                    cloned_machine._nameplate_dict[key] = value
+
+            if dict_to_update == 'materials_dict':
+                for key, value in updated_values.items():
+                    cloned_machine._materials_dict[key] = value
+        return cloned_machine
+
     @property 
     def delta_e(self):
         return self._machine_parameter_dict['delta_e']
