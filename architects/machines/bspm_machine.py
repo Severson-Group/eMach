@@ -7,7 +7,7 @@ Created on Tue Feb 23 00:41:26 2021
 
 from .machine import Machine, MissingValueError
 from .radial_machines import DPNVWinding, PM_Rotor_Sleeved, Stator, MachineComponent
-    
+from copy import deepcopy
     
 
 __all__ = ['BSPM_Machine']
@@ -116,6 +116,29 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
                 'Rated_current',
                 'ps'
                 )
+    def clone(self,**kwargs)->'BSPM_Machine':
+        """Creates a clone of the machine with updated parameters using *kwars.
+            
+        Args:
+            **kwargs: Machine dictionarys to be updated. 
+            param2: The second parameter.
+        Returns:
+            Cloned BSPM_Machine object.
+        """
+        cloned_machine=deepcopy(self)
+        for dict_to_update, updated_values in kwargs.items():
+            if dict_to_update == 'machine_parameter_dict':
+                for key,value in updated_values.items():
+                    cloned_machine._dict1[key]=value
+                    
+            if dict_to_update == 'nameplate_dict':
+                for key,value in updated_values.items():
+                    cloned_machine._dict2[key]=value
+                    
+            if dict_to_update == 'materials_dict':
+                for key,value in updated_values.items():
+                    cloned_machine._dict3[key]=value
+        return cloned_machine
     
     @property 
     def delta_e(self):
