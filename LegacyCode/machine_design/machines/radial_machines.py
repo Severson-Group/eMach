@@ -40,21 +40,46 @@ class Rotor_Iron(MachineComponent):
 class IM_Rotor_Iron(MachineComponent):
 
     def required_parameters():
-        return ('d_ro','w_rt',)
+        return ('d_ro','r_slot', 'd_rso','d_rbc',)
     def required_materials():
         return ('rotor_iron_mat',)
 
     @property
-    def d_ro(self):
+    def d_ro(self): #Length_HeadNeckRotorSlot #aka pole shoe length
         return self._machine_parameter_dict['d_ro']
-    @property
-    def w_rt(self):
-        return self._machine_parameter_dict['w_rt']
+
+    def d_rs(self): #Radius of rotor slot
+        return self._machine_parameter_dict['d_rs']
+
+    def d_rso(self): #width of the slot opening
+        return self._machine_parameter_dict['d_rso']
+
+    def d_rbc(self): #position of rotor bar center
+        return self._machine_parameter_dict['d_rbc']
 
     @property
     def rotor_iron_mat(self):
         return self._materials_dict['rotor_iron_mat']
 
+
+class IM_Rotor_Bar(MachineComponent):
+    #It uses some dimesnions from IM_Rotor_Iron
+
+    def required_materials():
+        return ('d_rs','d_rbc',)
+    def required_materials():
+        return ('rotor_bar_mat',)
+
+    @property
+    def d_rs(self): # Radius of rotor slot
+        return self._machine_parameter_dict['d_rs']
+
+    def d_rbc(self): #position of the rotor bar center
+        return self._machine_parameter_dict['d_rbc']
+
+    @property
+    def rotor_bar_mat(self):
+        return self._materials_dict['rotor_bar_mat']
 
 class PM(MachineComponent):
 
@@ -105,7 +130,7 @@ class RotorSleeve(MachineComponent):
 #     def required_materials():
 
 
-class IM_Rotor(Shaft, IM_Rotor_Iron, MachineComponent):
+class IM_Rotor(Shaft, IM_Rotor_Iron, IM_Rotor_Bar, MachineComponent):
 
 # Add bar component a bit later
     def required_parameters():
