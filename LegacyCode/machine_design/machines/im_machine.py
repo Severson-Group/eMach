@@ -4,7 +4,7 @@ from .radial_machines import DPNVWinding, IM_Rotor, Stator, MachineComponent
 __all__ = ['IM_Machine']
 
 
-class IM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
+class IM_Machine(Machine, IM_Rotor, Stator, DPNVWinding):
 
     def __init__(self, machine_parameter_dict: dict, materials_dict: dict, nameplate_dict: dict) -> "IM_Machine":
         """ Creates a IM_Machine object
