@@ -74,7 +74,7 @@ class IMArchitectType1(Architect):
             'Radius_OuterRotor'     : free_variables['r_ro'],
             'Radius_Shaft'          : self.__get_r_sh(free_variables),
 
-            'Length_HeadNeckRotorSlot': 1,
+            'Length_HeadNeckRotorSlot': 1, #Jiahao is using 1 mm as default
             'Radius_of_RotorSlot': free_variables['Radius_of_RotorSlot'],
             'Location_RotorBarCenter': free_variables['Location_RotorBarCenter'],
             'Width_RotorSlotOpen': free_variables['Width_RotorSlotOpen'],
@@ -86,12 +86,12 @@ class IMArchitectType1(Architect):
             'Radius_of_RotorSlot2':0,
             'Location_RotorBarCenter2': 0,
 
-            'Angle_StatorSlotOpen': free_variables['Angle_StatorSlotOpen'],
-            'Width_StatorTeethBody': free_variables['w_st'],
-            'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
-            'Width_StatorTeethNeck': free_variables['Width_StatorTeethNeck'],
+            'Angle_StatorSlotOpen'          : self.__get_Angle_StatorSlotOpen,
+            'Width_StatorTeethBody'         : free_variables['w_st'],
+            'Width_StatorTeethHeadThickness': free_variables['d_so'],
+            'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
 
-            'DriveW_poles': free_variables['DriveW_poles'],
+            'DriveW_poles': self.__design_spec['p'],
             'DriveW_zQ': free_variables['DriveW_zQ'],
             'DriveW_Rs': free_variables['DriveW_Rs'],
             'DriveW_CurrentAmp': free_variables['DriveW_CurrentAmp'],
@@ -169,6 +169,17 @@ class IMArchitectType1(Architect):
         d_sp = self.__get_d_sp(free_variables)
         d_st = free_variables['d_st']
         return r_si + d_sp + d_st
+
+    def __get_Angle_StatorSlotOpen(self):
+        return 0.5 * (360 / self.__design_spec['Q'])
+
+    def __turns_calculator(self):
+        desired_emf_Em = 0.95 * self.__design_spec['stator_phase_voltage_rms'] # 0.96~0.98, high speed motor has higher leakage reactance hence 0.95
+        ExcitationFreqSimulated = self.__design_spec['rated_speed']/60
+        flux_linkage_Psi_m = 1.414*desired_emf_Em / (2*3.14*ExcitationFreqSimulated)
+        return flux_linkage_Psi_m
+
+    
 
     #
     #
