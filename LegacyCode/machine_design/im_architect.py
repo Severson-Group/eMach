@@ -1,21 +1,15 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 13 13:20:21 2021
-
-@author: Bharat
-"""
 
 import numpy as np
 
 from .architect import Architect
-from .machines import BSPM_Machine
+from .machines import IM_Machine
 from .winding_layout import WindingLayout
 
-__all__ = ['BSPMArchitectType1']
+__all__ = ['IMArchitectType1']
 
-class BSPMArchitectType1(Architect):
+class IMArchitectType1(Architect):
     '''
-    This class acts as an interface between the end user and the BSPM_Machine class.
+    This class acts as an interface between the end user and the IM_Machine class.
     Each Architect class has to be tailor made based on the expected free variables
     from the optimization algorithm
     
