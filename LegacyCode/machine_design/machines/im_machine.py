@@ -80,7 +80,7 @@ class IM_Machine(Machine, IM_Rotor, Stator, DPNVWinding):
             return False
 
     def required_parameters():
-        req_geo = ('Length_AirGap', 'Radius_OuterStatorYoke', 'Radius_InnerStatorYoke')
+        req_geo=('delta_e','delta','l_st')
         for cl in IM_Machine.__bases__:
             if issubclass(cl, MachineComponent):
                 if cl.required_parameters() is not None:

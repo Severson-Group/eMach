@@ -134,16 +134,22 @@ class IM_Rotor(Shaft, IM_Rotor_Iron, IM_Rotor_Bar, MachineComponent):
 
 # Add bar component a bit later
     def required_parameters():
+        req_param = ('Qr')
         for cl in IM_Rotor.__bases__:
             if cl.required_parameters() is not None:
                 req_param=req_param+cl.required_parameters()
         return req_param
 
     def required_materials():
+        req_mat = tuple()
         for cl in IM_Rotor.__bases__:
             if cl.required_materials() is not None:
                 req_mat=req_mat+cl.required_materials()
         return req_mat
+
+    @property
+    def Qr(self):
+        return self._machine_parameter_dict['Qr']
      
 class PM_Rotor(Shaft,Rotor_Iron,PM,MachineComponent):
 
