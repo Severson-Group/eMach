@@ -98,7 +98,7 @@ class IMArchitectType1(Architect):
             # Not going to consider resistance for now
             # 'DriveW_Rs': free_variables['DriveW_Rs'],
 
-            'DriveW_CurrentAmp': free_variables['DriveW_CurrentAmp'],
+            'DriveW_CurrentAmp': self.__get_current_coil,
             'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
             'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
             'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
@@ -157,9 +157,13 @@ class IMArchitectType1(Architect):
         return machine_variant
 
     @property
-    def __current_coil(self):
-        I_hat = self.__design_spec['wire_A'] * self.__design_spec['J'] * 1.414
-        return I_hat
+    def __get_current_coil(self):
+        stator_phase_current_rms = self.__design_spec['rated_power'] / (\
+                    self.__design_spec['phase']  \
+                    * 0.96 \
+                    * self.__design_spec['voltage_rating'] \
+                    * 0.9)
+        return stator_phase_current_rms
 
     def __get_Radius_OuterStatorYoke(self, free_variables):
         r_si = self.__get_r_si(free_variables)
