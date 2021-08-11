@@ -3,6 +3,7 @@ import numpy as np
 from .architect import Architect
 from .machines import IM_Machine
 from .winding_layout import WindingLayout
+import numpy as np
 
 __all__ = ['IMArchitectType1']
 
@@ -92,8 +93,11 @@ class IMArchitectType1(Architect):
             'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
 
             'DriveW_poles': self.__design_spec['p'],
-            'DriveW_zQ': free_variables['DriveW_zQ'],
-            'DriveW_Rs': free_variables['DriveW_Rs'],
+            'DriveW_zQ': self.__get_turns(self, free_variables),
+
+            # Not going to consider resistance for now
+            # 'DriveW_Rs': free_variables['DriveW_Rs'],
+
             'DriveW_CurrentAmp': free_variables['DriveW_CurrentAmp'],
             'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
             'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
@@ -173,13 +177,36 @@ class IMArchitectType1(Architect):
     def __get_Angle_StatorSlotOpen(self):
         return 0.5 * (360 / self.__design_spec['Q'])
 
-    def __turns_calculator(self):
-        desired_emf_Em = 0.95 * self.__design_spec['stator_phase_voltage_rms'] # 0.96~0.98, high speed motor has higher leakage reactance hence 0.95
-        ExcitationFreqSimulated = self.__design_spec['rated_speed']/60
-        flux_linkage_Psi_m = 1.414*desired_emf_Em / (2*3.14*ExcitationFreqSimulated)
-        return flux_linkage_Psi_m
+    def __get_pole_pitch_tau_p(self, free_variables):
+        air_gap_diameter_D = free_variables['delta_e'] + 2*free_variables['r_ro']
+        return np.pi * air_gap_diameter_D / (2 * self.p)
 
-    
+
+    def __get_turns(self, free_variables):
+        desired_emf_Em = 0.95 * self.__design_spec['voltage_rating'] # 0.96~0.98, high speed motor has higher leakage reactance hence 0.95
+
+        alpha_i = 2 / 3.14 # ideal sinusoidal flux density distribusion, when the saturation happens in teeth, alpha_i becomes higher.
+        air_gap_flux_Phi_m = alpha_i * self.guess_air_gap_flux_density * self.__get_pole_pitch_tau_p(free_variables)\
+                             * self.__get_l_st(free_variables)
+        ExcitationFreqSimulated = self.__design_spec['rated_speed']/60
+        no_series_coil_turns_N = np.round(np.sqrt(2) * desired_emf_Em / (2 * np.pi * ExcitationFreqSimulated\
+                                                                         * self.__design_spec['kw1'] * air_gap_flux_Phi_m))
+
+        if self.__design_spec['DPNV'] == True:
+            number_parallel_branch = 2
+        else:
+            number_parallel_branch = 1
+            # print('\n''In some cases, eselfially in low-voltage, high-power machines, there may be a need to change the stator slot number, the number of parallel paths or even the main dimensions of the machine in order to find the appropriate number of conductors in a slot.''')
+        no_conductors_per_slot_zQ = 2 * 3 * no_series_coil_turns_N / self.__design_spec['Q'] * number_parallel_branch
+        # 3 here is number of phases please change this by adding the machine specification (check bp1_machine_spec)
+        return no_conductors_per_slot_zQ
+
+
+
+
+
+
+
 
     #
     #
@@ -226,8 +253,8 @@ class IMArchitectType1(Architect):
     #     zQ = round(Kcu*s_slot/(2*self.__design_spec['wire_A']));
     #     return zQ
     #
-    # def __get_l_st(self, free_variables):
-    #     return 0.001
+    def __get_l_st(self, free_variables):
+        return 0.001*1000
     #
     # def __get_V_r(self, free_variables):
     #     l_st = self.__get_l_st(free_variables)
