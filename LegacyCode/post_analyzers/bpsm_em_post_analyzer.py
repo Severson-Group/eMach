@@ -52,7 +52,7 @@ class BSPM_EM_PostAnalyzer():
 
         # # Copper volume
         # s_slot = machine.s_slot
-        # # V_scu = machine.Q * self.l_coil * machine.Kcu * machine.s_slot /self.winding_layout.no_winding_layer
+        # V_scu = machine.Q * self.l_coil * machine.Kcu * machine.s_slot /machine.no_of_layers
 
         # r_so    = machine.r_so
         # r_si    = machine.r_si
