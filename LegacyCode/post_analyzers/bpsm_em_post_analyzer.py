@@ -20,7 +20,7 @@ class BSPM_EM_PostAnalyzer():
         results['torque'] = results['torque'].iloc[i:]
         results['force'] = results['force'].iloc[i:]
         results['voltage'] = results['voltage'].iloc[i:]
-        results['hysterisis_loss'] = results['hysterisis_loss']
+        results['hysteresis_loss'] = results['hysteresis_loss']
         results['iron_loss'] = results['iron_loss']
         results['eddy_current_loss'] = results['eddy_current_loss'].iloc[i:]
 
@@ -71,6 +71,10 @@ class BSPM_EM_PostAnalyzer():
         post_processing['Fx'] = f_x
         post_processing['Fy'] = f_y
         post_processing['force_avg'] = force_avg
+        rotor_weight = machine.V_rfe * machine.rotor_iron_mat['core_material_density'] + machine.V_sh * \
+                       machine.shaft_mat['shaft_material_density'] + machine.V_rPM * \
+                       machine.magnet_mat['magnet_material_density']
+        post_processing['FRW'] = force_avg / rotor_weight
         post_processing['Em'] = Em
         post_processing['Ea'] = Ea
 

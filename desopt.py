@@ -31,7 +31,6 @@ class DesignProblem:
         self.objectives = objectives
         self.dh = dh
         self.bounds = bounds
-        self.n_obj = n_obj
 
     def fitness(self, x: 'tuple') -> 'tuple':
         try:
@@ -53,7 +52,7 @@ class DesignProblem:
 
     def get_nobj(self):
         """Returns number of objectives of optimization problem"""
-        return self.n_obj
+        return self.objectives.n_obj
 
 
 @runtime_checkable
