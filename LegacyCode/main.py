@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("..")
 from copy import deepcopy
 
@@ -20,6 +21,8 @@ from mach_eval import AnalysisStep, MachineDesigner, MachineEvaluator
 
 from analyzers import structrual_analyzer as sta
 from analyzers import thermal_analyzer as therm
+from bspm_obj import BspmObjectives
+
 ##############################################################################
 ############################ Define Design ###################################
 ##############################################################################
@@ -51,12 +54,15 @@ stress_limits = {'rad_sleeve': -100E6,
 # spd = sta.SleeveProblemDef(design_variant)
 # problem = spd.get_problem()
 struct_ana = sta.SleeveAnalyzer(stress_limits)
+
+
 # sleeve_dim = ana.analyze(problem)
 # print(sleeve_dim)
 
 
 class StructPostAnalyzer:
     """Converts a State into a problem"""
+
     def get_next_state(results, in_state):
         if results is bool:
             raise AttributeError
@@ -69,6 +75,8 @@ class StructPostAnalyzer:
 
 
 struct_step = AnalysisStep(sta.SleeveProblemDef, struct_ana, StructPostAnalyzer)
+
+
 ##############################################################################
 ############################ Define EM AnalysisStep ##########################
 ##############################################################################
@@ -76,6 +84,7 @@ struct_step = AnalysisStep(sta.SleeveProblemDef, struct_ana, StructPostAnalyzer)
 
 class BSPM_EM_ProblemDefinition():
     """Converts a State into a problem"""
+
     def get_problem(state):
         problem = BSPM_EM_Problem(state.design.machine, state.design.settings)
         return problem
@@ -86,6 +95,8 @@ em_analysis = BSPM_EM_Analysis(JMAG_FEA_Configuration)
 
 # define em step
 em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
+
+
 ##############################################################################
 ############################ Define Thermal AnalysisStep #####################
 ##############################################################################
@@ -93,6 +104,7 @@ em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnaly
 
 class AirflowPostAnalyzer:
     """Converts a State into a problem"""
+
     def get_next_state(results, in_state):
         if results['valid'] is False:
             raise AttributeError
@@ -103,6 +115,8 @@ class AirflowPostAnalyzer:
 
 
 thermal_step = AnalysisStep(therm.AirflowProblemDef, therm.AirflowAnalyzer, AirflowPostAnalyzer)
+
+
 ##############################################################################
 ############################ Define Windage AnalysisStep #####################
 ##############################################################################
@@ -110,8 +124,16 @@ thermal_step = AnalysisStep(therm.AirflowProblemDef, therm.AirflowAnalyzer, Airf
 
 class WindageLossPostAnalyzer:
     """Converts a State into a problem"""
+
     def get_next_state(results, in_state):
         state_out = deepcopy(in_state)
+        state_out.conditions.windage_loss = results
+        machine = state_out.design.machine
+        state_out.conditions.efficiency = 100 * machine.mech_power / (machine.mech_power + results +
+                                                                      state_out.conditions.em['rotor_iron_loss'] +
+                                                                      state_out.conditions.em['stator_iron_loss'] +
+                                                                      state_out.conditions.em['magnet_loss'])
+
         return state_out
 
 
@@ -120,3 +142,4 @@ windage_step = AnalysisStep(therm.WindageProblemDef, therm.WindageLossAnalyzer, 
 # evaluate machine design
 evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step, windage_step])
 results = evaluator.evaluate(design_variant)
+objectives = BspmObjectives.get_objectives(True, results)
