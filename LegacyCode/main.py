@@ -16,7 +16,7 @@ from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 from problems.bspm_em_problem import BSPM_EM_Problem
 from post_analyzers.bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
 from length_scale_step import LengthScaleStep
-from mach_eval import AnalysisStep, State, MachineDesigner, MachineEvaluator
+from mach_eval import AnalysisStep, MachineDesigner, MachineEvaluator
 
 from analyzers import structrual_analyzer as sta
 from analyzers import thermal_analyzer as therm
@@ -36,11 +36,11 @@ set_handler = BSPM_Settings_Handler()
 bspm_designer = MachineDesigner(arch, set_handler)
 # create machine variant using architect
 free_var = (0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 0, 3e-3,
-            0.0, 0.95, 0, 0.05, 150000, 25, 55)
+            0.0, 0.95, 0, 0.05, 160000, 25, 55)
 # set operating point for BSPM machine
 
 design_variant = bspm_designer.create_design(free_var)
-
+print(design_variant.machine.Z_q)
 ##############################################################################
 ############################ Define Struct AnalysisStep ######################
 ##############################################################################
@@ -69,23 +69,8 @@ class StructPostAnalyzer:
 
 
 struct_step = AnalysisStep(sta.SleeveProblemDef, struct_ana, StructPostAnalyzer)
-
 ##############################################################################
-############################ Define Thermal AnalysisStep #####################
-##############################################################################
-
-
-class AirflowPostAnalyzer:
-    """Converts a State into a problem"""
-    def get_next_state(results, in_state):
-        state_out = deepcopy(in_state)
-        return state_out
-
-
-thermal_step = AnalysisStep(therm.AirflowProblemDef, therm.AirflowAnalyzer, AirflowPostAnalyzer)
-
-##############################################################################
-############################ Define em AnalysisStep ##########################
+############################ Define EM AnalysisStep ##########################
 ##############################################################################
 
 
@@ -101,8 +86,37 @@ em_analysis = BSPM_EM_Analysis(JMAG_FEA_Configuration)
 
 # define em step
 em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
+##############################################################################
+############################ Define Thermal AnalysisStep #####################
+##############################################################################
+
+
+class AirflowPostAnalyzer:
+    """Converts a State into a problem"""
+    def get_next_state(results, in_state):
+        if results['valid'] is False:
+            raise AttributeError
+        else:
+            state_out = deepcopy(in_state)
+            state_out.conditions.airflow = results['Required Airflow']
+        return state_out
+
+
+thermal_step = AnalysisStep(therm.AirflowProblemDef, therm.AirflowAnalyzer, AirflowPostAnalyzer)
+##############################################################################
+############################ Define Windage AnalysisStep #####################
+##############################################################################
+
+
+class WindageLossPostAnalyzer:
+    """Converts a State into a problem"""
+    def get_next_state(results, in_state):
+        state_out = deepcopy(in_state)
+        return state_out
+
+
+windage_step = AnalysisStep(therm.WindageProblemDef, therm.WindageLossAnalyzer, WindageLossPostAnalyzer)
 
 # evaluate machine design
-evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step])
+evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step, windage_step])
 results = evaluator.evaluate(design_variant)
-
