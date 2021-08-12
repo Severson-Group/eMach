@@ -917,7 +917,7 @@ class BSPM_EM_Analysis():
         torque_csv_path = path + study_name + '_torque.csv'
         force_csv_path = path + study_name + '_force.csv'
         iron_loss_path = path + study_name + '_iron_loss_loss.csv'
-        hysterisis_loss_path = path + study_name + '_hysteresis_loss_loss.csv'
+        hysteresis_loss_path = path + study_name + '_hysteresis_loss_loss.csv'
         eddy_current_loss_path = path + study_name + '_joule_loss.csv'
 
         curr_df = pd.read_csv(current_csv_path, skiprows=6)
@@ -925,7 +925,7 @@ class BSPM_EM_Analysis():
         tor_df = pd.read_csv(torque_csv_path, skiprows=6)
         force_df = pd.read_csv(force_csv_path, skiprows=6)
         iron_df = pd.read_csv(iron_loss_path, skiprows=6)
-        hyst_df = pd.read_csv(hysterisis_loss_path, skiprows=6)
+        hyst_df = pd.read_csv(hysteresis_loss_path, skiprows=6)
         eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
 
         range_2TS = int(
@@ -945,7 +945,7 @@ class BSPM_EM_Analysis():
             'torque': tor_df,
             'force': force_df,
             'iron_loss': iron_df,
-            'hysterisis_loss': hyst_df,
+            'hysteresis_loss': hyst_df,
             'eddy_current_loss': eddy_df,
             'copper_loss': self.copper_loss,
             'range_fine_step': range_2TS

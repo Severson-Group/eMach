@@ -21,7 +21,7 @@ from mach_eval import AnalysisStep, MachineDesigner, MachineEvaluator
 
 from analyzers import structrual_analyzer as sta
 from analyzers import thermal_analyzer as therm
-from bspm_obj import BspmObjectives
+from bspm_obj import BSPMObjectives, BSPMConstraints
 
 ##############################################################################
 ############################ Define Design ###################################
@@ -124,7 +124,6 @@ thermal_step = AnalysisStep(therm.AirflowProblemDef, therm.AirflowAnalyzer, Airf
 
 class WindageLossPostAnalyzer:
     """Converts a State into a problem"""
-
     def get_next_state(results, in_state):
         state_out = deepcopy(in_state)
         state_out.conditions.windage_loss = results
@@ -133,7 +132,6 @@ class WindageLossPostAnalyzer:
                                                                       state_out.conditions.em['rotor_iron_loss'] +
                                                                       state_out.conditions.em['stator_iron_loss'] +
                                                                       state_out.conditions.em['magnet_loss'])
-
         return state_out
 
 
@@ -142,4 +140,5 @@ windage_step = AnalysisStep(therm.WindageProblemDef, therm.WindageLossAnalyzer, 
 # evaluate machine design
 evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step, windage_step])
 results = evaluator.evaluate(design_variant)
-objectives = BspmObjectives.get_objectives(True, results)
+constraints = BSPMConstraints.check_constraints(results)
+objectives = BSPMObjectives.get_objectives(constraints, results)
