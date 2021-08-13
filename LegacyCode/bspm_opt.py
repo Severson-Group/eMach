@@ -1,8 +1,16 @@
 class BSPMOptimization:
     def __init__(self, n_obj, bounds):
-        self.n_obj = n_obj
-        self.bounds = bounds
-        
+        self.__n_obj = n_obj
+        self.__bounds = bounds
+
+    @property
+    def n_obj(self):
+        return self.__n_obj
+
+    @property
+    def bounds(self):
+        return self.__bounds
+
     def get_objectives(self, valid_constraints, full_results):
         if not valid_constraints:
             f1, f2, f3 = 9999, 9999, 9999  # bad fitness values
