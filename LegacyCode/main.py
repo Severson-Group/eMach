@@ -23,7 +23,7 @@ from analyzers import thermal_analyzer as therm
 
 from bspm_opt import BSPMOptimization
 from mach_eval import AnalysisStep, MachineDesigner, MachineEvaluator
-from des_opt import DesignProblem, DesignOptimizationMOEAD
+from des_opt import DesignProblem, DesignOptimizationMOEAD, InvalidDesign
 
 from datahandler import DataHandler
 ##############################################################################
@@ -61,7 +61,7 @@ class StructPostAnalyzer:
 
     def get_next_state(results, in_state):
         if results is bool:
-            raise AttributeError
+            raise InvalidDesign('Suitable sleeve not found')
         else:
             machine = in_state.design.machine
             new_machine = machine.clone(machine_parameter_dict={'d_sl': results[0]})
@@ -103,7 +103,7 @@ class AirflowPostAnalyzer:
 
     def get_next_state(results, in_state):
         if results['valid'] is False:
-            raise AttributeError
+            raise InvalidDesign('Magnet temperature beyond limits')
         else:
             state_out = deepcopy(in_state)
             state_out.conditions.airflow = results['Required Airflow']
@@ -138,19 +138,22 @@ windage_step = AnalysisStep(therm.WindageProblemDef, therm.WindageLossAnalyzer, 
 evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step, windage_step])
 
 # run optimization
-bp2 = [0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 0, 3e-3]
+bp2 = (0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 0, 3e-3)
+# design = bspm_designer.create_design(bp2)
+# results = evaluator.evaluate(design)
+
 bounds = [
-    [0.7 * bp2[0], 2 * bp2[0]],  # delta_e  
+    [0.9 * bp2[0], 1.1 * bp2[0]],  # delta_e
     [0.8 * bp2[1], 1.2 * bp2[1]],  # r_ro    this will change the tip speed
-    [0.3 * bp2[2], 0.85 * bp2[2]],  # alpha_st 
-    [0.25 * bp2[3], 4 * bp2[3]],  # d_so     
-    [0.6 * bp2[4], 1.3 * bp2[4]],  # w_st     
-    [0.6 * bp2[5], 1.2 * bp2[5]],  # d_st    
-    [0.7 * bp2[6], 1.4 * bp2[6]],  # d_sy     
-    [0.6 * bp2[7], 1 * bp2[7]],  # alpha_m  
-    [0.5 * bp2[8], 3 * bp2[8]],  # d_m      
-    [0 * bp2[9], 7 * bp2[9]],  # d_mp     
-    [0.3 * bp2[10], 1 * bp2[10]],  # d_ri 
+    [0.9 * bp2[2], 1.1 * bp2[2]],  # alpha_st
+    [0.9 * bp2[3], 1.1 * bp2[3]],  # d_so
+    [0.9 * bp2[4], 1.1 * bp2[4]],  # w_st
+    [0.9 * bp2[5], 1.1 * bp2[5]],  # d_st
+    [0.9 * bp2[6], 1.1 * bp2[6]],  # d_sy
+    [0.9 * bp2[7], 1 * bp2[7]],  # alpha_m
+    [0.9 * bp2[8], 1.1 * bp2[8]],  # d_m
+    [0.9 * bp2[9], 1.1 * bp2[9]],  # d_mp
+    [0.9 * bp2[10], 1.1 * bp2[10]],  # d_ri
 ]
 
 opt_settings = BSPMOptimization(3, bounds)
