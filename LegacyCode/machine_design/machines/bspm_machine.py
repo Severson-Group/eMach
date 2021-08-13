@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Feb 23 00:41:26 2021
-
-@author: Bharat
-"""
 
 from .machine import Machine, MissingValueError
 from .radial_machines import DPNVWinding, PM_Rotor_Sleeved, Stator, MachineComponent
