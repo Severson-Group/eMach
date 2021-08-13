@@ -78,9 +78,21 @@ class Constraint(Protocol):
         raise NotImplementedError
 
 
-class Objective(Protocol):
+class Optimization(Protocol):
+    @abstractmethod
+    def check_constraints(self, full_results) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def n_obj(self) -> int:
+        return NotImplementedError
+
     @abstractmethod
     def get_objectives(self, valid_constraints, full_results) -> tuple:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_bounds(self, x) -> tuple:
         raise NotImplementedError
 
 

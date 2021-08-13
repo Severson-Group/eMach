@@ -1,5 +1,9 @@
-class BSPMObjectives:
-    def get_objectives(valid_constraints, full_results):
+class BSPMOptimization:
+    def __init__(self, n_obj, bounds):
+        self.n_obj = n_obj
+        self.bounds = bounds
+        
+    def get_objectives(self, valid_constraints, full_results):
         if not valid_constraints:
             f1, f2, f3 = 9999, 9999, 9999  # bad fitness values
         else:
@@ -22,13 +26,7 @@ class BSPMObjectives:
             f3 = weighted_ripple_sum
         return f1, f2, f3
 
-    @property
-    def n_obj(self):
-        return 3
-
-
-class BSPMConstraints:
-    def check_constraints(full_results):
+    def check_constraints(self, full_results):
         valid_constraints = True
         final_results = full_results[-1]
         final_state = final_results[-1]
