@@ -6,7 +6,7 @@ manner suitable for both machine optimization and evaluation.
 
 from typing import Protocol, runtime_checkable, Any, List
 from abc import abstractmethod, ABC
-from desopt import Design, Evaluator, Designer
+from des_opt import Design, Evaluator, Designer
 from copy import deepcopy
 
 

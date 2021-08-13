@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import sys
 sys.path.append("..")
-import desopt as do
+import des_opt as do
 import pygmo as pg
 from typing import List,Tuple
 

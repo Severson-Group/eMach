@@ -1,3 +1,4 @@
+
 import pygmo as pg
 from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
@@ -6,38 +7,41 @@ import traceback
 
 
 class DesignOptimizationMOEAD:
-    def __init__(self, machine_design_problem):
-        self.machine_design_problem = machine_design_problem
+    def __init__(self, design_problem):
+        self.design_problem = design_problem
 
-    def run_optimization(self, pop_size, gen_size):
-        prob = pg.problem(self.machine_design_problem)
+    def initial_pop(self, pop_size):
+        prob = pg.problem(self.design_problem)
         pop = pg.population(prob, size=pop_size)
-        algo = pg.algorithm(pg.moead(gen=gen_size, weight_generation="grid",
+        return pop
+
+    def run_optimization(self, pop, gen_size):
+        algo = pg.algorithm(pg.moead(gen=1, weight_generation="grid",
                                      decomposition="tchebycheff",
                                      neighbours=20,
                                      CR=1, F=0.5, eta_m=20,
                                      realb=0.9,
                                      limit=2, preserve_diversity=True))
-        pop = algo.evolve(pop)
+        for _ in range(0, gen_size):
+            pop = algo.evolve(pop)
         return pop
 
 
+
+
 class DesignProblem:
-    def __init__(self, designer: 'Designer', evaluator: 'Evaluator', constraints: 'Constraint', objectives: 'Objective'
-                 , dh: 'DataHandler', bounds: 'tuple', n_obj: 'int'):
+    def __init__(self, designer: 'Designer', evaluator: 'Evaluator', optimization: 'Optimization', dh: 'DataHandler'):
         self.designer = designer
         self.evaluator = evaluator
-        self.constraints = constraints
-        self.objectives = objectives
+        self.optimization = optimization
         self.dh = dh
-        self.bounds = bounds
 
     def fitness(self, x: 'tuple') -> 'tuple':
         try:
             design = self.designer.create_design(x)
             full_results = self.evaluator.evaluate(design)
-            valid_constraints = self.constraints.check_constraints(full_results)
-            objs = self.objectives.get_objectives(valid_constraints, full_results)
+            valid_constraints = self.optimization.check_constraints(full_results)
+            objs = self.optimization.get_objectives(valid_constraints, full_results)
             self.dh.save(design, full_results, objs)
         except Exception as e:
             print(e)
@@ -48,11 +52,17 @@ class DesignProblem:
 
     def get_bounds(self):
         """Returns bounds for optimization problem"""
-        return self.bounds
+        bounds_denorm = self.optimization.bounds
+        print('---------------------\nBounds:')
+        for idx, bounds in enumerate(bounds_denorm):
+            print(idx, bounds)
+        min_b, max_b = np.asarray(bounds_denorm).T
+        min_b, max_b = min_b.astype(float), max_b.astype(float)
+        return min_b.tolist(), max_b.tolist()
 
     def get_nobj(self):
         """Returns number of objectives of optimization problem"""
-        return self.objectives.n_obj
+        return self.optimization.n_obj
 
 
 @runtime_checkable
@@ -70,12 +80,6 @@ class Evaluator(Protocol):
     @abstractmethod
     def evaluate(self, design: 'Design') -> Any:
         pass
-
-
-class Constraint(Protocol):
-    @abstractmethod
-    def check_constraints(self, full_results) -> bool:
-        raise NotImplementedError
 
 
 class Optimization(Protocol):
