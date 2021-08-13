@@ -13,14 +13,16 @@ EPS = 1e-2  # unit: mm
 class BSPM_EM_Analysis():
     def __init__(self, configuration):
         self.configuration = configuration
+        self.counter = 0
 
     def analyze(self, problem, counter=0):
+        self.counter = self.counter + 1
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
-        self.project_name = 'proj_%d_' % counter
+        self.project_name = 'proj_%d_' % self.counter
 
         expected_project_file = self.configuration['run_folder'] + "%s.jproj" % self.project_name
 
@@ -31,11 +33,12 @@ class BSPM_EM_Analysis():
         from .electrical_analysis.JMAG import JMAG
         toolJd = JMAG(self.configuration)
         app, attempts = toolJd.open(expected_project_file)
+        print('Application is', app)
         if attempts > 1:
             self.project_name = self.project_name + 'attempts_%d' % (attempts)
 
         self.study_name = self.project_name + "TranPMSM"
-        self.design_results_folder = self.configuration['run_folder'] + "%sresults/" % (self.project_name)
+        self.design_results_folder = self.configuration['run_folder'] + "%sresults/" % self.project_name
         if not os.path.isdir(self.design_results_folder):
             os.makedirs(self.design_results_folder)
         ################################################################
@@ -98,9 +101,9 @@ class BSPM_EM_Analysis():
     @property
     def l_coil(self):
         tau_u = (2 * np.pi / self.machine_variant.Q) * (
-                    self.machine_variant.r_si + self.machine_variant.d_sp + self.machine_variant.d_st / 2)
+                self.machine_variant.r_si + self.machine_variant.d_sp + self.machine_variant.d_st / 2)
         l_ew = np.pi * 0.5 * (tau_u + self.machine_variant.w_st) / 2 + tau_u * self.machine_variant.Kov * (
-                    self.machine_variant.pitch - 1)
+                self.machine_variant.pitch - 1)
         l_coil = 2 * (self.machine_variant.l_st + l_ew)  # length of one coil
         return l_coil
 
@@ -108,7 +111,7 @@ class BSPM_EM_Analysis():
     def R_coil(self):
         a_wire = (self.machine_variant.s_slot * self.machine_variant.Kcu) / (2 * self.machine_variant.Z_q)
         return (self.l_coil * self.machine_variant.Z_q * self.machine_variant.Q / 6) / (
-                    self.machine_variant.coil_mat['copper_elec_conductivity'] * a_wire)
+                self.machine_variant.coil_mat['copper_elec_conductivity'] * a_wire)
 
     @property
     def copper_loss(self):
@@ -205,7 +208,7 @@ class BSPM_EM_Analysis():
 
     def pre_process(self, app, model):
         # pre-process : you can select part by coordinate!
-        ''' Group '''
+        """ Group """
 
         def group(name, id_list):
             model.GetGroupList().CreateGroup(name)
@@ -317,8 +320,6 @@ class BSPM_EM_Analysis():
         return True
 
     def add_magnetic_transient_study(self, app, model, dir_csv_output_folder, study_name):
-        self = self
-
         model.CreateStudy("Transient2D", study_name)
         app.SetCurrentStudy(study_name)
         study = model.GetStudy(study_name)
@@ -331,7 +332,7 @@ class BSPM_EM_Analysis():
         self.add_material(study)
 
         # Conditions - Motion
-        self.the_speed = self.excitation_freq * 60. / (self.machine_variant.p)  # rpm
+        self.the_speed = self.excitation_freq * 60. / self.machine_variant.p  # rpm
         study.CreateCondition("RotationMotion",
                               "RotCon")  # study.GetCondition(u"RotCon").SetXYZPoint(u"", 0, 0, 1) # megbox warning
         print('the_speed:', self.the_speed)
@@ -341,9 +342,10 @@ class BSPM_EM_Analysis():
         # Implementation of id=0 control:
         #   d-axis initial position is self.alpha_m*0.5
         #   The U-phase current is sin(omega_syn*t) = 0 at t=0.
-        study.GetCondition("RotCon").SetValue(u"InitialRotationAngle",
-                                              -self.machine_variant.alpha_m * 0.5 + 90 + self.initial_excitation_bias_compensation_deg() + (
-                                                          180 / self.machine_variant.p))  # add 360/(2p) deg to reverse the initial magnetizing direction to make torque positive.
+        study.GetCondition("RotCon").SetValue(u"InitialRotationAngle", -self.machine_variant.alpha_m * 0.5 + 90 +
+                                              self.initial_excitation_bias_compensation_deg() +
+                                              (180 / self.machine_variant.p))
+        # add 360/(2p) deg to reverse the initial magnetizing direction to make torque positive.
 
         study.CreateCondition("Torque",
                               "TorCon")  # study.GetCondition(u"TorCon").SetXYZPoint(u"", 0, 0, 0) # megbox warning
@@ -372,9 +374,10 @@ class BSPM_EM_Analysis():
             # https://www2.jmag-international.com/support/en/pdf/JMAG-Designer_Ver.17.1_ENv3.pdf
             study.GetStudyProperties().SetValue("DirectSolverType", 1)
 
-        if self.configuration['MultipleCPUs'] == True:
+        if self.configuration['MultipleCPUs']:
             # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
-            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough for eddy current solve. 6~8 is enough for transient solve.
+            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
+            # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", 2)
 
@@ -397,7 +400,7 @@ class BSPM_EM_Analysis():
             refarray[2][1] = number_of_steps_2TS  # 最后的number_of_steps_2TS（32）步，必须对应半个周期，从而和后面的铁耗计算相对应。
             refarray[2][2] = 50
             DM.GetDataSet("SectionStepTable").SetTable(refarray)
-            number_of_total_steps = 1 + number_of_steps_1TS + number_of_steps_2TS  # [Double Check] don't forget to modify here!
+            number_of_total_steps = 1 + number_of_steps_1TS + number_of_steps_2TS  # don't forget to modify here!
             study.GetStep().SetValue("Step", number_of_total_steps)
             study.GetStep().SetValue("StepType", 3)
             study.GetStep().SetTableProperty("Division", DM.GetDataSet("SectionStepTable"))
@@ -406,7 +409,7 @@ class BSPM_EM_Analysis():
         study.GetDesignTable().AddEquation("freq")
         study.GetDesignTable().AddEquation("speed")
         study.GetDesignTable().GetEquation("freq").SetType(0)
-        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % ((self.excitation_freq)))
+        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.excitation_freq)
         study.GetDesignTable().GetEquation("freq").SetDescription("Excitation Frequency")
         study.GetDesignTable().GetEquation("speed").SetType(1)
         study.GetDesignTable().GetEquation("speed").SetExpression("freq * %d" % (60 / self.machine_variant.p))
@@ -419,7 +422,7 @@ class BSPM_EM_Analysis():
         # Stator 
         if True:
             cond = study.CreateCondition("Ironloss", "IronLossConStator")
-            cond.SetValue("RevolutionSpeed", "freq*60/%d" % (self.machine_variant.p))
+            cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
             cond.ClearParts()
             sel = cond.GetSelection()
             sel.SelectPartByPosition(self.machine_variant.r_si * 1e3 + EPS, EPS, 0)
@@ -429,14 +432,14 @@ class BSPM_EM_Analysis():
             cond.SetValue("PresetType", 3)  # 3:Custom
             # Specify the reference steps yourself because you don't really know what JMAG is doing behind you
             cond.SetValue("StartReferenceStep",
-                          number_of_total_steps + 1 - number_of_steps_2TS * 0.5)  # 1/4 period <=> number_of_steps_2TS*0.5
+                          number_of_total_steps + 1 - number_of_steps_2TS * 0.5)  # 1/4 period = number_of_steps_2TS*0.5
             cond.SetValue("EndReferenceStep", number_of_total_steps)
             cond.SetValue("UseStartReferenceStep", 1)
             cond.SetValue("UseEndReferenceStep", 1)
             cond.SetValue("Cyclicity", 4)  # specify reference steps for 1/4 period and extend it to whole period
             cond.SetValue("UseFrequencyOrder", 1)
             cond.SetValue("FrequencyOrder", "1-50")  # Harmonics up to 50th orders
-        # Check CSV reults for iron loss (You cannot check this for Freq study) # CSV and save space
+        # Check CSV results for iron loss (You cannot check this for Freq study) # CSV and save space
         study.GetStudyProperties().SetValue("CsvOutputPath", dir_csv_output_folder)  # it's folder rather than file!
         study.GetStudyProperties().SetValue("CsvResultTypes", self.configuration['Csv_Results'])
         study.GetStudyProperties().SetValue("DeleteResultFiles", self.configuration['delete_results_after_calculation'])
@@ -446,7 +449,8 @@ class BSPM_EM_Analysis():
             cond = study.CreateCondition("Ironloss", "IronLossConRotor")
             cond.SetValue("BasicFrequencyType", 2)
             cond.SetValue("BasicFrequency", "freq")
-            # cond.SetValue(u"BasicFrequency", u"slip*freq") # this require the signal length to be at least 1/4 of slip period, that's too long!
+            # cond.SetValue(u"BasicFrequency", u"slip*freq") # this require the signal length to be at least 1/4 of
+            # slip period, that's too long!
             cond.ClearParts()
             sel = cond.GetSelection()
             sel.SelectPart(self.id_backiron)
@@ -457,7 +461,7 @@ class BSPM_EM_Analysis():
             cond.SetValue("PresetType", 3)
             # Specify the reference steps yourself because you don't really know what JMAG is doing behind you
             cond.SetValue("StartReferenceStep",
-                          number_of_total_steps + 1 - number_of_steps_2TS * 0.5)  # 1/4 period <=> number_of_steps_2TS*0.5
+                          number_of_total_steps + 1 - number_of_steps_2TS * 0.5)  # 1/4 period = number_of_steps_2TS*0.5
             cond.SetValue("EndReferenceStep", number_of_total_steps)
             cond.SetValue("UseStartReferenceStep", 1)
             cond.SetValue("UseEndReferenceStep", 1)
@@ -475,20 +479,23 @@ class BSPM_EM_Analysis():
         study.GetMeshControl().GetTable("SlideTable2D").SetTable(refarray)
 
         study.GetMeshControl().SetValue("MeshType",
-                                        1)  # make sure this has been exe'd: study.GetCondition(u"RotCon").AddSet(model.GetSetList().GetSet(u"Motion_Region"), 0)
+                                        1)  # make sure this has been exe'd:
+        # study.GetCondition(u"RotCon").AddSet(model.GetSetList().GetSet(u"Motion_Region"), 0)
         study.GetMeshControl().SetValue("RadialDivision", self.configuration[
             'mesh_radial_division'])  # for air region near which motion occurs
         study.GetMeshControl().SetValue("CircumferentialDivision", self.configuration[
             'mesh_circum_division'])  # 1440) # for air region near which motion occurs 这个数足够大，sliding mesh才准确。
         study.GetMeshControl().SetValue("AirRegionScale", self.configuration[
-            'mesh_air_region_scale'])  # [Model Length]: Specify a value within the following area. (1.05 <= value < 1000)
+            'mesh_air_region_scale'])  # [Model Length]: Specify a value within (1.05 <= value < 1000)
         study.GetMeshControl().SetValue("MeshSize", self.configuration['mesh_size'] * 1e3)  # mm
         study.GetMeshControl().SetValue("AutoAirMeshSize", 0)
         study.GetMeshControl().SetValue("AirMeshSize", self.configuration['mesh_size'] * 1e3)  # mm
         study.GetMeshControl().SetValue("Adaptive", 0)
 
-        # This is not neccessary for whole model FEA. In fact, for BPMSM simulation, it causes mesh error "The copy target region is not found".
-        # study.GetMeshControl().CreateCondition("RotationPeriodicMeshAutomatic", "autoRotMesh") # with this you can choose to set CircumferentialDivision automatically
+        # This is not neccessary for whole model FEA. In fact, for BPMSM simulation, it causes mesh error "The copy
+        # target region is not found".
+        # study.GetMeshControl().CreateCondition("RotationPeriodicMeshAutomatic", "autoRotMesh") with this you can
+        # choose to set CircumferentialDivision automatically
 
         study.GetMeshControl().CreateCondition("Part", "MagnetMeshCtrl")
         study.GetMeshControl().GetCondition("MagnetMeshCtrl").SetValue("Size", self.configuration[
@@ -500,7 +507,7 @@ class BSPM_EM_Analysis():
             numCase = study.GetDesignTable().NumCases()
             for case in range(0, numCase):
                 study.SetCurrentCase(case)
-                if study.HasMesh() == False:
+                if not study.HasMesh():
                     study.CreateMesh()
 
         mesh_all_cases(study)
@@ -637,13 +644,14 @@ class BSPM_EM_Analysis():
         app.ShowCircuitGrid(True)
         study.CreateCircuit()
 
-        # 4 pole motor Qs=24 dpnv implemented by two layer winding (6 coils). In this case, drive winding has the same slot turns as bearing winding
+        # 4 pole motor Qs=24 dpnv implemented by two layer winding (6 coils). In this case, drive winding has the same
+        # slot turns as bearing winding
         def circuit(poles, turns, Rs, ampT, ampS, freq, x=10, y=10):
             # Star Connection_2 is GroupAC
             # Star Connection_4 is GroupBD
 
             # placing Coils
-            y_offset = 0;
+            y_offset = 0
             study.GetCircuit().CreateComponent("Coil", "coil_Ua")
             study.GetCircuit().CreateInstance("coil_Ua", x - 4, y + y_offset + 6)
             study.GetCircuit().GetComponent("coil_Ua").SetValue("Turn", turns)
@@ -721,51 +729,43 @@ class BSPM_EM_Analysis():
 
             # Setting current values
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(ampT, freq,
-                                           0)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
+            f1 = app.FunctionFactory().Sin(ampT, freq, 0)
+            # "freq" variable cannot be used here. So pay extra attension when you create new case of a different freq.
             func.AddFunction(f1)
             study.GetCircuit().GetComponent(I1t).SetFunction(func)
 
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(ampT, freq,
-                                           -120)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
+            f1 = app.FunctionFactory().Sin(ampT, freq, -120)
             func.AddFunction(f1)
             study.GetCircuit().GetComponent(I2t).SetFunction(func)
 
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(ampT, freq,
-                                           -240)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
+            f1 = app.FunctionFactory().Sin(ampT, freq, -240)
             func.AddFunction(f1)
             study.GetCircuit().GetComponent(I3t).SetFunction(func)
 
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(ampS, freq,
-                                           0)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
-            f2 = app.FunctionFactory().Sin(-ampT / 2, freq,
-                                           0)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
+            f1 = app.FunctionFactory().Sin(ampS, freq, 0)
+            f2 = app.FunctionFactory().Sin(-ampT / 2, freq, 0)
             func.AddFunction(f1)
             func.AddFunction(f2)
             study.GetCircuit().GetComponent(I1s).SetFunction(func)
 
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(ampS, freq,
-                                           120)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
-            f2 = app.FunctionFactory().Sin(-ampT / 2, freq,
-                                           -120)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
+            f1 = app.FunctionFactory().Sin(ampS, freq, 120)
+            f2 = app.FunctionFactory().Sin(-ampT / 2, freq, -120)
             func.AddFunction(f1)
             func.AddFunction(f2)
             study.GetCircuit().GetComponent(I2s).SetFunction(func)
 
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(ampS, freq,
-                                           240)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
-            f2 = app.FunctionFactory().Sin(-ampT / 2, freq,
-                                           -240)  # "freq" variable cannot be used here. So pay extra attension here when you create new case of a different freq.
+            f1 = app.FunctionFactory().Sin(ampS, freq, 240)
+            f2 = app.FunctionFactory().Sin(-ampT / 2, freq, -240)
             func.AddFunction(f1)
             func.AddFunction(f2)
             study.GetCircuit().GetComponent(I3s).SetFunction(func)
 
-            # Terminal Voltage/Circuit Voltage: Check for outputing CSV results 
+            # Terminal Voltage/Circuit Voltage: Check for outputting CSV results
             study.GetCircuit().CreateTerminalLabel("Terminal_Us", 6, -14)
             study.GetCircuit().CreateTerminalLabel("Terminal_Ws", 0, -6)
             study.GetCircuit().CreateTerminalLabel("Terminal_Vs", 20, -6)
@@ -777,7 +777,7 @@ class BSPM_EM_Analysis():
         current_speak = self.current_srms * np.sqrt(2)  # Is, max current at suspension terminal Is+It/2
 
         slot_area_utilizing_ratio = (current_tpeak / 2 + current_speak) / (
-                    self.machine_variant.Rated_current * np.sqrt(2))
+                self.machine_variant.Rated_current * np.sqrt(2))
         print('---Slot area utilizing ratio is', slot_area_utilizing_ratio)
         print('---Peak Current per coil :', self.machine_variant.Rated_current * np.sqrt(2))
         print('---Peak torque current :', current_tpeak)
@@ -789,7 +789,7 @@ class BSPM_EM_Analysis():
                 ampS=current_speak, freq=self.excitation_freq)
 
         for suffix, poles in zip(['a', 'b'], [self.machine_variant.p * 2,
-                                              self.machine_variant.ps * 2]):  # 仍然需要考虑poles，是因为为Coil设置Set那里的代码还没有更新。这里的2(self.DriveW_poles)和4(self.BeariW_poles)等价于leftlayer和rightlayer。
+                                              self.machine_variant.ps * 2]):
             for UVW in ['U', 'V', 'W']:
                 study.CreateCondition("FEMCoil", 'phase_' + UVW + suffix)
                 # link between FEM Coil Condition and Circuit FEM Coil
@@ -809,8 +809,8 @@ class BSPM_EM_Analysis():
 
             # right layer
             # print (count, "Coil Set %d"%(count), end=' ')
-            condition.CreateSubCondition("FEMCoilData", "Coil Set Right %d" % (count))
-            subcondition = condition.GetSubCondition("Coil Set Right %d" % (count))
+            condition.CreateSubCondition("FEMCoilData", "Coil Set Right %d" % count)
+            subcondition = condition.GetSubCondition("Coil Set Right %d" % count)
             subcondition.ClearParts()
             subcondition.AddSet(model.GetSetList().GetSet("coil_%s%s%s %d" % ('right_', UVW, UpDown, count)),
                                 0)  # right layer
@@ -847,8 +847,8 @@ class BSPM_EM_Analysis():
                 else:
                     UpDown = '+'
             # print (count_leftlayer, "Coil Set %d"%(count_leftlayer))
-            condition.CreateSubCondition("FEMCoilData", "Coil Set Left %d" % (count_leftlayer))
-            subcondition = condition.GetSubCondition("Coil Set Left %d" % (count_leftlayer))
+            condition.CreateSubCondition("FEMCoilData", "Coil Set Left %d" % count_leftlayer)
+            subcondition = condition.GetSubCondition("Coil Set Left %d" % count_leftlayer)
             subcondition.ClearParts()
             subcondition.AddSet(model.GetSetList().GetSet("coil_%s%s%s %d" % ('left_', UVW, UpDown, count_leftlayer)),
                                 0)  # left layer
@@ -866,19 +866,19 @@ class BSPM_EM_Analysis():
         val_list = [el[1] for el in attrs]
         the_dict = dict(list(zip(key_list, val_list)))
         sorted_key = sorted(key_list, key=lambda item: (
-        int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'),
-        item))  # this is also useful for string beginning with digiterations '15 Steel'.
+            int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'),
+            item))  # this is also useful for string beginning with digiterations '15 Steel'.
         tuple_list = [(key, the_dict[key]) for key in sorted_key]
-        if toString == False:
-            print('- Bearingless PMSM Individual #%s\n\t' % (name), end=' ')
+        if not toString:
+            print('- Bearingless PMSM Individual #%s\n\t' % name, end=' ')
             print(', \n\t'.join("%s = %s" % item for item in tuple_list))
             return ''
         else:
-            return '\n- Bearingless PMSM Individual #%s\n\t' % (name) + ', \n\t'.join(
+            return '\n- Bearingless PMSM Individual #%s\n\t' % name + ', \n\t'.join(
                 "%s = %s" % item for item in tuple_list)
 
     def run_study(self, app, study, toc):
-        if self.configuration['JMAG_Scheduler'] == False:
+        if not self.configuration['JMAG_Scheduler']:
             print('-----------------------Running JMAG (et 30 secs)...')
             # if run_list[1] == True:
             study.RunAllCases()
@@ -889,7 +889,7 @@ class BSPM_EM_Analysis():
             job = study.CreateJob()
             job.SetValue("Title", study.GetName())
             job.SetValue("Queued", True)
-            job.Submit(False)  # Fallse:CurrentCase, True:AllCases
+            job.Submit(False)  # False:CurrentCase, True:AllCases
             # wait and check
             # study.CheckForCaseResults()
         app.Save()
@@ -909,7 +909,8 @@ class BSPM_EM_Analysis():
         app.View().Zoom(3)
         app.View().Pan(-self.machine_variant.r_si, 0)
         app.ExportImageWithSize(self.design_results_folder + self.project_name + 'mesh.png', 2000, 2000)
-        app.View().ShowModel()  # 1st btn. close mesh view, and note that mesh data will be deleted if only ouput table results are selected.
+        app.View().ShowModel()  # 1st btn. close mesh view, and note that mesh data will be deleted if only ouput table
+        # results are selected.
 
     def extract_JMAG_results(self, path, study_name):
         current_csv_path = path + study_name + '_circuit_current.csv'

@@ -44,11 +44,15 @@ class DesignProblem:
             objs = self.optimization.get_objectives(valid_constraints, full_results)
             self.dh.save(design, full_results, objs)
         except Exception as e:
-            print(e)
-            print(traceback.format_exc())
-            temp = tuple(map(tuple, 1E10 * np.ones([1, self.get_nobj()])))
-            objs = temp[0]
-        return objs
+            # print(e)
+            # print(traceback.format_exc())
+            if e is InvalidDesign:
+                temp = tuple(map(tuple, 1E10 * np.ones([1, self.get_nobj()])))
+                objs = temp[0]
+                return objs
+            else:
+                raise e
+
 
     def get_bounds(self):
         """Returns bounds for optimization problem"""
@@ -104,3 +108,10 @@ class DataHandler(Protocol):
     @abstractmethod
     def save(self, design: 'Design', full_results, objs):
         raise NotImplementedError
+
+
+class InvalidDesign(Exception):
+    """ Exception raised for invalid designs """
+    def __init__(self, message = 'Invalid Design'):
+        self.message = message
+        super().__init__(self.message)
