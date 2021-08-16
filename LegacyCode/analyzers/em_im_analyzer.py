@@ -16,6 +16,22 @@ class IM_EM_Analysis():
     
     def analyze(self, problem, counter = 0):
 
+        self.machine_variant = problem.machine
+        self.operating_point = problem.operating_point
+
+        ####################################################
+        # 01 Setting project name and output folder
+        ####################################################
+        self.project_name = 'proj_%d_' % (counter)
+
+        expected_project_file = self.configuration['run_folder'] + "%s.jproj" % (self.project_name)
+
+        # Create output folder
+        if not os.path.isdir(self.configuration['JMAG_csv_folder']):
+            os.makedirs(self.configuration['JMAG_csv_folder'])
+
+            
+
 
     
 
