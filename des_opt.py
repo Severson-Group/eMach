@@ -1,4 +1,3 @@
-
 import pygmo as pg
 from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
@@ -27,8 +26,6 @@ class DesignOptimizationMOEAD:
         return pop
 
 
-
-
 class DesignProblem:
     def __init__(self, designer: 'Designer', evaluator: 'Evaluator', optimization: 'Optimization', dh: 'DataHandler'):
         self.designer = designer
@@ -43,6 +40,8 @@ class DesignProblem:
             valid_constraints = self.optimization.check_constraints(full_results)
             objs = self.optimization.get_objectives(valid_constraints, full_results)
             self.dh.save(design, full_results, objs)
+
+            return objs
         except Exception as e:
             # print(e)
             # print(traceback.format_exc())
@@ -52,7 +51,6 @@ class DesignProblem:
                 return objs
             else:
                 raise e
-
 
     def get_bounds(self):
         """Returns bounds for optimization problem"""
@@ -67,6 +65,10 @@ class DesignProblem:
     def get_nobj(self):
         """Returns number of objectives of optimization problem"""
         return self.optimization.n_obj
+
+    # Return function name
+    def get_name(self):
+        return "Bearingless PMSM Design"
 
 
 @runtime_checkable
@@ -112,6 +114,7 @@ class DataHandler(Protocol):
 
 class InvalidDesign(Exception):
     """ Exception raised for invalid designs """
-    def __init__(self, message = 'Invalid Design'):
+
+    def __init__(self, message='Invalid Design'):
         self.message = message
         super().__init__(self.message)
