@@ -1,16 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 13 18:48:17 2021
-
-@author: Bharat
-"""
-
 from.specification import Specification
 
+
 class BSPMMachineSpec(Specification):
-    '''
+    """
     This class is a wrapper for all information required by BSPM_Machine Architects
-    '''
+    """
     
     def __init__(self,design_spec, rotor_core, stator_core , magnet , \
                  conductor, shaft, air = None, sleeve = None, hub = None):

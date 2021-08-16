@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 13 19:03:34 2021
-
-@author: Bharat
-"""
 
 DesignSpec = {
     'DPNV'              : True,
