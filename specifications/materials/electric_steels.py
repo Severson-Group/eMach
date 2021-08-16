@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 13 19:17:41 2021
 
-@author: Bharat
-"""
 import os
 
 Arnon5 = {
