@@ -2,7 +2,7 @@ import numpy as np
 
 from .architect import Architect
 from .machines import IM_Machine
-from .winding_layout import WindingLayout
+from .winding_layout_im import winding_layout_v2
 import numpy as np
 
 __all__ = ['IMArchitectType1']
@@ -39,7 +39,7 @@ class IMArchitectType1(Architect):
         self.__air = specification.air
         self.__rotor_bar_material = specification.rotor_bar_material
         self.__shaft_material = specification.shaft_material
-        self.__winding = WindingLayout(DPNV_or_SEPA=True, Qs=self.__design_spec['Q'], \
+        self.__winding = winding_layout_v2(DPNV_or_SEPA=True, Qs=self.__design_spec['Q'], \
                                        p=self.__design_spec['p'])
 
     def create_new_design(self, x):
