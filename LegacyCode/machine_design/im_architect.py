@@ -40,7 +40,8 @@ class IMArchitectType1(Architect):
         self.__rotor_bar_material = specification.rotor_bar_material
         self.__shaft_material = specification.shaft_material
         self.__winding = winding_layout_v2(DPNV_or_SEPA=True, Qs=self.__design_spec['Q'], \
-                                       p=self.__design_spec['p'])
+                                       p=self.__design_spec['p'], ps = self.__design_spec['ps'],\
+                                           coil_pitch_y= (0.5*self.__design_spec['Q'])/self.__design_spec['p'])
 
     def create_new_design(self, x):
         '''
