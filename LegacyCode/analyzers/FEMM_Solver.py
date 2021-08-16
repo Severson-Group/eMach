@@ -299,7 +299,7 @@ class FEMM_Solver(object):
             angle_per_slot = 2 * pi / im.Qr
             # THETA_BAR = pi - angle_per_slot
 
-            wily_Qr = winding_layout.pole_specific_winding_with_neutral(self.im.Qr, self.im.DriveW_poles / 2,
+            wily_Qr = winding_layout_im.pole_specific_winding_with_neutral(self.im.Qr, self.im.DriveW_poles / 2,
                                                                         self.im.BeariW_poles / 2,
                                                                         self.im.spec_input_dict['coil_pitch_y_Qr'])
             for ind, pair in enumerate(wily_Qr.pairs):
@@ -894,7 +894,7 @@ class FEMM_Solver(object):
         if fraction == 1:
             THETA = - angle_per_slot + 0.5 * angle_per_slot + 3.0 / 360
 
-            grouping_AC_of_Y_layer = winding_layout.infer_Y_layer_grpAC_from_X_layer_and_coil_pitch_y(
+            grouping_AC_of_Y_layer = winding_layout_im.infer_Y_layer_grpAC_from_X_layer_and_coil_pitch_y(
                 im.wily.grouping_AC, im.wily.coil_pitch_y)
             # print('-'*100)
             # print(im.wily.grouping_AC)
