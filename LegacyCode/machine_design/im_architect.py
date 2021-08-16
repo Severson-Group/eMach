@@ -106,7 +106,10 @@ class IMArchitectType1(Architect):
 
             'stack_length' : self.__get_l_st,
 
-            'BeariW_poles' : self.__design_spec['ps']
+            'BeariW_poles' : self.__design_spec['ps'],
+
+            'BeariW_turns' : self.__get_turns(self, free_variables),
+
 
 
         }
