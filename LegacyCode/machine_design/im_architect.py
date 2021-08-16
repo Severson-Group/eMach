@@ -99,45 +99,22 @@ class IMArchitectType1(Architect):
             # 'DriveW_Rs': free_variables['DriveW_Rs'],
 
             'DriveW_CurrentAmp': self.__get_current_coil,
-            'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
-            'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
-            'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
+            'DriveW_CurrentAmpUsed' : self.__get_current_coil,
+            'BeariW_CurrentAmpUsed' : self.__get_current_coil,
+            'DriveW_Freq' : self.__design_spec['DriveW_Freq'],
 
-            # dependant variables
-            'alpha_so': self.__get_alpha_so(free_variables),
-            'd_sp': self.__get_d_sp(free_variables),
-            'r_si': self.__get_r_si(free_variables),
-            'alpha_ms': self.__get_alpha_ms(free_variables),
-            'd_ms': self.__get_d_ms(free_variables),
-            'r_sh': self.__get_r_sh(free_variables),
-            'r_so': self.__get_r_so(free_variables),
-            's_slot': self.__get_s_slot(free_variables),
-            'p': self.__design_spec['p'],
-            'V_r': self.__get_V_r(free_variables),
-            'l_st': self.__get_l_st(free_variables),
-            'd_sl': 0.001,
-            'delta_sl': 0,
-            'delta': free_variables['delta_e'],
-            'Q': self.__design_spec['Q'],
-            'n_m': 1,
+            'stack_length' : self.__get_l_st,
 
-            # winding parameters
-            'coil_groups': self.__winding.grouping_a,
-            'no_of_layers': self.__winding.no_winding_layer,
-            'layer_phases': [self.__winding.rightlayer_phase, self.__winding.leftlayer_phase],
-            'layer_polarity': [self.__winding.rightlayer_polarity, self.__winding.leftlayer_polarity],
-            'pitch': self.__winding.y,
-            'Z_q': self.__get_zQ(free_variables),
-            'Kov': self.__design_spec['Kov'],
-            'Kcu': self.__design_spec['Kcu'],
+            'BeariW_poles' : self.__design_spec['ps']
+
+
         }
 
         im_material = {
             'air_mat': self.__air,
             'rotor_iron_mat': self.__rotor_material,
             'stator_iron_mat': self.__stator_material,
-            'magnet_mat': self.__magnet_material,
-            'rotor_sleeve_mat': self.__sleeve_material,
+            'rotor_bar_mat': self.__rotor_bar_material,
             'coil_mat': self.__coil_material,
             'shaft_mat': self.__shaft_material,
             'rotor_hub': self.__rotor_hub
@@ -257,7 +234,7 @@ class IMArchitectType1(Architect):
     #     zQ = round(Kcu*s_slot/(2*self.__design_spec['wire_A']));
     #     return zQ
     #
-    def __get_l_st(self, free_variables):
+    def __get_l_st(self):
         return 0.001*1000
     #
     # def __get_V_r(self, free_variables):
