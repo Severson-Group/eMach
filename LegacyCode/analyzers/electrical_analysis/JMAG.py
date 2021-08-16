@@ -170,7 +170,7 @@ class JMAG(object):  # < ToolBase & DrawerBase & MakerExtrudeBase & MakerRevolve
 
         list_region_objects = []
         for idx, list_segments in enumerate(list_regions):
-            # print(list_segments)
+            print(list_segments)
 
             # Region
             self.doc.GetSelection().Clear()
