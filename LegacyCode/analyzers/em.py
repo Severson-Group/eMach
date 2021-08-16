@@ -128,7 +128,7 @@ class BSPM_EM_Analysis():
             deg_alpha_ms=self.machine_variant.alpha_ms,  # segment span: class type DimAngular
             mm_d_ri=self.machine_variant.d_ri * 1e3,  # inner radius of rotor: class type DimLinear
             mm_r_sh=self.machine_variant.r_sh * 1e3,  # rotor iron thickness: class type DimLinear
-            mm_d_mp=self.machine_variant.d_mp * 1e3,  # interpolar iron thickness: class type DimLinear
+            mm_d_mp=self.machine_variant.d_mp * 1e3,  # inter polar iron thickness: class type DimLinear
             mm_d_ms=self.machine_variant.d_ms * 1e3,  # inter segment iron thickness: class type DimLinear
             p=self.machine_variant.p,  # Set pole-pairs to 2
             s=self.machine_variant.n_m,  # Set magnet segments/pole to 4
@@ -166,7 +166,7 @@ class BSPM_EM_Analysis():
         # Rotor Core
         list_segments = self.rotorCore.draw(toolJd)
         toolJd.bMirror = False
-        toolJd.iRotateCopy = self.rotorCore.p * 2
+        toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
         region1 = toolJd.prepareSection(list_segments)
 
         # Shaft

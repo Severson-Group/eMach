@@ -9,10 +9,10 @@ import traceback
 class DesignOptimizationMOEAD:
     def __init__(self, design_problem):
         self.design_problem = design_problem
+        self.prob = pg.problem(self.design_problem)
 
     def initial_pop(self, pop_size):
-        prob = pg.problem(self.design_problem)
-        pop = pg.population(prob, size=pop_size)
+        pop = pg.population(self.prob, size=pop_size)
         return pop
 
     def run_optimization(self, pop, gen_size):
