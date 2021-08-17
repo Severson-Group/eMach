@@ -1594,14 +1594,15 @@ class FEMM_Solver(object):
         phase_shift_beari = -120 / 180. * np.pi if self.im.wily.CommutatingSequenceB == 1 else 120 / 180. * np.pi
         freq = self.im.DriveW_Freq
         # DPNV Group A/C
-        dict_stator_current_function[0] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=0 * phase_shift_drive,
-                                                 phaseB=0 * phase_shift_beari: ampD * sin(
+        dict_stator_current_function[0] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=0 * phase_shift_drive,\
+                                                 phaseB=0 * phase_shift_beari: ampD * sin(\
             2 * pi * freq * t + phaseD) - ampB * sin(2 * pi * freq * t + phaseB)
-        dict_stator_current_function[1] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=1 * phase_shift_drive,
-                                                 phaseB=1 * phase_shift_beari: ampD * sin(
             2 * pi * freq * t + phaseD) - ampB * sin(2 * pi * freq * t + phaseB)
-        dict_stator_current_function[2] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=2 * phase_shift_drive,
-                                                 phaseB=2 * phase_shift_beari: ampD * sin(
+        dict_stator_current_function[1] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=1 * phase_shift_drive,\
+                                                 phaseB=1 * phase_shift_beari: ampD * sin(\
+            2 * pi * freq * t + phaseD) - ampB * sin(2 * pi * freq * t + phaseB)
+        dict_stator_current_function[2] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=2 * phase_shift_drive,\
+                                                 phaseB=2 * phase_shift_beari: ampD * sin(\
             2 * pi * freq * t + phaseD) - ampB * sin(2 * pi * freq * t + phaseB)
         # DPNV Group B/D
         dict_stator_current_function[3] = lambda t, freq=freq, ampD=ampD, ampB=ampB, phaseD=0 * phase_shift_drive,
