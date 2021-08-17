@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb  1 11:43:32 2021
-
-@author: Martin Johnson
-"""
 from abc import ABC, abstractmethod
+
 
 class Machine(ABC):
     """ABC for Machine objects"""
@@ -23,7 +18,8 @@ class Machine(ABC):
     @abstractmethod
     def get_missing_required_values():
         pass
-    
+
+
 class MachineComponent(ABC):
     """Base Class for Machine Components"""
     
@@ -35,12 +31,14 @@ class MachineComponent(ABC):
     def required_materials():
         pass
 
+
 class Winding(MachineComponent):
     """Base Class for Machine Components"""
     
     def required_parameters():
-        return ('no_of_layers', 'layer_phases', 'layer_polarity', 'pitch', \
+        return ('no_of_layers', 'layer_phases', 'layer_polarity', 'pitch',
                 'Z_q', 'Kov', 'Kcu',)
+
     def required_materials():
         return ('coil_mat',)
     
@@ -76,14 +74,11 @@ class Winding(MachineComponent):
     def coil_mat(self):
         return self._materials_dict['coil_mat']
     
-    
-    
-    
-    
-    
+
 class Error(Exception):
     """Base class for exceptions in this module."""
     pass
+
 
 class MissingValueError(Error):
     """Exception raised for errors in the input.

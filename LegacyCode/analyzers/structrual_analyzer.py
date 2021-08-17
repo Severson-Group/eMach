@@ -612,7 +612,7 @@ class SleeveAnalyzer:
         sol = op.minimize(problem.cost, [1E-3, -1E-3], tol=1E-4, constraints=const, bounds=[[0, 1], [-.01, 0]])
         print(sol.success)
         print(sol)
-        if sol.success == True:
+        if sol.success:
             return sol.x
         else:
             return False

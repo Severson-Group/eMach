@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 13 19:19:23 2021
-
-@author: Bharat
-"""
 
 CarbonFiber = {
     'sleeve_material'            : 'CarbonFiber',
