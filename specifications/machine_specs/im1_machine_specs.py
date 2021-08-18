@@ -22,6 +22,8 @@ DesignSpec = {
     "Js": 4e6,
     "Jr": 6.5e6,
     "Steel": "M19Gauge29",
+    "bar"  : "Aluminium",
+    "coil" : "Copper",
     "lamination_stacking_factor_kFe": 0.95,
     "Coil": "Cu",
     "space_factor_kCu": 0.5,
@@ -37,7 +39,7 @@ DesignSpec = {
     "guess_power_factor": 0.6,
     "use_drop_shape_rotor_bar": False,
     "tip_speed": 150,
-    "safety_factor_to_yield": "None",
+    "safety_factor_to_yield": None,
     "safety_factor_to_critical_speed": 1.5,
     "bool_skew_stator": False,
     "bool_skew_rotor": False
