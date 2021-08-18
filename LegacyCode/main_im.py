@@ -13,7 +13,7 @@ from specifications.materials.jmag_library_magnets import N40H
 from specifications.materials.miscellaneous_materials import CarbonFiber, Steel, Copper, Hub, Air
 
 
-# from settings.bspm_settings_handler import BSPM_Settings_Handler
+from settings.im_settings_handler import IM_Settings_Handler
 # from analyzers import structrual_analyzer as sta
 
 from analyzers.em_im_analyzer import IM_EM_Analysis
@@ -37,7 +37,7 @@ machine_spec = IMMachineSpec(design_spec=DesignSpec, rotor_core=DesignSpec["Stee
 print("Steel Material", type(DesignSpec["Steel"]))
 # initialize BSPMArchitect with machine specification
 arch = IMArchitectType1(machine_spec)
-# set_handler = BSPM_Settings_Handler()
+set_handler = IM_Settings_Handler()
 #
 # bspm_designer = MachineDesigner(arch, set_handler)
 # # create machine variant using architect
