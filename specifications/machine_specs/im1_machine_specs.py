@@ -17,7 +17,7 @@ DesignSpec = {
     "ExcitationFreqSimulated": 1500,
     "VoltageRating": 480,
     "TangentialStress": 12000,
-    "Qs": 18,
+    "Q": 18,
     "Qr": 12,
     "Js": 4e6,
     "Jr": 6.5e6,

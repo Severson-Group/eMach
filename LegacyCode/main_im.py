@@ -3,16 +3,20 @@ import sys
 
 sys.path.append("..")
 
-from machine_design import BSPMArchitectType1
-from specifications.bspm_specification import BSPMMachineSpec
+from machine_design import IMArchitectType1
+from specifications.im_specification import IMMachineSpec
+from specifications.machine_specs.im1_machine_specs import DesignSpec
 
-from specifications.machine_specs.bp1_machine_specs import DesignSpec
+
 from specifications.materials.electric_steels import Arnon5
 from specifications.materials.jmag_library_magnets import N40H
 from specifications.materials.miscellaneous_materials import CarbonFiber, Steel, Copper, Hub, Air
-from settings.bspm_settings_handler import BSPM_Settings_Handler
-from analyzers import structrual_analyzer as sta
-from analyzers.em import BSPM_EM_Analysis
+
+
+# from settings.bspm_settings_handler import BSPM_Settings_Handler
+# from analyzers import structrual_analyzer as sta
+
+from analyzers.em_im_analyzer import IM_EM_Analysis
 from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 
 from problems.bspm_em_problem import BSPM_EM_Problem
@@ -25,7 +29,7 @@ from mach_eval import AnalysisStep, State, MachineDesigner, MachineEvaluator
 ##############################################################################
 
 # create specification object for the BSPM machine
-machine_spec = BSPMMachineSpec(design_spec=DesignSpec, rotor_core=Arnon5,
+machine_spec = IMMachineSpec(design_spec=DesignSpec, rotor_core=Arnon5,
                                stator_core=Arnon5, magnet=N40H, conductor=Copper,
                                shaft=Steel, air=Air, sleeve=CarbonFiber, hub=Hub)
 
