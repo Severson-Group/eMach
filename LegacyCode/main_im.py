@@ -36,7 +36,7 @@ machine_spec = IMMachineSpec(design_spec=DesignSpec, rotor_core=DesignSpec["Stee
 
 print("Steel Material", type(DesignSpec["Steel"]))
 # initialize BSPMArchitect with machine specification
-# arch = BSPMArchitectType1(machine_spec)
+arch = IMArchitectType1(machine_spec)
 # set_handler = BSPM_Settings_Handler()
 #
 # bspm_designer = MachineDesigner(arch, set_handler)
