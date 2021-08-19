@@ -5,6 +5,8 @@ from .machines import IM_Machine
 from .winding_layout_im import winding_layout_v2
 import numpy as np
 
+from specifications.machine_specs.im1_machine_specs import DesignSpec
+
 __all__ = ['IMArchitectType1']
 
 
@@ -74,8 +76,8 @@ class IMArchitectType1(Architect):
             'Angle_StatorSlotSpan': 360 / self.__design_spec['Q'],
             'Angle_RotorSlotSpan': 360 / self.__design_spec['Qr'],
 
-            'Radius_OuterStatorYoke': free_variables['Radius_OuterStatorYoke'],
-            'Radius_InnerStatorYoke': free_variables['Radius_InnerStatorYoke'],
+            'Radius_OuterStatorYoke': self.__get_Radius_OuterStatorYoke(free_variables),
+            'Radius_InnerStatorYoke': self.__get_Radius_InnerStatorYoke(free_variables),
             'Length_AirGap'         : free_variables['delta_e'],
             'Radius_OuterRotor'     : free_variables['r_ro'],
             'Radius_Shaft'          : self.__get_r_sh(free_variables),
@@ -98,7 +100,7 @@ class IMArchitectType1(Architect):
             'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
 
             'DriveW_poles': self.__design_spec['p'],
-            'DriveW_zQ': self.__get_turns(self, free_variables),
+            'DriveW_zQ': self.__get_turns(free_variables),
 
             # Not going to consider resistance for now
             # 'DriveW_Rs': free_variables['DriveW_Rs'],
@@ -112,7 +114,7 @@ class IMArchitectType1(Architect):
 
             'BeariW_poles' : self.__design_spec['ps'],
 
-            'BeariW_turns' : self.__get_turns(self, free_variables),
+            'BeariW_turns' : self.__get_turns(free_variables),
 
 
 
@@ -163,6 +165,9 @@ class IMArchitectType1(Architect):
         d_st = free_variables['d_st']
         return r_si + d_sp + d_st
 
+    def __get_r_sh(self, free_variables):
+        return free_variables['d_ri']*0.5
+
     def __get_Angle_StatorSlotOpen(self):
         return 0.5 * (360 / self.__design_spec['Q'])
 
@@ -172,6 +177,7 @@ class IMArchitectType1(Architect):
 
 
     def __get_turns(self, free_variables):
+
         desired_emf_Em = 0.95 * self.__design_spec['voltage_rating'] # 0.96~0.98, high speed motor has higher leakage reactance hence 0.95
 
         alpha_i = 2 / 3.14 # ideal sinusoidal flux density distribusion, when the saturation happens in teeth, alpha_i becomes higher.
@@ -199,9 +205,9 @@ class IMArchitectType1(Architect):
 
     #
     #
-    # def __get_d_sp(self, free_variables):
-    #     d_so = free_variables['d_so']
-    #     return 1.5*d_so
+    def __get_d_sp(self, free_variables):
+        d_so = free_variables['d_so']
+        return 1.5*d_so
     #
     def __get_r_si(self, free_variables):
         delta_e = free_variables['delta_e']
@@ -268,9 +274,12 @@ class IMArchitectType1(Architect):
             'w_st': x[4],
             'd_st': x[5],
             'd_sy': x[6],
-            'alpha_m': x[7],
-            'd_m': x[8],
-            'd_mp': x[9],
+            'Radius_of_RotorSlot': x[7],
+            'Location_RotorBarCenter': x[8],
+            'Width_RotorSlotOpen': x[9],
             'd_ri': x[10],
+
+
+
         }
         return free_variables
