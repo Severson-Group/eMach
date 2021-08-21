@@ -13,10 +13,11 @@ DesignSpec = {
     "ps": 4,
     "coil_pitch_y": 3,
     "coil_pitch_y_Qr": 3,
-    "mec_power": 50e3,
+    "rated_power": 50e3,
     "ExcitationFreqSimulated": 1500,
-    "VoltageRating": 480,
+    "voltage_rating": 480,
     "TangentialStress": 12000,
+    "rated_speed" : 3141.592653,
     "Q": 18,
     "Qr": 12,
     "Js": 4e6,
@@ -42,6 +43,9 @@ DesignSpec = {
     "safety_factor_to_yield": None,
     "safety_factor_to_critical_speed": 1.5,
     "bool_skew_stator": False,
-    "bool_skew_rotor": False
+    "bool_skew_rotor": False,
+    "kw1" : 0.866,
+    "Ix_ratio" : 2.5/100
+
     }
 
