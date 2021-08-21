@@ -1,3 +1,8 @@
+"""Module holding classes required for design optimization.
+
+This module holds the classes required for optimizing a design using pygmo in MachEval.
+"""
+
 import pygmo as pg
 from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
