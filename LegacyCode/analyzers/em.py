@@ -59,6 +59,7 @@ class BSPM_EM_Analysis():
         study = self.add_magnetic_transient_study(app, model, self.configuration['JMAG_csv_folder'], self.study_name) # Change here and there 
         self.mesh_study(app, model, study)
         self.run_study(app, study, clock_time())
+        self.run_study(app, study, clock_time())
         # export Voltage if field data exists.
         if self.configuration['delete_results_after_calculation'] == False:
             # Export Circuit Voltage

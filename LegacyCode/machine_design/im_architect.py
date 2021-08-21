@@ -107,8 +107,8 @@ class IMArchitectType1(Architect):
 
             'DriveW_CurrentAmp': self.__get_current_coil,
             'DriveW_CurrentAmpUsed' : self.__get_current_coil,
-            'BeariW_CurrentAmpUsed' : self.__get_current_coil,
-            'DriveW_Freq' : self.__design_spec['DriveW_Freq'],
+            'BeariW_CurrentAmpUsed' : self.__get_current_coil * self.__design_spec['Ix_ratio'],
+            'DriveW_Freq' : self.__design_spec['ExcitationFreqSimulated'],
 
             'stack_length' : self.__get_l_st,
 
@@ -136,7 +136,7 @@ class IMArchitectType1(Architect):
             'mech_power': self.__design_spec['rated_power'],
             'voltage_rating': self.__design_spec['voltage_rating'],
             'Iq_rated_ratio': 0.95,
-            'Rated_current': self.__current_coil,
+            'Rated_current': im_parameters['DriveW_CurrentAmp'],
             'ps': self.__design_spec['ps'],
         }
 
@@ -146,7 +146,7 @@ class IMArchitectType1(Architect):
     @property
     def __get_current_coil(self):
         stator_phase_current_rms = self.__design_spec['rated_power'] / (\
-                    self.__design_spec['phase']  \
+                    self.__design_spec['m']  \
                     * 0.96 \
                     * self.__design_spec['voltage_rating'] \
                     * 0.9)
@@ -173,7 +173,7 @@ class IMArchitectType1(Architect):
 
     def __get_pole_pitch_tau_p(self, free_variables):
         air_gap_diameter_D = free_variables['delta_e'] + 2*free_variables['r_ro']
-        return np.pi * air_gap_diameter_D / (2 * self.p)
+        return np.pi * air_gap_diameter_D / (2 * self.__design_spec['p'])
 
 
     def __get_turns(self, free_variables):
@@ -181,13 +181,13 @@ class IMArchitectType1(Architect):
         desired_emf_Em = 0.95 * self.__design_spec['voltage_rating'] # 0.96~0.98, high speed motor has higher leakage reactance hence 0.95
 
         alpha_i = 2 / 3.14 # ideal sinusoidal flux density distribusion, when the saturation happens in teeth, alpha_i becomes higher.
-        air_gap_flux_Phi_m = alpha_i * self.guess_air_gap_flux_density * self.__get_pole_pitch_tau_p(free_variables)\
-                             * self.__get_l_st(free_variables)
-        ExcitationFreqSimulated = self.__design_spec['rated_speed']/60
+        air_gap_flux_Phi_m = alpha_i * self.__design_spec['guess_air_gap_flux_density'] * self.__get_pole_pitch_tau_p(free_variables)\
+                             * self.__get_l_st()
+        ExcitationFreqSimulated = self.__design_spec['ExcitationFreqSimulated']
         no_series_coil_turns_N = np.round(np.sqrt(2) * desired_emf_Em / (2 * np.pi * ExcitationFreqSimulated\
                                                                          * self.__design_spec['kw1'] * air_gap_flux_Phi_m))
 
-        if self.__design_spec['DPNV'] == True:
+        if self.__design_spec['DPNV_or_SEPA'] == True:
             number_parallel_branch = 2
         else:
             number_parallel_branch = 1
