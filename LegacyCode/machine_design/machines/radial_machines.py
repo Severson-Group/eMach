@@ -134,7 +134,7 @@ class IM_Rotor(Shaft, IM_Rotor_Iron, IM_Rotor_Bar, MachineComponent):
 
 # Add bar component a bit later
     def required_parameters():
-        req_param = ('Qr')
+        req_param = ('r_rs', 'd_rbc', 'w_rso',)
         for cl in IM_Rotor.__bases__:
             if cl.required_parameters() is not None:
                 req_param=req_param+cl.required_parameters()

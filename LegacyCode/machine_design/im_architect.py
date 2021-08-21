@@ -83,9 +83,9 @@ class IMArchitectType1(Architect):
             'Radius_Shaft'          : self.__get_r_sh(free_variables),
 
             'Length_HeadNeckRotorSlot': 1, #Jiahao is using 1 mm as default
-            'Radius_of_RotorSlot': free_variables['Radius_of_RotorSlot'],
-            'Location_RotorBarCenter': free_variables['Location_RotorBarCenter'],
-            'Width_RotorSlotOpen': free_variables['Width_RotorSlotOpen'],
+            'Radius_of_RotorSlot': free_variables['r_rs'],
+            'Location_RotorBarCenter': free_variables['d_rbc'],
+            'Width_RotorSlotOpen': free_variables['w_rso'],
 
             # 'Radius_of_RotorSlot2': free_variables['Radius_of_RotorSlot2'],
             # 'Location_RotorBarCenter2': free_variables['Location_RotorBarCenter2'],
@@ -274,9 +274,9 @@ class IMArchitectType1(Architect):
             'w_st': x[4],
             'd_st': x[5],
             'd_sy': x[6],
-            'Radius_of_RotorSlot': x[7],
-            'Location_RotorBarCenter': x[8],
-            'Width_RotorSlotOpen': x[9],
+            'r_rs': x[7],
+            'd_rbc': x[8],
+            'w_rso': x[9],
             'd_ri': x[10],
 
 
