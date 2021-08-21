@@ -21,7 +21,7 @@ from analyzers.em import BSPM_EM_Analysis
 from analyzers import structrual_analyzer as sta
 from analyzers import thermal_analyzer as therm
 
-from bspm_opt import BSPMOptimization
+from bspm_ds import BSPMDesignSpace
 from mach_eval import AnalysisStep, MachineDesigner, MachineEvaluator
 from des_opt import DesignProblem, DesignOptimizationMOEAD, InvalidDesign
 
@@ -158,7 +158,7 @@ bounds = [
 
 dh = DataHandler()
 
-opt_settings = BSPMOptimization(3, bounds)
+opt_settings = BSPMDesignSpace(3, bounds)
 design_prob = DesignProblem(bspm_designer, evaluator, opt_settings, dh)
 design_opt = DesignOptimizationMOEAD(design_prob)
 
