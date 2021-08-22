@@ -1,10 +1,10 @@
 from .machine import Machine, MissingValueError
-from .radial_machines import DPNVWinding, IM_Rotor, Stator, MachineComponent
+from .radial_machines import DPNVWinding_IM, IM_Rotor, Stator_IM, MachineComponent
 
 __all__ = ['IM_Machine']
 
 
-class IM_Machine(Machine, IM_Rotor, Stator, DPNVWinding):
+class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
 
     def __init__(self, machine_parameter_dict: dict, materials_dict: dict, nameplate_dict: dict) -> "IM_Machine":
         """ Creates a IM_Machine object
@@ -47,16 +47,17 @@ class IM_Machine(Machine, IM_Rotor, Stator, DPNVWinding):
         Return Values
             missing_values: list
         """
-        missing_values = []
-        for a in [[cls.required_parameters(), machine_geometry_dict],
-                  [cls.required_materials(), materials_dict],
-                  [cls.required_nameplate(), nameplate_dict]]:
-            for value in a[0]:
-                if value in a[1]:
-                    pass
-                else:
-                    missing_values.append(value)
-        return missing_values
+        # missing_values = []
+        # for a in [[cls.required_parameters(), machine_geometry_dict],
+        #           [cls.required_materials(), materials_dict],
+        #           [cls.required_nameplate(), nameplate_dict]]:
+        #     for value in a[0]:
+        #         if value in a[1]:
+        #             pass
+        #         else:
+        #             missing_values.append(value)
+        # return missing_values
+        return None
 
     def check_required_values(cls, machine_geometry_dict: dict,
                               materials_dict: dict,
@@ -80,12 +81,13 @@ class IM_Machine(Machine, IM_Rotor, Stator, DPNVWinding):
             return False
 
     def required_parameters():
-        req_geo=('delta_e','delta','l_st')
-        for cl in IM_Machine.__bases__:
-            if issubclass(cl, MachineComponent):
-                if cl.required_parameters() is not None:
-                    req_geo = req_geo + cl.required_parameters()
-        return req_geo
+        return None
+        # req_geo=('delta_e','l_st')
+        # for cl in IM_Machine.__bases__:
+        #     if issubclass(cl, MachineComponent):
+        #         if cl.required_parameters() is not None:
+        #             req_geo = req_geo + cl.required_parameters()
+        # return req_geo
 
     def required_materials():
         req_mat = ()
@@ -105,16 +107,13 @@ class IM_Machine(Machine, IM_Rotor, Stator, DPNVWinding):
                 )
 
     @property
-    def Length_AirGap(self):
-        return self._machine_parameter_dict['Length_AirGap']
+    def delta_e(self):
+        return self._machine_parameter_dict['delta_e']
 
     @property
-    def Radius_OuterStatorYoke(self):
-        return self._machine_parameter_dict['Radius_OuterStatorYoke']
+    def l_st(self):
+        return self._machine_parameter_dict['l_st']
 
-    @property
-    def Radius_InnerStatorYoke(self):
-        return self._machine_parameter_dict['Radius_InnerStatorYoke']
 
     @property
     def mech_power(self):
