@@ -117,6 +117,13 @@ class IMArchitectType1(Architect):
             'BeariW_turns' : self.__get_turns(free_variables),
 
 
+            'coil_groups': self.__winding.grouping_AC,
+            'no_of_layers': self.__winding.number_winding_layer,
+            'layer_phases': [self.__winding.layer_X_phases, self.__winding.layer_Y_phases],
+            'layer_polarity': [self.__winding.layer_X_signs, self.__winding.layer_Y_signs],
+            'pitch': self.__winding.coil_pitch_y,
+
+
 
         }
 
@@ -135,7 +142,7 @@ class IMArchitectType1(Architect):
             'mech_omega': self.__design_spec['rated_speed'],
             'mech_power': self.__design_spec['rated_power'],
             'voltage_rating': self.__design_spec['voltage_rating'],
-            'Iq_rated_ratio': 0.95,
+            'Iq_rated_ratio': 0.975,
             'Rated_current': im_parameters['DriveW_CurrentAmp'],
             'ps': self.__design_spec['ps'],
         }

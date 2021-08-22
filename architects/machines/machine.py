@@ -75,8 +75,42 @@ class Winding(MachineComponent):
     @property
     def coil_mat(self):
         return self._materials_dict['coil_mat']
-    
-    
+
+
+class Winding_IM(MachineComponent):
+    """Base Class for Machine Components"""
+
+    def required_parameters():
+        return ('no_of_layers', 'layer_phases', 'layer_polarity', 'pitch', \
+                'DriveW_zQ',)
+
+    def required_materials():
+        return ('coil_mat',)
+
+    @property
+    def no_of_layers(self):
+        return self._machine_parameter_dict['no_of_layers']
+
+    @property
+    def layer_phases(self):
+        return self._machine_parameter_dict['layer_phases']
+
+    @property
+    def layer_polarity(self):
+        return self._machine_parameter_dict['layer_polarity']
+
+    @property
+    def pitch(self):
+        return self._machine_parameter_dict['pitch']
+
+    @property
+    def DriveW_zQ(self):
+        return self._machine_parameter_dict['DriveW_zQ']
+
+    @property
+    def coil_mat(self):
+        return self._materials_dict['coil_mat']
+
     
     
     
