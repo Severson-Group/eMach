@@ -9,7 +9,7 @@ import sys
 sys.path.append("...")
 import macheval as me
 
-class BSPMSettingsHandler(me.SettingsHandler):
+class IMSettingsHandler(me.SettingsHandler):
     def getSettings(x):
         return NotImplementedError #TODO Implement settings functionality
     
