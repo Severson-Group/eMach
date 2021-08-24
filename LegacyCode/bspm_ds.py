@@ -1,4 +1,7 @@
-class BSPMOptimization:
+import numpy as np
+
+
+class BSPMDesignSpace:
     def __init__(self, n_obj, bounds):
         self.__n_obj = n_obj
         self.__bounds = bounds
@@ -9,7 +12,9 @@ class BSPMOptimization:
 
     @property
     def bounds(self):
-        return self.__bounds
+        min_b, max_b = np.asarray(self.__bounds).T
+        min_b, max_b = min_b.astype(float), max_b.astype(float)
+        return min_b.tolist(), max_b.tolist()
 
     def get_objectives(self, valid_constraints, full_results):
         if not valid_constraints:

@@ -1,7 +1,7 @@
-desopt module
-=============
+des\_opt module
+===============
 
-.. automodule:: desopt
+.. automodule:: des_opt
     :members:
     :undoc-members:
     :show-inheritance:
