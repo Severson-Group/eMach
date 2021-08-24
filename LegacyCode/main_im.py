@@ -13,7 +13,7 @@ from specifications.materials.jmag_library_magnets import N40H
 from specifications.materials.miscellaneous_materials import CarbonFiber, Steel, Copper, Hub, Air
 
 
-from settings.im_settings_handler import IM_Settings_Handler
+from settings.IM_settings_handler import IM_Settings_Handler
 # from analyzers import structrual_analyzer as sta
 
 from analyzers.em_im_analyzer import IM_EM_Analysis
@@ -47,34 +47,7 @@ free_var = (0.00390399, 0.00964596, 35.9925, 0.00358376, 0.00722451, 0.0128492,
 # # set operating point for BSPM machine
 #
 design_variant = im_designer.create_design(free_var)
-#
-# ##############################################################################
-# ############################ Define struct AnalysisStep ######################
-# ##############################################################################
-#
-# stress_limits={'rad_sleeve': -100E6,
-#                'tan_sleeve': 1300E6,
-#                'rad_magnets': 0,
-#                'tan_magnets': 80E6}
-#
-# # spd = sta.SleeveProblemDef(design_variant)
-# # problem = spd.get_problem()
-# ana = sta.SleeveAnalyzer(stress_limits)
-# # sleeve_dim = ana.analyze(problem)
-# # print(sleeve_dim)
-#
-#
-# class StructPostAnalyzer:
-#     """Converts a State into a problem"""
-#     def __init__(self):
-#         pass
-#
-#     def get_next_state(results, in_state):
-#         state_out = in_state
-#         return state_out
-#
-#
-# struct_step = AnalysisStep(sta.SleeveProblemDef, ana, StructPostAnalyzer)
+
 #
 # ##############################################################################
 # ############################ Define em AnalysisStep ##########################
