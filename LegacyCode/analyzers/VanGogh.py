@@ -2,7 +2,7 @@
 
 # from shapely.geometry import LineString, Point
 from math import tan, pi, atan, sqrt, sin, cos, copysign, atan2, asin, acos
-import utility
+# import utility
 from pylab import plt, np, mpl
 
 mpl.rcParams['mathtext.fontset'] = 'stix'
@@ -12,9 +12,12 @@ CUSTOM = 2
 JMAG = 1
 FEMM = 0
 
+__all__ = ['VanGogh']
 
 class VanGogh(object):
     """One VanGogh for both FEMM and JMAG"""
+
+    __all__ = None
 
     def __init__(self, im, child_index):
         self.im = im
