@@ -19,7 +19,7 @@ from settings.IM_settings_handler import IM_Settings_Handler
 from analyzers.em_im_analyzer import IM_EM_Analysis
 from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 
-from problems.bspm_em_problem import BSPM_EM_Problem
+from problems.im_em_problem import IM_EM_Problem
 from post_analyzers.bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
 from length_scale_step import LengthScaleStep
 from mach_eval import AnalysisStep, State, MachineDesigner, MachineEvaluator
@@ -48,25 +48,25 @@ free_var = (0.00390399, 0.00964596, 35.9925, 0.00358376, 0.00722451, 0.0128492,
 #
 design_variant = im_designer.create_design(free_var)
 
+
+##############################################################################
+############################ Define em AnalysisStep ##########################
+##############################################################################
+
+
+class IM_EM_ProblemDefinition():
+    """Converts a State into a problem"""
+
+    def __init__(self):
+        pass
+
+    def get_problem(state):
+        problem = IM_EM_Problem(state.design.machine, state.design.settings)
+        return problem
 #
-# ##############################################################################
-# ############################ Define em AnalysisStep ##########################
-# ##############################################################################
 #
-#
-# class BSPM_EM_ProblemDefinition():
-#     """Converts a State into a problem"""
-#
-#     def __init__(self):
-#         pass
-#
-#     def get_problem(state):
-#         problem = BSPM_EM_Problem(state.design.machine, state.design.settings)
-#         return problem
-#
-#
-# # initialize em analyzer class with FEA configuration
-# em_analysis = BSPM_EM_Analysis(JMAG_FEA_Configuration)
+# initialize em analyzer class with FEA configuration
+em_analysis = IM_EM_Analysis(JMAG_FEA_Configuration)
 #
 # # define em step
 # em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
