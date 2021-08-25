@@ -25,6 +25,7 @@ from ..machine_design import winding_layout_im
 SELECT_ALL = 4
 EPS = 1e-2  # unit mm
 
+__all__ = ['FEMM_Solver']
 
 class VanGogh_FEMM(VanGogh):
     def __init__(self, im, child_index=0):
