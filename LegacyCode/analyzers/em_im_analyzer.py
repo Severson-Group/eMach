@@ -7,14 +7,14 @@ from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNot
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
 
-from 
+from FEMM_Solver import FEMM_Solver
 
 EPS = 1e-2 # unit: mm
 
 class IM_EM_Analysis():
 
     def __init__(self, configuration):
-        self.femm_solver = FEMM_Solver.FEMM_Solver()
+        pass
 
 
     # def __init__(self, configuration):
