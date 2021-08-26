@@ -19,9 +19,9 @@ import subprocess
 from time import sleep
 from time import time as clock_time
 
-# from VanGogh import VanGogh
-from . import VanGogh
-from ..machine_design import winding_layout_im
+from .VanGogh import VanGogh
+# from . import VanGogh
+from .electrical_analysis import winding_layout_im
 
 SELECT_ALL = 4
 EPS = 1e-2  # unit mm

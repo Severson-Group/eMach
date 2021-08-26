@@ -2,7 +2,7 @@
 import os
 import datetime
 import itertools
-import angle_error_nick
+# import angle_error_nick
 
 
 def my_execfile(filename, g=None, l=None):
@@ -834,60 +834,60 @@ def build_str_results(axeses, acm_variant, project_name, tran_study_name, dir_cs
 
 # str_results, torque_average, normalized_torque_ripple, ss_avg_force_magnitude, normalized_force_error_magnitude, force_error_angle, dm.jmag_loss_list, dm.femm_loss_list, power_factor, total_loss, cost_function
 
-class suspension_force_vector(object):
-    """docstring for suspension_force_vector"""
-
-    def __init__(self, force_x, force_y, range_ss=None):  # range_ss means range_steadystate
-        super(suspension_force_vector, self).__init__()
-        self.force_x = force_x
-        self.force_y = force_y
-        self.force_ang = []
-        temp_force_ang = np.arctan2(force_y, force_x) / np.pi * 180  # [deg]
-        for angle in temp_force_ang:
-            if angle < 0:
-                angle += 360
-            self.force_ang.append(angle)
-        # print('-'*40+'\nsfv:', self.force_ang)
-        self.force_abs = np.sqrt(np.array(force_x) ** 2 + np.array(force_y) ** 2)
-
-        if range_ss == None:
-            range_ss = len(force_x)
-        self.range_ss = range_ss
-
-        self.ss_avg_force_vector = np.array(
-            [sum(force_x[-range_ss:]), sum(force_y[-range_ss:])]) / range_ss  # len(force_x[-range_ss:])
-        self.ss_avg_force_angle = np.arctan2(self.ss_avg_force_vector[1], self.ss_avg_force_vector[0]) / np.pi * 180
-        if self.ss_avg_force_angle < 0:
-            self.ss_avg_force_angle += 360
-        print('sfv.ss_avg_force_angle =', self.ss_avg_force_angle)
-        # if self.ss_avg_force_angle < 0:
-        #     self.ss_avg_force_angle += 360
-        # print('sfv:', self.ss_avg_force_angle)
-        self.ss_avg_force_magnitude = np.sqrt(self.ss_avg_force_vector[0] ** 2 + self.ss_avg_force_vector[1] ** 2)
-
-        self.force_err_ang_old_way = self.force_ang - self.ss_avg_force_angle  # This can be wrong for the case "3 deg - 354 deg"
-        # self.force_err_ang_new_way = self.compute_angle_error(np.ones(len(self.force_ang))*self.ss_avg_force_angle, np.array(self.force_ang))
-        self.force_err_ang_new_way = angle_error_nick.angle_error(
-            np.ones(len(self.force_ang)) * self.ss_avg_force_angle, np.array(self.force_ang))
-        # for a, b in zip(self.force_err_ang_old_way[-range_ss:], self.force_err_ang_new_way[-range_ss:]):
-        #     print(a,b)
-        self.force_err_ang = self.force_err_ang_new_way
-
-        # print('sfv:', self.force_err_ang)
-        self.force_err_abs = self.force_abs - self.ss_avg_force_magnitude
-
-        self.ss_max_force_err_ang = max(self.force_err_ang[-range_ss:]), min(self.force_err_ang[-range_ss:])
-        self.ss_max_force_err_abs = max(self.force_err_abs[-range_ss:]), min(self.force_err_abs[-range_ss:])
-
-        # method 1
-        # self.force_error_angle = 0.5*(self.ss_max_force_err_ang[0]-self.ss_max_force_err_ang[1])
-        # normalized_force_error_magnitude = 0.5*(sfv.ss_max_force_err_abs[0]-sfv.ss_max_force_err_abs[1])/sfv.ss_avg_force_magnitude
-
-        # method 2 suggested by Eric
-        self.force_error_angle = max([abs(self.ss_max_force_err_ang[0]),
-                                      abs(self.ss_max_force_err_ang[1])])
-        self.normalized_force_error_magnitude = max([abs(self.ss_max_force_err_abs[0]),
-                                                     abs(self.ss_max_force_err_abs[1])]) / self.ss_avg_force_magnitude
+# class suspension_force_vector(object):
+#     """docstring for suspension_force_vector"""
+#
+#     def __init__(self, force_x, force_y, range_ss=None):  # range_ss means range_steadystate
+#         super(suspension_force_vector, self).__init__()
+#         self.force_x = force_x
+#         self.force_y = force_y
+#         self.force_ang = []
+#         temp_force_ang = np.arctan2(force_y, force_x) / np.pi * 180  # [deg]
+#         for angle in temp_force_ang:
+#             if angle < 0:
+#                 angle += 360
+#             self.force_ang.append(angle)
+#         # print('-'*40+'\nsfv:', self.force_ang)
+#         self.force_abs = np.sqrt(np.array(force_x) ** 2 + np.array(force_y) ** 2)
+#
+#         if range_ss == None:
+#             range_ss = len(force_x)
+#         self.range_ss = range_ss
+#
+#         self.ss_avg_force_vector = np.array(
+#             [sum(force_x[-range_ss:]), sum(force_y[-range_ss:])]) / range_ss  # len(force_x[-range_ss:])
+#         self.ss_avg_force_angle = np.arctan2(self.ss_avg_force_vector[1], self.ss_avg_force_vector[0]) / np.pi * 180
+#         if self.ss_avg_force_angle < 0:
+#             self.ss_avg_force_angle += 360
+#         print('sfv.ss_avg_force_angle =', self.ss_avg_force_angle)
+#         # if self.ss_avg_force_angle < 0:
+#         #     self.ss_avg_force_angle += 360
+#         # print('sfv:', self.ss_avg_force_angle)
+#         self.ss_avg_force_magnitude = np.sqrt(self.ss_avg_force_vector[0] ** 2 + self.ss_avg_force_vector[1] ** 2)
+#
+#         self.force_err_ang_old_way = self.force_ang - self.ss_avg_force_angle  # This can be wrong for the case "3 deg - 354 deg"
+#         # self.force_err_ang_new_way = self.compute_angle_error(np.ones(len(self.force_ang))*self.ss_avg_force_angle, np.array(self.force_ang))
+#         self.force_err_ang_new_way = angle_error_nick.angle_error(
+#             np.ones(len(self.force_ang)) * self.ss_avg_force_angle, np.array(self.force_ang))
+#         # for a, b in zip(self.force_err_ang_old_way[-range_ss:], self.force_err_ang_new_way[-range_ss:]):
+#         #     print(a,b)
+#         self.force_err_ang = self.force_err_ang_new_way
+#
+#         # print('sfv:', self.force_err_ang)
+#         self.force_err_abs = self.force_abs - self.ss_avg_force_magnitude
+#
+#         self.ss_max_force_err_ang = max(self.force_err_ang[-range_ss:]), min(self.force_err_ang[-range_ss:])
+#         self.ss_max_force_err_abs = max(self.force_err_abs[-range_ss:]), min(self.force_err_abs[-range_ss:])
+#
+#         # method 1
+#         # self.force_error_angle = 0.5*(self.ss_max_force_err_ang[0]-self.ss_max_force_err_ang[1])
+#         # normalized_force_error_magnitude = 0.5*(sfv.ss_max_force_err_abs[0]-sfv.ss_max_force_err_abs[1])/sfv.ss_avg_force_magnitude
+#
+#         # method 2 suggested by Eric
+#         self.force_error_angle = max([abs(self.ss_max_force_err_ang[0]),
+#                                       abs(self.ss_max_force_err_ang[1])])
+#         self.normalized_force_error_magnitude = max([abs(self.ss_max_force_err_abs[0]),
+#                                                      abs(self.ss_max_force_err_abs[1])]) / self.ss_avg_force_magnitude
 
 
 def pyplot_clear(axeses):
