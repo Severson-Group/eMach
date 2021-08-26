@@ -548,7 +548,8 @@ class VanGogh(object):
         y_solutions[0] + centery, y_solutions[1] + centery)
 
 
-from utility import csv_row_reader
+from .utility import csv_row_reader
+
 
 
 class VanGogh_pyPlotter(VanGogh):
@@ -634,7 +635,7 @@ import pyx
 # text.preamble(r"\usepackage{ulem}")  # underlining text...
 # text.preamble(r"\usepackage{anyfontsize}")  # one way of scaling fonts (except math fonts)....
 
-import PyX_Utility
+# import PyX_Utility
 
 
 class VanGogh_TikZPlotter():

@@ -1,5 +1,9 @@
 from time import time as clock_time
 import os
+# import sys
+# sys.path.append("..")
+# import sys
+# sys.path.append('FEMM_Solver.py')
 import numpy as np
 import pandas as pd
 
@@ -7,8 +11,8 @@ from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNot
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
 
-from FEMM_Solver import FEMM_Solver
-# import FEMM_Solver
+# from analyzers import FEMM_Solver
+from .FEMM_Solver import FEMM_Solver
 EPS = 1e-2 # unit: mm
 
 class IM_EM_Analysis():
