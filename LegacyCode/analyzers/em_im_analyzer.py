@@ -18,13 +18,10 @@ EPS = 1e-2 # unit: mm
 class IM_EM_Analysis():
 
     def __init__(self, configuration):
+
         self.femm_solver = FEMM_Solver()
 
 
-
-    # def __init__(self, configuration):
-    #     self.configuration = configuration
-    #
     def analyze(self, problem, counter = 0):
 
         self.machine_variant = problem.machine

@@ -17,7 +17,7 @@ from settings.IM_settings_handler import IM_Settings_Handler
 # from analyzers import structrual_analyzer as sta
 
 from analyzers.em_im_analyzer import IM_EM_Analysis
-from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
+from specifications.analyzer_config.em_fea_config_im import FEMM_FEA_Configuration
 
 from problems.im_em_problem import IM_EM_Problem
 from post_analyzers.bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
@@ -66,7 +66,7 @@ class IM_EM_ProblemDefinition():
 #
 #
 # initialize em analyzer class with FEA configuration
-em_analysis = IM_EM_Analysis(JMAG_FEA_Configuration)
+em_analysis = IM_EM_Analysis(FEMM_FEA_Configuration)
 #
 # # define em step
 # em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
