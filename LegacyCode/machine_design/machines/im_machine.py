@@ -154,6 +154,10 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
         return self._machine_parameter_dict['BeariW_Rs']
 
     @property
+    def DriveW_poles(self):
+        return self._machine_parameter_dict['DriveW_poles']
+
+    @property
     def BeariW_poles(self):
         return self._machine_parameter_dict['BeariW_poles']
 

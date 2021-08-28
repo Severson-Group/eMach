@@ -44,7 +44,8 @@ class IM_EM_Analysis():
 
 
         self.machine_variant.fea_config_dict = self.configuration
-
+        self.machine_variant.bool_initial_design = self.configuration['bool_initial_design']
+        self.machine_variant.ID = self.project_name
         self.femm_solver = FEMM_Solver(self.machine_variant, flag_read_from_jmag=False, freq=50)  # eddy+static
 
 
