@@ -1,5 +1,6 @@
 from time import time as clock_time
 import os
+import femm
 # import sys
 # sys.path.append("..")
 # import sys
@@ -18,15 +19,18 @@ EPS = 1e-2 # unit: mm
 class IM_EM_Analysis():
 
     def __init__(self, configuration):
+        self.configuration = configuration
 
-        self.femm_solver = FEMM_Solver()
+    def create_im_variant(self):
+        # self.im =IM_EM_Analysis()
+        self.im.Angle_RotorSlotSpan = 2
 
 
     def analyze(self, problem, counter = 0):
 
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
-
+        problem.configuration = self.configuration
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
@@ -37,6 +41,15 @@ class IM_EM_Analysis():
         # Create output folder
         if not os.path.isdir(self.configuration['JMAG_csv_folder']):
             os.makedirs(self.configuration['JMAG_csv_folder'])
+
+
+        self.machine_variant.fea_config_dict = self.configuration
+
+        self.femm_solver = FEMM_Solver(self.machine_variant, flag_read_from_jmag=False, freq=50)  # eddy+static
+
+
+
+
 
             
 

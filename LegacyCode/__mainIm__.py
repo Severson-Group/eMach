@@ -44,7 +44,7 @@ im_designer = MachineDesigner(arch, set_handler)
 free_var = (0.00390399, 0.00964596, 35.9925, 0.00358376, 0.00722451, 0.0128492,
             0.0143288, 180.0, 0.00514122, 0.00308507, 0.00363824, 0.0, 0.95, 0,
             0.05, 200000, 80)
-# # set operating point for BSPM machine
+# # set operating point for IM machine
 #
 design_variant = im_designer.create_design(free_var)
 
@@ -68,10 +68,10 @@ class IM_EM_ProblemDefinition():
 # initialize em analyzer class with FEA configuration
 em_analysis = IM_EM_Analysis(FEMM_FEA_Configuration)
 #
-# # define em step
-# em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
+# define em step
+em_step = AnalysisStep(IM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
 #
 # # evaluate machine design
-# evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep])
-# results = evaluator.evaluate(design_variant)
+evaluator = MachineEvaluator([em_step])
+results = evaluator.evaluate(design_variant)
 #

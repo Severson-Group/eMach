@@ -80,6 +80,7 @@ class BSPMArchitectType1(Architect):
             'd_m'          : free_variables['d_m'],
             'd_mp'         : free_variables['d_mp'],
             'd_ri'         : free_variables['d_ri'],
+            'test_variable': 541524,
             # dependant variables 
             'alpha_so'     : self.__get_alpha_so(free_variables),
             'd_sp'         : self.__get_d_sp(free_variables),
@@ -95,7 +96,7 @@ class BSPMArchitectType1(Architect):
             'd_sl'         : 0.001,
             'delta_sl'     : 0,
             'delta'        : free_variables['delta_e'],
-            'Q'            : self.__design_spec['Q'],
+            'Q'            : 6,
             'n_m'          : 1,
  
             # winding parameters

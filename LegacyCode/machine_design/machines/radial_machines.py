@@ -192,7 +192,7 @@ class PM_Rotor_Sleeved(PM_Rotor,RotorSleeve,MachineComponent):
 
     
     def required_parameters():
-        req_param=('delta_sl',)
+        req_param=('delta_sl','test_variable',)
         for cl in PM_Rotor_Sleeved.__bases__:
             if cl.required_parameters() is not None:
                 req_param=req_param+cl.required_parameters()
@@ -208,6 +208,10 @@ class PM_Rotor_Sleeved(PM_Rotor,RotorSleeve,MachineComponent):
     @property
     def delta_sl(self):
         return self._machine_parameter_dict['delta_sl']
+
+    @property
+    def test_variable(self):
+        return self._machine_parameter_dict['test_variable']
     
 class Stator(MachineComponent):
     
@@ -222,7 +226,7 @@ class Stator(MachineComponent):
                 'r_si'        ,#Stator Tooth Radius
                 'r_so'        ,
                 's_slot'      ,
-                'Qs'
+                'Q'
                 #'l_st'        , #ADD to MOTOR
                 )
     def required_materials():
