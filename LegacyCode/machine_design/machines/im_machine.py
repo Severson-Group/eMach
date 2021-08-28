@@ -81,13 +81,24 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
             return False
 
     def required_parameters():
-        return None
-        # req_geo=('delta_e','l_st')
-        # for cl in IM_Machine.__bases__:
-        #     if issubclass(cl, MachineComponent):
-        #         if cl.required_parameters() is not None:
-        #             req_geo = req_geo + cl.required_parameters()
-        # return req_geo
+        # return None
+        req_geo=('delta_e','l_st','Angle_RotorSlotSpan','Angle_StatorSlotOpen'
+                 ,'Angle_StatorSlotSpan','Bar_Conductivity','BeariW_CurrentAmp'
+                 ,'BeariW_Freq','BeariW_Rs','BeariW_poles','BeariW_turns'
+                 ,'CurrentAmp_per_phase','DriveW_CurrentAmp','DriveW_Freq'
+                 ,'DriveW_Rs','DriveW_poles','DriveW_zQ','End_Ring_Resistance'
+                 ,'Js','Length_AirGap','Length_HeadNeckRotorSlot'
+                 ,'Location_RotorBarCenter2','Omega','Qr','Qs'
+                 ,'Radius_InnerStatorYoke','Radius_OuterRotor'
+                 ,'Radius_OuterStatorYoke','Radius_Shaft','Radius_of_RotorSlot'
+                 ,'Radius_of_RotorSlot2','Width_RotorSlotOpen','Width_StatorTeethBody'
+                 ,'Width_StatorTeethHeadThickness','Width_StatorTeethNeck'
+                    )
+        for cl in IM_Machine.__bases__:
+            if issubclass(cl, MachineComponent):
+                if cl.required_parameters() is not None:
+                    req_geo = req_geo + cl.required_parameters()
+        return req_geo
 
     def required_materials():
         req_mat = ()
@@ -112,8 +123,51 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
 
     @property
     def l_st(self):
-        return self._machine_parameter_dict['l_st']
+        return self._machine_parameter_dict['stack_length']
 
+    @property
+    def Angle_RotorSlotSpan(self):
+        return self._machine_parameter_dict['Angle_RotorSlotSpan']
+
+    @property
+    def Angle_StatorSlotOpen(self):
+        return self._machine_parameter_dict['Angle_StatorSlotOpen']
+
+    @property
+    def Angle_StatorSlotSpan(self):
+        return self._machine_parameter_dict['Angle_StatorSlotSpan']
+
+    @property
+    def Bar_Conductivity(self):
+        return self._machine_parameter_dict['Bar_Conductivity']
+
+    @property
+    def BeariW_CurrentAmp(self):
+        return self._machine_parameter_dict['BeariW_CurrentAmp']
+
+    @property
+    def BeariW_Freq(self):
+        return self._machine_parameter_dict['BeariW_Freq']
+
+    @property
+    def BeariW_Rs(self):
+        return self._machine_parameter_dict['BeariW_Rs']
+
+    @property
+    def BeariW_poles(self):
+        return self._machine_parameter_dict['BeariW_poles']
+
+    @property
+    def BeariW_turns(self):
+        return self._machine_parameter_dict['BeariW_turns']
+
+    @property
+    def CurrentAmp_per_phase(self):
+        return self._machine_parameter_dict['CurrentAmp_per_phase']
+
+    @property
+    def DriveW_CurrentAmp(self):
+        return self._machine_parameter_dict['DriveW_CurrentAmp']
 
     @property
     def mech_power(self):

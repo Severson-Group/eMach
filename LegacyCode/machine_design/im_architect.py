@@ -175,8 +175,11 @@ class IMArchitectType1(Architect):
     def __get_r_sh(self, free_variables):
         return free_variables['d_ri']*0.5
 
+    @property
     def __get_Angle_StatorSlotOpen(self):
-        return 0.5 * (360 / self.__design_spec['Q'])
+        Angle_StatorSlotOpen = 0.5 * (360 / self.__design_spec['Q'])
+        print('Angle Stator slot open', Angle_StatorSlotOpen)
+        return Angle_StatorSlotOpen
 
     def __get_pole_pitch_tau_p(self, free_variables):
         air_gap_diameter_D = free_variables['delta_e'] + 2*free_variables['r_ro']
@@ -189,7 +192,7 @@ class IMArchitectType1(Architect):
 
         alpha_i = 2 / 3.14 # ideal sinusoidal flux density distribusion, when the saturation happens in teeth, alpha_i becomes higher.
         air_gap_flux_Phi_m = alpha_i * self.__design_spec['guess_air_gap_flux_density'] * self.__get_pole_pitch_tau_p(free_variables)\
-                             * self.__get_l_st()
+                             * self.__get_l_st
         ExcitationFreqSimulated = self.__design_spec['ExcitationFreqSimulated']
         no_series_coil_turns_N = np.round(np.sqrt(2) * desired_emf_Em / (2 * np.pi * ExcitationFreqSimulated\
                                                                          * self.__design_spec['kw1'] * air_gap_flux_Phi_m))
@@ -255,6 +258,7 @@ class IMArchitectType1(Architect):
     #     zQ = round(Kcu*s_slot/(2*self.__design_spec['wire_A']));
     #     return zQ
     #
+    @property
     def __get_l_st(self):
         return 0.001*1000
     #

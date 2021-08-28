@@ -184,7 +184,7 @@ class FEMM_Solver(object):
             self.flag_static_solver = not self.flag_eddycurrent_solver
             self.fraction = 2
 
-        self.stack_length = im.stack_length
+        self.stack_length = im.l_st
 
         self.im = im
         self.dir_codes = im.fea_config_dict['dir.codes']
