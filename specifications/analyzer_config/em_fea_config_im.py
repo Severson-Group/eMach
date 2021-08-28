@@ -16,6 +16,7 @@ FEMM_FEA_Configuration = {
     "bool_re_evaluate": False,
     "bool_re_evaluate_wo_csv": False,
     "delete_results_after_calculation": False,
+    "bool_initial_design" : False,
 
     "designer.Show": True,
     "designer.MultipleCPUs": True,
