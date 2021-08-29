@@ -282,7 +282,8 @@ class FEMM_Solver(object):
             # block_label(101, 'Air',         (0, 0),  10, automesh=True) # for deeply-saturated rotor yoke
 
         # Iron Core @225deg
-        if 'M19' in self.im.spec_input_dict['Steel']:
+        if 'M19' in self.im.stator_iron_mat['core_material']:
+
             steel_name = 'M19Gauge29'
         elif self.im.spec_input_dict['Steel'] == 'M15':
             steel_name = 'My M-15 Steel'
@@ -296,14 +297,14 @@ class FEMM_Solver(object):
         # Circuit Configuration
         # Rotor Winding Part
         # Our proposed pole-specific winidng with a neutral plate (this case we ignore fraction and always draw whole model!)
-        if self.im.spec_input_dict['PoleSpecificNeutral'] == True:
+        if self.im.PoleSpecificNeutral == True:
             R = im.Location_RotorBarCenter  # Since 5/23/2019
             angle_per_slot = 2 * pi / im.Qr
             # THETA_BAR = pi - angle_per_slot
 
             wily_Qr = winding_layout_im.pole_specific_winding_with_neutral(self.im.Qr, self.im.DriveW_poles / 2,
                                                                         self.im.BeariW_poles / 2,
-                                                                        self.im.spec_input_dict['coil_pitch_y_Qr'])
+                                                                        self.im.pitch)
             for ind, pair in enumerate(wily_Qr.pairs):
 
                 circuit_name = 'r%s' % (self.rotor_phase_name_list[ind])
@@ -1362,7 +1363,7 @@ class FEMM_Solver(object):
         femm.openfemm(True)  # bHide # False for debug
         femm.newdocument(0)  # magnetic
         self.freq = 0  # static
-        self.stack_length = self.im.stack_length * 1
+        self.stack_length = self.im.l_st * 1
         self.probdef()
 
         if self.deg_per_step == 0.0:
@@ -1835,17 +1836,20 @@ class FEMM_Solver(object):
 
         # femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
         # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 35, 0, 0, 1, 0, 0, 0)
-        femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, self.im.spec_derive_dict['Bar_Conductivity'] * 1e-6, 0, 0, 1, 0, 0,
-                            0)  # [MS/m]
+        femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 1 * 1e-6, 0, 0, 1, 0, 0,
+                            0)
+
+        # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, self.im.Bar_Conductivity * 1e-6, 0, 0, 1, 0, 0,
+        #                     0)  # [MS/m]
         # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 1/1.673e-2, 0, 0, 1, 0, 0, 0)
 
         # femm.mi_addmaterial('LinearIron', 2000, 2000, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 
-        if self.im.spec_input_dict['Steel'] == 'M19Gauge29':
+        if self.im.stator_iron_mat['core_material'] == 'M19Gauge29':
             # femm.mi_getmaterial('M-19 Steel') # for Stator & Rotor Iron Cores (Nonlinear with B-H curve)
             femm.mi_addmaterial('M19Gauge29', 0, 0, 0, 0, 0, 0.3556, 0,
                                 0.95)  # no lamination for testing consistency with JMAG
-            hdata, bdata = np.loadtxt(self.dir_codes + './M-19-Steel-BH-Curve-afterJMAGsmooth.BH', unpack=True,
+            hdata, bdata = np.loadtxt(self.im.stator_iron_mat['core_bh_file'], unpack=True,
                                       usecols=(0, 1))
             for n in range(0, len(bdata)):
                 femm.mi_addbhpoint('M19Gauge29', bdata[n], hdata[n])
@@ -2966,7 +2970,7 @@ class FEMM_Solver(object):
 
         self.freq = 1
         # Alternatively, the length of the machine could be scaled by the number of segments to make this correction automatically. -David Meeker
-        self.stack_length = self.im.stack_length * fraction
+        self.stack_length = self.im.l_st * fraction
         self.probdef()
 
         self.add_material()

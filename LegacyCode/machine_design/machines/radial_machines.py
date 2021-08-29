@@ -284,21 +284,21 @@ class Stator(MachineComponent):
 class Stator_IM(MachineComponent):
 
     def required_parameters():
-        return None
+        # return None
         # Add this later
-        # return ('alpha_st',  # Stator Tooth Angle
-        #         'd_so',  # Stator
-        #         'w_st',  # Stator Tooth Width
-        #         'd_st',  # Stator Tooth Length
-        #         'd_sy',  # Stator Yoke width
-        #         'alpha_so',  #
-        #         'd_sp',  # Stator Shoe pole thickness
-        #         'r_si',  # Stator Tooth Radius
-        #         'r_so',
-        #         's_slot',
-        #         'Qs'
-        #         # 'l_st'        , #ADD to MOTOR
-        #         )
+        return ('alpha_st',  # Stator Tooth Angle
+                'd_so',  # Stator
+                'w_st',  # Stator Tooth Width
+                'd_st',  # Stator Tooth Length
+                'd_sy',  # Stator Yoke width
+                'alpha_so',  #
+                'd_sp',  # Stator Shoe pole thickness
+                'r_si',  # Stator Tooth Radius
+                'r_so',
+                's_slot',
+                'Qs'
+                # 'l_st'        , #ADD to MOTOR
+                )
 
     def required_materials():
         return ('stator_iron_mat',)
@@ -344,8 +344,8 @@ class Stator_IM(MachineComponent):
         return self._machine_parameter_dict['s_slot']
 
     @property
-    def Q(self):
-        return self._machine_parameter_dict['Q']
+    def Qs(self):
+        return self._machine_parameter_dict['Qs']
 
     @property
     def stator_iron_mat(self):

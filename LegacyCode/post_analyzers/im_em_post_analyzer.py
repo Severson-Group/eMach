@@ -2,7 +2,7 @@ import copy
 import numpy as np
 
 
-class BSPM_EM_PostAnalyzer():
+class IM_EM_PostAnalyzer():
 
     def copper_loss(self):
         return 6*((self.current_trms/2)**2 + self.current_srms**2)*self.R_coil
@@ -89,7 +89,7 @@ class BSPM_EM_PostAnalyzer():
         #                                                        target_freq=machine.mech_omega*machine.p/(2*np.pi))
         #
         # state_out.conditions.em = post_processing
-        return None 
+        return None
 
 
 def process_torque_data(torque_df):

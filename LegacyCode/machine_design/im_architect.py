@@ -99,7 +99,7 @@ class IMArchitectType1(Architect):
             'Width_StatorTeethHeadThickness': free_variables['d_so'],
             'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
 
-            'DriveW_poles': self.__design_spec['p'],
+            'DriveW_poles': self.__design_spec['p']*2,
             'DriveW_zQ': self.__get_turns(free_variables),
 
             # Not going to consider resistance for now
@@ -112,7 +112,7 @@ class IMArchitectType1(Architect):
 
             'stack_length' : self.__get_l_st,
 
-            'BeariW_poles' : self.__design_spec['ps'],
+            'BeariW_poles' : self.__design_spec['ps']*2,
 
             'BeariW_turns' : self.__get_turns(free_variables),
 
@@ -122,6 +122,8 @@ class IMArchitectType1(Architect):
             'layer_phases': [self.__winding.layer_X_phases, self.__winding.layer_Y_phases],
             'layer_polarity': [self.__winding.layer_X_signs, self.__winding.layer_Y_signs],
             'pitch': self.__winding.coil_pitch_y,
+            'use_drop_shape_rotor_bar' : self.__design_spec['use_drop_shape_rotor_bar'],
+            'PoleSpecificNeutral' : self.__design_spec['PoleSpecificNeutral']
 
 
 

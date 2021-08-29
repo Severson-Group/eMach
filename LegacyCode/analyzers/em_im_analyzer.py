@@ -46,7 +46,15 @@ class IM_EM_Analysis():
         self.machine_variant.fea_config_dict = self.configuration
         self.machine_variant.bool_initial_design = self.configuration['bool_initial_design']
         self.machine_variant.ID = self.project_name
+        self.bool_run_in_JMAG_Script_Editor = False
+
         self.femm_solver = FEMM_Solver(self.machine_variant, flag_read_from_jmag=False, freq=50)  # eddy+static
+
+        self.femm_solver.greedy_search_for_breakdown_slip(self.configuration['JMAG_csv_folder'], self.project_name,
+                                                          bool_run_in_JMAG_Script_Editor=self.bool_run_in_JMAG_Script_Editor,
+                                                          fraction=1)  # 转子导条必须形成通路
+        # self.femm_solver.run_rotating_static_FEA()
+
 
 
 
