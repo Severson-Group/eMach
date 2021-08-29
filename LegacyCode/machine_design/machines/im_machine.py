@@ -93,6 +93,8 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
                  ,'Radius_OuterStatorYoke','Radius_Shaft','Radius_of_RotorSlot'
                  ,'Radius_of_RotorSlot2','Width_RotorSlotOpen','Width_StatorTeethBody'
                  ,'Width_StatorTeethHeadThickness','Width_StatorTeethNeck'
+                 ,'use_drop_shape_rotor_bar','PoleSpecificNeutral'
+                 ,'pitch'
                     )
         for cl in IM_Machine.__bases__:
             if issubclass(cl, MachineComponent):
@@ -118,8 +120,8 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
                 )
 
     @property
-    def delta_e(self):
-        return self._machine_parameter_dict['delta_e']
+    def Length_AirGap(self):
+        return self._machine_parameter_dict['Length_AirGap']
 
     @property
     def l_st(self):
@@ -128,6 +130,50 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
     @property
     def Angle_RotorSlotSpan(self):
         return self._machine_parameter_dict['Angle_RotorSlotSpan']
+
+    @property
+    def Width_StatorTeethNeck(self):
+        return self._machine_parameter_dict['Width_StatorTeethNeck']
+
+    @property
+    def Width_RotorSlotOpen(self):
+        return self._machine_parameter_dict['Width_RotorSlotOpen']
+
+    @property
+    def Width_StatorTeethHeadThickness(self):
+        return self._machine_parameter_dict['Width_StatorTeethHeadThickness']
+
+    @property
+    def Location_RotorBarCenter(self):
+        return self._machine_parameter_dict['Location_RotorBarCenter']
+
+    @property
+    def Radius_of_RotorSlot(self):
+        return self._machine_parameter_dict['Radius_of_RotorSlot']
+
+    @property
+    def PoleSpecificNeutral(self):
+        return self._machine_parameter_dict['PoleSpecificNeutral']
+
+    @property
+    def Radius_OuterStatorYoke(self):
+        return self._machine_parameter_dict['Radius_OuterStatorYoke']
+
+    @property
+    def Radius_InnerStatorYoke(self):
+        return self._machine_parameter_dict['Radius_InnerStatorYoke']
+
+    @property
+    def Radius_Shaft(self):
+        return self._machine_parameter_dict['Radius_Shaft']
+
+    @property
+    def Width_StatorTeethBody(self):
+        return self._machine_parameter_dict['Width_StatorTeethBody']
+
+    @property
+    def use_drop_shape_rotor_bar(self):
+        return self._machine_parameter_dict['use_drop_shape_rotor_bar']
 
     @property
     def Angle_StatorSlotOpen(self):
@@ -145,6 +191,9 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
     def BeariW_CurrentAmp(self):
         return self._machine_parameter_dict['BeariW_CurrentAmp']
 
+    @property
+    def Radius_OuterRotor(self):
+        return self._machine_parameter_dict['Radius_OuterRotor']
     @property
     def BeariW_Freq(self):
         return self._machine_parameter_dict['BeariW_Freq']
@@ -188,6 +237,10 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
     @property
     def Iq_rated_ratio(self):
         return self._nameplate_dict['Iq_rated_ratio']
+
+    @property
+    def pitch(self):
+        return self._machine_parameter_dict['pitch']
 
     @property
     def Rated_current(self):
