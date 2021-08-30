@@ -94,7 +94,8 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
                  ,'Radius_of_RotorSlot2','Width_RotorSlotOpen','Width_StatorTeethBody'
                  ,'Width_StatorTeethHeadThickness','Width_StatorTeethNeck'
                  ,'use_drop_shape_rotor_bar','PoleSpecificNeutral'
-                 ,'pitch'
+                 ,'pitch','number_parallel_branch','DPNV_or_SEPA'
+                 ,'CommutatingSequenceD'
                     )
         for cl in IM_Machine.__bases__:
             if issubclass(cl, MachineComponent):
@@ -158,6 +159,18 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
     @property
     def Radius_OuterStatorYoke(self):
         return self._machine_parameter_dict['Radius_OuterStatorYoke']
+
+    @property
+    def number_parallel_branch(self):
+        return self._machine_parameter_dict['number_parallel_branch']
+
+    @property
+    def CommutatingSequenceD(self):
+        return self._machine_parameter_dict['CommutatingSequenceD']
+
+    @property
+    def DPNV_or_SEPA(self):
+        return self._machine_parameter_dict['DPNV_or_SEPA']
 
     @property
     def Radius_InnerStatorYoke(self):

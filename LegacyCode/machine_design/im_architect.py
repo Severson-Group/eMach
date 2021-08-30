@@ -123,9 +123,10 @@ class IMArchitectType1(Architect):
             'layer_polarity': [self.__winding.layer_X_signs, self.__winding.layer_Y_signs],
             'pitch': self.__winding.coil_pitch_y,
             'use_drop_shape_rotor_bar' : self.__design_spec['use_drop_shape_rotor_bar'],
-            'PoleSpecificNeutral' : self.__design_spec['PoleSpecificNeutral']
-
-
+            'PoleSpecificNeutral' : self.__design_spec['PoleSpecificNeutral'],
+            'number_parallel_branch' : self.__design_spec['number_parallel_branch'],
+            'DPNV_or_SEPA' : self.__design_spec['DPNV_or_SEPA'],
+            'CommutatingSequenceD' : self.__winding.CommutatingSequenceD
 
         }
 

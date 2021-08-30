@@ -46,6 +46,7 @@ DesignSpec = {
     "bool_skew_rotor": False,
     "kw1" : 0.866,
     "Ix_ratio" : 2.5/100,
+    "number_parallel_branch" : 2
 
 
     }
