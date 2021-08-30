@@ -405,8 +405,8 @@ class FEMM_Solver(object):
                             turns=-1)  # However, this turns=-1 is not effective for PARALLEL_CONNECTED circuit
 
         # Stator Winding
-        npb = im.wily.number_parallel_branch
-        nwl = im.wily.number_winding_layer  # number of windign layers
+        npb = im.number_parallel_branch
+        nwl = im.no_of_layers  # number of windign layers
         if self.flag_static_solver == True:  # self.freq == 0:
             # static solver
             femm.mi_addcircprop('dU', self.dict_stator_current_function[3](0.0), SERIES_CONNECTED)
@@ -417,7 +417,7 @@ class FEMM_Solver(object):
             femm.mi_addcircprop('bW', self.dict_stator_current_function[2](0.0), SERIES_CONNECTED)
         else:  # eddy current solver
             # if im.fea_config_dict['DPNV_separate_winding_implementation'] == True or im.fea_config_dict['DPNV'] == False:
-            if im.spec_input_dict['DPNV_or_SEPA'] == False:
+            if im.DPNV_or_SEPA == False:
                 # either a separate winding or a DPNV winding implemented as a separate winding
                 ampD = im.DriveW_CurrentAmp / npb
                 ampB = im.BeariW_CurrentAmp
@@ -427,7 +427,7 @@ class FEMM_Solver(object):
                 ampB = ampD
 
             # 2020/07/07: Does comutating sequence even matter for frequency analysis??? Simply delege this if-else statement will do no harm. (to be tested)
-            if im.wily.CommutatingSequenceD == 1:
+            if im.CommutatingSequenceD == 1:
                 MyCommutatingSequence = ['-', '+']  # 2 pole
             else:
                 # raise
@@ -465,7 +465,7 @@ class FEMM_Solver(object):
         THETA = pi - angle_per_slot + 0.5 * angle_per_slot - 3.0 / 360  # This 3 deg must be less than 360/Qs/2，取这么大是为了在GUI上看得清楚点。
         count = 0
         # for phase, up_or_down in zip(im.l_rightlayer1,im.l_rightlayer2):
-        for phase, up_or_down in zip(im.wily.layer_X_phases, im.wily.layer_X_signs):
+        for phase, up_or_down in zip(im.layer_phases[0], im.layer_polarity[0]):
             circuit_name = 'd' + phase
             THETA += angle_per_slot
             X = R * cos(THETA);
@@ -485,7 +485,7 @@ class FEMM_Solver(object):
             THETA = pi - angle_per_slot + 0.5 * angle_per_slot + 3.0 / 360
 
             # for phase, up_or_down in zip(im.l_leftlayer1,im.l_leftlayer2):
-            for phase, up_or_down in zip(im.wily.layer_Y_phases, im.wily.layer_Y_signs):
+            for phase, up_or_down in zip(im.layer_phases[1], im.layer_polarity[1]):
                 circuit_name = 'b' + phase
                 THETA += angle_per_slot
                 X = R * cos(THETA);
