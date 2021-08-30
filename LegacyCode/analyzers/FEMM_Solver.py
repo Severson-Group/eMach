@@ -3004,7 +3004,7 @@ class FEMM_Solver(object):
             pass  # debug double layer rotor winding JMAG circuit for tia-ismb-2020 on 2020-10-04
         else:
             print('\n' + '-' * 20, self.study_name)
-            proc = subprocess.Popen([sys.executable, 'parasolve_greedy_search_manager.py',
+            proc = subprocess.Popen([sys.executable, os.getcwd() + '\\analyzers\parasolve_greedy_search_manager.py',
                                      str(number_of_instantces), self.dir_femm_temp, str(self.stack_length)], bufsize=-1)
             # proc.wait() # don't wait on femm solver, and let jmag plot the model and get ready for the breakdownd slip info.
 

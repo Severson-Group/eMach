@@ -48,11 +48,17 @@ class IM_EM_Analysis():
         self.machine_variant.ID = self.project_name
         self.bool_run_in_JMAG_Script_Editor = False
 
+        print('Run greedy_search_for_breakdown_slip...')
+        femm_tic = clock_time()
+
         self.femm_solver = FEMM_Solver(self.machine_variant, flag_read_from_jmag=False, freq=50)  # eddy+static
 
         self.femm_solver.greedy_search_for_breakdown_slip(self.configuration['JMAG_csv_folder'], self.project_name,
                                                           bool_run_in_JMAG_Script_Editor=self.bool_run_in_JMAG_Script_Editor,
                                                           fraction=1)  # 转子导条必须形成通路
+
+        slip_freq_breakdown_torque, breakdown_torque, breakdown_force = self.femm_solver.wait_greedy_search(femm_tic)
+
         # self.femm_solver.run_rotating_static_FEA()
 
 
