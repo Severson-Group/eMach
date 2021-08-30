@@ -71,64 +71,124 @@ class IMArchitectType1(Architect):
 
         im_parameters = {
 
-            'Qs': self.__design_spec['Q'],
-            'Qr': self.__design_spec['Qr'],
-            'Angle_StatorSlotSpan': 360 / self.__design_spec['Q'],
-            'Angle_RotorSlotSpan': 360 / self.__design_spec['Qr'],
+            'Qs': 24,
+            'Qr': 32,
+            'Angle_StatorSlotSpan': 360/24,
+            'Angle_RotorSlotSpan': 360/32,
 
-            'Radius_OuterStatorYoke': self.__get_Radius_OuterStatorYoke(free_variables),
-            'Radius_InnerStatorYoke': self.__get_Radius_InnerStatorYoke(free_variables),
-            'Length_AirGap'         : free_variables['delta_e'],
-            'Radius_OuterRotor'     : free_variables['r_ro'],
-            'Radius_Shaft'          : self.__get_r_sh(free_variables),
+            'Radius_OuterStatorYoke': 113.767,
+            'Radius_InnerStatorYoke': 77.9400,
+            'Length_AirGap': 2.43798,
+            'Radius_OuterRotor': 47.74648292756861,
+            'Radius_Shaft': 8.909627424964462,
 
-            'Length_HeadNeckRotorSlot': 1, #Jiahao is using 1 mm as default
-            'Radius_of_RotorSlot': free_variables['r_rs'],
-            'Location_RotorBarCenter': free_variables['d_rbc'],
-            'Width_RotorSlotOpen': free_variables['w_rso'],
+            'Length_HeadNeckRotorSlot': 1.1791492735270337,  # Jiahao is using 1 mm as default
+            'Radius_of_RotorSlot': 1.6699405702001604,
+            'Location_RotorBarCenter': 44.897393083841415,
+            'Width_RotorSlotOpen': 1.0010737572184039,
 
             # 'Radius_of_RotorSlot2': free_variables['Radius_of_RotorSlot2'],
             # 'Location_RotorBarCenter2': free_variables['Location_RotorBarCenter2'],
 
-            #As of now no double bar rotor
-            'Radius_of_RotorSlot2':0,
-            'Location_RotorBarCenter2': 0,
+            # As of now no double bar rotor
+            'Radius_of_RotorSlot2': 0.6227192954834465,
+            'Location_RotorBarCenter2': 34.230484771383125,
 
-            'Angle_StatorSlotOpen'          : self.__get_Angle_StatorSlotOpen,
-            'Width_StatorTeethBody'         : free_variables['w_st'],
-            'Width_StatorTeethHeadThickness': free_variables['d_so'],
-            'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
+            'Angle_StatorSlotOpen': 10.820748923347335,
+            'Width_StatorTeethBody': 10.240361002369372,
+            'Width_StatorTeethHeadThickness': 0.5785684617867006,
+            'Width_StatorTeethNeck': 0.2892842308933503,
 
-            'DriveW_poles': self.__design_spec['p']*2,
-            'DriveW_zQ': self.__get_turns(free_variables),
+            'DriveW_poles':  2,
+            'DriveW_zQ': 10,
 
             # Not going to consider resistance for now
             # 'DriveW_Rs': free_variables['DriveW_Rs'],
 
-            'DriveW_CurrentAmp': self.__get_current_coil,
-            'DriveW_CurrentAmpUsed' : self.__get_current_coil,
-            'BeariW_CurrentAmpUsed' : self.__get_current_coil * self.__design_spec['Ix_ratio'],
-            'DriveW_Freq' : self.__design_spec['ExcitationFreqSimulated'],
+            'DriveW_CurrentAmp': 127.89733,
+            'DriveW_CurrentAmpUsed': self.__get_current_coil,
+            'BeariW_CurrentAmpUsed': self.__get_current_coil * self.__design_spec['Ix_ratio'],
+            'DriveW_Freq': 500,
 
-            'stack_length' : self.__get_l_st,
+            'stack_length': 92.5925925,
 
-            'BeariW_poles' : self.__design_spec['ps']*2,
+            'BeariW_poles': 4,
 
-            'BeariW_turns' : self.__get_turns(free_variables),
-
+            'BeariW_turns': self.__get_turns(free_variables),
 
             'coil_groups': self.__winding.grouping_AC,
             'no_of_layers': self.__winding.number_winding_layer,
             'layer_phases': [self.__winding.layer_X_phases, self.__winding.layer_Y_phases],
             'layer_polarity': [self.__winding.layer_X_signs, self.__winding.layer_Y_signs],
             'pitch': self.__winding.coil_pitch_y,
-            'use_drop_shape_rotor_bar' : self.__design_spec['use_drop_shape_rotor_bar'],
-            'PoleSpecificNeutral' : self.__design_spec['PoleSpecificNeutral'],
-            'number_parallel_branch' : self.__design_spec['number_parallel_branch'],
-            'DPNV_or_SEPA' : self.__design_spec['DPNV_or_SEPA'],
-            'CommutatingSequenceD' : self.__winding.CommutatingSequenceD
+            'use_drop_shape_rotor_bar': self.__design_spec['use_drop_shape_rotor_bar'],
+            'PoleSpecificNeutral': self.__design_spec['PoleSpecificNeutral'],
+            'number_parallel_branch': self.__design_spec['number_parallel_branch'],
+            'DPNV_or_SEPA': self.__design_spec['DPNV_or_SEPA'],
+            'CommutatingSequenceD': self.__winding.CommutatingSequenceD
 
         }
+
+        # im_parameters = {
+        #
+        #     'Qs': self.__design_spec['Q'],
+        #     'Qr': self.__design_spec['Qr'],
+        #     'Angle_StatorSlotSpan': 360 / self.__design_spec['Q'],
+        #     'Angle_RotorSlotSpan': 360 / self.__design_spec['Qr'],
+        #
+        #     'Radius_OuterStatorYoke': self.__get_Radius_OuterStatorYoke(free_variables),
+        #     'Radius_InnerStatorYoke': self.__get_Radius_InnerStatorYoke(free_variables),
+        #     'Length_AirGap'         : free_variables['delta_e'],
+        #     'Radius_OuterRotor'     : free_variables['r_ro'],
+        #     'Radius_Shaft'          : self.__get_r_sh(free_variables),
+        #
+        #     'Length_HeadNeckRotorSlot': 1, #Jiahao is using 1 mm as default
+        #     'Radius_of_RotorSlot': free_variables['r_rs'],
+        #     'Location_RotorBarCenter': free_variables['d_rbc'],
+        #     'Width_RotorSlotOpen': free_variables['w_rso'],
+        #
+        #     # 'Radius_of_RotorSlot2': free_variables['Radius_of_RotorSlot2'],
+        #     # 'Location_RotorBarCenter2': free_variables['Location_RotorBarCenter2'],
+        #
+        #     #As of now no double bar rotor
+        #     'Radius_of_RotorSlot2':0,
+        #     'Location_RotorBarCenter2': 0,
+        #
+        #     'Angle_StatorSlotOpen'          : self.__get_Angle_StatorSlotOpen,
+        #     'Width_StatorTeethBody'         : free_variables['w_st'],
+        #     'Width_StatorTeethHeadThickness': free_variables['d_so'],
+        #     'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
+        #
+        #     'DriveW_poles': self.__design_spec['p']*2,
+        #     'DriveW_zQ': self.__get_turns(free_variables),
+        #
+        #     # Not going to consider resistance for now
+        #     # 'DriveW_Rs': free_variables['DriveW_Rs'],
+        #
+        #     'DriveW_CurrentAmp': self.__get_current_coil,
+        #     'DriveW_CurrentAmpUsed' : self.__get_current_coil,
+        #     'BeariW_CurrentAmpUsed' : self.__get_current_coil * self.__design_spec['Ix_ratio'],
+        #     'DriveW_Freq' : self.__design_spec['ExcitationFreqSimulated'],
+        #
+        #     'stack_length' : self.__get_l_st,
+        #
+        #     'BeariW_poles' : self.__design_spec['ps']*2,
+        #
+        #     'BeariW_turns' : self.__get_turns(free_variables),
+        #
+        #
+        #     'coil_groups': self.__winding.grouping_AC,
+        #     'no_of_layers': self.__winding.number_winding_layer,
+        #     'layer_phases': [self.__winding.layer_X_phases, self.__winding.layer_Y_phases],
+        #     'layer_polarity': [self.__winding.layer_X_signs, self.__winding.layer_Y_signs],
+        #     'pitch': self.__winding.coil_pitch_y,
+        #     'use_drop_shape_rotor_bar' : self.__design_spec['use_drop_shape_rotor_bar'],
+        #     'PoleSpecificNeutral' : self.__design_spec['PoleSpecificNeutral'],
+        #     'number_parallel_branch' : self.__design_spec['number_parallel_branch'],
+        #     'DPNV_or_SEPA' : self.__design_spec['DPNV_or_SEPA'],
+        #     'CommutatingSequenceD' : self.__winding.CommutatingSequenceD
+        #
+        # }
 
         im_material = {
             'air_mat': self.__air,
@@ -205,7 +265,7 @@ class IMArchitectType1(Architect):
         else:
             number_parallel_branch = 1
             # print('\n''In some cases, eselfially in low-voltage, high-power machines, there may be a need to change the stator slot number, the number of parallel paths or even the main dimensions of the machine in order to find the appropriate number of conductors in a slot.''')
-        no_conductors_per_slot_zQ = 2 * 3 * no_series_coil_turns_N / self.__design_spec['Q'] * number_parallel_branch
+        no_conductors_per_slot_zQ = 2 * 3 * no_series_coil_turns_N / self.__design_spec['Qs'] * number_parallel_branch
         # 3 here is number of phases please change this by adding the machine specification (check bp1_machine_spec)
         return no_conductors_per_slot_zQ
 
