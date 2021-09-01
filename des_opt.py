@@ -72,7 +72,8 @@ class DesignProblem:
         except Exception as e:
             # print(e)
             # print(traceback.format_exc())
-            if e is InvalidDesign:
+            if type(e) is InvalidDesign:
+
                 temp = tuple(map(tuple, 1E10 * np.ones([1, self.get_nobj()])))
                 objs = temp[0]
                 return objs
