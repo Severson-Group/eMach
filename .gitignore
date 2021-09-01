@@ -47,3 +47,10 @@ LegacyCode/run_data/proj_0_.jfiles/proj_0_~1/proj_0_TranPMSM~1/Case1/warning
 *.fem
 *.txt
 *.fem
+LegacyCode/run_data/JMAG_csv/femm_temp.fem
+*.fem
+LegacyCode/run_data/proj_0_attempts_2.jfiles/proj_0_attempts_2~1/proj_0_attempts_2TranPMSM~1/Case1/jcgmntr
+LegacyCode/run_data/proj_0_attempts_2.jfiles/proj_0_attempts_2~1/proj_0_attempts_2TranPMSM~1/Case1/jmonitor
+LegacyCode/run_data/proj_0_attempts_2.jfiles/proj_0_attempts_2~1/proj_0_attempts_2TranPMSM~1/Case1/warning
+*.fem
+*.fem
