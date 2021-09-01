@@ -29,13 +29,19 @@ class WindingLayout(object):
             self.rightlayer_polarity = ['+', '+', '-', '-', '+', '+', '-', '-', '+', '+', '-', '-', '+', '+', '-', '-', '+', '+', '-', '-', '+', '+', '-', '-']
             self.leftlayer_phase  = self.rightlayer_phase[::] # ExampleQ24p2m3ps1: torque winding inner layer
             self.leftlayer_polarity  = self.rightlayer_polarity[::]
-            self.grouping_AC   = [  0,   0,   1,   1,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   0,   0] # 只取决于outerlayer/rightlayer的反相情况
+            self.grouping_a   = [  'b',   'b',   'a',   'a',   'a',   'a',   'b',
+                                   'b',   'b',   'b',   'a',   'a',   'a',   'a',
+                                   'b',   'b',   'b',   'b',   'a',   'a',   'a',   'a',   'b',   'b'] # 只取决于outerlayer/rightlayer的反相情况
             self.coil_pitch    = 6 # left layer can be inferred from coil pitch and right layer diagram
             self.CommutatingSequenceD = 1 # D stands for Drive winding (i.e., torque winding)
             self.CommutatingSequenceB = 0 # B stands for Bearing winding (i.e., suspension winding), commutating sequence decides the direction of the rotating field
             self.number_parallel_branch = 2.
             self.bool_3PhaseCurrentSource = False # 3PhaseCurrentSource is a macro in circuit setup of JMAG
             self.no_winding_layer = 2 # for torque winding and this means there could be a short pitch
+
+            self.y    = 6 # coil_pitch, left layer can be inferred from coil pitch and right layer diagram
+            self.Kw    = 0.966
+            self.initial_excitation_bias_compensation_deg = -30
 
             # backward compatibility
             self.l41 = self.rightlayer_phase
@@ -184,7 +190,7 @@ class WindingLayout(object):
             self.leftlayer_phase  = ['W', 'U', 'V', 'W', 'U', 'V', 'W', 'U', 'V', 'W', 'U', 'V']
             self.leftlayer_polarity  = ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']
             # self.grouping_AC   = [  0,   0,   0,   1,   1,   1,   1,   1,   1,   0,   0,   0] # 只取决于outerlayer/rightlayer的反相情况，AC是在悬浮逆变器激励下会反相的
-            self.grouping_AC   = [  0,   0,   1,   1,   0,   0,   1,   1,   0,   0,   1,   1] # Jingwei's layout
+            self.grouping_a   = [  'b',   'b',   'a',   'a',   'b',   'b',   'a',   'a',   'b',   'b',   'a',   'a'] # Jingwei's layout
             self.coil_pitch    = -1 # left layer can be inferred from coil pitch and right layer diagram
                                     # We use negative coil_pitch to indicate concentrated winding
             self.CommutatingSequenceD = 1 # D stands for Drive winding (i.e., torque winding)
@@ -193,7 +199,9 @@ class WindingLayout(object):
             self.bool_3PhaseCurrentSource = False # 3PhaseCurrentSource is a macro in circuit setup of JMAG
             self.no_winding_layer = 2 # for torque winding and this means there could be a short pitch
 
-            self.initial_excitation_bias_compensation_deg = 0 # for torque winding
+            self.y = 1
+            self.Kw = 0.866
+            self.initial_excitation_bias_compensation_deg = -15 # for torque winding
 
             # backward compatibility
             self.l41 = self.rightlayer_phase

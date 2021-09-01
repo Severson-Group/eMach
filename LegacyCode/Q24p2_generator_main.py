@@ -6,7 +6,7 @@ sys.path.append("..")
 from machine_design import BSPMArchitectType1
 
 from specifications.bspm_specification import BSPMMachineSpec
-from specifications.machine_specs.bp1_machine_specs import DesignSpec
+from specifications.machine_specs.Q24p2_gen_specs import DesignSpec
 from specifications.materials.electric_steels import Arnon5
 from specifications.materials.jmag_library_magnets import N40H
 from specifications.materials.miscellaneous_materials import CarbonFiber, Steel, Copper, Hub, Air
@@ -61,9 +61,8 @@ class StructPostAnalyzer:
 
     def get_next_state(results, in_state):
         if results is False:
-            raise InvalidDesign
+            raise InvalidDesign('Suitable sleeve not found')
         else:
-            print('Results are ', type(results))
             machine = in_state.design.machine
             new_machine = machine.clone(machine_parameter_dict={'d_sl': results[0]})
         state_out = deepcopy(in_state)
@@ -139,22 +138,25 @@ windage_step = AnalysisStep(therm.WindageProblemDef, therm.WindageLossAnalyzer, 
 evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step, windage_step])
 
 # run optimization
-bp2 = (0.00275, 0.02141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 0, 3e-3)
+Q24p2_gen = (0.00275, 0.02142, 11.13458012, 0.002201241, 0.009522116, 0.022541758, 0.029286149, 90, 3.41e-3, 0, 3e-3)
+# Q12p1_gen = (0.001664795,	0.019093239,	22.46060342,	0.00133381,
+#        0.007262994,	0.019853899,	0.013041872,	178.3617496,
+#        3.41e-3, 0, 3e-3)
 # design = bspm_designer.create_design(bp2)
 # results = evaluator.evaluate(design)
 
 bounds = [
-    [0.9 * bp2[0], 1.1 * bp2[0]],  # delta_e
-    [1 * bp2[1], 1.1 * bp2[1]],  # r_ro    this will change the tip speed
-    [0.9 * bp2[2], 1.1 * bp2[2]],  # alpha_st
-    [0.9 * bp2[3], 1.1 * bp2[3]],  # d_so
-    [0.9 * bp2[4], 1.1 * bp2[4]],  # w_st
-    [0.9 * bp2[5], 1.1 * bp2[5]],  # d_st
-    [0.9 * bp2[6], 1.1 * bp2[6]],  # d_sy
-    [1 * bp2[7], 1 * bp2[7]],  # alpha_m
-    [1 * bp2[8], 1.1 * bp2[8]],  # d_m
-    [1 * bp2[9], 1.1 * bp2[9]],  # d_mp
-    [0.3 * bp2[10], 1 * bp2[10]],  # d_ri
+    [0.9 * Q24p2_gen[0], 1.1 * Q24p2_gen[0]],  # delta_e
+    [1 * Q24p2_gen[1], 1.1 * Q24p2_gen[1]],  # r_ro    this will change the tip speed
+    [0.9 * Q24p2_gen[2], 1.1 * Q24p2_gen[2]],  # alpha_st
+    [0.9 * Q24p2_gen[3], 1.1 * Q24p2_gen[3]],  # d_so
+    [0.9 * Q24p2_gen[4], 1.1 * Q24p2_gen[4]],  # w_st
+    [0.9 * Q24p2_gen[5], 1.1 * Q24p2_gen[5]],  # d_st
+    [0.9 * Q24p2_gen[6], 1.1 * Q24p2_gen[6]],  # d_sy
+    [1 * Q24p2_gen[7], 1 * Q24p2_gen[7]],  # alpha_m
+    [1 * Q24p2_gen[8], 1.1 * Q24p2_gen[8]],  # d_m
+    [1 * Q24p2_gen[9], 1.1 * Q24p2_gen[9]],  # d_mp
+    [0.3 * Q24p2_gen[10], 1 * Q24p2_gen[10]],  # d_ri
 ]
 
 dh = DataHandler()
