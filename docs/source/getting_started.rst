@@ -1,4 +1,4 @@
-Getting Started
+Introduction
 ===============
 
 This document will outline the installation of ``macheval``	 and how to get started using it to design, evaluate, and optimize electric machines.
