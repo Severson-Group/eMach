@@ -4,10 +4,8 @@ MachEval is a code base designed to assist in the evaluation and optimization of
 
 .. toctree::
    :maxdepth: 2
-   :caption: Guidelines:
-	
-   documentation
-   auto_docs
+   :caption: Getting Started:
+
    getting_started
    rectangle_example
    
@@ -17,6 +15,13 @@ MachEval is a code base designed to assist in the evaluation and optimization of
 
    modules
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Guidelines:
+	
+   documentation
+   auto_docs
+   
    
 Indices
 ==================
