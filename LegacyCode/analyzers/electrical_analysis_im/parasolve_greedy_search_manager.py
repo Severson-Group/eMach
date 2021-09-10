@@ -83,7 +83,7 @@ while True:
     for i, id_solver in enumerate(list_solver_id[-number_of_instantces:]):
         savetofile(id_solver, freq_begin + i*freq_step, stack_length)
 
-        proc = subprocess.Popen([sys.executable, os.getcwd() + '\\analyzers\parasolve_greedy_search.py',
+        proc = subprocess.Popen([sys.executable, os.getcwd() + '\\analyzers\electrical_analysis_im\parasolve_greedy_search.py',
                                  str(id_solver), '"'+dir_femm_temp+'"'], bufsize=-1)
         procs.append(proc)
 
