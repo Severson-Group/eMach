@@ -13,7 +13,7 @@ from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
 
 # from analyzers import FEMM_Solver
-from .FEMM_Solver import FEMM_Solver
+from .electrical_analysis_im.FEMM_Solver import FEMM_Solver
 EPS = 1e-2 # unit: mm
 
 class IM_EM_Analysis():

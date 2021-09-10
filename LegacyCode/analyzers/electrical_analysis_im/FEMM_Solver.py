@@ -21,7 +21,7 @@ from time import time as clock_time
 
 from .VanGogh import VanGogh
 # from . import VanGogh
-from .electrical_analysis import winding_layout_im
+from .winding_layout_im import winding_layout_v2
 
 SELECT_ALL = 4
 EPS = 1e-2  # unit mm
@@ -302,7 +302,7 @@ class FEMM_Solver(object):
             angle_per_slot = 2 * pi / im.Qr
             # THETA_BAR = pi - angle_per_slot
 
-            wily_Qr = winding_layout_im.pole_specific_winding_with_neutral(self.im.Qr, self.im.DriveW_poles / 2,
+            wily_Qr = winding_layout_v2.pole_specific_winding_with_neutral(self.im.Qr, self.im.DriveW_poles / 2,
                                                                         self.im.BeariW_poles / 2,
                                                                         self.im.pitch)
             for ind, pair in enumerate(wily_Qr.pairs):
@@ -897,7 +897,7 @@ class FEMM_Solver(object):
         if fraction == 1:
             THETA = - angle_per_slot + 0.5 * angle_per_slot + 3.0 / 360
 
-            grouping_AC_of_Y_layer = winding_layout_im.infer_Y_layer_grpAC_from_X_layer_and_coil_pitch_y(
+            grouping_AC_of_Y_layer = winding_layout_v2.infer_Y_layer_grpAC_from_X_layer_and_coil_pitch_y(
                 im.wily.grouping_AC, im.wily.coil_pitch_y)
             # print('-'*100)
             # print(im.wily.grouping_AC)
@@ -3004,7 +3004,7 @@ class FEMM_Solver(object):
             pass  # debug double layer rotor winding JMAG circuit for tia-ismb-2020 on 2020-10-04
         else:
             print('\n' + '-' * 20, self.study_name)
-            proc = subprocess.Popen([sys.executable, os.getcwd() + '\\analyzers\parasolve_greedy_search_manager.py',
+            proc = subprocess.Popen([sys.executable, os.getcwd() + '\\analyzers\electrical_analysis_im\parasolve_greedy_search_manager.py',
                                      str(number_of_instantces), self.dir_femm_temp, str(self.stack_length)], bufsize=-1)
             # proc.wait() # don't wait on femm solver, and let jmag plot the model and get ready for the breakdownd slip info.
 
