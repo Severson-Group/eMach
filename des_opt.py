@@ -36,8 +36,11 @@ class DesignProblem:
 
     Attributes:
         designer: Objects which convert free variables to a design.
+        
         evaluator: Objects which evaluate the performance of different designs.
+        
         design_space: Objects which characterizes the design space of the optimization.
+        
         dh: Data handlers which enable saving optimization results and its resumption.
     """
     def __init__(self, designer: 'Designer', evaluator: 'Evaluator', design_space: 'DesignSpace', dh: 'DataHandler'):
