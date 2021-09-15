@@ -1836,7 +1836,7 @@ class FEMM_Solver(object):
 
         # femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
         # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 35, 0, 0, 1, 0, 0, 0)
-        femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 1 * 1e-6, 0, 0, 1, 0, 0,
+        femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 47619047.61904761 * 1e-6, 0, 0, 1, 0, 0,
                             0)
 
         # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, self.im.Bar_Conductivity * 1e-6, 0, 0, 1, 0, 0,
@@ -3023,7 +3023,7 @@ class FEMM_Solver(object):
                 femm.closefemm()
 
                 new_fname = self.dir_femm_temp + self.study_name + '.csv'
-                os.rename(fname, new_fname)
+                # os.rename(fname, new_fname)
                 with open(new_fname, 'w') as f:
                     str_results = "%g\n%g\n" % (freq, torque)
                     str_results += "%g\n%g\n" % (stator_slot_area, rotor_slot_area)
@@ -3038,8 +3038,8 @@ class FEMM_Solver(object):
 
                 # leave the fem file for ease of reproduction
                 # os.remove(fname[:-4]+'.fem')
-                os.remove(fname[:-4] + '.ans')
-                os.rename(fname[:-4] + '.fem', new_fname[:-4] + '.fem')
+                #os.remove(fname[:-4] + '.ans')
+                #os.rename(fname[:-4] + '.fem', new_fname[:-4] + '.fem')
                 break
             else:
                 print('Wait for greedy search: sleep 1 sec...')

@@ -82,21 +82,7 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
 
     def required_parameters():
         # return None
-        req_geo=('delta_e','l_st','Angle_RotorSlotSpan','Angle_StatorSlotOpen'
-                 ,'Angle_StatorSlotSpan','Bar_Conductivity','BeariW_CurrentAmp'
-                 ,'BeariW_Freq','BeariW_Rs','BeariW_poles','BeariW_turns'
-                 ,'CurrentAmp_per_phase','DriveW_CurrentAmp','DriveW_Freq'
-                 ,'DriveW_Rs','DriveW_poles','DriveW_zQ','End_Ring_Resistance'
-                 ,'Js','Length_AirGap','Length_HeadNeckRotorSlot'
-                 ,'Location_RotorBarCenter2','Omega','Qr','Qs'
-                 ,'Radius_InnerStatorYoke','Radius_OuterRotor'
-                 ,'Radius_OuterStatorYoke','Radius_Shaft','Radius_of_RotorSlot'
-                 ,'Radius_of_RotorSlot2','Width_RotorSlotOpen','Width_StatorTeethBody'
-                 ,'Width_StatorTeethHeadThickness','Width_StatorTeethNeck'
-                 ,'use_drop_shape_rotor_bar','PoleSpecificNeutral'
-                 ,'pitch','number_parallel_branch','DPNV_or_SEPA'
-                 ,'CommutatingSequenceD'
-                    )
+        req_geo=('Length_AirGap','l_st')
         for cl in IM_Machine.__bases__:
             if issubclass(cl, MachineComponent):
                 if cl.required_parameters() is not None:
@@ -112,12 +98,25 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
         return req_mat
 
     def required_nameplate():
-        return ('mech_power',  # kW
-                'mech_omega',  # rad/s
-                'voltage_rating',  # Vrms (line-to-line, Wye-Connect)
-                'Iq_rated_ratio',  # per rated coil currents
-                'Rated_current',
-                'ps'
+        return ('mech_power'  # kW
+                ,'Omega'  # rad/s
+                ,'voltage_rating'  # Vrms (line-to-line, Wye-Connect)
+                ,'Iq_rated_ratio'  # per rated coil currents
+                ,'Rated_current'
+                ,'Bar_Conductivity'
+                ,'BeariW_CurrentAmp'
+                ,'BeariW_Freq'
+                ,'BeariW_Rs'
+                ,'BeariW_poles'
+                ,'BeariW_turns'
+                ,'CurrentAmp_per_phase'
+                ,'DriveW_CurrentAmp'
+                ,'DriveW_Freq'
+                ,'DriveW_Rs'
+                ,'DriveW_poles'
+                ,'DriveW_zQ'
+                ,'End_Ring_Resistance'
+                , 'Js'
                 )
 
     @property
@@ -128,73 +127,10 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
     def l_st(self):
         return self._machine_parameter_dict['stack_length']
 
-    @property
-    def Angle_RotorSlotSpan(self):
-        return self._machine_parameter_dict['Angle_RotorSlotSpan']
-
-    @property
-    def Width_StatorTeethNeck(self):
-        return self._machine_parameter_dict['Width_StatorTeethNeck']
-
-    @property
-    def Width_RotorSlotOpen(self):
-        return self._machine_parameter_dict['Width_RotorSlotOpen']
-
-    @property
-    def Width_StatorTeethHeadThickness(self):
-        return self._machine_parameter_dict['Width_StatorTeethHeadThickness']
 
     @property
     def Location_RotorBarCenter(self):
         return self._machine_parameter_dict['Location_RotorBarCenter']
-
-    @property
-    def Radius_of_RotorSlot(self):
-        return self._machine_parameter_dict['Radius_of_RotorSlot']
-
-    @property
-    def PoleSpecificNeutral(self):
-        return self._machine_parameter_dict['PoleSpecificNeutral']
-
-    @property
-    def Radius_OuterStatorYoke(self):
-        return self._machine_parameter_dict['Radius_OuterStatorYoke']
-
-    @property
-    def number_parallel_branch(self):
-        return self._machine_parameter_dict['number_parallel_branch']
-
-    @property
-    def CommutatingSequenceD(self):
-        return self._machine_parameter_dict['CommutatingSequenceD']
-
-    @property
-    def DPNV_or_SEPA(self):
-        return self._machine_parameter_dict['DPNV_or_SEPA']
-
-    @property
-    def Radius_InnerStatorYoke(self):
-        return self._machine_parameter_dict['Radius_InnerStatorYoke']
-
-    @property
-    def Radius_Shaft(self):
-        return self._machine_parameter_dict['Radius_Shaft']
-
-    @property
-    def Width_StatorTeethBody(self):
-        return self._machine_parameter_dict['Width_StatorTeethBody']
-
-    @property
-    def use_drop_shape_rotor_bar(self):
-        return self._machine_parameter_dict['use_drop_shape_rotor_bar']
-
-    @property
-    def Angle_StatorSlotOpen(self):
-        return self._machine_parameter_dict['Angle_StatorSlotOpen']
-
-    @property
-    def Angle_StatorSlotSpan(self):
-        return self._machine_parameter_dict['Angle_StatorSlotSpan']
 
     @property
     def Bar_Conductivity(self):
@@ -204,9 +140,6 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
     def BeariW_CurrentAmp(self):
         return self._machine_parameter_dict['BeariW_CurrentAmp']
 
-    @property
-    def Radius_OuterRotor(self):
-        return self._machine_parameter_dict['Radius_OuterRotor']
     @property
     def BeariW_Freq(self):
         return self._machine_parameter_dict['BeariW_Freq']
@@ -252,13 +185,6 @@ class IM_Machine(Machine, IM_Rotor, Stator_IM, DPNVWinding_IM):
         return self._nameplate_dict['Iq_rated_ratio']
 
     @property
-    def pitch(self):
-        return self._machine_parameter_dict['pitch']
-
-    @property
     def Rated_current(self):
         return self._nameplate_dict['Rated_current']
 
-    @property
-    def ps(self):
-        return self._nameplate_dict['ps']
