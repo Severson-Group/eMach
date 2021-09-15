@@ -41,10 +41,9 @@ set_handler = IM_Settings_Handler()
 #
 im_designer = MachineDesigner(arch, set_handler)
 # # create machine variant using architect
-free_var = (113.767, 77.9400, 2.43798, 47.74648292756861, 8.909627424964462, 1.1791492735270337,
-            1.6699405702001604, 44.897393083841415, 1.0010737572184039, 0.6227192954834465,
-            34.230484771383125, 10.820748923347335, 10.240361002369372, 0.57856846,
-            0.2892842, 92.5925925)
+free_var = (2.4379, 10.24036, 6.44200, 10.82074, 1.001073, 0.5785,
+            1.17914, 27.7555, 35.8276, 0.00308507, 0.00363824, 0.0, 0.95, 0,
+            0.05, 200000, 80)
 # # set operating point for IM machine
 #
 design_variant = im_designer.create_design(free_var)

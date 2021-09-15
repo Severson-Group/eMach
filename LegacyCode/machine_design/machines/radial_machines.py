@@ -21,6 +21,24 @@ class Shaft(MachineComponent):
     @property
     def shaft_mat(self):
         return self._materials_dict['shaft_mat']
+
+
+class Shaft_IM(MachineComponent):
+
+    def required_parameters():
+        return ('Radius_Shaft',)
+
+    def required_materials():
+        return ('shaft_mat',)
+
+    @property
+    def r_sh(self):
+        return self._machine_parameter_dict['r_sh']
+
+    @property
+    def Radius_Shaft(self):
+        return self._machine_parameter_dict['Radius_Shaft']
+
     
 class Rotor_Iron(MachineComponent):
     
@@ -40,22 +58,35 @@ class Rotor_Iron(MachineComponent):
 class IM_Rotor_Iron(MachineComponent):
 
     def required_parameters():
-        return ('d_ro','r_slot', 'd_rso','d_rbc',)
+        return ('Angle_RotorSlotSpan',
+                'Length_HeadNeckRotorSlot',
+                'Radius_OuterRotor',
+                'Radius_of_RotorSlot',
+                'Radius_of_RotorSlot2',
+                'Width_RotorSlotOpen',
+                )
     def required_materials():
         return ('rotor_iron_mat',)
 
     @property
-    def d_ro(self): #Length_HeadNeckRotorSlot #aka pole shoe length
-        return self._machine_parameter_dict['d_ro']
+    def Angle_RotorSlotSpan(self):
+        return self._machine_parameter_dict['Angle_RotorSlotSpan']
 
-    def d_rs(self): #Radius of rotor slot
-        return self._machine_parameter_dict['d_rs']
+    @property
+    def Radius_OuterRotor(self):
+        return self._machine_parameter_dict['Radius_OuterRotor']
 
-    def d_rso(self): #width of the slot opening
-        return self._machine_parameter_dict['d_rso']
+    @property
+    def Radius_of_RotorSlot2(self):
+        return self._machine_parameter_dict['Radius_of_RotorSlot2']
 
-    def d_rbc(self): #position of rotor bar center
-        return self._machine_parameter_dict['d_rbc']
+    @property
+    def Radius_of_RotorSlot(self):
+        return self._machine_parameter_dict['Radius_of_RotorSlot']
+
+    @property
+    def Width_RotorSlotOpen(self):
+        return self._machine_parameter_dict['Width_RotorSlotOpen']
 
     @property
     def rotor_iron_mat(self):
@@ -66,23 +97,23 @@ class IM_Rotor_Bar(MachineComponent):
     #It uses some dimesnions from IM_Rotor_Iron
 
     def required_materials():
-        return ('d_rs','d_rbc',)
+        return ('Location_RotorBarCenter2','use_drop_shape_rotor_bar',)
     def required_materials():
         return ('rotor_bar_mat',)
 
     @property
-    def d_rs(self): # Radius of rotor slot
-        return self._machine_parameter_dict['d_rs']
+    def use_drop_shape_rotor_bar(self):
+        return self._machine_parameter_dict['use_drop_shape_rotor_bar']
 
-    def d_rbc(self): #position of the rotor bar center
-        return self._machine_parameter_dict['d_rbc']
+    @property
+    def Location_RotorBarCenter2(self):
+        return self._machine_parameter_dict['Location_RotorBarCenter2']
 
     @property
     def rotor_bar_mat(self):
         return self._materials_dict['rotor_bar_mat']
 
 class PM(MachineComponent):
-
 
 
     def required_parameters():
@@ -130,7 +161,7 @@ class RotorSleeve(MachineComponent):
 #     def required_materials():
 
 
-class IM_Rotor(Shaft, IM_Rotor_Iron, IM_Rotor_Bar, MachineComponent):
+class IM_Rotor(Shaft_IM, IM_Rotor_Iron, IM_Rotor_Bar, MachineComponent):
 
 # Add bar component a bit later
     def required_parameters():
@@ -286,16 +317,13 @@ class Stator_IM(MachineComponent):
     def required_parameters():
         # return None
         # Add this later
-        return ('alpha_st',  # Stator Tooth Angle
-                'd_so',  # Stator
-                'w_st',  # Stator Tooth Width
-                'd_st',  # Stator Tooth Length
-                'd_sy',  # Stator Yoke width
-                'alpha_so',  #
-                'd_sp',  # Stator Shoe pole thickness
-                'r_si',  # Stator Tooth Radius
-                'r_so',
-                's_slot',
+        return ('Angle_StatorSlotOpen',  # Stator Tooth Angle
+                'Angle_StatorSlotSpan',  # Stator
+                'Width_StatorTeethBody',  # Stator Tooth Width
+                'Width_StatorTeethHeadThickness',  # Stator Tooth Length
+                'Width_StatorTeethNeck',  # Stator Yoke width
+                'Radius_InnerStatorYoke',  #
+                'Radius_OuterStatorYoke',  # Stator Shoe pole thickness
                 'Qs'
                 # 'l_st'        , #ADD to MOTOR
                 )
@@ -304,44 +332,32 @@ class Stator_IM(MachineComponent):
         return ('stator_iron_mat',)
 
     @property
-    def alpha_st(self):
-        return self._machine_parameter_dict['alpha_st']
+    def Angle_StatorSlotOpen(self):
+        return self._machine_parameter_dict['Angle_StatorSlotOpen']
 
     @property
-    def d_so(self):
-        return self._machine_parameter_dict['d_so']
+    def Angle_StatorSlotSpan(self):
+        return self._machine_parameter_dict['Angle_StatorSlotSpan']
 
     @property
-    def w_st(self):
-        return self._machine_parameter_dict['w_st']
+    def Width_StatorTeethBody(self):
+        return self._machine_parameter_dict['Width_StatorTeethBody']
 
     @property
-    def d_st(self):
-        return self._machine_parameter_dict['d_st']
+    def Width_StatorTeethHeadThickness(self):
+        return self._machine_parameter_dict['Width_StatorTeethHeadThickness']
 
     @property
-    def d_sy(self):
-        return self._machine_parameter_dict['d_sy']
+    def Width_StatorTeethNeck(self):
+        return self._machine_parameter_dict['Width_StatorTeethNeck']
 
     @property
-    def alpha_so(self):
-        return self._machine_parameter_dict['alpha_so']
+    def Radius_InnerStatorYoke(self):
+        return self._machine_parameter_dict['Radius_InnerStatorYoke']
 
     @property
-    def d_sp(self):
-        return self._machine_parameter_dict['d_sp']
-
-    @property
-    def r_si(self):
-        return self._machine_parameter_dict['r_si']
-
-    @property
-    def r_so(self):
-        return self._machine_parameter_dict['r_so']
-
-    @property
-    def s_slot(self):
-        return self._machine_parameter_dict['s_slot']
+    def Radius_OuterStatorYoke(self):
+        return self._machine_parameter_dict['Radius_OuterStatorYoke']
 
     @property
     def Qs(self):
@@ -372,7 +388,13 @@ class DPNVWinding(Winding, MachineComponent):
 class DPNVWinding_IM(Winding_IM, MachineComponent):
 
     def required_parameters():
-        req_param = ('coil_groups',)
+        req_param = ('coil_groups',
+                     'DPNV_or_SEPA',
+                     'PoleSpecificNeutral',
+                     'pitch',
+                     'number_parallel_branch',
+                     'CommutatingSequenceD',
+                     )
         for cl in DPNVWinding_IM.__bases__:
             if cl.required_parameters() is not None:
                 req_param = req_param + cl.required_parameters()
@@ -385,4 +407,30 @@ class DPNVWinding_IM(Winding_IM, MachineComponent):
     def coil_groups(self):
         return self._machine_parameter_dict['coil_groups']
     
-# 
+    @property
+    def DPNV_or_SEPA(self):
+        return self._machine_parameter_dict['DPNV_or_SEPA']
+
+    @property
+    def PoleSpecificNeutral(self):
+        return self._machine_parameter_dict['PoleSpecificNeutral']
+
+    @property
+    def pitch(self):
+        return self._machine_parameter_dict['pitch']
+
+    @property
+    def number_parallel_branch(self):
+        return self._machine_parameter_dict['number_parallel_branch']
+
+    @property
+    def CommutatingSequenceD(self):
+        return self._machine_parameter_dict['CommutatingSequenceD']
+
+
+
+
+
+
+
+

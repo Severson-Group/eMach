@@ -1835,7 +1835,7 @@ class FEMM_Solver(object):
 
         # femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
         # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 35, 0, 0, 1, 0, 0, 0)
-        femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, self.im.spec_derive_dict['Bar_Conductivity'] * 1e-6, 0, 0, 1, 0, 0,
+        femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 47619047.61904761 * 1e-6, 0, 0, 1, 0, 0,
                             0)  # [MS/m]
         # femm.mi_addmaterial('Aluminum', 1, 1, 0, 0, 1/1.673e-2, 0, 0, 1, 0, 0, 0)
 
