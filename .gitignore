@@ -24,39 +24,9 @@
 *.pyc
 __pycache__/
 
+# JMAG FILES
+LegacyCode/run_data/
+
 # Sphinx documentation
 docs/build/
 docs/source/_templates/
-*.csv
-*.lock
-*.jmdl
-*.jproj
-*.xml
-*.check
-*.error
-*.html
-*.jcf
-*.jlog
-*.jplot
-*.jpost
-*.loss
-*.sav
-*.sav2
-LegacyCode/run_data/proj_1_.jfiles/proj_1_~1/proj_1_TranPMSM~1/Case1/jcgmntr
-LegacyCode/run_data/proj_1_.jfiles/proj_1_~1/proj_1_TranPMSM~1/Case1/jmonitor
-LegacyCode/run_data/proj_1_.jfiles/proj_1_~1/proj_1_TranPMSM~1/Case1/warning
-LegacyCode/run_data/proj_1_attempts_5.jfiles/proj_1_attempts_5~2/proj_1_attempts_5TranPMSM~1/Case1/jcgmntr
-LegacyCode/run_data/proj_1_attempts_5.jfiles/proj_1_attempts_5~2/proj_1_attempts_5TranPMSM~1/Case1/jmonitor
-LegacyCode/run_data/proj_1_attempts_5.jfiles/proj_1_attempts_5~2/proj_1_attempts_5TranPMSM~1/Case1/warning
-*.png
-LegacyCode/run_data/proj_2_attempts_2.jfiles/proj_2_attempts_2~1/proj_2_attempts_2TranPMSM~1/Case1/jcgmntr
-LegacyCode/run_data/proj_2_attempts_2.jfiles/proj_2_attempts_2~1/proj_2_attempts_2TranPMSM~1/Case1/jmonitor
-LegacyCode/run_data/proj_2_attempts_2.jfiles/proj_2_attempts_2~1/proj_2_attempts_2TranPMSM~1/Case1/warning
-LegacyCode/run_data/proj_3_.jfiles/proj_3_~1/proj_3_TranPMSM~1/Case1/jcgmntr
-LegacyCode/run_data/proj_3_.jfiles/proj_3_~1/proj_3_TranPMSM~1/Case1/jmonitor
-LegacyCode/run_data/proj_3_.jfiles/proj_3_~1/proj_3_TranPMSM~1/Case1/warning
-LegacyCode/run_data/proj_4_.jfiles/proj_4~1/study~1/Case1/jcgmntr
-LegacyCode/run_data/proj_4_.jfiles/proj_4~1/study~1/Case1/jmonitor
-LegacyCode/run_data/proj_4_.jfiles/proj_4~1/study~1/Case1/warning
-LegacyCode/run_data/proj_1_attempts_15.jfiles/proj_1_attempts_15~1/proj_1_attempts_15TranPMSM~1/Case1/jcgmntr
-LegacyCode/run_data/proj_1_attempts_15.jfiles/proj_1_attempts_15~1/proj_1_attempts_15TranPMSM~1/Case1/jmonitor
