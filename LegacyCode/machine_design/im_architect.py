@@ -71,51 +71,51 @@ class IMArchitectType1(Architect):
 
         im_parameters = {
 
-            'Qs': 24,
-            'Qr': 32,
-            'Angle_StatorSlotSpan': 360/24,
-            'Angle_RotorSlotSpan': 360/32,
+            'Qs': self.__design_spec['Qs'],
+            'Qr': self.__design_spec['Qr'],
+            'Angle_StatorSlotSpan': 360/self.__design_spec['Qs'],
+            'Angle_RotorSlotSpan': 360/self.__design_spec['Qr'],
 
-            'Radius_OuterStatorYoke': 113.767,
-            'Radius_InnerStatorYoke': 77.9400,
-            'Length_AirGap': 2.43798,
-            'Radius_OuterRotor': 47.74648292756861,
-            'Radius_Shaft': 8.909627424964462,
+            'Radius_OuterStatorYoke': free_variables['Radius_OuterStatorYoke'],
+            'Radius_InnerStatorYoke': free_variables['Radius_InnerStatorYoke'],
+            'Length_AirGap': free_variables['Length_AirGap'],
+            'Radius_OuterRotor': free_variables['Radius_OuterRotor'],
+            'Radius_Shaft': free_variables['Radius_Shaft'],
 
-            'Length_HeadNeckRotorSlot': 1.1791492735270337,  # Jiahao is using 1 mm as default
-            'Radius_of_RotorSlot': 1.6699405702001604,
-            'Location_RotorBarCenter': 44.897393083841415,
-            'Width_RotorSlotOpen': 1.0010737572184039,
+            'Length_HeadNeckRotorSlot': free_variables['Length_HeadNeckRotorSlot'],  # Jiahao is using 1 mm as default
+            'Radius_of_RotorSlot': free_variables['Radius_of_RotorSlot'],
+            'Location_RotorBarCenter': free_variables['Location_RotorBarCenter'],
+            'Width_RotorSlotOpen': free_variables['Width_RotorSlotOpen'],
 
             # 'Radius_of_RotorSlot2': free_variables['Radius_of_RotorSlot2'],
             # 'Location_RotorBarCenter2': free_variables['Location_RotorBarCenter2'],
 
             # As of now no double bar rotor
-            'Radius_of_RotorSlot2': 0.6227192954834465,
-            'Location_RotorBarCenter2': 34.230484771383125,
+            'Radius_of_RotorSlot2': free_variables['Radius_of_RotorSlot2'],
+            'Location_RotorBarCenter2': free_variables['Location_RotorBarCenter2'],
 
-            'Angle_StatorSlotOpen': 9.623859913139942,
-            'Width_StatorTeethBody': 10.240361002369372,
-            'Width_StatorTeethHeadThickness': 0.5785684617867006,
-            'Width_StatorTeethNeck': 0.2892842308933503,
+            'Angle_StatorSlotOpen': free_variables['Angle_StatorSlotOpen'],
+            'Width_StatorTeethBody': free_variables['Width_StatorTeethBody'],
+            'Width_StatorTeethHeadThickness': free_variables['Width_StatorTeethHeadThickness'],
+            'Width_StatorTeethNeck': free_variables['Width_StatorTeethNeck'],
 
-            'DriveW_poles':  2,
+            'DriveW_poles':  2*self.__design_spec['p'],
             'DriveW_zQ': 10,
 
             # Not going to consider resistance for now
             # 'DriveW_Rs': free_variables['DriveW_Rs'],
 
             'DriveW_CurrentAmp': 127.89733,
-            'DriveW_CurrentAmpUsed': self.__get_current_coil,
-            'BeariW_CurrentAmpUsed': 3.1974333526305068,
+            'DriveW_CurrentAmpUsed': 127.89733 * 0.975,
+            'BeariW_CurrentAmpUsed': 127.89733 * 0.025,
             'DriveW_Freq': 500,
 
             'Bar_Conductivity' : 47619047.61904761,
-            'stack_length': 92.5925925,
+            'stack_length': free_variables['stack_length'],
 
-            'BeariW_poles': 4,
+            'BeariW_poles': 2*self.__design_spec['ps'],
 
-            'BeariW_turns': self.__get_turns(free_variables),
+            'BeariW_turns': 10,
 
             'coil_groups': self.__winding.grouping_AC,
             'no_of_layers': self.__winding.number_winding_layer,
@@ -129,67 +129,6 @@ class IMArchitectType1(Architect):
             'CommutatingSequenceD': self.__winding.CommutatingSequenceD
 
         }
-
-        # im_parameters = {
-        #
-        #     'Qs': self.__design_spec['Q'],
-        #     'Qr': self.__design_spec['Qr'],
-        #     'Angle_StatorSlotSpan': 360 / self.__design_spec['Q'],
-        #     'Angle_RotorSlotSpan': 360 / self.__design_spec['Qr'],
-        #
-        #     'Radius_OuterStatorYoke': self.__get_Radius_OuterStatorYoke(free_variables),
-        #     'Radius_InnerStatorYoke': self.__get_Radius_InnerStatorYoke(free_variables),
-        #     'Length_AirGap'         : free_variables['delta_e'],
-        #     'Radius_OuterRotor'     : free_variables['r_ro'],
-        #     'Radius_Shaft'          : self.__get_r_sh(free_variables),
-        #
-        #     'Length_HeadNeckRotorSlot': 1, #Jiahao is using 1 mm as default
-        #     'Radius_of_RotorSlot': free_variables['r_rs'],
-        #     'Location_RotorBarCenter': free_variables['d_rbc'],
-        #     'Width_RotorSlotOpen': free_variables['w_rso'],
-        #
-        #     # 'Radius_of_RotorSlot2': free_variables['Radius_of_RotorSlot2'],
-        #     # 'Location_RotorBarCenter2': free_variables['Location_RotorBarCenter2'],
-        #
-        #     #As of now no double bar rotor
-        #     'Radius_of_RotorSlot2':0,
-        #     'Location_RotorBarCenter2': 0,
-        #
-        #     'Angle_StatorSlotOpen'          : self.__get_Angle_StatorSlotOpen,
-        #     'Width_StatorTeethBody'         : free_variables['w_st'],
-        #     'Width_StatorTeethHeadThickness': free_variables['d_so'],
-        #     'Width_StatorTeethNeck'         : free_variables['d_so']*0.5,
-        #
-        #     'DriveW_poles': self.__design_spec['p']*2,
-        #     'DriveW_zQ': self.__get_turns(free_variables),
-        #
-        #     # Not going to consider resistance for now
-        #     # 'DriveW_Rs': free_variables['DriveW_Rs'],
-        #
-        #     'DriveW_CurrentAmp': self.__get_current_coil,
-        #     'DriveW_CurrentAmpUsed' : self.__get_current_coil,
-        #     'BeariW_CurrentAmpUsed' : self.__get_current_coil * self.__design_spec['Ix_ratio'],
-        #     'DriveW_Freq' : self.__design_spec['ExcitationFreqSimulated'],
-        #
-        #     'stack_length' : self.__get_l_st,
-        #
-        #     'BeariW_poles' : self.__design_spec['ps']*2,
-        #
-        #     'BeariW_turns' : self.__get_turns(free_variables),
-        #
-        #
-        #     'coil_groups': self.__winding.grouping_AC,
-        #     'no_of_layers': self.__winding.number_winding_layer,
-        #     'layer_phases': [self.__winding.layer_X_phases, self.__winding.layer_Y_phases],
-        #     'layer_polarity': [self.__winding.layer_X_signs, self.__winding.layer_Y_signs],
-        #     'pitch': self.__winding.coil_pitch_y,
-        #     'use_drop_shape_rotor_bar' : self.__design_spec['use_drop_shape_rotor_bar'],
-        #     'PoleSpecificNeutral' : self.__design_spec['PoleSpecificNeutral'],
-        #     'number_parallel_branch' : self.__design_spec['number_parallel_branch'],
-        #     'DPNV_or_SEPA' : self.__design_spec['DPNV_or_SEPA'],
-        #     'CommutatingSequenceD' : self.__winding.CommutatingSequenceD
-        #
-        # }
 
         im_material = {
             'air_mat': self.__air,
@@ -246,7 +185,7 @@ class IMArchitectType1(Architect):
         return Angle_StatorSlotOpen
 
     def __get_pole_pitch_tau_p(self, free_variables):
-        air_gap_diameter_D = free_variables['delta_e'] + 2*free_variables['r_ro']
+        air_gap_diameter_D = free_variables['Length_AirGap'] + 2*free_variables['Radius_OuterRotor']
         return np.pi * air_gap_diameter_D / (2 * self.__design_spec['p'])
 
 
@@ -342,19 +281,22 @@ class IMArchitectType1(Architect):
 
     def x_to_dict(self, x):
         free_variables = {
-            'delta_e': x[0],
-            'r_ro': x[1],
-            'alpha_st': x[2],
-            'd_so': x[3],
-            'w_st': x[4],
-            'd_st': x[5],
-            'd_sy': x[6],
-            'r_rs': x[7],
-            'd_rbc': x[8],
-            'w_rso': x[9],
-            'd_ri': x[10],
-
-
+            'Radius_OuterStatorYoke': x[0],
+            'Radius_InnerStatorYoke': x[1],
+            'Length_AirGap': x[2],
+            'Radius_OuterRotor': x[3],
+            'Radius_Shaft': x[4],
+            'Length_HeadNeckRotorSlot': x[5],
+            'Radius_of_RotorSlot': x[6],
+            'Location_RotorBarCenter': x[7],
+            'Width_RotorSlotOpen': x[8],
+            'Radius_of_RotorSlot2': x[9],
+            'Location_RotorBarCenter2': x[10],
+            'Angle_StatorSlotOpen'   : x[11],
+            'Width_StatorTeethBody'  : x[12],
+            'Width_StatorTeethHeadThickness' : x[13],
+            'Width_StatorTeethNeck'     : x[14],
+            'stack_length'  : x[15]
 
         }
         return free_variables
