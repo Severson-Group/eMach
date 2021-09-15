@@ -96,7 +96,7 @@ class BSPMArchitectType1(Architect):
             'd_sl'         : 0.001,
             'delta_sl'     : 0,
             'delta'        : free_variables['delta_e'],
-            'Q'            : 6,
+            'Q'            : self.__design_spec['Q'],
             'n_m'          : 1,
  
             # winding parameters
