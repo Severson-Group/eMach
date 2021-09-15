@@ -36,6 +36,7 @@ class IM_EM_Analysis():
 
         slip_freq_breakdown_torque, breakdown_torque, breakdown_force = self.femm_solver.wait_greedy_search(femm_tic)
 
+        
         return slip_freq_breakdown_torque, breakdown_torque, breakdown_force
 
 
