@@ -1,23 +1,18 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 15 09:36:01 2021
-
-@author: Martin Johnson
-"""
-from .machine import MachineComponent, Winding, Winding_IM
+import numpy as np
+from .machine import MachineComponent, Winding,Winding_IM
 
 
 class Shaft(MachineComponent):
-
     def required_parameters():
         return ('r_sh',)
+
     def required_materials():
         return ('shaft_mat',)
-    
+
     @property
     def r_sh(self):
         return self._machine_parameter_dict['r_sh']
-    
+
     @property
     def shaft_mat(self):
         return self._materials_dict['shaft_mat']
@@ -39,18 +34,18 @@ class Shaft_IM(MachineComponent):
     def Radius_Shaft(self):
         return self._machine_parameter_dict['Radius_Shaft']
 
-    
+
 class Rotor_Iron(MachineComponent):
-    
     def required_parameters():
         return ('d_ri',)
+
     def required_materials():
         return ('rotor_iron_mat',)
-    
+
     @property
     def d_ri(self):
         return self._machine_parameter_dict['d_ri']
-    
+
     @property
     def rotor_iron_mat(self):
         return self._materials_dict['rotor_iron_mat']
@@ -117,22 +112,23 @@ class PM(MachineComponent):
 
 
     def required_parameters():
-        return ('d_m','alpha_ms','alpha_m','n_m')
+        return ('d_m', 'alpha_ms', 'alpha_m', 'n_m')
+
     def required_materials():
         return ('magnet_mat',)
-    
+
     @property
     def d_m(self):
         return self._machine_parameter_dict['d_m']
-    
+
     @property
     def alpha_m(self):
         return self._machine_parameter_dict['alpha_m']
-    
+
     @property
     def alpha_ms(self):
         return self._machine_parameter_dict['alpha_ms']
-    
+
     @property
     def n_m(self):
         return self._machine_parameter_dict['n_m']
@@ -140,17 +136,20 @@ class PM(MachineComponent):
     @property
     def magnet_mat(self):
         return self._materials_dict['magnet_mat']
-        
+
+
+
 class RotorSleeve(MachineComponent):
     def required_parameters():
         return ('d_sl',)
+
     def required_materials():
         return ('rotor_sleeve_mat',)
-    
+
     @property
     def d_sl(self):
         return self._machine_parameter_dict['d_sl']
-    
+
     @property
     def rotor_sleeve_mat(self):
         return self._materials_dict['rotor_sleeve_mat']
@@ -181,92 +180,118 @@ class IM_Rotor(Shaft_IM, IM_Rotor_Iron, IM_Rotor_Bar, MachineComponent):
     @property
     def Qr(self):
         return self._machine_parameter_dict['Qr']
-     
-class PM_Rotor(Shaft,Rotor_Iron,PM,MachineComponent):
 
-    
+
+
+
+class PM_Rotor(Shaft, Rotor_Iron, PM, MachineComponent):
     def required_parameters():
-        req_param=('r_ro','d_mp','d_ms','p','V_r')
+        req_param = ('r_ro', 'd_mp', 'd_ms', 'p', 'V_r')
         for cl in PM_Rotor.__bases__:
             if cl.required_parameters() is not None:
-                req_param=req_param+cl.required_parameters()
+                req_param = req_param + cl.required_parameters()
         return req_param
-    
+
     def required_materials():
-        req_mat=tuple()
+        req_mat = ('air_mat', 'rotor_hub')
         for cl in PM_Rotor.__bases__:
             if cl.required_materials() is not None:
-                req_mat=req_mat+cl.required_materials()
+                req_mat = req_mat + cl.required_materials()
         return req_mat
-    
+
     @property
     def d_mp(self):
         return self._machine_parameter_dict['d_mp']
-    
+
     @property
     def d_ms(self):
         return self._machine_parameter_dict['d_ms']
-    
+
     @property
     def r_ro(self):
         return self._machine_parameter_dict['r_ro']
-    
+
     @property
     def p(self):
         return self._machine_parameter_dict['p']
-    
+
     @property
     def V_r(self):
         return self._machine_parameter_dict['V_r']
-       
-class PM_Rotor_Sleeved(PM_Rotor,RotorSleeve,MachineComponent):
 
-    
+    @property
+    def air_mat(self):
+        return self._materials_dict['air_mat']
+
+    @property
+    def rotor_hub(self):
+        return self._materials_dict['rotor_hub']
+
+    @property
+    def V_rfe(self):
+        r_ro = self.r_ro
+        alpha_m = self.alpha_m * np.pi / 180
+        d_m = self.d_m
+        d_mp = self.d_mp
+        p = self.p
+        l_st = self.l_st
+        V_rfe = np.pi * ((r_ro - d_m) ** 2 - self.r_sh ** 2) * l_st + (np.pi - p * alpha_m) * (
+                (r_ro - d_mp) ** 2 - (r_ro - d_m) ** 2) * l_st
+        return V_rfe
+
+    @property
+    def V_rPM(self):
+        r_ro = self.r_ro
+        alpha_m = self.alpha_m * np.pi / 180
+        d_m = self.d_m
+        p = self.p
+        l_st = self.l_st
+        V_rPM = p * alpha_m * (r_ro ** 2 - (r_ro - d_m) ** 2) * l_st
+        return V_rPM
+
+
+class PM_Rotor_Sleeved(PM_Rotor, RotorSleeve, MachineComponent):
     def required_parameters():
-        req_param=('delta_sl','test_variable',)
+        req_param = ('delta_sl',)
         for cl in PM_Rotor_Sleeved.__bases__:
             if cl.required_parameters() is not None:
-                req_param=req_param+cl.required_parameters()
+                req_param = req_param + cl.required_parameters()
         return req_param
-    
+
     def required_materials():
-        req_mat=tuple()
+        req_mat = tuple()
         for cl in PM_Rotor_Sleeved.__bases__:
             if cl.required_materials() is not None:
-                req_mat=req_mat+cl.required_materials()
+                req_mat = req_mat + cl.required_materials()
         return req_mat
-    
+
     @property
     def delta_sl(self):
         return self._machine_parameter_dict['delta_sl']
 
-    @property
-    def test_variable(self):
-        return self._machine_parameter_dict['test_variable']
-    
+
 class Stator(MachineComponent):
-    
     def required_parameters():
-        return ('alpha_st'    ,#Stator Tooth Angle
-                'd_so'        ,#Stator
-                'w_st'        ,#Stator Tooth Width
-                'd_st'        ,#Stator Tooth Length
-                'd_sy'        ,#Stator Yoke width
-                'alpha_so'    ,#
-                'd_sp'        ,#Stator Shoe pole thickness
-                'r_si'        ,#Stator Tooth Radius
-                'r_so'        ,
-                's_slot'      ,
+        return ('alpha_st',  # Stator Tooth Angle
+                'd_so',  # Stator
+                'w_st',  # Stator Tooth Width
+                'd_st',  # Stator Tooth Length
+                'd_sy',  # Stator Yoke width
+                'alpha_so',  #
+                'd_sp',  # Stator Shoe pole thickness
+                'r_si',  # Stator Tooth Radius
+                'r_so',
+                's_slot',
                 'Q'
-                #'l_st'        , #ADD to MOTOR
                 )
+
     def required_materials():
         return ('stator_iron_mat',)
-    
+
     @property
     def alpha_st(self):
         return self._machine_parameter_dict['alpha_st']
-    
+
     @property
     def d_so(self):
         return self._machine_parameter_dict['d_so']
@@ -274,15 +299,15 @@ class Stator(MachineComponent):
     @property
     def w_st(self):
         return self._machine_parameter_dict['w_st']
-    
+
     @property
     def d_st(self):
         return self._machine_parameter_dict['d_st']
-   
+
     @property
     def d_sy(self):
         return self._machine_parameter_dict['d_sy']
-    
+
     @property
     def alpha_so(self):
         return self._machine_parameter_dict['alpha_so']
@@ -290,23 +315,23 @@ class Stator(MachineComponent):
     @property
     def d_sp(self):
         return self._machine_parameter_dict['d_sp']
-    
+
     @property
     def r_si(self):
         return self._machine_parameter_dict['r_si']
-    
+
     @property
     def r_so(self):
         return self._machine_parameter_dict['r_so']
-    
+
     @property
     def s_slot(self):
         return self._machine_parameter_dict['s_slot']
-    
+
     @property
     def Q(self):
         return self._machine_parameter_dict['Q']
-    
+
     @property
     def stator_iron_mat(self):
         return self._materials_dict['stator_iron_mat']
@@ -369,17 +394,16 @@ class Stator_IM(MachineComponent):
 
 
 class DPNVWinding(Winding, MachineComponent):
-    
     def required_parameters():
-        req_param=('coil_groups',)
+        req_param = ('coil_groups',)
         for cl in DPNVWinding.__bases__:
             if cl.required_parameters() is not None:
-                req_param=req_param+cl.required_parameters()
+                req_param = req_param + cl.required_parameters()
         return req_param
-    
+
     def required_materials():
         return ()
-    
+
     @property
     def coil_groups(self):
         return self._machine_parameter_dict['coil_groups']
@@ -406,7 +430,7 @@ class DPNVWinding_IM(Winding_IM, MachineComponent):
     @property
     def coil_groups(self):
         return self._machine_parameter_dict['coil_groups']
-    
+
     @property
     def DPNV_or_SEPA(self):
         return self._machine_parameter_dict['DPNV_or_SEPA']
@@ -426,11 +450,3 @@ class DPNVWinding_IM(Winding_IM, MachineComponent):
     @property
     def CommutatingSequenceD(self):
         return self._machine_parameter_dict['CommutatingSequenceD']
-
-
-
-
-
-
-
-

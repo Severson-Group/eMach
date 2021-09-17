@@ -10,7 +10,7 @@ from specifications.machine_specs.bp1_machine_specs import DesignSpec
 from specifications.materials.electric_steels import Arnon5
 from specifications.materials.jmag_library_magnets import N40H
 from specifications.materials.miscellaneous_materials import CarbonFiber, Steel, Copper, Hub, Air
-from settings.bspm_settings_handler import BSPM_Settings_Handler
+from settings.bspmsettingshandler import BSPMSettingsHandler
 from analyzers.em import BSPM_EM_Analysis
 from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 
@@ -31,7 +31,7 @@ machine_spec = BSPMMachineSpec(design_spec=DesignSpec, rotor_core=Arnon5,
 
 # initialize BSPMArchitect with machine specification
 arch = BSPMArchitectType1(machine_spec)
-set_handler = BSPM_Settings_Handler()
+set_handler = BSPMSettingsHandler()
     
 bspm_designer = MachineDesigner(arch, set_handler)
 # create machine variant using architect

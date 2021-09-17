@@ -149,8 +149,6 @@ class StructuralProblemDef:
         sl=RotorComponent(SleeveMaterial,R3,R4)
         sl.set_MaxRadialStress(MaxRadialSleeveStress)
         sl.set_MaxTanStress(MaxTanSleeveStress)
-        
-        
         sl.set_th(d_sl)
         sl.set_delta_sl(delta_sl)
         
@@ -468,10 +466,10 @@ class Sigma:
         sigma_t= self.A[0]*(self.rotComp.C2*self.rotComp.h + self.rotComp.C3)*(np.power(R,(self.rotComp.h-1)))+self.A[1]*(self.rotComp.C3 - self.rotComp.C2*self.rotComp.h)*(np.power(R,(-self.rotComp.h-1)))+(3*self.rotComp.C2 + self.rotComp.C3)*self.rotComp.Beta*(self.omega**2)*(np.power(R,2))+self.rotComp.zeta_t*self.deltaT
         return sigma_t
 
+
 class SleeveProblem:
-    
-    def __init__(self,r_sh: float,d_m: float,r_ro: float,
-                   deltaT: float,mat_dict: dict,N: float):
+    def __init__(self, r_sh: float, d_m: float, r_ro: float,
+                   deltaT: float, mat_dict: dict, N: float):
         """__init__ definition for SleeveProblem class
         
         Args:
@@ -492,8 +490,8 @@ class SleeveProblem:
         
     def tan_sleeve(self,x):
         """Calculate sigma_t_sl_max for given sleeve design"""
-        d_sl=x[0]
-        delta_sl=x[1]
+        d_sl = x[0]
+        delta_sl = x[1]
         R_ro=self.r_ro
         N=self.N
         r_sh=self.r_sh
@@ -542,26 +540,29 @@ class SleeveProblem:
         sigma_r_pm=sigmas[2].radial(x_pm)
         stress=sigma_r_pm[0]
         return stress
-    def tan_magnet(self,x):
+
+    def tan_magnet(self, x):
         """Calculate sigma_t_pm_max for given sleeve design"""
-        d_sl=x[0]
-        delta_sl=x[1]
-        R_ro=self.r_ro
-        N=self.N
-        r_sh=self.r_sh
-        d_m=self.d_m
-        deltaT=self.deltaT
-        struc_prob_def=StructuralProblemDef(self.mat_dict)
-        problem=struc_prob_def.get_problem(r_sh,d_m,R_ro,d_sl,delta_sl,deltaT,N)
-        analyzer=StructuralAnalyzer()
-        sigmas=analyzer.analyze(problem)
-        x_pm=np.linspace(R_ro-d_m,R_ro,50)
-        sigma_t_pm=sigmas[2].tangential(x_pm)
-        stress=sigma_t_pm[0]
+        d_sl = x[0]
+        delta_sl = x[1]
+        R_ro = self.r_ro
+        N = self.N
+        r_sh = self.r_sh
+        d_m = self.d_m
+        deltaT = self.deltaT
+        struc_prob_def = StructuralProblemDef(self.mat_dict)
+        problem = struc_prob_def.get_problem(r_sh, d_m, R_ro, d_sl, delta_sl, deltaT, N)
+        analyzer = StructuralAnalyzer()
+        sigmas = analyzer.analyze(problem)
+        x_pm = np.linspace(R_ro-d_m, R_ro, 50)
+        sigma_t_pm = sigmas[2].tangential(x_pm)
+        stress = sigma_t_pm[0]
         return stress
-    def cost(self,x):
+
+    def cost(self, x):
         return x[0]
-    
+
+
 class SleeveProblemDef:
     def get_problem(state) -> 'StructuralProblem':
         design = state.design
@@ -582,33 +583,36 @@ class SleeveProblemDef:
         material_dict['alpha_sl_r'] = 0.3E-6
 
         r_sh = design.machine.r_sh
+        print('mat is ', material_dict)
         r_ro = design.machine.r_ro
+        # print('rotor radius is ', r_ro)
         d_m = design.machine.d_m
+        # print('magnet thickness is ', d_m)
         N = design.settings.speed
-        deltaT = 10
+        deltaT = design.settings.rotor_temp_rise
 
         problem = SleeveProblem(r_sh, d_m, r_ro, deltaT, material_dict, N)
         return problem
-    
+
+
 class SleeveAnalyzer:
-    def __init__(self,stress_limits):
-        self.stress_limits=stress_limits
+    def __init__(self, stress_limits):
+        self.stress_limits = stress_limits
     
-    def analyze(self,problem: 'SleeveProblem'):
+    def analyze(self, problem: 'SleeveProblem'):
         nlc1 = op.NonlinearConstraint(problem.rad_sleeve,
-                                      self.stress_limits['rad_sleeve'],
-                                      0)
-        nlc2 = op.NonlinearConstraint(problem.tan_sleeve,-np.inf,
+                                      self.stress_limits['rad_sleeve'], 0)
+        nlc2 = op.NonlinearConstraint(problem.tan_sleeve, -np.inf,
                                       self.stress_limits['tan_sleeve'])
         nlc3 = op.NonlinearConstraint(problem.rad_magnet, -np.inf,
                                       self.stress_limits['rad_magnets'])
-        nlc4 = op.NonlinearConstraint(problem.tan_magnet,-np.inf,
+        nlc4 = op.NonlinearConstraint(problem.tan_magnet, -np.inf,
                                       self.stress_limits['tan_magnets'])
-        const=[nlc1,nlc2,nlc3,nlc4]
-        sol=op.minimize(problem.cost,[1E-3,-1E-3],tol=1E-4,constraints=const,bounds=[[0,1],[-.01,0]])
+        const = [nlc1, nlc2, nlc3, nlc4]
+        sol = op.minimize(problem.cost, [1E-3, -1E-3], tol=1E-4, constraints=const, bounds=[[0, 1], [-.01, 0]])
         print(sol.success)
         print(sol)
-        if sol.success == True:
+        if sol.success:
             return sol.x
         else:
             return False
@@ -616,22 +620,22 @@ class SleeveAnalyzer:
 
 if __name__ == "__main__":
     mat_dict = fea_config_dict
-    stress_limits={'rad_sleeve':-100E6,
-                   'tan_sleeve':1300E6,
-                   'rad_magnets':0,
-                   'tan_magnets':80E6}
-    mat_dict['alpha_sh']=1.2E-5
-    mat_dict['alpha_rc']=1.2E-5
-    mat_dict['alpha_pm']=5E-6
-    mat_dict['alpha_sl_t']=-4.7E-7
-    mat_dict['alpha_sl_r']=0.3E-6
-    r_sh=5E-3
-    d_m=3E-3
-    r_ro=12.5E-2
-    deltaT=10
-    N=10E3
-    spd=SleeveProblemDef(mat_dict)   
-    problem=spd.get_problem(r_sh, d_m, r_ro, deltaT, N)
-    ana=SleeveAnalyzer(stress_limits)
-    sleeve_dim=ana.analyze(problem)
+    stress_limits = {'rad_sleeve': -100E6,
+                     'tan_sleeve': 1300E6,
+                     'rad_magnets': 0,
+                     'tan_magnets': 80E6}
+    mat_dict['alpha_sh'] = 1.2E-5
+    mat_dict['alpha_rc'] = 1.2E-5
+    mat_dict['alpha_pm'] = 5E-6
+    mat_dict['alpha_sl_t'] = -4.7E-7
+    mat_dict['alpha_sl_r'] = 0.3E-6
+    r_sh = 5E-3
+    d_m = 3E-3
+    r_ro = 12.5E-2
+    deltaT = 10
+    N = 10E3
+    spd = SleeveProblemDef(mat_dict)
+    problem = spd.get_problem(r_sh, d_m, r_ro, deltaT, N)
+    ana = SleeveAnalyzer(stress_limits)
+    sleeve_dim = ana.analyze(problem)
     print(sleeve_dim)
