@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 13 19:18:47 2021
-
-@author: Ramadas
-"""
-
 N40H = {
     'magnet_material'            : "Arnold/Reversible/N40H",
     'magnet_material_density'    : 7450, # kg/m3

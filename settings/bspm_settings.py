@@ -10,7 +10,7 @@ class BSPM_EMAnalyzer_Settings():
     on the operting point for obtaining eletrical performance evaluation of 
     bearingless permanent magnet eletric machines
     '''
-    def __init__(self,Id, Iq, Ix, Iy, speed, magnet_temp):
+    def __init__(self, Id, Iq, Ix, Iy, speed, ambient_temp, rotor_temp_rise):
         '''
         Parameters
         ----------
@@ -24,7 +24,7 @@ class BSPM_EMAnalyzer_Settings():
             PU value of y-axis current.
         speed : float
             Machine rotational speed in rad/s.
-        magnet_temp : float
+        ambient_temp : float
             Magnet temperature in celsius.
 
         Returns
@@ -37,8 +37,9 @@ class BSPM_EMAnalyzer_Settings():
         self.__Ix = Ix
         self.__Iy = Iy
         self.__speed = speed
-        self.__magnet_temp = magnet_temp
-    
+        self.__ambient_temp = ambient_temp
+        self.__rotor_temp_rise = rotor_temp_rise
+
     @property 
     def Id(self):
         return self.__Id
@@ -63,5 +64,12 @@ class BSPM_EMAnalyzer_Settings():
     def magnet_temp(self):
         return self.__magnet_temp
 
+    @property
+    def ambient_temp(self):
+        return self.__ambient_temp
+
+    @property
+    def rotor_temp_rise(self):
+        return self.__rotor_temp_rise
 
     
