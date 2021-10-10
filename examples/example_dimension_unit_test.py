@@ -1,7 +1,8 @@
 # add the directory immediately above this file's directory to path for module import
 import sys
+
 sys.path.append('..')
-                
+
 from emach.model_obj import DimMillimeter, DimInch, DimDegree, DimRadian
 
 inchObject = DimInch(5)
@@ -68,8 +69,8 @@ print(type(inchObject / 5))
 
 ###### Uncomment this to check exception #######
 # print('********Power Demo*****')
-#print(inchObject**2)
-#print(2**inchObject)
+# print(inchObject**2)
+# print(2**inchObject)
 # print(inchObject**milObject)
 
 print('*******Angle Demo******')
@@ -83,7 +84,6 @@ print('Angle Unary operation')
 print(-degObject)
 negDegObject = DimDegree(-180)
 print(-negDegObject)
-
 
 print('******Nested Dimension Demo*********')
 print('DimMillimeter(inchObject)')

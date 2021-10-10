@@ -16,8 +16,8 @@ hollowCylinder1 = mo.CrossSectHollowCylinder(name = 'hollowCylinder1',
                                                 dim_t = x, dim_r_o = y)
 
 # create hollowcylinder component
-comp1 = mo.Component(name = 'comp1', cross_sections = [hollowCylinder1], \
-                     material = mo.MaterialGeneric(name ='pm'), \
+comp1 = mo.Component(name = 'comp1', cross_sections = [hollowCylinder1],
+                     material = mo.MaterialGeneric(name ='pm'),
                      make_solid = mo.MakeExtrude(location = mo.Location3D(), dim_depth = x))
 
 # create an instance of the MagNet class
