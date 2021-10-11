@@ -2,7 +2,10 @@ from time import time as clock_time
 import os
 import numpy as np
 import pandas as pd
+import sys
+sys.path.append("../..")
 
+from des_opt import InvalidDesign
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
@@ -921,13 +924,16 @@ class BSPM_EM_Analysis():
         hysteresis_loss_path = path + study_name + '_hysteresis_loss_loss.csv'
         eddy_current_loss_path = path + study_name + '_joule_loss.csv'
 
-        curr_df = pd.read_csv(current_csv_path, skiprows=6)
-        volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
-        tor_df = pd.read_csv(torque_csv_path, skiprows=6)
-        force_df = pd.read_csv(force_csv_path, skiprows=6)
-        iron_df = pd.read_csv(iron_loss_path, skiprows=6)
-        hyst_df = pd.read_csv(hysteresis_loss_path, skiprows=6)
-        eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
+        try:
+            curr_df = pd.read_csv(current_csv_path, skiprows=6)
+            volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
+            tor_df = pd.read_csv(torque_csv_path, skiprows=6)
+            force_df = pd.read_csv(force_csv_path, skiprows=6)
+            iron_df = pd.read_csv(iron_loss_path, skiprows=6)
+            hyst_df = pd.read_csv(hysteresis_loss_path, skiprows=6)
+            eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
+        except FileNotFoundError:
+            raise InvalidDesign
 
         range_2TS = int(
             self.configuration['number_of_steps_per_rev_2TS'] * self.configuration['number_of_revolution_2TS'])

@@ -27,7 +27,10 @@ class DesignOptimizationMOEAD:
                                      realb=0.9,
                                      limit=2, preserve_diversity=True))
         for _ in range(0, gen_size):
+            print('This is iteration', _)
             pop = algo.evolve(pop)
+            print('Save current generation')
+            self.design_problem.dh.save_pop(pop)
         return pop
 
 
@@ -66,7 +69,7 @@ class DesignProblem:
             full_results = self.evaluator.evaluate(design)
             valid_constraints = self.design_space.check_constraints(full_results)
             objs = self.design_space.get_objectives(valid_constraints, full_results)
-            self.dh.save(design, full_results, objs)
+            self.dh.save_to_archive(design, full_results, objs)
             return objs
 
         except Exception as e:
@@ -132,8 +135,16 @@ class DesignSpace(Protocol):
 class DataHandler(Protocol):
     """Parent class for all data handlers"""
     @abstractmethod
-    def save(self, design: 'Design', full_results, objs):
+    def save_to_archive(self, design: 'Design', full_results, objs):
         raise NotImplementedError
+
+
+class OptiData:
+    """Object template for serializing optimization results with Pickle"""
+    def __init__(self, design, perf_metrics, fitness):
+        self.design = design
+        self.perf_metrics = perf_metrics
+        self.fitness = fitness
 
 
 class InvalidDesign(Exception):

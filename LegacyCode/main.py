@@ -1,5 +1,6 @@
 import sys
 from copy import deepcopy
+from pprint import pprint
 
 sys.path.append("..")
 
@@ -26,6 +27,7 @@ from mach_eval import AnalysisStep, MachineDesigner, MachineEvaluator
 from des_opt import DesignProblem, DesignOptimizationMOEAD, InvalidDesign
 
 from datahandler import DataHandler
+
 ##############################################################################
 ############################ Define Design ###################################
 ##############################################################################
@@ -106,7 +108,7 @@ class AirflowPostAnalyzer:
             raise InvalidDesign('Magnet temperature beyond limits')
         else:
             state_out = deepcopy(in_state)
-            state_out.conditions.airflow = results['Required Airflow']
+            state_out.conditions.airflow = results
         return state_out
 
 
@@ -123,12 +125,14 @@ class WindageLossPostAnalyzer:
 
     def get_next_state(results, in_state):
         state_out = deepcopy(in_state)
-        state_out.conditions.windage_loss = results
         machine = state_out.design.machine
-        state_out.conditions.efficiency = 100 * machine.mech_power / (machine.mech_power + results +
-                                                                      state_out.conditions.em['rotor_iron_loss'] +
-                                                                      state_out.conditions.em['stator_iron_loss'] +
-                                                                      state_out.conditions.em['magnet_loss'])
+        eff = 100 * machine.mech_power / (machine.mech_power + results +
+                                          state_out.conditions.em['rotor_iron_loss'] +
+                                          state_out.conditions.em['stator_iron_loss'] +
+                                          state_out.conditions.em['magnet_loss'])
+        state_out.conditions.windage = {'loss': results,
+                                        'efficiency': eff
+                                        }
         return state_out
 
 
@@ -138,10 +142,13 @@ windage_step = AnalysisStep(therm.WindageProblemDef, therm.WindageLossAnalyzer, 
 evaluator = MachineEvaluator([struct_step, em_step, LengthScaleStep, thermal_step, windage_step])
 
 # run optimization
-bp2 = (0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 0, 3e-3)
-# design = bspm_designer.create_design(bp2)
+bp2 = (0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 0013.54e-3, 180.0, 3.41e-3, 0, 3e-3)
+design = bspm_designer.create_design(bp2)
+
+# Evaluate BP2 machine alone
 # results = evaluator.evaluate(design)
 
+# set bounds for pygmo optimization problem
 bounds = [
     [0.9 * bp2[0], 1.1 * bp2[0]],  # delta_e
     [1 * bp2[1], 1.1 * bp2[1]],  # r_ro    this will change the tip speed
@@ -150,19 +157,28 @@ bounds = [
     [0.9 * bp2[4], 1.1 * bp2[4]],  # w_st
     [0.9 * bp2[5], 1.1 * bp2[5]],  # d_st
     [0.9 * bp2[6], 1.1 * bp2[6]],  # d_sy
-    [1 * bp2[7], 1 * bp2[7]],  # alpha_m
+    [0.99 * bp2[7], 1 * bp2[7]],  # alpha_m
     [1 * bp2[8], 1.1 * bp2[8]],  # d_m
     [1 * bp2[9], 1.1 * bp2[9]],  # d_mp
     [0.3 * bp2[10], 1 * bp2[10]],  # d_ri
 ]
 
-dh = DataHandler()
+arch_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_arch.pkl'  # specify path where file will reside
+pop_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\latest_population.pkl'
+dh = DataHandler(arch_file, pop_file)  # initialize data handler with archive file and population file locations
 
-opt_settings = BSPMDesignSpace(3, bounds)
-design_prob = DesignProblem(bspm_designer, evaluator, opt_settings, dh)
-design_opt = DesignOptimizationMOEAD(design_prob)
+archive = dh.load_from_archive()
+for data in archive:
+    print('The rotor outer radius is', data.design.machine.r_ro)
 
-pop_size = 78
-gen_size = 10
-ini_pop = design_opt.initial_pop(pop_size)
-pop = design_opt.run_optimization(ini_pop, gen_size)
+# opt_settings = BSPMDesignSpace(3, bounds)
+# design_prob = DesignProblem(bspm_designer, evaluator, opt_settings, dh)
+# design_opt = DesignOptimizationMOEAD(design_prob)
+#
+# pop_size = 78
+# gen_size = 10
+#
+# population = dh.load_pop()
+# if population is None:
+#     population = design_opt.initial_pop(pop_size)
+# pop = design_opt.run_optimization(population, gen_size)
