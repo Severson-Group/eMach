@@ -26,7 +26,7 @@ JMAG_FEA_Configuration = {
     'mesh_air_region_scale': 1.15,
 
     # Aplication settings
-    'designer.Show': True,
+    'designer.Show': False,
     'delete_results_after_calculation': False,
 
     'run_folder': os.path.abspath('') + '/run_data/',  # storing FEM files path

@@ -562,7 +562,7 @@ class WindageProblemDef:
         l_st = design.machine.l_st
         r_si = design.machine.r_si
         airgap = design.machine.delta
-        m_dot_air = state.conditions.airflow
+        m_dot_air = state.conditions.airflow['Required Airflow']
         T_air = design.settings.ambient_temp
 
         prob = WindageProblem(omega, r_ro, l_st, r_si, airgap, m_dot_air, T_air)

@@ -1,7 +1,7 @@
 from .bspm_settings import BSPM_EMAnalyzer_Settings
 
 
-class BSPMSettingsHandler():
+class BSPMSettingsHandler:
     """ This is a wrapper class designed to contain all relevant information on the operating point for obtaining
     electrical performance evaluation of bearingless permanent magnet electric machines
     """
