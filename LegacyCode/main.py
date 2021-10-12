@@ -164,9 +164,8 @@ bounds = [
 
 arch_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_arch.pkl'  # specify path where saved data will reside
 des_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_designer.pkl'
-eval_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_evaluator.pkl'
 pop_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\latest_population.pkl'
-dh = DataHandler(arch_file, des_file, eval_file)  # initialize data handler with required file paths
+dh = DataHandler(arch_file, des_file)  # initialize data handler with required file paths
 
 # archive = dh.load_from_archive()
 # for data in archive:

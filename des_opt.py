@@ -64,7 +64,6 @@ class DesignProblem:
         self.__design_space = design_space
         self.__dh = dh
         dh.save_designer(designer)
-        dh.save_evaluator(evaluator)
 
     def fitness(self, x: 'tuple') -> 'tuple':
         """Calculates the fitness or objectives of each design based on evaluation results.
@@ -164,9 +163,6 @@ class DataHandler(Protocol):
     def save_designer(self, designer):
         raise NotImplementedError
 
-    @abstractmethod
-    def save_evaluator(self, evaluator):
-        raise NotImplementedError
 
 
 class OptiData:

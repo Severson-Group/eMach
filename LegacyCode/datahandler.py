@@ -7,10 +7,9 @@ import des_opt as do
 
 
 class DataHandler(do.DataHandler):
-    def __init__(self, archive_filepath, designer_filepath, evaluator_filepath):
+    def __init__(self, archive_filepath, designer_filepath):
         self.archive_filepath = archive_filepath
         self.designer_filepath = designer_filepath
-        self.evaluator_filepath = evaluator_filepath
 
     def save_to_archive(self, x, design, full_results, objs):
         # assign relevant data to OptiData class attributes
@@ -30,7 +29,3 @@ class DataHandler(do.DataHandler):
     def save_designer(self, designer):
         with open(self.designer_filepath, 'wb') as des:
             pickle.dump(designer, des, -1)
-
-    def save_evaluator(self, evaluator):
-        with open(self.evaluator_filepath, 'wb') as population:
-            pickle.dump(evaluator, population, -1)
