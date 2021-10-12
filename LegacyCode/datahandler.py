@@ -7,15 +7,14 @@ import des_opt as do
 
 
 class DataHandler(do.DataHandler):
-    def __init__(self, archive_filepath, pop_filepath):
+    def __init__(self, archive_filepath, designer_filepath, evaluator_filepath):
         self.archive_filepath = archive_filepath
-        self.pop_filepath = pop_filepath
+        self.designer_filepath = designer_filepath
+        self.evaluator_filepath = evaluator_filepath
 
-    def save_to_archive(self, design, full_results, objs):
-        # access the state of evaluation after all steps are completed
-        final_state = full_results[-1][-1]
+    def save_to_archive(self, x, design, full_results, objs):
         # assign relevant data to OptiData class attributes
-        opti_data = do.OptiData(design=final_state.design, perf_metrics=final_state.conditions, fitness=objs)
+        opti_data = do.OptiData(x=x, design=design, full_results=full_results, objs=objs)
         # write to pkl file. 'ab' indicates binary append
         with open(self.archive_filepath, 'ab') as archive:
             pickle.dump(opti_data, archive, -1)
@@ -28,14 +27,10 @@ class DataHandler(do.DataHandler):
                 except EOFError:
                     break
 
-    def save_pop(self, pop):
-        with open(self.pop_filepath, 'wb') as population:
-            pickle.dump(pop, population, -1)
+    def save_designer(self, designer):
+        with open(self.designer_filepath, 'wb') as des:
+            pickle.dump(designer, des, -1)
 
-    def load_pop(self):
-        try:
-            with open(self.pop_filepath, 'rb') as f:
-                pop = pickle.load(f)
-            return pop
-        except FileNotFoundError:
-            return None
+    def save_evaluator(self, evaluator):
+        with open(self.evaluator_filepath, 'wb') as population:
+            pickle.dump(evaluator, population, -1)
