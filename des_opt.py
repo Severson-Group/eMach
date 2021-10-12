@@ -4,6 +4,7 @@ This module holds the classes required for optimizing a design using pygmo in Ma
 """
 
 import pygmo as pg
+import pandas as pd
 from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
 import numpy as np
@@ -34,20 +35,20 @@ class DesignOptimizationMOEAD:
         return pop
 
     #  methods to save and load latest generation for resuming optimization
-    @staticmethod
     def save_pop(filepath, pop):
-        with open(filepath, 'wb') as population:
-            pickle.dump(pop, population, -1)
+        df = pd.DataFrame(pop.get_x())
+        df.to_csv(filepath)
 
-    @staticmethod
-    def load_pop(filepath):
+    def load_pop(self, filepath, pop_size):
         try:
-            with open(filepath, 'rb') as f:
-                pop = pickle.load(f)
-            return pop
+            df = pd.read_csv(filepath, index_col=0)
         except FileNotFoundError:
             return None
-
+        pop = pg.population(self.prob)
+        for i in range(pop_size):
+            print(df.iloc[i])
+            pop.push_back(df.iloc[i])
+        return pop
 
 class DesignProblem:
     """Class to create, evaluate, and optimize designs
@@ -86,6 +87,7 @@ class DesignProblem:
             valid_constraints = self.__design_space.check_constraints(full_results)
             objs = self.__design_space.get_objectives(valid_constraints, full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
+            print('The fitness values are', objs)
             return objs
 
         except Exception as e:
@@ -95,11 +97,11 @@ class DesignProblem:
                 temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
                 objs = temp[0]
                 return objs
-            elif type(e) is FileNotFoundError:
-                print('**********ERROR*************')
-                temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
-                objs = temp[0]
-                return objs
+            # elif type(e) is FileNotFoundError:
+            #     print('**********ERROR*************')
+            #     temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
+            #     objs = temp[0]
+            #     return objs
             else:
                 raise e
 
