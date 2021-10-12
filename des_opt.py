@@ -7,7 +7,7 @@ import pygmo as pg
 from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
 import numpy as np
-import traceback
+import pickle
 
 
 class DesignOptimizationMOEAD:
@@ -19,7 +19,7 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size):
+    def run_optimization(self, pop, gen_size, filepath):
         algo = pg.algorithm(pg.moead(gen=1, weight_generation="grid",
                                      decomposition="tchebycheff",
                                      neighbours=20,
@@ -29,9 +29,24 @@ class DesignOptimizationMOEAD:
         for _ in range(0, gen_size):
             print('This is iteration', _)
             pop = algo.evolve(pop)
-            print('Save current generation')
-            self.design_problem.dh.save_pop(pop)
+            print('Saving current generation')
+            self.save_pop(filepath, pop)
         return pop
+
+    #  methods to save and load latest generation for resuming optimization
+    @staticmethod
+    def save_pop(filepath, pop):
+        with open(filepath, 'wb') as population:
+            pickle.dump(pop, population, -1)
+
+    @staticmethod
+    def load_pop(filepath):
+        try:
+            with open(filepath, 'rb') as f:
+                pop = pickle.load(f)
+            return pop
+        except FileNotFoundError:
+            return None
 
 
 class DesignProblem:
@@ -44,10 +59,12 @@ class DesignProblem:
         dh: Data handlers which enable saving optimization results and its resumption.
     """
     def __init__(self, designer: 'Designer', evaluator: 'Evaluator', design_space: 'DesignSpace', dh: 'DataHandler'):
-        self.designer = designer
-        self.evaluator = evaluator
-        self.design_space = design_space
-        self.dh = dh
+        self.__designer = designer
+        self.__evaluator = evaluator
+        self.__design_space = design_space
+        self.__dh = dh
+        dh.save_designer(designer)
+        dh.save_evaluator(evaluator)
 
     def fitness(self, x: 'tuple') -> 'tuple':
         """Calculates the fitness or objectives of each design based on evaluation results.
@@ -65,11 +82,11 @@ class DesignProblem:
             e: The errors encountered during design creation or evaluation apart from the InvalidDesign error
         """
         try:
-            design = self.designer.create_design(x)
-            full_results = self.evaluator.evaluate(design)
-            valid_constraints = self.design_space.check_constraints(full_results)
-            objs = self.design_space.get_objectives(valid_constraints, full_results)
-            self.dh.save_to_archive(design, full_results, objs)
+            design = self.__designer.create_design(x)
+            full_results = self.__evaluator.evaluate(design)
+            valid_constraints = self.__design_space.check_constraints(full_results)
+            objs = self.__design_space.get_objectives(valid_constraints, full_results)
+            self.__dh.save_to_archive(x, design, full_results, objs)
             return objs
 
         except Exception as e:
@@ -84,11 +101,11 @@ class DesignProblem:
 
     def get_bounds(self):
         """Returns bounds for optimization problem"""
-        return self.design_space.bounds
+        return self.__design_space.bounds
 
     def get_nobj(self):
         """Returns number of objectives of optimization problem"""
-        return self.design_space.n_obj
+        return self.__design_space.n_obj
 
 
 @runtime_checkable
@@ -135,21 +152,29 @@ class DesignSpace(Protocol):
 class DataHandler(Protocol):
     """Parent class for all data handlers"""
     @abstractmethod
-    def save_to_archive(self, design: 'Design', full_results, objs):
+    def save_to_archive(self, x, design, full_results, objs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def save_designer(self, designer):
+        raise NotImplementedError
+
+    @abstractmethod
+    def save_evaluator(self, evaluator):
         raise NotImplementedError
 
 
 class OptiData:
     """Object template for serializing optimization results with Pickle"""
-    def __init__(self, design, perf_metrics, fitness):
+    def __init__(self, x, design, full_results, objs):
+        self.x = x
         self.design = design
-        self.perf_metrics = perf_metrics
-        self.fitness = fitness
+        self.full_results = full_results
+        self.objs = objs
 
 
 class InvalidDesign(Exception):
     """ Exception raised for invalid designs """
-
     def __init__(self, message='Invalid Design'):
         self.message = message
         super().__init__(self.message)

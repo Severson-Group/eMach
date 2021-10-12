@@ -1,6 +1,5 @@
 import sys
 from copy import deepcopy
-from pprint import pprint
 
 sys.path.append("..")
 
@@ -163,22 +162,24 @@ bounds = [
     [0.3 * bp2[10], 1 * bp2[10]],  # d_ri
 ]
 
-arch_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_arch.pkl'  # specify path where file will reside
+arch_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_arch.pkl'  # specify path where saved data will reside
+des_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_designer.pkl'
+eval_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\opti_evaluator.pkl'
 pop_file = r'X:\UWM\RA\Git\ProjectSpace\MachEval\LegacyCode\latest_population.pkl'
-dh = DataHandler(arch_file, pop_file)  # initialize data handler with archive file and population file locations
+dh = DataHandler(arch_file, des_file, eval_file)  # initialize data handler with required file paths
 
-archive = dh.load_from_archive()
-for data in archive:
-    print('The rotor outer radius is', data.design.machine.r_ro)
+# archive = dh.load_from_archive()
+# for data in archive:
+#     print('The rotor outer radius is', data.design.machine.r_ro)
 
-# opt_settings = BSPMDesignSpace(3, bounds)
-# design_prob = DesignProblem(bspm_designer, evaluator, opt_settings, dh)
-# design_opt = DesignOptimizationMOEAD(design_prob)
-#
-# pop_size = 78
-# gen_size = 10
-#
-# population = dh.load_pop()
-# if population is None:
-#     population = design_opt.initial_pop(pop_size)
-# pop = design_opt.run_optimization(population, gen_size)
+opt_settings = BSPMDesignSpace(3, bounds)
+design_prob = DesignProblem(bspm_designer, evaluator, opt_settings, dh)
+design_opt = DesignOptimizationMOEAD(design_prob)
+
+pop_size = 78
+gen_size = 10
+
+population = design_opt.load_pop(pop_file)
+if population is None:
+    population = design_opt.initial_pop(pop_size)
+pop = design_opt.run_optimization(population, gen_size, pop_file)
