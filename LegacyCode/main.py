@@ -61,7 +61,7 @@ class StructPostAnalyzer:
     """Converts a State into a problem"""
 
     def get_next_state(results, in_state):
-        if results is bool:
+        if results is False:
             raise InvalidDesign('Suitable sleeve not found')
         else:
             machine = in_state.design.machine

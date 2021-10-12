@@ -71,7 +71,7 @@ class BSPM_EM_Analysis():
             ref1 = app.GetDataManager().GetDataSet("Circuit Voltage")
             app.GetDataManager().CreateGraphModel(ref1)
             app.GetDataManager().GetGraphModel("Circuit Voltage").WriteTable(
-                self.configuration['JMAG_csv_folder'] + self.project_name + "_EXPORT_CIRCUIT_VOLTAGE.csv")
+                self.configuration['JMAG_csv_folder'] + self.study_name + "_EXPORT_CIRCUIT_VOLTAGE.csv")
         toolJd.close()
         ####################################################
         # 03 Load FEA output
@@ -917,23 +917,27 @@ class BSPM_EM_Analysis():
 
     def extract_JMAG_results(self, path, study_name):
         current_csv_path = path + study_name + '_circuit_current.csv'
-        voltage_csv_path = path + study_name + '_circuit_voltage.csv'
+        voltage_csv_path = path + study_name + '_EXPORT_CIRCUIT_VOLTAGE.csv'
         torque_csv_path = path + study_name + '_torque.csv'
         force_csv_path = path + study_name + '_force.csv'
         iron_loss_path = path + study_name + '_iron_loss_loss.csv'
         hysteresis_loss_path = path + study_name + '_hysteresis_loss_loss.csv'
         eddy_current_loss_path = path + study_name + '_joule_loss.csv'
 
-        try:
-            curr_df = pd.read_csv(current_csv_path, skiprows=6)
-            volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
-            tor_df = pd.read_csv(torque_csv_path, skiprows=6)
-            force_df = pd.read_csv(force_csv_path, skiprows=6)
-            iron_df = pd.read_csv(iron_loss_path, skiprows=6)
-            hyst_df = pd.read_csv(hysteresis_loss_path, skiprows=6)
-            eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
-        except FileNotFoundError:
-            raise InvalidDesign
+        curr_df = pd.read_csv(current_csv_path, skiprows=6)
+        volt_df = pd.read_csv(voltage_csv_path,)
+        volt_df.rename(columns={'Time, s': 'Time(s)', 'Terminal_Us [Case 1]': 'Terminal_Us',
+                                'Terminal_Ut [Case 1]': 'Terminal_Ut',
+                                'Terminal_Vs [Case 1]': 'Terminal_Vs',
+                                'Terminal_Vt [Case 1]': 'Terminal_Vt',
+                                'Terminal_Ws [Case 1]': 'Terminal_Ws',
+                                'Terminal_Wt [Case 1]': 'Terminal_Wt', }, inplace=True)
+
+        tor_df = pd.read_csv(torque_csv_path, skiprows=6)
+        force_df = pd.read_csv(force_csv_path, skiprows=6)
+        iron_df = pd.read_csv(iron_loss_path, skiprows=6)
+        hyst_df = pd.read_csv(hysteresis_loss_path, skiprows=6)
+        eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
 
         range_2TS = int(
             self.configuration['number_of_steps_per_rev_2TS'] * self.configuration['number_of_revolution_2TS'])
