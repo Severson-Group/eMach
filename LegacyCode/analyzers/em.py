@@ -179,51 +179,40 @@ class BSPM_EM_Analysis():
         list_segments = self.shaft.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = 1
-        try:
-            region0 = toolJd.prepareSection(list_segments)
-        except:
-            return False
+        region0 = toolJd.prepareSection(list_segments)
 
         # Rotor Magnet
         list_regions = self.rotorMagnet.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        try:
-            region2 = toolJd.prepareSection(list_regions, bRotateMerge=False)
-        except:
-            return False
+        region2 = toolJd.prepareSection(list_regions, bRotateMerge=False)
 
         # Sleeve
-        sleeve = CrossSectInnerNotchedRotor.CrossSectSleeve(
-            name='Sleeve',
-            notched_magnet=self.rotorMagnet,
-            d_sleeve=self.machine_variant.d_sl * 1e3  # mm
-        )
-        list_regions = sleeve.draw(toolJd)
-        toolJd.bMirror = False
-        toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        try:
-            regionS = toolJd.prepareSection(list_regions)
-        except:
-            return False
+        # sleeve = CrossSectInnerNotchedRotor.CrossSectSleeve(
+        #     name='Sleeve',
+        #     notched_magnet=self.rotorMagnet,
+        #     d_sleeve=self.machine_variant.d_sl * 1e3  # mm
+        # )
+        # list_regions = sleeve.draw(toolJd)
+        # toolJd.bMirror = False
+        # toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
+        # try:
+        #     regionS = toolJd.prepareSection(list_regions)
+        # except:
+        #     return False
 
         # Stator Core
         list_regions = self.stator_core.draw(toolJd)
         toolJd.bMirror = True
         toolJd.iRotateCopy = self.stator_core.Q
-        try:
-            region3 = toolJd.prepareSection(list_regions)
-        except:
-            return False
+        region3 = toolJd.prepareSection(list_regions)
 
         # Stator Winding
         list_regions = self.coils.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.coils.stator_core.Q
-        try:
-            region4 = toolJd.prepareSection(list_regions)
-        except:
-            return False
+        region4 = toolJd.prepareSection(list_regions)
+
         return True
 
     def pre_process(self, app, model):
@@ -238,20 +227,20 @@ class BSPM_EM_Analysis():
 
         part_ID_list = model.GetPartIDs()
 
-        if len(part_ID_list) != int(1 + 1 + self.machine_variant.p * 2 + 1 + 1 + self.machine_variant.Q * 2):
+        if len(part_ID_list) != int(1 + 1 + self.machine_variant.p * 2 + 1 + self.machine_variant.Q * 2):
             print('Parts are missing in this machine')
             return False
 
         self.id_backiron = id_backiron = part_ID_list[0]
         id_shaft = part_ID_list[1]
         partIDRange_Magnet = part_ID_list[2:int(2 + self.machine_variant.p * 2)]
-        id_sleeve = part_ID_list[int(2 + self.machine_variant.p * 2)]
+        # id_sleeve = part_ID_list[int(2 + self.machine_variant.p * 2)]
         id_statorCore = part_ID_list[int(2 + self.machine_variant.p * 2) + 1]
         partIDRange_Coil = part_ID_list[
                            int(2 + self.machine_variant.p * 2) + 2: int(2 + self.machine_variant.p * 2) + 2 + int(
                                self.machine_variant.Q * 2)]
 
-        model.SuppressPart(id_sleeve, 1)
+        # model.SuppressPart(id_sleeve, 1)
 
         group("Magnet", partIDRange_Magnet)
         group("Coils", partIDRange_Coil)
