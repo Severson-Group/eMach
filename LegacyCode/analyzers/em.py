@@ -50,8 +50,8 @@ class BSPM_EM_Analysis():
         self.create_custom_material(app, self.machine_variant.stator_iron_mat['core_material'])
         # Draw cross_section
         draw_success = self.draw_machine(toolJd)
-        if draw_success != 1:
-            raise Exception('Drawer failed.')
+        if not draw_success:
+            raise InvalidDesign
         # Import Model into Designer
         toolJd.doc.SaveModel(False)  # True: Project is also saved.
         model = toolJd.app.GetCurrentModel()
@@ -60,7 +60,7 @@ class BSPM_EM_Analysis():
         # Add study and run
         valid_design = self.pre_process(app, model)
         if not valid_design:
-            return None
+            raise InvalidDesign
         study = self.add_magnetic_transient_study(app, model, self.configuration['JMAG_csv_folder'],
                                                   self.study_name)  # Change here and there
         self.mesh_study(app, model, study)
@@ -170,19 +170,28 @@ class BSPM_EM_Analysis():
         list_segments = self.rotorCore.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        region1 = toolJd.prepareSection(list_segments)
+        try:
+            region1 = toolJd.prepareSection(list_segments)
+        except:
+            return False
 
         # Shaft
         list_segments = self.shaft.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = 1
-        region0 = toolJd.prepareSection(list_segments)
+        try:
+            region0 = toolJd.prepareSection(list_segments)
+        except:
+            return False
 
         # Rotor Magnet
         list_regions = self.rotorMagnet.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        region2 = toolJd.prepareSection(list_regions, bRotateMerge=False)
+        try:
+            region2 = toolJd.prepareSection(list_regions, bRotateMerge=False)
+        except:
+            return False
 
         # Sleeve
         sleeve = CrossSectInnerNotchedRotor.CrossSectSleeve(
@@ -193,20 +202,28 @@ class BSPM_EM_Analysis():
         list_regions = sleeve.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        regionS = toolJd.prepareSection(list_regions)
+        try:
+            regionS = toolJd.prepareSection(list_regions)
+        except:
+            return False
 
         # Stator Core
         list_regions = self.stator_core.draw(toolJd)
         toolJd.bMirror = True
         toolJd.iRotateCopy = self.stator_core.Q
-        region3 = toolJd.prepareSection(list_regions)
+        try:
+            region3 = toolJd.prepareSection(list_regions)
+        except:
+            return False
 
         # Stator Winding
         list_regions = self.coils.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.coils.stator_core.Q
-        region4 = toolJd.prepareSection(list_regions)
-
+        try:
+            region4 = toolJd.prepareSection(list_regions)
+        except:
+            return False
         return True
 
     def pre_process(self, app, model):
