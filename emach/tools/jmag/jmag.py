@@ -3,6 +3,7 @@ import os
 
 from ..tool_abc import toolabc as abc
 from ..token_draw import TokenDraw
+from ...model_obj.dimensions import *
 
 __all__ = []
 __all__ += ["JmagDesigner"]
@@ -80,10 +81,45 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
             self.jd.Hide()
 
     def draw_line(self, startxy: 'Location2D', endxy: 'Location2D') -> 'TokenDraw':
-        pass
+        if self.part is None:
+            self.part = self.create_part()
+
+        start_x = eval(self.default_length)(startxy[0])
+        start_y = eval(self.default_length)(startxy[1])
+        end_x = eval(self.default_length)(endxy[0])
+        end_y = eval(self.default_length)(endxy[1])
+
+        line = self.sketch.CreateLine(start_x, start_y, end_x, end_y)
+        return TokenDraw(line, 0)
 
     def draw_arc(self, centerxy: 'Location2D', startxy: 'Location2D', endxy: 'Location2D') -> 'TokenDraw':
-        pass
+        if self.part is None:
+            self.part = self.create_part()
+
+        center_x = eval(self.default_length)(centerxy[0])
+        center_y = eval(self.default_length)(centerxy[1])
+        start_x = eval(self.default_length)(startxy[0])
+        start_y = eval(self.default_length)(startxy[1])
+        end_x = eval(self.default_length)(endxy[0])
+        end_y = eval(self.default_length)(endxy[1])
+
+        arc = self.sketch.CreateArc(center_x, center_y, start_x, start_y, end_x, end_y)
+        return TokenDraw(arc, 1)
+
+    def create_part(self):
+        ref1 = self.assembly.GetItem('XY Plane')
+        ref2 = self.doc.CreateReferenceFromItem(ref1)
+        self.sketch = self.assembly.CreateSketch(ref2)
+        partName = 'partDrawing'
+        self.sketch.SetProperty('Name', partName)
+
+        self.sketch.OpenSketch()
+        ref1 = self.assembly.GetItem(partName)
+        ref2 = self.doc.CreateReferenceFromItem(ref1)
+        self.assembly.MoveToPart(ref2)
+        part = self.assembly.GetItem(partName)
+
+        return part
 
     def select(self):
         pass

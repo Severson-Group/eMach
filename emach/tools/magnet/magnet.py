@@ -92,7 +92,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         self.mn.setVariant(0, 'line', 'python')
         line = self.mn.getVariant(0, 'python');
         
-        return TokenDraw(line,0)
+        return TokenDraw(line, 0)
 
 
     def draw_arc(self, centerxy, startxy, endxy):
