@@ -14,9 +14,128 @@ class ThermalProblem:
         self.res=res
         self.Q_dot=Q_dot
         self.T_ref=T_ref
-        
 
-class ThemalProblemDef:
+class StatorProblemDef:
+    def __init__(self,mat_dict):
+        self.mat_dict=mat_dict
+    def get_problem(self,r_si,d_sp,d_st,w_st,w_sy, alpha_st,l_st,T_ref,losses,h_out,h_in):
+        self.r_si=r_si
+        self.d_sp=d_sp
+        self.d_st=d_st
+        self.w_st=w_st
+        self.w_sy=w_sy
+        self.alpha_st=alpha_st
+        self.losses=losses
+        self.T_ref = T_ref
+        #self.omega = omega
+        self.h_out=h_out
+        self.h_in=h_in
+        self.r_so=r_si+d_st+w_sy
+        self.l_st=l_st
+        Res= self.create_resistance_network()
+        ################################################
+        #           Load Losses into loss Vector
+        ################################################
+        Q_dot=np.zeros([5,1])
+        Q_dot[1]=losses['copper']/6
+        Q_dot[3]=losses['total']-losses['copper']
+        
+        #print('Magnet Losses:',Q_dot[5])
+        ################################################
+        #    Create Reference Temperature Vector
+        ################################################
+        
+        T_ref=np.zeros([4,1])
+        T_ref[0]=self.T_ref
+        prob=ThermalProblem(Res,Q_dot,T_ref)
+        return prob
+    
+    def create_resistance_network(self):
+        ################################################
+        #           Load Material Properties
+        ################################################
+        stator_core_k = self.mat_dict['core_therm_conductivity']
+        air_k = self.mat_dict['air_therm_conductivity']
+        air_mu = self.mat_dict['air_viscosity']
+        air_cp = self.mat_dict['air_cp']
+        coil_k = self.mat_dict['coil_therm_cond']
+        ################################################
+        #             Load Operating Point
+        ################################################
+        ################################################
+        #           Create Material Objects
+        ################################################
+        
+        
+        ##############
+        #Rotor Core
+        ##############
+        sc_mat=Material(stator_core_k)
+        
+        ##############
+        #coil
+        ##############
+        coil_mat=Material(coil_k)
+        
+        ##############
+        #Air
+        ##############
+        air_mat=Material(air_k)
+        air_mat.set_cp(air_cp)
+        air_mat.set_mu(air_mu)
+        
+        #############################
+        ####Geometric Values#########
+        #############################
+        
+        R1=self.r_si+self.d_sp
+        R2=self.r_so-self.w_sy
+        R3=self.r_so
+        stack_length=self.l_st
+        
+        Resistances=[]
+        ##############
+        #Path 0 
+        ##############
+        Descr='Coil to StatorInt)'
+        A_1=stack_length*(2*np.pi/6-self.alpha_st)*(R1+R2)/2
+        Resistances.append(plane_wall(coil_mat,1,2,R1,R2,A_1))
+        Resistances[0].Descr=Descr
+        ##############
+        #Path 1 
+        ##############
+        Descr='coil inter, to stator out'
+        A_2=stack_length*(2*np.pi/6-self.alpha_st)*(R2+R3)/2
+        Resistances.append(plane_wall(sc_mat,2,3,R2,R3,A_2))
+        Resistances[1].Descr=Descr
+        ##############
+        #Path 2 
+        ##############
+        A_3=stack_length*(2*np.pi)*(R3)
+        Descr='Rotor Core center to PM/RC interface'
+        Resistances.append(conv(air_mat,3,0,self.h_out,A_3))
+        Resistances[2].Descr=Descr
+        
+        ##############
+        #Path 3
+        ##############
+        Descr='Outer rotor edge to Air'
+        A_rotor_out=stack_length*(6*self.alpha_st*self.r_si)
+        Resistances.append(conv(air_mat,4,0,self.h_in,A_rotor_out))
+        Resistances[3].Descr=Descr
+        ##############
+        #Path 4 
+        ##############
+        A_4=stack_length*self.w_st
+        Descr='Rotor Core center to PM/RC interface'
+        Resistances.append(plane_wall(sc_mat,3,4,self.r_si,R1,A_4))
+        Resistances[4].Descr=Descr
+        
+        return Resistances
+        
+    
+
+class RotorThemalProblemDef:
     def __init__(self,mat_dict):
         self.mat_dict=mat_dict
 
@@ -506,7 +625,7 @@ class AirflowProblem:
         self.T_ref=T_ref
         self.omega=omega
         
-        self.therm_prob_def=ThemalProblemDef(mat_dict)
+        self.therm_prob_def=RotorThemalProblemDef(mat_dict)
         self.therm_ana=ThermalAnalyzer()
         
     def magnet_temp(self,u_z):
@@ -741,6 +860,22 @@ class shaft_conv(Resistance):
     @property
     def resistance_value(self):
         return 1/(self.h*self.A)
+    
+class conv(Resistance):
+    def __init__(self,Material,Node1,Node2,h,A):
+        super().__init__(Material,Node1,Node2)
+        self.omega=omega
+        self._h=h
+        self.A=A
+
+    @property
+    def h(self):
+        return self._h
+
+    @property
+    def resistance_value(self):
+        return 1/(self.h*self.A)
+
 
 
 if __name__ == "__main__":
