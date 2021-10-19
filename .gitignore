@@ -24,6 +24,9 @@
 *.pyc
 __pycache__/
 
+# JMAG FILES
+LegacyCode/run_data/
+
 # Sphinx documentation
 docs/build/
 docs/source/_templates/
