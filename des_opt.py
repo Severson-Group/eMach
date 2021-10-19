@@ -35,7 +35,7 @@ class DesignOptimizationMOEAD:
         return pop
 
     #  methods to save and load latest generation for resuming optimization
-    def save_pop(filepath, pop):
+    def save_pop(self, filepath, pop):
         df = pd.DataFrame(pop.get_x())
         df.to_csv(filepath)
 
@@ -97,6 +97,8 @@ class DesignProblem:
                 temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
                 objs = temp[0]
                 return objs
+                
+            ################ Uncomment below block of code to prevent one off errors from JMAG ###################
             # elif type(e) is FileNotFoundError:
             #     print('**********ERROR*************')
             #     temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
