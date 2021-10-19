@@ -32,7 +32,7 @@ class BSPMDesignSpace:
                               machine.V_rfe + magnet['magnet_material_cost'] * machine.V_rPM + \
                               coil['copper_material_cost'] * machine.V_scu
             f1 = cost_of_machine
-            f2 = -1 * final_state.conditions.efficiency
+            f2 = -1 * final_state.conditions.windage['efficiency']
 
             em_results = final_state.conditions.em
             weighted_ripple_sum = em_results['torque_ripple'] / 0.05 + em_results['Em'] / 0.05 + em_results['Ea'] / 1
