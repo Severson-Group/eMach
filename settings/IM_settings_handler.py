@@ -6,7 +6,6 @@ class IM_Settings_Handler():
     bearingless permanent magnet eletric machines
     '''
     def __init__(self):
-        print("This is a dummy")
         pass
     
     def get_settings(self,x):
