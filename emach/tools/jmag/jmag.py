@@ -3,6 +3,7 @@ import os
 
 from ..tool_abc import toolabc as abc
 from ..token_draw import TokenDraw
+from ..token_make import TokenMake
 from ...model_obj.dimensions import *
 
 __all__ = []
@@ -121,14 +122,140 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         return part
 
+    def create_model(self, model_name):
+
+        num_models = self.jd.NumModels()
+        if num_models == 1:
+            model = self.jd.GetCurrentModel()
+            model.setName(model_name)
+        else:
+            for i in range(len(num_models) - 1):
+                self.jd.DeleteModel(i)
+            model = self.jd.GetCurrentModel()
+            self.setName(model_name)
+
+        return model
+
     def select(self):
         pass
 
-    def prepare_section(self, cs_token: 'CrossSectToken') -> any:
-        pass
+    def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
+        # self.validate_attr(cs_token, 'CrossSectToken')
+        self.doc.GetSelection().Clear()
+        for i in range(len(cs_token.token)):
+            self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i].draw_token.GetName()))
+
+        id = self.sketch.NumItems()
+        self.sketch.CreateRegions()
+        id2 = self.sketch.NumItems()
+        visItem = 1
+        itemType = 64
+        innerCoord1 = cs_token.innerCoord(1)
+        innerCoord2 = cs_token.innerCoord(2)
+        innerCoord1 = eval(self.default_length, innerCoord1)
+        innerCoord2 = eval(self.default_length, innerCoord2)
+
+        self.geometry_editor.View.SelectAtCoordinateDlg(innerCoord1, innerCoord2, 0, visItem, itemType)
+        region = self.doc.GetSelection.Item([0])
+        regionName = region.GetName;
+
+        regionList = 'Region'
+        for idx in range(2, id2 - id):
+            regionList[idx] = 'Region.' + idx
+
+        for idx in range(id2 - id):
+            if regionList[idx] != regionName:
+                self.doc.GetSelection().Clear()
+                self.doc.GetSelection().Add(self.sketch.GetItem(regionList[idx]))
+                self.doc.GetSelection().Delete()
+
+        self.sketch.CloseSketch()
+
+        return region
+
+    def create_study(self, study_name, study_type, model) -> any:
+
+        num_studies = self.jd.NumStudies()
+        if num_studies == 0:
+            study = model.create_study(study_type, study_name)
+        else:
+            for i in range(len(num_studies) - 2):
+                model.DeleteStudy(i)
+            study = self.jd.GetCurrentStudy()
+            study.SetName(study_name)
+
+        return study
 
     def extrude(self, name, material: str, depth: float) -> any:
-        pass
+
+        depth = eval(self.default_length, depth)
+        ref1 = self.sketch
+        extrude_part = self.part.CreateExtrudeSolid(ref1, depth)
+        self.part.SetProperty('Name', name)
+        sketch_name = name + '_sketch'
+        self.sketch.SetProperty('Name', sketch_name)
+
+        self.part = []
+        self.doc.SaveModel(True)
+        model_name = name + '_model'
+        self.model = self.create_model(model_name)
+
+        study_name = name + '_study'
+        self.study = self.create_study(study_name, self.study_type, self.model)
+
+        self.setDefaultLengthUnit(self.default_length)
+        self.setDefaultAngleUnit(self.default_angle)
+
+        self.study.SetMaterialByName(name, material)
+
+        return extrude_part
+
+    def setDefaultLengthUnit(self, userUnit):
+
+        if userUnit == 'DimMeter':
+            self.default_length = userUnit
+            self.model.SetUnitCollection('SI_units')
+        else:
+            raise Exception('Unsupported length unit')
+
+    def setDefaultAngleUnit(self, userUnit):
+
+        if userUnit == 'DimDegree':
+            self.default_length = userUnit
+            self.model.SetUnitCollection('SI_units')
+        else:
+            raise Exception('Unsupported angle unit')
 
     def revolve(self, name, material: str, center: 'Location2D', axis: 'Location2D', angle: float) -> any:
-        pass
+        center = eval(self.default_length, center)
+        axis = eval(self.default_length, axis)
+        angle = eval(self.default_angle, angle)
+
+        ref1 = self.sketch
+        revolve_part = self.part.CreateRevolveSolid(ref1)
+        self.part.GetItem('Revolve').setProperty('SpecificRatio', 1)
+        self.part.GetItem('Revolve').setProperty('AxisType', '1')
+        self.part.GetItem('Revolve').setProperty('AxisPosX', center[0])
+        self.part.GetItem('Revolve').setProperty('AxisPosY', center[1])
+        self.part.GetItem('Revolve').setProperty('AxisVecX', axis[0])
+        self.part.GetItem('Revolve').setProperty('AxisVecY', axis[1])
+        self.part.GetItem('Revolve').setProperty('AxisVecZ', 0)
+        self.part.GetItem('Revolve').setProperty('Angle', angle)
+        self.part.SetProperty('Name', name)
+        sketch_name = name + '_sketch'
+        self.sketch.SetProperty('Name', sketch_name)
+
+        self.part = []
+        self.doc.SaveModel(True)
+        model_name = name + '_model'
+        self.model = self.create_model(model_name)
+
+        study_name = name + '_study'
+        self.study = self.create_study(study_name, self.study_type, self.model)
+
+        self.setDefaultLengthUnit(self.default_length)
+        self.setDefaultAngleUnit(self.default_angle)
+
+        self.study.SetMaterialByName(name, material)
+
+        return revolve_part
