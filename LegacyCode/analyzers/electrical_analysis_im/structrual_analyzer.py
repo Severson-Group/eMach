@@ -583,7 +583,6 @@ class SleeveProblemDef:
         material_dict['alpha_sl_r'] = 0.3E-6
 
         r_sh = design.machine.r_sh
-        print('mat is ', material_dict)
         r_ro = design.machine.r_ro
         # print('rotor radius is ', r_ro)
         d_m = design.machine.d_m

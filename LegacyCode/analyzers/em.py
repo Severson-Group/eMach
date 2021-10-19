@@ -2,7 +2,10 @@ from time import time as clock_time
 import os
 import numpy as np
 import pandas as pd
+import sys
+sys.path.append("../..")
 
+from des_opt import InvalidDesign
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
@@ -47,8 +50,8 @@ class BSPM_EM_Analysis():
         self.create_custom_material(app, self.machine_variant.stator_iron_mat['core_material'])
         # Draw cross_section
         draw_success = self.draw_machine(toolJd)
-        if draw_success != 1:
-            raise Exception('Drawer failed.')
+        if not draw_success:
+            raise InvalidDesign
         # Import Model into Designer
         toolJd.doc.SaveModel(False)  # True: Project is also saved.
         model = toolJd.app.GetCurrentModel()
@@ -57,7 +60,7 @@ class BSPM_EM_Analysis():
         # Add study and run
         valid_design = self.pre_process(app, model)
         if not valid_design:
-            return None
+            raise InvalidDesign
         study = self.add_magnetic_transient_study(app, model, self.configuration['JMAG_csv_folder'],
                                                   self.study_name)  # Change here and there
         self.mesh_study(app, model, study)
@@ -69,7 +72,7 @@ class BSPM_EM_Analysis():
             ref1 = app.GetDataManager().GetDataSet("Circuit Voltage")
             app.GetDataManager().CreateGraphModel(ref1)
             app.GetDataManager().GetGraphModel("Circuit Voltage").WriteTable(
-                self.configuration['JMAG_csv_folder'] + self.project_name + "_EXPORT_CIRCUIT_VOLTAGE.csv")
+                self.configuration['JMAG_csv_folder'] + self.study_name + "_EXPORT_CIRCUIT_VOLTAGE.csv")
         toolJd.close()
         ####################################################
         # 03 Load FEA output
@@ -168,7 +171,10 @@ class BSPM_EM_Analysis():
         list_segments = self.rotorCore.draw(toolJd)
         toolJd.bMirror = False
         toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        region1 = toolJd.prepareSection(list_segments)
+        try:
+            region1 = toolJd.prepareSection(list_segments)
+        except:
+            return False
 
         # Shaft
         list_segments = self.shaft.draw(toolJd)
@@ -183,15 +189,18 @@ class BSPM_EM_Analysis():
         region2 = toolJd.prepareSection(list_regions, bRotateMerge=False)
 
         # Sleeve
-        sleeve = CrossSectInnerNotchedRotor.CrossSectSleeve(
-            name='Sleeve',
-            notched_magnet=self.rotorMagnet,
-            d_sleeve=self.machine_variant.d_sl * 1e3  # mm
-        )
-        list_regions = sleeve.draw(toolJd)
-        toolJd.bMirror = False
-        toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
-        regionS = toolJd.prepareSection(list_regions)
+        # sleeve = CrossSectInnerNotchedRotor.CrossSectSleeve(
+        #     name='Sleeve',
+        #     notched_magnet=self.rotorMagnet,
+        #     d_sleeve=self.machine_variant.d_sl * 1e3  # mm
+        # )
+        # list_regions = sleeve.draw(toolJd)
+        # toolJd.bMirror = False
+        # toolJd.iRotateCopy = self.rotorMagnet.notched_rotor.p * 2
+        # try:
+        #     regionS = toolJd.prepareSection(list_regions)
+        # except:
+        #     return False
 
         # Stator Core
         list_regions = self.stator_core.draw(toolJd)
@@ -219,20 +228,20 @@ class BSPM_EM_Analysis():
 
         part_ID_list = model.GetPartIDs()
 
-        if len(part_ID_list) != int(1 + 1 + self.machine_variant.p * 2 + 1 + 1 + self.machine_variant.Q * 2):
+        if len(part_ID_list) != int(1 + 1 + self.machine_variant.p * 2 + 1 + self.machine_variant.Q * 2):
             print('Parts are missing in this machine')
             return False
 
         self.id_backiron = id_backiron = part_ID_list[0]
         id_shaft = part_ID_list[1]
         partIDRange_Magnet = part_ID_list[2:int(2 + self.machine_variant.p * 2)]
-        id_sleeve = part_ID_list[int(2 + self.machine_variant.p * 2)]
+        # id_sleeve = part_ID_list[int(2 + self.machine_variant.p * 2)]
         id_statorCore = part_ID_list[int(2 + self.machine_variant.p * 2) + 1]
         partIDRange_Coil = part_ID_list[
                            int(2 + self.machine_variant.p * 2) + 2: int(2 + self.machine_variant.p * 2) + 2 + int(
                                self.machine_variant.Q * 2)]
 
-        model.SuppressPart(id_sleeve, 1)
+        # model.SuppressPart(id_sleeve, 1)
 
         group("Magnet", partIDRange_Magnet)
         group("Coils", partIDRange_Coil)
@@ -915,7 +924,7 @@ class BSPM_EM_Analysis():
 
     def extract_JMAG_results(self, path, study_name):
         current_csv_path = path + study_name + '_circuit_current.csv'
-        voltage_csv_path = path + study_name + '_circuit_voltage.csv'
+        voltage_csv_path = path + study_name + '_EXPORT_CIRCUIT_VOLTAGE.csv'
         torque_csv_path = path + study_name + '_torque.csv'
         force_csv_path = path + study_name + '_force.csv'
         iron_loss_path = path + study_name + '_iron_loss_loss.csv'
@@ -923,7 +932,14 @@ class BSPM_EM_Analysis():
         eddy_current_loss_path = path + study_name + '_joule_loss.csv'
 
         curr_df = pd.read_csv(current_csv_path, skiprows=6)
-        volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
+        volt_df = pd.read_csv(voltage_csv_path,)
+        volt_df.rename(columns={'Time, s': 'Time(s)', 'Terminal_Us [Case 1]': 'Terminal_Us',
+                                'Terminal_Ut [Case 1]': 'Terminal_Ut',
+                                'Terminal_Vs [Case 1]': 'Terminal_Vs',
+                                'Terminal_Vt [Case 1]': 'Terminal_Vt',
+                                'Terminal_Ws [Case 1]': 'Terminal_Ws',
+                                'Terminal_Wt [Case 1]': 'Terminal_Wt', }, inplace=True)
+
         tor_df = pd.read_csv(torque_csv_path, skiprows=6)
         force_df = pd.read_csv(force_csv_path, skiprows=6)
         iron_df = pd.read_csv(iron_loss_path, skiprows=6)
