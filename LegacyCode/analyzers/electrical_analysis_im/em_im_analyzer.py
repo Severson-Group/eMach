@@ -1,6 +1,6 @@
 from time import time as clock_time
 import os
-from .electrical_analysis_im.FEMM_Solver import FEMM_Solver
+from .FEMM_Solver import FEMM_Solver
 
 
 class IM_EM_Analysis():

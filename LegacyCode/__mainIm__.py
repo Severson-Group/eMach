@@ -16,7 +16,7 @@ from specifications.materials.miscellaneous_materials import CarbonFiber, Steel,
 from settings.IM_settings_handler import IM_Settings_Handler
 # from analyzers import structrual_analyzer as sta
 
-from analyzers.em_im_analyzer import IM_EM_Analysis
+from analyzers.electrical_analysis_im.em_im_analyzer import IM_EM_Analysis
 from specifications.analyzer_config.em_fea_config_im import FEMM_FEA_Configuration
 
 from problems.im_em_problem import IM_EM_Problem
