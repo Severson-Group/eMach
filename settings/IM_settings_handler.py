@@ -3,7 +3,7 @@ from .im_settings import IM_EMAnalyzer_Settings
 class IM_Settings_Handler():
     ''' This is a wrapper class designed to contain all relevant information
     on the operting point for obtaining eletrical performance evaluation of 
-    bearingless permanent magnet eletric machines
+    Induction machines
     '''
     def __init__(self):
         pass
