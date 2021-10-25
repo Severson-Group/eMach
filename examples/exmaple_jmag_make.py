@@ -26,6 +26,28 @@ stator1 = mo.CrossSectOuterRotorStator(
 
 )
 
+
+stator2 = mo.CrossSectOuterRotorStator(
+    name = 'stator2',
+    dim_alpha_st = mo.DimDegree(30),
+    dim_alpha_so = mo. DimDegree((30 / 2) * 0.25),
+    dim_r_si = mo.DimMillimeter(15),
+    dim_d_sy = mo.DimMillimeter(7.5),
+    dim_d_st = mo.DimMillimeter(7.5),
+    dim_d_sp = mo.DimMillimeter(5),
+    dim_d_so = mo.DimMillimeter(3),
+    dim_w_st = mo.DimMillimeter(7.5),
+    dim_r_st = mo.DimMillimeter(0),
+    dim_r_sf = mo.DimMillimeter(0),
+    dim_r_sb = mo.DimMillimeter(0),
+    dim_Q = 8,
+    location = mo.Location2D(),
+    theta = mo.DimDegree(0)
+
+)
+
+
+
 comp1 = mo.Component(
     name = 'comp1',
     cross_sections = [stator1],
@@ -36,13 +58,26 @@ comp1 = mo.Component(
 )
 
 
-tool_jmag = jd.JmagDesigner()
+comp2 = mo.Component(
+    name = 'comp1',
+    cross_sections = [stator2],
+    material = mo.MaterialGeneric(name ='10JNEX900'),
+    make_solid = mo.MakeExtrude(location = mo.Location3D(),
+                               dim_depth = mo.DimMillimeter(15))
+
+)
+
+
 file = r'one.jproj'
+
+tool_jmag = jd.JmagDesigner()
+
 tool_jmag.open(filepath=file)
 
 tool_jmag.set_visibility(True)
 
 comp1.make(tool_jmag, tool_jmag)
+
 
 
 

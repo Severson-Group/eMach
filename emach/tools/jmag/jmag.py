@@ -22,9 +22,9 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         self.study = None
         self.view = None
         self.filepath = None
-        self.study_type = None
-        self.default_length = None
-        self.default_angle = None
+        self.study_type = 'Transient'
+        self.default_length = 'DimMeter'
+        self.default_angle = 'DimDegree'
         self.visible = True
 
     # def __del__(self):
@@ -141,29 +141,34 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
     def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
         # self.validate_attr(cs_token, 'CrossSectToken')
+        a = cs_token.token
+
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
-            self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i].draw_token.GetName()))
+            for j in range(len(cs_token.token[0])):
+                self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i][j].draw_token.GetName()))
 
         id = self.sketch.NumItems()
         self.sketch.CreateRegions()
         id2 = self.sketch.NumItems()
         visItem = 1
         itemType = 64
-        innerCoord1 = cs_token.innerCoord(1)
-        innerCoord2 = cs_token.innerCoord(2)
-        innerCoord1 = eval(self.default_length, innerCoord1)
-        innerCoord2 = eval(self.default_length, innerCoord2)
+        innerCoord1 = cs_token.inner_coord[0]
+        innerCoord2 = cs_token.inner_coord[1]
 
-        self.geometry_editor.View.SelectAtCoordinateDlg(innerCoord1, innerCoord2, 0, visItem, itemType)
-        region = self.doc.GetSelection.Item([0])
-        regionName = region.GetName;
+        innerCoord1 = eval(self.default_length)(innerCoord1)
+        innerCoord2 = eval(self.default_length)(innerCoord2)
 
-        regionList = 'Region'
-        for idx in range(2, id2 - id):
-            regionList[idx] = 'Region.' + idx
+        self.geometry_editor.View().SelectAtCoordinateDlg(innerCoord1, innerCoord2, 0, visItem, itemType)
+        region = self.doc.GetSelection().Item(0)
+        regionName = region.GetName()
 
-        for idx in range(id2 - id):
+        regionList=[]
+        regionList.append('Region')
+        for idx in range(1, id2 - id):
+            regionList.append('Region.' + str(idx+1))
+
+        for idx in range((id2 - id)):
             if regionList[idx] != regionName:
                 self.doc.GetSelection().Clear()
                 self.doc.GetSelection().Add(self.sketch.GetItem(regionList[idx]))
@@ -177,7 +182,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         num_studies = self.jd.NumStudies()
         if num_studies == 0:
-            study = model.create_study(study_type, study_name)
+            study = model.CreateStudy(study_type, study_name)
         else:
             for i in range(len(num_studies) - 2):
                 model.DeleteStudy(i)
@@ -186,9 +191,9 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         return study
 
-    def extrude(self, name, material: str, depth: float) -> any:
+    def extrude(self, name, material: str, depth: float, token = None) -> any:
 
-        depth = eval(self.default_length, depth)
+        depth = eval(self.default_length)(depth)
         ref1 = self.sketch
         extrude_part = self.part.CreateExtrudeSolid(ref1, depth)
         self.part.SetProperty('Name', name)
