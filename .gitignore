@@ -24,7 +24,9 @@
 *.pyc
 __pycache__/
 
-# JMAG FILES
+# JMAG/FEMM files
+*.jproj
+*.xml
 LegacyCode/run_data/
 
 # Sphinx documentation
