@@ -19,6 +19,10 @@ class Shaft(MachineComponent):
     def shaft_mat(self):
         return self._materials_dict['shaft_mat']
 
+    @property
+    def V_sh(self):
+        return np.pi * (self.r_sh ** 2) * self.l_st
+
 
 class Shaft_IM(MachineComponent):
 
@@ -346,6 +350,23 @@ class Stator(MachineComponent):
     @property
     def stator_iron_mat(self):
         return self._materials_dict['stator_iron_mat']
+
+    @property
+    def V_sfe(self):
+        V_sfe = np.pi*(self.r_so**2 - self.r_si**2)*self.l_st - 6*self.s_slot*self.l_st
+        return V_sfe
+
+    @property
+    def l_coil(self):
+        tau_u = (2 * np.pi / self.Q) * (self.r_si + self.d_sp + self.d_st / 2)
+        l_ew = np.pi * 0.5 * (tau_u + self.w_st) / 2 + tau_u * self.Kov * (self.pitch - 1)
+        l_coil = 2 * (self.l_st + l_ew)  # length of one coil
+        return l_coil
+
+    @property
+    def V_scu(self):
+        V_scu = self.Q * self.l_coil * self.Kcu * self.s_slot / self.no_of_layers
+        return V_scu
 
 
 class Stator_IM(MachineComponent):
