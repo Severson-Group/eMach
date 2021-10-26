@@ -103,7 +103,6 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         start_y = eval(self.default_length)(startxy[1])
         end_x = eval(self.default_length)(endxy[0])
         end_y = eval(self.default_length)(endxy[1])
-
         arc = self.sketch.CreateArc(center_x, center_y, start_x, start_y, end_x, end_y)
         return TokenDraw(arc, 1)
 

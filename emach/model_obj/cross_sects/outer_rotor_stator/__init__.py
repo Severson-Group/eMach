@@ -117,7 +117,6 @@ class CrossSectOuterRotorStator(CrossSectBase):
         phi = np.arcsin((w_st / 2) / r)
         x5 = r * np.cos(phi)  # lower point(still above x - axis)
         y5 = r * np.sin(phi)  # lower point(still above x - axis)
-
         # Left point of d_so line
         theta = alpha_st / 2
         phi = DimRadian(DimDegree(180)) - alpha_so + theta
@@ -129,10 +128,9 @@ class CrossSectOuterRotorStator(CrossSectBase):
         x_arr = [x1, x1, x2, x2, x3, x4, x3, x4, x5, x5, x6, x6]
         y_arr = [y1, -y1, y2, -y2, y3, y4, -y3, -y4, y5, -y5, y6, -y6]
 
-        points = np.array([x_arr, y_arr])
-
-        points = np.transpose(points)
-
+        points = [x_arr, y_arr]
+        points = list(zip(*points))
+        points = [list(sublist) for sublist in points]
 
         arc1 = []
         arc2 = []
@@ -147,29 +145,27 @@ class CrossSectOuterRotorStator(CrossSectBase):
         seg6 = []
 
         for i in range(Q):
-            angle = alpha_total*i
+            angle = alpha_total * i
             p = self.location.transform_coords(points, DimRadian(angle))
 
-            x = p[:, 0]
-            y = p[:, 1]
+            # select point from p to draw lines and arcs
+            p1 = [p[1][0], p[1][1]]
+            p2 = [p[0][0], p[0][1]]
 
-            p1 = [x[1], y[1]]
-            p2 = [x[0], y[0]]
+            p3 = [p[3][0], p[3][1]]
+            p4 = [p[2][0], p[2][1]]
 
-            p3 = [x[3], y[3]]
-            p4 = [x[2], y[2]]
+            p5 = [p[5][0], p[5][1]]
+            p6 = [p[4][0], p[4][1]]
 
-            p5 = [x[5], y[5]]
-            p6 = [x[4], y[4]]
+            p7 = [p[6][0], p[6][1]]
+            p8 = [p[7][0], p[7][1]]
 
-            p7 = [x[6], y[6]]
-            p8 = [x[7], y[7]]
+            p9 = [p[8][0], p[8][1]]
+            p10 = [p[9][0], p[9][1]]
 
-            p9 = [x[8], y[8]]
-            p10 = [x[9], y[9]]
-
-            p11 = [x[10], y[10]]
-            p12 = [x[11], y[11]]
+            p11 = [p[10][0], p[10][1]]
+            p12 = [p[11][0], p[11][1]]
 
             arc1.append(drawer.draw_arc(self.location.anchor_xy, p1, p2))
             arc2.append(drawer.draw_arc(self.location.anchor_xy, p3, p4))
@@ -183,14 +179,13 @@ class CrossSectOuterRotorStator(CrossSectBase):
             seg5.append(drawer.draw_line(p11, p9))
             seg6.append(drawer.draw_line(p12, p10))
 
-
         rad = r_si + (d_sy / 2)
-        ic = np.array([[rad, type(rad)(0)]])
-        inner_coord = self.location.transform_coords(np.array(ic))
+        ic = [[rad, type(rad)(0)]]
+        inner_coord = self.location.transform_coords(ic)
 
-        segments  = [arc1, arc2, arc3, arc4, seg1, seg2, seg3, seg4, seg5, seg6]
+        segments = [arc1, arc2, arc3, arc4, seg1, seg2, seg3, seg4, seg5, seg6]
 
-        cs_token = CrossSectToken(inner_coord[0, :], segments )  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], segments)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
