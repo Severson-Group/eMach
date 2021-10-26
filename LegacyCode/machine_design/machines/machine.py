@@ -68,11 +68,11 @@ class Winding(MachineComponent):
 
     @property
     def Kov(self):
-        return self._machine_parameter_dict['Kov']
+        return self._nameplate_dict['Kov']
 
     @property
     def Kcu(self):
-        return self._machine_parameter_dict['Kcu']
+        return self._nameplate_dict['Kcu']
 
     @property
     def coil_mat(self):
