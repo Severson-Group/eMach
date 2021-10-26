@@ -65,7 +65,6 @@ class BSPM_EM_Analysis():
                                                   self.study_name)  # Change here and there
         self.mesh_study(app, model, study)
         self.run_study(app, study, clock_time())
-        self.run_study(app, study, clock_time())
         # export Voltage if field data exists.
         if not self.configuration['delete_results_after_calculation']:
             # Export Circuit Voltage
