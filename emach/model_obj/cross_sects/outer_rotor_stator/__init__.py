@@ -128,6 +128,7 @@ class CrossSectOuterRotorStator(CrossSectBase):
         x_arr = [x1, x1, x2, x2, x3, x4, x3, x4, x5, x5, x6, x6]
         y_arr = [y1, -y1, y2, -y2, y3, y4, -y3, -y4, y5, -y5, y6, -y6]
 
+        # transpose list
         points = [x_arr, y_arr]
         points = list(zip(*points))
         points = [list(sublist) for sublist in points]

@@ -109,47 +109,47 @@ class CrossSectLinearMotorStator(CrossSectBase):
             
         # build x and y coordinates of stator points as arrays based on
         # the order how these points are connected between each other
-        x = [ x1, x5, x5,  x1,  x1, x2, x3, x4, x4, x3, x2, x1, \
-              x1, x2, x3, x4, x4, x3, x2, x1];
-        y = [ y1, y1, y10, y10, y8, y8, y9, y9, y6, y6, y7, y7, \
-              y4, y4, y5, y5, y2, y2, y3, y3];
-        
-        p = np.array([x, y])
+        x = [ x1, x5, x5,  x1,  x1, x2, x3, x4, x4, x3, x2, x1,
+              x1, x2, x3, x4, x4, x3, x2, x1]
+        y = [ y1, y1, y10, y10, y8, y8, y9, y9, y6, y6, y7, y7,
+              y4, y4, y5, y5, y2, y2, y3, y3]
 
-        p = np.transpose(p)
+        # transpose list
+        coords = [x, y]
+        coords = list(zip(*coords))
+        coords = [list(sublist) for sublist in coords]
 
-        points = self.location.transform_coords(p)
+        points = self.location.transform_coords(coords)
 
-        seg1 = drawer.draw_line(points[0, :], points[1, :])
-        seg2 = drawer.draw_line(points[1, :], points[2, :])
-        seg3 = drawer.draw_line(points[2, :], points[3, :])
-        seg4 = drawer.draw_line(points[3, :], points[4, :])
-        seg5 = drawer.draw_line(points[4, :], points[5, :])
-        seg6 = drawer.draw_line(points[5, :], points[6, :])
-        seg7 = drawer.draw_line(points[6, :], points[7, :])
-        seg8 = drawer.draw_line(points[7, :], points[8, :])
-        seg9 = drawer.draw_line(points[8, :], points[9, :])
-        seg10 = drawer.draw_line(points[9, :], points[10, :])
-        seg11 = drawer.draw_line(points[10, :], points[11, :])
-        seg12 = drawer.draw_line(points[11, :], points[12, :])
-        seg13 = drawer.draw_line(points[12, :], points[13, :])
-        seg14 = drawer.draw_line(points[13, :], points[14, :])
-        seg15 = drawer.draw_line(points[14, :], points[15, :])
-        seg16 = drawer.draw_line(points[15, :], points[16, :])
-        seg17 = drawer.draw_line(points[16, :], points[17, :])
-        seg18 = drawer.draw_line(points[17, :], points[18, :])
-        seg19 = drawer.draw_line(points[18, :], points[19, :])
-        seg20 = drawer.draw_line(points[19, :], points[0, :])
+        seg1 = drawer.draw_line(points[0], points[1])
+        seg2 = drawer.draw_line(points[1], points[2])
+        seg3 = drawer.draw_line(points[2], points[3])
+        seg4 = drawer.draw_line(points[3], points[4])
+        seg5 = drawer.draw_line(points[4], points[5])
+        seg6 = drawer.draw_line(points[5], points[6])
+        seg7 = drawer.draw_line(points[6], points[7])
+        seg8 = drawer.draw_line(points[7], points[8])
+        seg9 = drawer.draw_line(points[8], points[9])
+        seg10 = drawer.draw_line(points[9], points[10])
+        seg11 = drawer.draw_line(points[10], points[11])
+        seg12 = drawer.draw_line(points[11], points[12])
+        seg13 = drawer.draw_line(points[12], points[13])
+        seg14 = drawer.draw_line(points[13], points[14])
+        seg15 = drawer.draw_line(points[14], points[15])
+        seg16 = drawer.draw_line(points[15], points[16])
+        seg17 = drawer.draw_line(points[16], points[17])
+        seg18 = drawer.draw_line(points[17], points[18])
+        seg19 = drawer.draw_line(points[18], points[19])
+        seg20 = drawer.draw_line(points[19], points[0])
         
         x_coord = x3
         y_coord = (y5 + y6)/2
-        inner_coord = self.location.transform_coords(np.array([[x_coord, y_coord]]))
+        inner_coord = self.location.transform_coords([[x_coord, y_coord]])
 
-        segments = [seg1, seg2, seg3, seg4, seg5, seg6, seg7, seg8, \
-                seg9, seg10, seg11, seg12, seg13, seg14, seg15, seg16, \
-                seg17, seg18, seg19, seg20]
+        segments = [seg1, seg2, seg3, seg4, seg5, seg6, seg7, seg8, seg9, seg10,
+                    seg11, seg12, seg13, seg14, seg15, seg16, seg17, seg18, seg19, seg20]
 
-        cs_token = CrossSectToken(inner_coord[0, :], segments)  # create CrossSectToken selfect
+        cs_token = CrossSectToken(inner_coord[0], segments)  # create CrossSectToken select
 
         return cs_token
 

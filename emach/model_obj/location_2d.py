@@ -102,7 +102,7 @@ class Location2D():
         row, col = rot_coords.shape
 
         # add argument coords with anchor to get desired coordinates
-        # convert type back to what it was before
+        # convert type of coordinate back to what it was before calculations
         for i in range(row):
             trans_coords_list[i][0] = type(coords[i][0])(rot_coords[i, 0]) + self._anchor_xy[0]
             trans_coords_list[i][1] = type(coords[i][1])(rot_coords[i, 1]) + self._anchor_xy[1]

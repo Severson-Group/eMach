@@ -57,25 +57,26 @@ class CrossSectArc(CrossSectBase):
         y_in = (r - t) * np.sin(alpha / 2)
         y = [-y_out, y_out, y_in, -y_in]
 
-        z = np.array([x, y])
-
-        coords = np.transpose(z)  # convert coordinates to a form of [[x1,y1]..]
+        # transpose list
+        coords = [x, y]
+        coords = list(zip(*coords))
+        coords = [list(sublist) for sublist in coords]
 
         p = self.location.transform_coords(coords)  # shift coordinates based on anchor and theta given in location
 
         # draw hollow cylinder
-        arc_out = drawer.draw_arc(self.location.anchor_xy, p[0, :], p[1, :])
-        line_cc = drawer.draw_line(p[1, :], p[2, :])
-        arc_in = drawer.draw_arc(self.location.anchor_xy, p[3, :], p[2, :])
-        line_cw = drawer.draw_line(p[3, :], p[0, :])
+        arc_out = drawer.draw_arc(self.location.anchor_xy, p[0], p[1])
+        line_cc = drawer.draw_line(p[1], p[2])
+        arc_in = drawer.draw_arc(self.location.anchor_xy, p[3], p[2])
+        line_cw = drawer.draw_line(p[3], p[0])
 
         # get coordinate within hollow cylinder
         rad = r - t * 0.5
-        inner_coord = self.location.transform_coords(np.array([[rad, type(r)(0)]]))
+        inner_coord = self.location.transform_coords([[rad, type(r)(0)]])
 
         token = [arc_out, line_cc, arc_in, line_cw]  # compile tokens
 
-        cs_token = CrossSectToken(inner_coord[0, :], token)  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], token)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
