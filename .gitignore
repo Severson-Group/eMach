@@ -24,6 +24,17 @@
 *.pyc
 __pycache__/
 
+# JMAG/FEMM files
+*.jproj
+*.xml
+LegacyCode/run_data/
+
 # Sphinx documentation
 docs/build/
 docs/source/_templates/
+
+# JMAG simulation files
+run_data/
+
+# archive files
+*.pkl
