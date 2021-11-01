@@ -140,7 +140,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
     def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
         # self.validate_attr(cs_token, 'CrossSectToken')
-        a = cs_token.token
+
 
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
