@@ -128,10 +128,10 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
             model = self.jd.GetCurrentModel()
             model.setName(model_name)
         else:
-            for i in range(len(num_models) - 1):
+            for i in range(num_models - 1):
                 self.jd.DeleteModel(i)
             model = self.jd.GetCurrentModel()
-            self.setName(model_name)
+            model.setName(model_name)
 
         return model
 
@@ -144,7 +144,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
-            for j in range(len(cs_token.token[0])):
+            for j in range(len(cs_token.token[i])):
                 self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i][j].draw_token.GetName()))
 
         id = self.sketch.NumItems()
@@ -183,7 +183,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         if num_studies == 0:
             study = model.CreateStudy(study_type, study_name)
         else:
-            for i in range(len(num_studies) - 2):
+            for i in range(num_studies):
                 model.DeleteStudy(i)
             study = self.jd.GetCurrentStudy()
             study.SetName(study_name)
@@ -199,7 +199,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         sketch_name = name + '_sketch'
         self.sketch.SetProperty('Name', sketch_name)
 
-        self.part = []
+        self.part = None
         self.doc.SaveModel(True)
         model_name = name + '_model'
         self.model = self.create_model(model_name)
@@ -225,7 +225,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
     def setDefaultAngleUnit(self, userUnit):
 
         if userUnit == 'DimDegree':
-            self.default_length = userUnit
+            self.default_angle = userUnit
             self.model.SetUnitCollection('SI_units')
         else:
             raise Exception('Unsupported angle unit')
@@ -249,7 +249,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         sketch_name = name + '_sketch'
         self.sketch.SetProperty('Name', sketch_name)
 
-        self.part = []
+        self.part = None
         self.doc.SaveModel(True)
         model_name = name + '_model'
         self.model = self.create_model(model_name)

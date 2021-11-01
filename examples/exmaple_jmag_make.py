@@ -38,7 +38,7 @@ stator2 = mo.CrossSectOuterRotorStator(
     dim_r_sf=mo.DimMillimeter(0),
     dim_r_sb=mo.DimMillimeter(0),
     dim_Q=8,
-    location=mo.Location2D(),
+    location=mo.Location2D(anchor_xy=[mo.DimMillimeter(100), mo.DimMillimeter(0)]),
     theta=mo.DimDegree(0)
 
 )
@@ -67,3 +67,4 @@ tool_jmag = jd.JmagDesigner()
 tool_jmag.open(filepath=file)
 tool_jmag.set_visibility(True)
 comp1.make(tool_jmag, tool_jmag)
+comp2.make(tool_jmag, tool_jmag)
