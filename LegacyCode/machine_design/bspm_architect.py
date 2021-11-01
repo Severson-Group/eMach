@@ -74,7 +74,7 @@ class BSPMArchitectType1(Architect):
             'd_m': free_variables['d_m'],
             'd_mp': free_variables['d_mp'],
             'd_ri': free_variables['d_ri'],
-            # dependant variables 
+            # dependant variables
             'alpha_so': self.__get_alpha_so(free_variables),
             'd_sp': self.__get_d_sp(free_variables),
             'r_si': self.__get_r_si(free_variables),
@@ -83,24 +83,16 @@ class BSPMArchitectType1(Architect):
             'r_sh': self.__get_r_sh(free_variables),
             'r_so': self.__get_r_so(free_variables),
             's_slot': self.__get_s_slot(free_variables),
-            'p': self.__design_spec['p'],
             'V_r': self.__get_V_r(free_variables),
             'l_st': self.__get_l_st(free_variables),
             'd_sl': 0.001,
             'delta_sl': 0,
             'delta': free_variables['delta_e'],
+            'Z_q': self.__get_zQ(free_variables),
+            # non changing variables
+            'p': self.__design_spec['p'],
             'Q': self.__design_spec['Q'],
             'n_m': 1,
-
-            # winding parameters
-            'coil_groups': self.__winding.grouping_a,
-            'no_of_layers': self.__winding.no_winding_layer,
-            'layer_phases': [self.__winding.rightlayer_phase, self.__winding.leftlayer_phase],
-            'layer_polarity': [self.__winding.rightlayer_polarity, self.__winding.leftlayer_polarity],
-            'pitch': self.__winding.y,
-            'Z_q': self.__get_zQ(free_variables),
-            'Kov': self.__design_spec['Kov'],
-            'Kcu': self.__design_spec['Kcu'],
         }
 
         bspm_material = {
@@ -115,13 +107,20 @@ class BSPMArchitectType1(Architect):
         }
 
         bspm_nameplate = {
-
+            'ps': self.__design_spec['ps'],
             'mech_omega': self.__design_spec['rated_speed'],
             'mech_power': self.__design_spec['rated_power'],
             'voltage_rating': self.__design_spec['voltage_rating'],
-            'Iq_rated_ratio': 0.95,
             'Rated_current': self.__current_coil,
-            'ps': self.__design_spec['ps'],
+
+            # winding parameters
+            'coil_groups': self.__winding.grouping_a,
+            'no_of_layers': self.__winding.no_winding_layer,
+            'layer_phases': [self.__winding.rightlayer_phase, self.__winding.leftlayer_phase],
+            'layer_polarity': [self.__winding.rightlayer_polarity, self.__winding.leftlayer_polarity],
+            'pitch': self.__winding.y,
+            'Kov': self.__design_spec['Kov'],
+            'Kcu': self.__design_spec['Kcu'],
         }
 
         machine_variant = BSPM_Machine(bspm_parameters, bspm_material, bspm_nameplate)
