@@ -19,7 +19,7 @@ stator1 = mo.CrossSectOuterRotorStator(
     dim_r_sf=mo.DimMillimeter(0),
     dim_r_sb=mo.DimMillimeter(0),
     dim_Q=8,
-    location=mo.Location2D(),
+    location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
     theta=mo.DimDegree(0)
 
 )
