@@ -8,26 +8,17 @@ __all__ = ['Location2D']
 
 
 class Location2D:
+    """Class representing the location of a cross-section"""
+
     def __init__(self, anchor_xy=[DimMillimeter(0), DimMillimeter(0)], theta=DimRadian(0)):
-        """
-        Initialization function for Location2D class. It assigns the value of
-        the arguments passed to private variables and creates a new variable
-        __rot which holds the Park's transformation matrix corresponding to
-        theta input'
+        """Initialization for Location2D class.
 
-        Parameters
-        ----------
-        anchor_xy : List of DimLinear objects
-            DESCRIPTION. Distance from global xy coordinate to component's
-            origin xy coordinate. The default is np.array([0, 0]).
-        theta : DimAngular
-            DESCRIPTION. Angle about global xy axes to rotate component's xy
-            axes. The default is 0.
+        Validates type of input arguments and creates a new attribute _rot to hold the Park's transformation matrix
 
-        Returns
-        -------
-        None.
-
+        Args:
+            anchor_xy: List of DimLinear objects representing distance from global xy coordinate to component's
+                origin xy coordinate. The default is [DimMillimeter(0), DimMillimeter(0)].
+            theta: Angle about global xy axes to rotate component's xy axes. The default is 0.
         """
         self._anchor_xy = anchor_xy
         self._theta = theta
@@ -50,7 +41,6 @@ class Location2D:
         return self._rot
 
     def _validate_attr(self):
-
         if not len(self._anchor_xy) == 2:
             raise TypeError("Expected input to be one of length 2. \
                              Instead it was of length " + str(len(self._anchor_xy)))
@@ -65,26 +55,18 @@ class Location2D:
                              DimAngular. Instead it was of type " + str(type(self._theta)))
 
     def transform_coords(self, coords, add_theta=None):
-        """
-        This function takes in an nx2 array of coordinates of the form [x,y]
-        and returns rotated and translated coordinates. The translation and
-        rotation are described by self.__anchor_xy and self.__theta. The optional
-        "addTheta" argument adds an additional angle of "addTheta" to the
-        self.__theta attribute.
+        """Transform nx2 array of coordinates
 
-        Parameters
-        ----------
-        coords : List of DimLinear
-            DESCRIPTION. An nx2 array of coordinates of the form [x,y]
-        add_theta : DimAngular, optional
-            DESCRIPTION. The default is None.
+        This function performs translation and rotation upon a series of coordinated based on self._anchor_xy and
+        self._theta. The optional "addTheta" argument adds an additional angle of "addTheta" to the self._theta
+        attribute.
 
-        Returns
-        -------
-        trans_coords : List of DimLinear
-            DESCRIPTION. An nx2 array of coordinates of the form [x,y] tranformed
-            based on Location2D.__anchor_xy, Location2D.__anchor_xy and add_theta
+        Args:
+            coords : An nx2 array of coordinates of the form [x,y]
+            add_theta : Angle in addition to self._theta by which coordinates are rotated
 
+        Returns:
+            trans_coords : An nx2 array of transformed coordinates of the form [x,y]
         """
         if add_theta is None:
             trans = self._rot
