@@ -12,6 +12,7 @@ __all__ += ["JmagDesigner"]
 
 class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase):
     def __init__(self):
+        self.jd_instance = DispatchEx('designerstarter.InstanceManager')
         self.jd = None
         self.geometry_editor = None
         self.doc = None
@@ -22,38 +23,49 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         self.study = None
         self.view = None
         self.filepath = None
-        self.study_type = 'Transient'
-        self.default_length = 'DimMeter'
-        self.default_angle = 'DimDegree'
+        self.study_type = None
+        self.default_length = None
+        self.default_angle = None
         self.visible = True
 
-    # def __del__(self):
-    #     self.jd.Quit()
+    def __del__(self):
+        self.jd.Quit()
 
-    def open(self, filepath, length_unit='DimMeter', angle_unit='DimDegree'):
-
+    def open(self, comp_filepath, length_unit='DimMeter', angle_unit='DimDegree', study_type='Transient'):
         self.default_length = length_unit
         self.default_angle = angle_unit
+        self.study_type = study_type
 
-        file_name, file_extension = os.path.splitext(filepath)
+        # parse out path and extension of file
+        file_name_path, file_extension = os.path.splitext(comp_filepath)
+        file_contents = file_name_path.split("\\")
+        # extract folder where file resides
+        file_path = file_contents[0]
+        for i in range(len(file_contents) - 2):
+            file_path = file_path + "\\" + file_contents[i + 1]
 
         if file_extension != '.jproj':
             raise TypeError('Incorrect file extension')
-
-        jd_instance = DispatchEx('designerstarter.InstanceManager')
-        self.jd = jd_instance.GetNamedInstance(filepath, 0)
+        self.jd = self.jd_instance.GetNamedInstance(comp_filepath, 0)
         self.set_visibility(self.visible)
 
-        # try:
-        #     self.jd.Load(filepath)
-        #     self.filepath = filepath
-        # except FileNotFoundError:
-        curr_dir = os.getcwd()
-        print(curr_dir)
-        filename = os.path.basename(filepath)
-        filepath = curr_dir + '/' + filename
-        self.jd.NewProject(filepath)
-        self.save_as(filepath)
+        # check if file exists
+        if os.path.exists(comp_filepath):
+            self.jd.Load(comp_filepath)
+            self.filepath = comp_filepath
+        # if not, check if folder exists
+        else:
+            if os.path.exists(file_path):
+                self.jd.NewProject(comp_filepath)
+                self.save_as(comp_filepath)
+            # if folder does not exist, just use current directory
+            else:
+                print('does not exist')
+                curr_dir = os.getcwd()
+                filename = os.path.basename(comp_filepath)
+                self.filepath = curr_dir + '/' + filename
+                self.jd.NewProject(comp_filepath)
+                self.save_as(comp_filepath)
 
         self.view = self.jd.View()
         self.jd.GetCurrentModel().RestoreCadLink(True)
@@ -140,8 +152,6 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
     def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
         # self.validate_attr(cs_token, 'CrossSectToken')
-
-
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
             for j in range(len(cs_token.token[i])):
@@ -162,10 +172,9 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         region = self.doc.GetSelection().Item(0)
         regionName = region.GetName()
 
-        regionList=[]
-        regionList.append('Region')
+        regionList = ['Region']
         for idx in range(1, id2 - id):
-            regionList.append('Region.' + str(idx+1))
+            regionList.append('Region.' + str(idx + 1))
 
         for idx in range((id2 - id)):
             if regionList[idx] != regionName:
@@ -178,7 +187,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         return region
 
     def create_study(self, study_name, study_type, model) -> any:
-
+        self.study_type = study_type
         num_studies = self.jd.NumStudies()
         if num_studies == 0:
             study = model.CreateStudy(study_type, study_name)
@@ -190,8 +199,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         return study
 
-    def extrude(self, name, material: str, depth: float, token = None) -> any:
-
+    def extrude(self, name, material: str, depth: float, token=None) -> any:
         depth = eval(self.default_length)(depth)
         ref1 = self.sketch
         extrude_part = self.part.CreateExtrudeSolid(ref1, depth)
@@ -207,14 +215,14 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         study_name = name + '_study'
         self.study = self.create_study(study_name, self.study_type, self.model)
 
-        self.setDefaultLengthUnit(self.default_length)
-        self.setDefaultAngleUnit(self.default_angle)
+        self.set_default_length_unit(self.default_length)
+        self.set_default_angle_unit(self.default_angle)
 
         self.study.SetMaterialByName(name, material)
 
         return extrude_part
 
-    def setDefaultLengthUnit(self, userUnit):
+    def set_default_length_unit(self, userUnit):
 
         if userUnit == 'DimMeter':
             self.default_length = userUnit
@@ -222,7 +230,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         else:
             raise Exception('Unsupported length unit')
 
-    def setDefaultAngleUnit(self, userUnit):
+    def set_default_angle_unit(self, userUnit):
 
         if userUnit == 'DimDegree':
             self.default_angle = userUnit
@@ -257,9 +265,8 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         study_name = name + '_study'
         self.study = self.create_study(study_name, self.study_type, self.model)
 
-        self.setDefaultLengthUnit(self.default_length)
-        self.setDefaultAngleUnit(self.default_angle)
+        self.set_default_length_unit(self.default_length)
+        self.set_default_angle_unit(self.default_angle)
 
         self.study.SetMaterialByName(name, material)
-
         return revolve_part
