@@ -11,7 +11,7 @@ __all__ += ["MagNet"]
 
 
 class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase):
-    """ A class to handle MagNet applications
+    """ eMach MAGNET tool class to interface between Python scripts and the MAGNET application.
     """
 
     def __init__(self, visible=False):
@@ -29,8 +29,17 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         self.mn.close(False)
 
     def open(self, filename=None, length_unit='DimMillimeter', angle_unit='DimDegree'):
-        """ opens a new MAGNET session and assigns variables neccessary for further
-        operations
+        """ Open a new MAGNET session.
+
+        Launches the MAGNET application by opening an already created file if or by creating a new file. Assigns other
+        attributes to MAGNET application handles for future operations.
+
+        Args:
+            filename: Name of the MAGNET file which is to be opened. If no value is passed, a new file is created.
+            length_unit: String input of the eMach linear dimension unit to be employed to construct designs.
+                DimMillimeter and DimInch are natively supported in eMach.
+            angle_unit: String input of the eMach angular dimension unit to be employed to construct designs. DimDegree
+                and DimRadian are natively supported in eMach.
         """
         self.default_length = length_unit
         self.default_angle = angle_unit
@@ -47,6 +56,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         self.set_default_length(length_unit, False)
 
     def close(self):
+        """Close currently open MAGNET application without saving."""
         self.doc.close(False)
 
     def save_as(self, filename):
@@ -60,32 +70,19 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             raise AttributeError('Unable to save file. Use the save_as() function')
 
     def draw_line(self, startxy, endxy):
-        """
-        Draws a line in MAGNET
+        """Draw a line in MAGNET.
 
-        Parameters
-        ----------
-        startxy : integer list of len 2
-            the starting coordinate of the line
-        endxy : Tinteger list of len 2
-            the ending coordinate of the line
+        Args:
+            startxy: Start point of line. Should be of type Location2D defined with eMach DimLinear.
+            endxy: End point of the. Should be of type Location2D defined with eMach DimLinear.
 
-        Raises
-        ------
-        TypeError
-            If the coomand can't be passed to MAGNET due to any reason.
-
-        Returns
-        -------
-        ret : int
-            0 if successful 1 if failed.
-
+        Returns:
+            TokenDraw: Wrapper object holding return values obtained from MAGNET upon drawing a line.
         """
         start_x = eval(self.default_length)(startxy[0])
         start_y = eval(self.default_length)(startxy[1])
         end_x = eval(self.default_length)(endxy[0])
         end_y = eval(self.default_length)(endxy[1])
-
         ret = self.view.newLine(start_x, start_y, end_x, end_y)
 
         self.mn.setVariant(0, 'line', 'python')
@@ -94,22 +91,15 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         return TokenDraw(line, 0)
 
     def draw_arc(self, centerxy, startxy, endxy):
-        """
-        Draws an arc in MAGNET
+        """Draw an arc in MAGNET.
 
-        Parameters
-        ----------
-        centerxy : integer list of len 2
-            the center coordinate of the arc.
-        startxy : integer list of len 2
-            the starting coordinate of the arc
-        endxy : Tinteger list of len 2
-            the ending coordinate of the arc
+        Args:
+            centerxy: Centre point of arc. Should be of type Location2D defined with eMach Dimensions.
+            startxy: Start point of arc. Should be of type Location2D defined with eMach Dimensions.
+            endxy: End point of arc. Should be of type Location2D defined with eMach Dimensions.
 
-        Returns
-        -------
-        ret : TokenDraw object
-
+        Returns:
+            TokenDraw: Wrapper object holding return values obtained from tool upon drawing an arc.
         """
         center_x = eval(self.default_length)(centerxy[0])
         center_y = eval(self.default_length)(centerxy[1])
@@ -118,12 +108,10 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         end_x = eval(self.default_length)(endxy[0])
         end_y = eval(self.default_length)(endxy[1])
 
-        ret = self.view.newArc(
-            center_x, center_y, start_x, start_y, end_x, end_y
-        )
+        ret = self.view.newArc(center_x, center_y, start_x, start_y, end_x, end_y)
 
         self.mn.setVariant(0, 'arc', 'python')
-        arc = self.mn.getVariant(0, 'python');
+        arc = self.mn.getVariant(0, 'python')
 
         return TokenDraw(arc, 1)
 
@@ -131,18 +119,11 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         pass
 
     def prepare_section(self, cs_token):
-        """
-        Selects a section in MAGNET
+        """Select a section in MAGNET.
 
-        Parameters
-        ----------
-        inner_coord : integer list of len 2
-            coordinate within section user wishes to select.
-
-        Returns
-        -------
-        None.
-
+        Args:
+            cs_token: Wrapper object of type CrossSectToken. Holds information on inner coordinate of section to be
+                selected.
         """
         inner_coord_x = eval(self.default_length)(cs_token.inner_coord[0])
         inner_coord_y = eval(self.default_length)(cs_token.inner_coord[1])
@@ -153,12 +134,19 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
             self.consts.infoSetSelection,
             [self.consts.infoSliceSurface],
         )
-        new = 1
-        return new
+        return 1
 
     def extrude(self, name, material, depth, token=None):
-        """
-        Extrudes, assigns a material and name to a selected section in MAGNET
+        """Extrude, assign a material and name a selected section in MAGNET.
+
+        Args:
+            name: Name assigned to extruded component.
+            material: Name of material from tool library whose properties are assigned to component.
+            depth: Length of extrusion. Should be of type DimLinear.
+            token: Not used currently.
+
+        Returns:
+            ret: 1 if extrusion was successful, 0 otherwise.
         """
         depth_actual = eval(self.default_length)(depth)
         name = [name]
@@ -172,8 +160,20 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         return ret
 
     def revolve(self, name, material, center, axis, angle, token=None):
-        """
-        Revloves, assigns a material and name to a selected section in MAGNET
+        """Revolve, assign a material and name a selected section in MAGNET.
+
+        Args:
+            name: Name assigned to extruded component.
+            material: Name of material from tool library whose properties are assigned to component.
+            center: Center point about which the cross-section is revolved. Should be of type Location2D defined with
+                eMach Dimensions.
+            axis: Axis about which the cross-section is revolved. Should be of type Location2D defined with eMach
+                Dimensions.
+            angle: Angle of revolution. Should be of type DimAngular.
+            token: Not used currently.
+
+        Returns:
+            ret: 1 if extrusion was successful, 0 otherwise.
         """
         center_x = eval(self.default_length)(center[0])
         center_y = eval(self.default_length)(center[1])
@@ -195,45 +195,27 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
         return ret
 
     def view_all(self):
-        '''
-        Function to view entire cross-section of drawing made in MagNer
-
-        '''
+        """View entire cross-section of drawing made in MAGNET"""
         self.view.viewAll()
 
     def set_default_length(self, user_unit, make_app_default):
-        '''
-        Function to set the default length unit in MagNet. Supports millimeters
-        and inches.
+        """Set the default length unit in MAGNET. Supports millimeters and inches.
 
-        Parameters
-        ----------
-        user_unit : str
-            DESCRIPTION. String representing the unit the user wishes to set
-            as default.
-        make_app_default : bool
-            DESCRIPTION. Boolean with which user can set a unit as the default
-            unit employed in MagNet
+        Args:
+            user_unit: String representing the unit the user wishes to set as default.
+            make_app_default: Boolean with which user can set a unit as the default unit employed in MagNet
 
-        Raises
-        ------
-        TypeError
-            DESCRIPTION. Raise a TypeError if incorrent dimension is passed
+        Raises:
+            TypeError: Incorrect dimension passed
+        """
 
-        Returns
-        -------
-        None.
-
-        '''
-
-        if (user_unit == 'DimMillimeter'):
+        if user_unit == 'DimMillimeter':
             app_unit = 'millimeter'
-        elif (user_unit == 'DimInch'):
+        elif user_unit == 'DimInch':
             app_unit = 'inches'
         else:
             raise TypeError("Dimension not supported")
         self.default_length = user_unit
-
         self.doc.setDefaultLengthUnit(app_unit, make_app_default)
 
     def set_visibility(self, visible):

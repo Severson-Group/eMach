@@ -7,8 +7,9 @@ from .dimensions import *
 __all__ = ['Location2D']
 
 
-class Location2D():
 
+
+class Location2D:
     def __init__(self, anchor_xy=[DimMillimeter(0), DimMillimeter(0)], theta=DimRadian(0)):
         """
         Initialization function for Location2D class. It assigns the value of
