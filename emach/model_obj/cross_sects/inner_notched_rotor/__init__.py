@@ -143,15 +143,11 @@ class CrossSectInnerNotchedRotor(CrossSectBase):
         flip_zy = [zy_ar * -1 for zy_ar in zy[::-1]]
         flip_zy = flip_zy[1:]
         zy_array = flip_zy + zy
-
-        points = [[0, 0]] * len(x_array)
-        inner_points = [[0, 0]] * len(x_array)
-        for l in range(0, len(x_array)):
-            points[l][0] = x_array[l]
-            points[l][1] = y_array[l]
-            inner_points[l][0] = zx_array[l]
-            inner_points[l][1] = zy_array[l]
-
+        points = []
+        inner_points = []
+        for index in range(0, len(x_array)):
+            points.append([x_array[index], y_array[index]])
+            inner_points.append([zx_array[index], zy_array[index]])
         # Draw p poles with s segments per pole
 
         for i in range(1, P + 1):
