@@ -13,80 +13,117 @@ __all__ += ["JmagDesigner"]
 class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase):
     def __init__(self):
         self.jd_instance = DispatchEx('designerstarter.InstanceManager')
-        self.jd = None
-        self.geometry_editor = None
-        self.doc = None
-        self.assembly = None
-        self.sketch = None
-        self.part = None
-        self.model = None
-        self.study = None
-        self.view = None
-        self.filepath = None
-        self.study_type = None
-        self.default_length = None
-        self.default_angle = None
-        self.visible = True
+        self.jd = None  # JMAG-Designer Application object
+        self.geometry_editor = None  # The Geometry Editor object
+        self.doc = None  # The document object in Geometry Editor
+        self.assembly = None  # The assembly object in Geometry Editor
+        self.sketch = None  # The sketch object in Geometry Editor
+        self.part = None  # The part object in Geometry Editor
+        self.model = None  # The model object in JMAG Designer
+        self.study = None  # The study object in JMAG Designer
+        self.view = None  # The view object in JMAG Designer
+        self.filepath = None  # string that specifies the complete path to JMAG file
+        self.study_type = None  # The study type in JMAG Designer
+        self.default_length = None  # Default length unit is m
+        self.default_angle = None  # Default angle unit is degrees
+        self.visible = False  # Application visibility
 
-    def __del__(self):
-        self.jd.Quit()
+    # def __del__(self):
+    #     self.jd.Quit()
 
     def open(self, comp_filepath, length_unit='DimMeter', angle_unit='DimDegree', study_type='Transient'):
+        """Open an existing JMAG file or a create new one if file does not exist.
+
+        Launches the JMAG application by opening an already created file if or by creating a new file. Assigns JMAG
+        application handles to object attributes for future operations.
+
+        Args:
+            comp_filepath: Path of the JMAG file which is to be opened. If no such file exist, a new one is created.
+            length_unit: String input of the eMach linear dimension unit to be employed to construct designs. JMAG tool
+                only supports DimMeter
+            angle_unit: String input of the eMach angular dimension unit to be employed to construct designs. JMAG tool
+                only supports DimDegree
+            study_type: Specifies type of study launched in JMAG. Commonly used types are Static2D, Transient2D,
+                Frequency2D, Static, Transient, Frequency
+
+        Returns:
+            file_found: 1 if file exists; 0 if new file was created.
+        """
         self.default_length = length_unit
         self.default_angle = angle_unit
         self.study_type = study_type
 
+        file_found = 0
+        # convert relative paths to absolute paths
+        if not os.path.isabs(comp_filepath):
+            comp_filepath = os.path.abspath('.') + "\\" + comp_filepath
+
         # parse out path and extension of file
         file_name_path, file_extension = os.path.splitext(comp_filepath)
         file_contents = file_name_path.split("\\")
-        # extract folder where file resides
-        file_path = file_contents[0]
-        for i in range(len(file_contents) - 2):
-            file_path = file_path + "\\" + file_contents[i + 1]
 
+        # check if extension is of right type
         if file_extension != '.jproj':
             raise TypeError('Incorrect file extension')
+        # extract folder where file resides or is meant to reside
+        file_path = ""
+        for i in range(len(file_contents) - 1):
+            file_path = file_path + file_contents[i] + "\\"
+
+        # Obtains a JMAG-Designer Application object. If the specified JMAG-Designer key does not exist, a new instance
+        # of JMAG-Designer is started. Used when independently operating multiple instances of JMAG-Designer
         self.jd = self.jd_instance.GetNamedInstance(comp_filepath, 0)
+
+        # set visibility for JMAG
         self.set_visibility(self.visible)
 
         # check if file exists
         if os.path.exists(comp_filepath):
+            file_found = 1
             self.jd.Load(comp_filepath)
             self.filepath = comp_filepath
         # if not, check if folder exists
         else:
             if os.path.exists(file_path):
-                self.jd.NewProject(comp_filepath)
-                self.save_as(comp_filepath)
-            # if folder does not exist, just use current directory
+                self.filepath = comp_filepath
+            # if folder does not exist first try creating the folder. If that fails, create file in current working dir
             else:
-                print('does not exist')
-                curr_dir = os.getcwd()
-                filename = os.path.basename(comp_filepath)
-                self.filepath = curr_dir + '/' + filename
-                self.jd.NewProject(comp_filepath)
-                self.save_as(comp_filepath)
+                try:
+                    os.mkdir(file_path)
+                    self.filepath = comp_filepath
+                except FileNotFoundError:
+                    curr_dir = os.getcwd()
+                    filename = os.path.basename(comp_filepath)
+                    self.filepath = curr_dir + '/' + filename
+
+            self.jd.NewProject(self.filepath)  # create a new JMAG project
+            self.save_as(self.filepath)  # JMAG requires project to be saved before creating geometry
 
         self.view = self.jd.View()
-        self.jd.GetCurrentModel().RestoreCadLink(True)
-        self.geometry_editor = self.jd.CreateGeometryEditor(True)
+        self.jd.GetCurrentModel().RestoreCadLink(True)  # Restores the link to a CAD system to draw stuff
+        self.geometry_editor = self.jd.CreateGeometryEditor(True)  # creates new geometry or edits the geometry.
         self.doc = self.geometry_editor.GetDocument()
         self.assembly = self.doc.GetAssembly()
+        return file_found
 
     def save(self):
+        """Save JMAG designer file at previously defined path"""
         if type(self.filepath) is str:
             self.jd.SaveAs(self.filepath)
         else:
             raise AttributeError('Unable to save file. Use the save_as() function')
 
     def save_as(self, filepath):
+        """Save JMAG designer file at defined path"""
         self.filepath = filepath
         self.save()
 
     def close(self):
+        """Close JMAG designer file and all associated applications"""
         del self
 
     def set_visibility(self, visible):
+        """Set JMAG designer file visibility by passing True or False to visible"""
         self.visible = visible
         if self.visible:
             self.jd.Show()
@@ -94,6 +131,15 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
             self.jd.Hide()
 
     def draw_line(self, startxy: 'Location2D', endxy: 'Location2D') -> 'TokenDraw':
+        """Draw a line in JMAG Geometry Editor.
+
+        Args:
+            startxy: Start point of line. Should be of type Location2D defined with eMach DimLinear.
+            endxy: End point of the. Should be of type Location2D defined with eMach DimLinear.
+
+        Returns:
+            TokenDraw: Wrapper object holding return values obtained upon drawing a line.
+        """
         if self.part is None:
             self.part = self.create_part()
 
@@ -106,6 +152,16 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         return TokenDraw(line, 0)
 
     def draw_arc(self, centerxy: 'Location2D', startxy: 'Location2D', endxy: 'Location2D') -> 'TokenDraw':
+        """Draw an arc in JMAG Geometry Editor.
+
+        Args:
+            centerxy: Centre point of arc. Should be of type Location2D defined with eMach Dimensions.
+            startxy: Start point of arc. Should be of type Location2D defined with eMach Dimensions.
+            endxy: End point of arc. Should be of type Location2D defined with eMach Dimensions.
+
+        Returns:
+            TokenDraw: Wrapper object holding return values obtained from tool upon drawing an arc.
+        """
         if self.part is None:
             self.part = self.create_part()
 
@@ -119,22 +175,25 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         return TokenDraw(arc, 1)
 
     def create_part(self):
-        ref1 = self.assembly.GetItem('XY Plane')
-        ref2 = self.doc.CreateReferenceFromItem(ref1)
-        self.sketch = self.assembly.CreateSketch(ref2)
-        partName = 'partDrawing'
-        self.sketch.SetProperty('Name', partName)
+        """Create a new part in JMAG geometry editor"""
+        # create sketch in XY plane
+        ref1 = self.assembly.GetItem('XY Plane')  # Obtains an item displayed in the [Model Manager] tree.
+        ref2 = self.doc.CreateReferenceFromItem(ref1)   # Creates JMAG ReferenceObject from JMAG ItemObject.
+        self.sketch = self.assembly.CreateSketch(ref2)  # Creates a 2D sketch under the assembly.
 
-        self.sketch.OpenSketch()
-        ref1 = self.assembly.GetItem(partName)
+        # set name for sketch
+        part_name = 'partDrawing'
+        self.sketch.SetProperty('Name', part_name)
+
+        self.sketch.OpenSketch()    # Starts editing a sketch.
+        ref1 = self.assembly.GetItem(part_name)
         ref2 = self.doc.CreateReferenceFromItem(ref1)
-        self.assembly.MoveToPart(ref2)
-        part = self.assembly.GetItem(partName)
+        self.assembly.MoveToPart(ref2)  # Moves a 2D sketch that is under [assembly] under a new part.
+        part = self.assembly.GetItem(part_name)
 
         return part
 
     def create_model(self, model_name):
-
         num_models = self.jd.NumModels()
         if num_models == 1:
             model = self.jd.GetCurrentModel()
@@ -222,18 +281,32 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         return extrude_part
 
-    def set_default_length_unit(self, userUnit):
+    def set_default_length_unit(self, user_unit):
+        """Set the default length unit in JMAG. Only DimMeter supported.
 
-        if userUnit == 'DimMeter':
-            self.default_length = userUnit
+        Args:
+            user_unit: String representing the unit the user wishes to set as default.
+
+        Raises:
+            TypeError: Incorrect dimension passed
+        """
+        if user_unit == 'DimMeter':
+            self.default_length = user_unit
             self.model.SetUnitCollection('SI_units')
         else:
             raise Exception('Unsupported length unit')
 
-    def set_default_angle_unit(self, userUnit):
+    def set_default_angle_unit(self, user_unit):
+        """Set the default angular unit in JMAG. Only DimDegree supported.
 
-        if userUnit == 'DimDegree':
-            self.default_angle = userUnit
+        Args:
+            user_unit: String representing the unit the user wishes to set as default.
+
+        Raises:
+            TypeError: Incorrect dimension passed
+        """
+        if user_unit == 'DimDegree':
+            self.default_angle = user_unit
             self.model.SetUnitCollection('SI_units')
         else:
             raise Exception('Unsupported angle unit')
