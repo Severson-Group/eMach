@@ -215,8 +215,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         # self.validate_attr(cs_token, 'CrossSectToken')
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
-            for j in range(len(cs_token.token[i])):
-                self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i][j].draw_token.GetName()))
+            self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i].draw_token.GetName()))
 
         id = self.sketch.NumItems()
         self.sketch.CreateRegions()

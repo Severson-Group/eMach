@@ -184,7 +184,11 @@ class CrossSectOuterRotorStator(CrossSectBase):
         ic = [[rad, type(rad)(0)]]
         inner_coord = self.location.transform_coords(ic)
 
-        segments = [arc1, arc2, arc3, arc4, seg1, seg2, seg3, seg4, seg5, seg6]
+        geometry = [arc1, arc2, arc3, arc4, seg1, seg2, seg3, seg4, seg5, seg6]
+
+        segments = [x for seg in geometry for x in seg]
+
+
 
         cs_token = CrossSectToken(inner_coord[0], segments)  # create CrossSectToken object
         return cs_token
