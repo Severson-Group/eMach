@@ -254,7 +254,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         if num_studies == 0:
             study = model.CreateStudy(study_type, study_name)
         else:
-            for i in range(num_studies):
+            for i in range(num_studies-2):
                 model.DeleteStudy(i)
             study = self.jd.GetCurrentStudy()
             study.SetName(study_name)
