@@ -26,7 +26,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         self.study_type = None  # The study type in JMAG Designer
         self.default_length = None  # Default length unit is m
         self.default_angle = None  # Default angle unit is degrees
-        self.visible = False  # Application visibility
+        self.visible = True  # Application visibility
 
     # def __del__(self):
     #     self.jd.Quit()
@@ -80,15 +80,21 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         # check if file exists
         if os.path.exists(comp_filepath):
             file_found = 1
+            print("file exists")
+            print(file_path)
             self.jd.Load(comp_filepath)
             self.filepath = comp_filepath
         # if not, check if folder exists
         else:
             if os.path.exists(file_path):
+                print("New file")
+                print(file_path)
                 self.filepath = comp_filepath
             # if folder does not exist first try creating the folder. If that fails, create file in current working dir
             else:
                 try:
+                    print("create path")
+                    print(file_path)
                     os.mkdir(file_path)
                     self.filepath = comp_filepath
                 except FileNotFoundError:
@@ -211,10 +217,10 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
     def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
         # self.validate_attr(cs_token, 'CrossSectToken')
+        self.geometry_editor.View().Xy()
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
-            for j in range(len(cs_token.token[i])):
-                self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i][j].draw_token.GetName()))
+            self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i].draw_token.GetName()))
 
         id = self.sketch.NumItems()
         self.sketch.CreateRegions()
@@ -251,7 +257,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         if num_studies == 0:
             study = model.CreateStudy(study_type, study_name)
         else:
-            for i in range(num_studies):
+            for i in range(num_studies-2):
                 model.DeleteStudy(i)
             study = self.jd.GetCurrentStudy()
             study.SetName(study_name)

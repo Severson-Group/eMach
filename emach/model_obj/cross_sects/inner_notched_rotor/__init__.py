@@ -75,7 +75,10 @@ class CrossSectInnerNotchedRotor(CrossSectBase):
         s = self._s
         P = 2 * p
         alpha_rp = DimRadian(2 * np.pi / P)
-        alpha_k = (alpha_rm - (alpha_rs * s)) / (s - 1)
+        try:
+            alpha_k = (alpha_rm - (alpha_rs * s)) / (s - 1)
+        except ZeroDivisionError:
+            alpha_k = alpha_rs
 
         # Compute angles of various rotor segment start and end points
         if s % 2 == 1:
@@ -149,12 +152,11 @@ class CrossSectInnerNotchedRotor(CrossSectBase):
             points.append([x_array[index], y_array[index]])
             inner_points.append([zx_array[index], zy_array[index]])
         # Draw p poles with s segments per pole
-
+        arc = []
+        lines = []
         for i in range(1, P + 1):
             points = self.location.transform_coords(points, DimRadian(2 * np.pi / P))
             inner_points = self.location.transform_coords(inner_points, DimRadian(2 * np.pi / P))
-            arc = []
-            lines = []
             for j in range(0, 2 * s + 1):
                 if j % 2 == 1:
                     arc.append(drawer.draw_arc(self.location.anchor_xy, points[j], points[j + 1]))
@@ -167,8 +169,9 @@ class CrossSectInnerNotchedRotor(CrossSectBase):
                 # Draw inner surface
         if r_ri == 0:
             point_i = self.location.anchor_xy
-            inner_coord = self.location.transform_coords([[point_i]])
-            cs_token = CrossSectToken(inner_coord, arc)
+            inner_coord = self.location.transform_coords([point_i])
+            segs = [x for segment in [arc, lines] for x in segment]
+            cs_token = CrossSectToken(inner_coord[0], segs)
 
         else:
             point_i = [r_ri, 0] + self.location.anchor_xy
@@ -178,8 +181,10 @@ class CrossSectInnerNotchedRotor(CrossSectBase):
             arc_i2 = drawer.draw_arc(self.location.anchor_xy, point_i2, point_i)
             rad = r_ri + d_ri
             inner_coord = self.location.transform_coords([[rad, type(r_ri)(0)]])
-            segments = [arc, arc_i1, arc_i2]
-            cs_token = CrossSectToken(inner_coord[0], segments)
+            segments = [arc, lines, [arc_i1], [arc_i2]]
+
+            segs = [x for segment in segments for x in segment]
+            cs_token = CrossSectToken(inner_coord[0], segs)
 
         return cs_token
 

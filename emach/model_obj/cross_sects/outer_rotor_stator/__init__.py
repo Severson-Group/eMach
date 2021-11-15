@@ -185,8 +185,8 @@ class CrossSectOuterRotorStator(CrossSectBase):
         inner_coord = self.location.transform_coords(ic)
 
         segments = [arc1, arc2, arc3, arc4, seg1, seg2, seg3, seg4, seg5, seg6]
-
-        cs_token = CrossSectToken(inner_coord[0], segments)  # create CrossSectToken object
+        segs = [x for segment in segments for x in segment]
+        cs_token = CrossSectToken(inner_coord[0], segs)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
