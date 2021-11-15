@@ -35,7 +35,8 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         """Open an existing JMAG file or a create new one if file does not exist.
 
         Launches the JMAG application by opening an already created file if or by creating a new file. Assigns JMAG
-        application handles to object attributes for future operations.
+        application handles to object attributes for future operations. If intended file path does not exist and could
+        not be created, an error is raised.
 
         Args:
             comp_filepath: Path of the JMAG file which is to be opened. If no such file exist, a new one is created.
@@ -80,27 +81,19 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         # check if file exists
         if os.path.exists(comp_filepath):
             file_found = 1
-            print("file exists")
-            print(file_path)
             self.jd.Load(comp_filepath)
             self.filepath = comp_filepath
         # if not, check if folder exists
         else:
             if os.path.exists(file_path):
-                print("New file")
-                print(file_path)
                 self.filepath = comp_filepath
             # if folder does not exist first try creating the folder. If that fails, create file in current working dir
             else:
                 try:
-                    print("create path")
-                    print(file_path)
                     os.mkdir(file_path)
                     self.filepath = comp_filepath
                 except FileNotFoundError:
-                    curr_dir = os.getcwd()
-                    filename = os.path.basename(comp_filepath)
-                    self.filepath = curr_dir + '/' + filename
+                    raise FileNotFoundError("Path was not found and could not be created")
 
             self.jd.NewProject(self.filepath)  # create a new JMAG project
             self.save_as(self.filepath)  # JMAG requires project to be saved before creating geometry

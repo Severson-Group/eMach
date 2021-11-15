@@ -61,11 +61,11 @@ comp2 = mo.Component(
 
 )
 
-file = r'trial5.jproj'
+file = r'trial100.jproj'
 
 tool_jmag = jd.JmagDesigner()
 tool_jmag.open(comp_filepath=file)
-tool_jmag.set_visibility(False)
+tool_jmag.set_visibility(True)
 comp1.make(tool_jmag, tool_jmag)
 comp2.make(tool_jmag, tool_jmag)
 tool_jmag.save()

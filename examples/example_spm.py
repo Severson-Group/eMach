@@ -66,7 +66,7 @@ comp4 = mo.Component(
     make_solid=mo.MakeExtrude(location=mo.Location3D(),
                               dim_depth=mo.DimMillimeter(25)))
 
-file = r'full_SPM3.jproj'
+file = r'full_SPM.jproj'
 
 tool_jmag = jd.JmagDesigner()
 tool_jmag.open(comp_filepath=file)
