@@ -216,6 +216,8 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         pass
 
     def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
+        """ Creates JMAG geometry region using lines and arcs.
+        """
         # self.validate_attr(cs_token, 'CrossSectToken')
         self.geometry_editor.View().Xy()
         self.doc.GetSelection().Clear()
@@ -252,6 +254,8 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         return region
 
     def create_study(self, study_name, study_type, model) -> any:
+        """Creates a JMAG study
+        """
         self.study_type = study_type
         num_studies = self.jd.NumStudies()
         if num_studies == 0:
@@ -265,6 +269,16 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         return study
 
     def extrude(self, name, material: str, depth: float, token=None) -> any:
+        """ Extrudes a cross-section
+
+        Args:
+            name: name of the newly extruded component.
+            depth: Depth of extrusion. Should be defined with eMach Dimensions.
+            material : Material applied to the extruded component.
+
+        Returns:
+            Function will return the handle to the new extruded part
+        """
         depth = eval(self.default_length)(depth)
         ref1 = self.sketch
         extrude_part = self.part.CreateExtrudeSolid(ref1, depth)
@@ -318,6 +332,17 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
             raise Exception('Unsupported angle unit')
 
     def revolve(self, name, material: str, center: 'Location2D', axis: 'Location2D', angle: float) -> any:
+        """ Revolves cross-section along an arc
+
+        Args:
+            name: Name of the newly revolved component.
+            center: center point of rotation. Should be of type Location2d defined with eMach Dimensions.
+            axis: Axis of rotation. Should be of type Location2d defined with eMach Dimensions.
+                  Specifying negative value reverses the axis of rotation.
+
+        Returns:
+             This function will return the handle of the newly revolved part.
+        """
         center = eval(self.default_length, center)
         axis = eval(self.default_length, axis)
         angle = eval(self.default_angle, angle)
