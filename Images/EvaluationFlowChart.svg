@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="EvaluationFlowChart.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   id="svg3461"
+   version="1.1"
+   viewBox="0 0 76.200001 71.120001"
+   height="2.8in"
+   width="3in">
+  <defs
+     id="defs3455">
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker4795"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path4793" />
+    </marker>
+    <marker
+       inkscape:collect="always"
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path2488"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="Arrow1Mend-3"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2488-7" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-3-1"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path2488-7-1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3062"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path3060"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker3062-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3060-9" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker3062-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3060-5" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-3-2"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path2488-7-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker4795-5"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4793-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="Arrow1Mend-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2488-4" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:window-height="705"
+     inkscape:window-width="1366"
+     inkscape:guide-bbox="true"
+     showguides="false"
+     units="in"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="115.94916"
+     inkscape:cx="159.25756"
+     inkscape:zoom="1.979899"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
+    <sodipodi:guide
+       id="guide4656"
+       orientation="1,0"
+       position="23.85942,69.429281" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3458">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <rect
+       y="4.543582"
+       x="1.3256029"
+       height="54.522984"
+       width="47.173069"
+       id="rect5225"
+       style="opacity:0.994;fill:#f2f2f2;stroke:#000000;stroke-width:0.264999;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none" />
+    <rect
+       y="13.550549"
+       x="2.7073345"
+       height="7.9375"
+       width="42.682144"
+       id="rect2446-2"
+       style="opacity:0.995;fill:#cccccc;fill-opacity:1;stroke:#000000;stroke-width:0.499999;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       y="27.984837"
+       x="7.350975"
+       height="7.9375"
+       width="33.394859"
+       id="rect2446-9"
+       style="opacity:0.995;fill:#cccccc;fill-opacity:1;stroke:#000000;stroke-width:0.499999;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       y="43.154488"
+       x="3.9978242"
+       height="7.9375"
+       width="40.101158"
+       id="rect2446-7"
+       style="opacity:0.995;fill:#cccccc;fill-opacity:1;stroke:#000000;stroke-width:0.499999;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       style="opacity:0.999;fill:none;stroke:#000000;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 23.859419,1.6907204 V 12.699278"
+       id="path2477" />
+    <path
+       id="path2477-2"
+       d="m 23.859421,21.533216 v 6.000371"
+       style="opacity:0.999;fill:none;stroke:#000000;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend-3)"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="opacity:0.999;fill:none;stroke:#000000;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend-3-1)"
+       d="m 23.953914,36.03805 v 6.000374"
+       id="path2477-2-6" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="24.016087"
+       y="18.330511"
+       id="text2363"><tspan
+         sodipodi:role="line"
+         id="tspan2361"
+         x="24.016087"
+         y="18.330511"
+         style="font-size:3.175px;stroke-width:0.264583">Structural Analysis Step</tspan></text>
+    <text
+       id="text2363-0"
+       y="32.764797"
+       x="24.052597"
+       style="font-size:3.175px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="font-size:3.175px;stroke-width:0.264583"
+         y="32.764797"
+         x="24.052597"
+         id="tspan2361-6"
+         sodipodi:role="line">EM Analysis Step</tspan></text>
+    <text
+       id="text2363-9"
+       y="47.934448"
+       x="24.047832"
+       style="font-size:3.175px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="font-size:3.175px;stroke-width:0.264583"
+         y="47.934448"
+         x="24.047832"
+         id="tspan2361-9"
+         sodipodi:role="line">Thermal Analysis Step</tspan></text>
+    <text
+       id="text2363-95"
+       y="8.7649164"
+       x="14.564895"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="8.7649164"
+         x="14.564895"
+         id="tspan2361-0"
+         sodipodi:role="line">Intial Machine </tspan><tspan
+         id="tspan5188"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="12.292704"
+         x="14.564895"
+         sodipodi:role="line">Design</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="13.352558"
+       y="24.341566"
+       id="text2363-95-6"><tspan
+         sodipodi:role="line"
+         id="tspan2361-0-7"
+         x="13.352558"
+         y="24.341566"
+         style="font-size:2.82223px;stroke-width:0.264583">Sleeve Geometry</tspan></text>
+    <text
+       id="text2363-95-6-8"
+       y="38.81115"
+       x="34.849651"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="38.81115"
+         x="34.849651"
+         sodipodi:role="line"
+         id="tspan3304">Electric Losses</tspan><tspan
+         id="tspan4512"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="42.338936"
+         x="34.849651"
+         sodipodi:role="line">Machine Length</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="13.480196"
+       y="38.418549"
+       id="text2363-95-6-8-0"><tspan
+         sodipodi:role="line"
+         x="13.480196"
+         y="38.418549"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         id="tspan4512-9">Forces/Torques</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="33.97015"
+       y="53.809559"
+       id="text2363-95-6-8-7"><tspan
+         id="tspan3304-9"
+         sodipodi:role="line"
+         x="33.97015"
+         y="53.809559"
+         style="font-size:2.82223px;stroke-width:0.264583">Rotor/Stator</tspan><tspan
+         sodipodi:role="line"
+         x="33.97015"
+         y="57.337345"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         id="tspan4512-7"> Temperatures</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="12.684392"
+       y="53.759769"
+       id="text2363-95-6-8-2"><tspan
+         sodipodi:role="line"
+         x="12.684392"
+         y="53.759769"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         id="tspan4512-78">Required Airflow</tspan></text>
+    <path
+       id="path4791"
+       d="M 45.613355,17.584434 H 66.059473"
+       style="opacity:0.998;fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker4795)" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="63.871021"
+       y="20.678484"
+       id="text2363-95-8"><tspan
+         id="tspan4843"
+         sodipodi:role="line"
+         x="63.871021"
+         y="20.678484"
+         style="font-size:2.82223px;stroke-width:0.264583">Exit evaluation</tspan><tspan
+         id="tspan4847"
+         sodipodi:role="line"
+         x="63.871021"
+         y="24.206272"
+         style="font-size:2.82223px;stroke-width:0.264583"> if structural </tspan><tspan
+         id="tspan5217"
+         sodipodi:role="line"
+         x="63.871021"
+         y="27.734058"
+         style="font-size:2.82223px;stroke-width:0.264583">criteria fail</tspan></text>
+    <path
+       style="opacity:0.998;fill:none;stroke:#000000;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker4795-5)"
+       d="M 44.273381,46.533134 H 64.719499"
+       id="path4791-2" />
+    <text
+       id="text2363-95-8-4"
+       y="50.028091"
+       x="64.309021"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="50.028091"
+         x="64.309021"
+         sodipodi:role="line"
+         id="tspan4843-0">Exit evaluation </tspan><tspan
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="53.555878"
+         x="64.309021"
+         sodipodi:role="line"
+         id="tspan4847-9">if thermal </tspan><tspan
+         id="tspan5223"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="57.083668"
+         x="64.309021"
+         sodipodi:role="line">criteria fail</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       id="path2477-3"
+       d="M 23.859421,51.163016 V 65.913347"
+       style="opacity:0.999;fill:none;stroke:#000000;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend-7)" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       x="35.430588"
+       y="11.753668"
+       id="text2363-95-80"><tspan
+         sodipodi:role="line"
+         x="35.430588"
+         y="11.753668"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         id="tspan5188-9">Operating Point</tspan></text>
+    <text
+       id="text2363-95-6-8-2-0"
+       y="63.411304"
+       x="35.257927"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         id="tspan4512-78-3"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="63.411304"
+         x="35.257927"
+         sodipodi:role="line">Full Evaluation </tspan><tspan
+         id="tspan5287"
+         style="font-size:2.82223px;stroke-width:0.264583"
+         y="66.939095"
+         x="35.257927"
+         sodipodi:role="line">Results</tspan></text>
+  </g>
+</svg>
