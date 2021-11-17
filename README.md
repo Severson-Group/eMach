@@ -12,7 +12,7 @@ broad view of the workflow is provided below. More information of each block ill
 in this workflow is available [here](https://macheval.readthedocs.io/en/latest/getting_started.html#code-overview).
 
 <p align="center">
-  <img width="400" src="Images/MachEvalFlowChart.png">
+  <img width="400" src="Images/MachEvalFlowChart.svg">
 </p>
 <p align="center">
    Structure of Optimization
@@ -24,7 +24,7 @@ the optimization of these machines is shown below. The evaluator will be modifie
 each optimization based on 
 
 <p align="center">
-  <img width="400" src="Images/EvaluationFlowChart.png">
+  <img width="400" src="Images/EvaluationFlowChart.svg">
 </p>
 <p align="center">
    Optimization Flow Chart
