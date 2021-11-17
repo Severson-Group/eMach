@@ -1,5 +1,5 @@
-MachEval
-========
+*MachEval*
+==============
 
 .. toctree::
    :maxdepth: 4
@@ -7,3 +7,4 @@ MachEval
    architects
    des_opt
    mach_eval
+ 
