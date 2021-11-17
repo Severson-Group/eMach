@@ -15,6 +15,7 @@ class MachineDesign(Design):
 
     Attributes:
         machine: Holds information on machine dimensions, materials, and nameplate specs
+        
         settings: Operating conditions of machine. Can include speed, current, expected power / torque etc.
     """
     def __init__(self, machine: 'Machine', settings: Any):
@@ -28,6 +29,7 @@ class MachineDesigner(Designer):
     Attributes:
         arch: Class which converts optimization free variables to a complete set of machine dimensions required to
         fully define a machine.
+        
         settings_handler: Class which converts optimization free variable to machine operating conditions.
     """
     def __init__(self, arch: 'Architect', settings_handler: 'SettingsHandler'):
@@ -153,11 +155,11 @@ class AnalysisStep(EvaluationStep):
     """Class representing a step which involves detailed analysis.
 
     Attributes:
-        problem_definition: class or object defining the problem to be analyzed. This attribute acts as the interface
-        between the machine design and the analyzer.
+        problem_definition: class or object defining the problem to be analyzed. This attribute acts as the interface between the machine design and the analyzer.
+        
         analyzer: class or object which evaluates any aspect of a machine design.
-        post_analyzer: class or object which processes the results obtained from the analyzer and packages in a form
-        suitable for subsequent steps.
+        
+        post_analyzer: class or object which processes the results obtained from the analyzer and packages in a form suitable for subsequent steps.
     """
     def __init__(self, problem_definition, analyzer, post_analyzer):
         self.problem_definition = problem_definition
@@ -171,6 +173,7 @@ class AnalysisStep(EvaluationStep):
             state_in: input state which is to be evaluated.
         Returns:
             results: Results obtained from the analyzer.
+            
             state_out: Output state to be used by the next step involved in the machine design evaluation.
         """
         problem = self.problem_definition.get_problem(state_in)
@@ -214,8 +217,9 @@ class MissingValueError(Error):
     """Exception raised for errors in the input.
 
     Attributes:
-        expression -- input expression in which the error occurred
-        message -- explanation of the error
+        expression: input expression in which the error occurred
+        
+        message: explanation of the error
     """
     def __init__(self, expression, message):
         self.expression = expression
