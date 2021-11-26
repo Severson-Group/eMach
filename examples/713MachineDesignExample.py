@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 import sys
 sys.path.append("..")
 import des_opt as do
-import macheval as me
+import mach_eval as me
 import pygmo as pg
 from typing import List,Tuple,Any
 from copy import deepcopy
@@ -48,7 +48,7 @@ class Material:
         self.C_hy=C_hy
         self.C_omega=C_omega
         
-class Machine(me.Machine):
+class Machine:
     """Class defines a Machine object 
     
     Attributes:
@@ -95,7 +95,7 @@ class Machine(me.Machine):
 class SettingsHandler(me.SettingsHandler):
     def __init__(self,P_rated):
         self.P_rated=P_rated
-    def getSettings(self,x):
+    def get_settings(self,x):
         B_hat=x[0]
         A_hat=x[1]
         Omega=x[4]
@@ -130,17 +130,17 @@ class TipSpeedConstraintEvaluationStep(me.EvaluationStep):
         omega=stateIn.design.settings.Omega
         v_tip = r*omega 
         if v_tip >=self.maxTipSpeed:
-            raise ConstraintError(v_tip,'Tip Speed Violation')
+            raise do.InvalidDesign([v_tip,'Tip Speed Violation'])
         else:
             stateOut=deepcopy(stateIn)
-            stateOut.stateConditions.v_tip=v_tip
+            stateOut.conditions.v_tip=v_tip
             return [v_tip,stateOut]
 
 
 class LengthProblemDefinition(me.ProblemDefinition):
     """Class converts input state into a problem"""
     
-    def getProblem(self,state:'me.State')->'me.Problem':
+    def get_problem(self,state:'me.State')->'me.Problem':
         """Returns Problem from Input State"""
         T=state.design.settings.T
         B_hat=state.design.settings.B_hat
@@ -195,7 +195,7 @@ class LengthAnalyzer(me.Analyzer):
 
 class LengthPostAnalyzer(me.PostAnalyzer):
     """Converts input state into output state for TemplateAnalyzer"""
-    def getNextState(self,results:Any,stateIn:'me.State')->'me.State':
+    def get_next_state(self,results:Any,stateIn:'me.State')->'me.State':
         stateOut=deepcopy(stateIn)
         newMachine=stateOut.design.machine.newMachineFromNewLength(results)
         stateOut.design.machine=newMachine
@@ -215,16 +215,16 @@ class L2rConstraintEvaluationStep(me.EvaluationStep):
         L=stateIn.design.machine.L
         L2r = L/r #TODO define constraint
         if L2r >=self.maxL2r:
-            raise ConstraintError(L2r,'Length to radius Ratio')
+            raise do.InvalidDesign([L2r,'Length to radius Ratio'])
         else:
             stateOut=deepcopy(stateIn)
-            stateOut.stateConditions.L2r=L2r
+            stateOut.conditions.L2r=L2r
             return [L2r,stateOut]
 
 class LossProblemDefinition(me.ProblemDefinition):
     """Class converts input state into a problem"""
     
-    def getProblem(self,state:'me.State')->'me.Problem':
+    def get_problem(self,state:'me.State')->'me.Problem':
         """Returns Problem from Input State"""
         #TODO define problem definition
         rho=state.design.machine.mat.rho
@@ -290,15 +290,15 @@ class LossAnalyzer(me.Analyzer):
 
 class LossPostAnalyzer(me.PostAnalyzer):
     """Converts input state into output state for TemplateAnalyzer"""
-    def getNextState(self,results:Any,stateIn:'me.State')->'me.State':
+    def get_next_state(self,results:Any,stateIn:'me.State')->'me.State':
         stateOut=deepcopy(stateIn)
-        stateOut.stateConditions.P_loss=results
+        stateOut.conditions.P_loss=results
         return stateOut
 
 class CostProblemDefinition(me.ProblemDefinition):
     """Class converts input state into a problem"""
     
-    def getProblem(self,state:'me.State')->'me.Problem':
+    def get_problem(self,state:'me.State')->'me.Problem':
         """Returns Problem from Input State"""
         #TODO define problem definition
         delta=state.design.machine.delta
@@ -355,17 +355,17 @@ class CostAnalyzer(me.Analyzer):
 
 class CostPostAnalyzer(me.PostAnalyzer):
     """Converts input state into output state for TemplateAnalyzer"""
-    def getNextState(self,results:Any,stateIn:'me.State')->'me.State':
+    def get_next_state(self,results:Any,stateIn:'me.State')->'me.State':
         stateOut=deepcopy(stateIn)
-        stateOut.stateConditions.C=results[0]
-        stateOut.stateConditions.C_s=results[1]
-        stateOut.stateConditions.C_r=results[2]
+        stateOut.conditions.C=results[0]
+        stateOut.conditions.C_s=results[1]
+        stateOut.conditions.C_r=results[2]
         return stateOut
 
 class TorqueRippleProblemDefinition(me.ProblemDefinition):
     """Class converts input state into a problem"""
     
-    def getProblem(self,state:'me.State')->'me.Problem':
+    def get_problem(self,state:'me.State')->'me.Problem':
         """Returns Problem from Input State"""
         #TODO define problem definition
         r=state.design.machine.r
@@ -413,9 +413,9 @@ class TorqueRippleAnalyzer(me.Analyzer):
 
 class TorqueRipplePostAnalyzer(me.PostAnalyzer):
     """Converts input state into output state for TemplateAnalyzer"""
-    def getNextState(self,results:Any,stateIn:'me.State')->'me.State':
+    def get_next_state(self,results:Any,stateIn:'me.State')->'me.State':
         stateOut=deepcopy(stateIn)
-        stateOut.stateConditions.T_r=results
+        stateOut.conditions.T_r=results
         return stateOut
 
 
@@ -429,12 +429,47 @@ class ConstraintError(Error):
         self.message=message
 
     
+class DesignSpace:
+    """Design space of optimization"""
+    
+    def __init__(self,n_obj,bounds):
+        self._n_obj=n_obj
+        self._bounds=bounds
+    
+    def check_constraints(self, full_results) -> bool:
+        return True
+    @property
+    def n_obj(self) -> int:
+        return self._n_obj
+
+    def get_objectives(self, valid_constraints, full_results) -> tuple:
+        """ Calculates objectives from evaluation results
+        
+
+        Args:
+            full_results (List): Results from MachineEvaluator
+
+        Returns:
+            Tuple: objectives tuple 
+        """
+        final_state=full_results[-1][-1]
+        P_loss=final_state.conditions.P_loss
+        C=final_state.conditions.C
+        T_r=final_state.conditions.T_r
+        P_rated=final_state.design.settings.P_rated
+        
+        Eff=(P_rated-P_loss)/P_rated
+        results=(-Eff,C,T_r) #TODO define objectives
+        return results
+    @property
+    def bounds(self) -> tuple:
+        return self._bounds
 
     
-class Objective(do.Objective):
+class Objective():
     """Class defines objectives of cubiod optimization"""
 
-    def getObjectives(self,results:"List[do.State,float,do.State]"):
+    def get_objectives(self,results:"List[do.State,float,do.State]"):
         """ Calculates objectives from evaluation results
         
 
@@ -455,9 +490,11 @@ class Objective(do.Objective):
         return results
     
 class DataHandler:
-    def save(self,design,fullResults,objs):
-        """Unimplented data handler"""
-        #TODO Define datahandler
+    """Parent class for all data handlers"""
+    def save_to_archive(self, x, design, full_results, objs):
+        pass
+
+    def save_designer(self, designer):
         pass
 
 if __name__ == '__main__':
@@ -488,7 +525,6 @@ if __name__ == '__main__':
     
     #Create Evaluator
     evaluator=me.MachineEvaluator(evalSteps)
-    objectives=Objective()
     dh=DataHandler()
     
     #set evaluation bounds
@@ -499,12 +535,15 @@ if __name__ == '__main__':
     n_obj=3
     
     #Create Machine Design Problem
-    machDesProb=do.DesignProblem(des,evaluator,objectives,dh,
-                                        bounds,n_obj)
+    ds=DesignSpace(n_obj, bounds)
+    machDesProb=do.DesignProblem(des,evaluator,ds,dh)
     
     #Run Optimization
     opt=do.DesignOptimizationMOEAD(machDesProb)
-    pop=opt.run_optimization(496,500)
+    pop_size=496
+    gen_size=10
+    pop=opt.initial_pop(pop_size)
+    pop=opt.run_optimization(pop,gen_size)
     fits, vectors = pop.get_f(), pop.get_x()
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
     
