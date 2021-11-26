@@ -28,6 +28,7 @@ The rest of this document will cover both the ``des_opt`` and ``mach_eval`` modu
 des_opt
 -------
 
+
 .. figure:: /images/getting_started/desopt_Diagram.png
    :alt: Trial1 
    :align: center
@@ -51,6 +52,7 @@ Additional details of each of these objects can be found in the code documentati
 
 mach_eval
 ---------
+
 
 .. figure:: /images/getting_started/MachEval.png
    :alt: Trial1 
