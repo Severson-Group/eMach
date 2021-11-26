@@ -7,4 +7,3 @@
    architects
    desopt
    mach_eval
-   mach_opt
