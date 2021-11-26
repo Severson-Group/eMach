@@ -1,4 +1,4 @@
-Introduction
+Getting Started
 ===============
 
 This document will outline the installation of ``macheval``	 and how to get started using it to design, evaluate, and optimize electric machines.
@@ -26,7 +26,8 @@ The primary purpose of ``macheval`` is to act as a module framework in which mac
 The rest of this document will cover both the ``des_opt`` and ``mach_eval`` modules, explaining their purpose and applications. A detailed description of the code can be found here TODO ADD THIS LINK.
 
 des_opt
-+++++++
+-------
+
 
 .. figure:: /images/getting_started/desopt_Diagram.png
    :alt: Trial1 
@@ -50,7 +51,8 @@ DataHandler
 Additional details of each of these objects can be found in the code documentation. An example optimization of a rectangle using the ``des_opt`` module can be found :doc:`here <rectangle_example>`.
 
 mach_eval
-+++++++++
+---------
+
 
 .. figure:: /images/getting_started/MachEval.png
    :alt: Trial1 

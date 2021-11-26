@@ -5,6 +5,5 @@
    :maxdepth: 4
 
    architects
-   des_opt
+   desopt
    mach_eval
- 
