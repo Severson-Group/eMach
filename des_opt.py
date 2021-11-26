@@ -20,8 +20,8 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size, filepath):
-        algo = pg.algorithm(pg.moead(gen=1, weight_generation="grid",
+    def run_optimization(self, pop, gen_size, filepath='None'):
+        algo = pg.algorithm(pg.moead(gen=2, weight_generation="grid",
                                      decomposition="tchebycheff",
                                      neighbours=20,
                                      CR=1, F=0.5, eta_m=20,
@@ -87,12 +87,10 @@ class DesignProblem:
             valid_constraints = self.__design_space.check_constraints(full_results)
             objs = self.__design_space.get_objectives(valid_constraints, full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
-            print('The fitness values are', objs)
+            #print('The fitness values are', objs)
             return objs
 
         except Exception as e:
-            # print(e)
-            # print(traceback.format_exc())
             if type(e) is InvalidDesign:
                 temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
                 objs = temp[0]
@@ -153,7 +151,7 @@ class DesignSpace(Protocol):
         raise NotImplementedError
 
     @abstractmethod
-    def get_bounds(self, x) -> tuple:
+    def bounds(self) -> tuple:
         raise NotImplementedError
 
 
