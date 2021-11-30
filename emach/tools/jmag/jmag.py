@@ -139,8 +139,8 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         Returns:
             TokenDraw: Wrapper object holding return values obtained upon drawing a line.
         """
-        if self.part is None:
-            self.part = self.create_part()
+        if self.sketch is None:
+            self.sketch = self.create_sketch()
 
         start_x = eval(self.default_length)(startxy[0])
         start_y = eval(self.default_length)(startxy[1])
@@ -161,8 +161,8 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         Returns:
             TokenDraw: Wrapper object holding return values obtained from tool upon drawing an arc.
         """
-        if self.part is None:
-            self.part = self.create_part()
+        if self.sketch is None:
+            self.sketch = self.create_sketch()
 
         center_x = eval(self.default_length)(centerxy[0])
         center_y = eval(self.default_length)(centerxy[1])
@@ -173,22 +173,30 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         arc = self.sketch.CreateArc(center_x, center_y, start_x, start_y, end_x, end_y)
         return TokenDraw(arc, 1)
 
-    def create_part(self):
-        """Create a new part in JMAG geometry editor"""
+    def create_sketch(self):
+        """Create and open a new sketch in JMAG geometry editor"""
         # create sketch in XY plane
         ref1 = self.assembly.GetItem('XY Plane')  # Obtains an item displayed in the [Model Manager] tree.
         ref2 = self.doc.CreateReferenceFromItem(ref1)   # Creates JMAG ReferenceObject from JMAG ItemObject.
-        self.sketch = self.assembly.CreateSketch(ref2)  # Creates a 2D sketch under the assembly.
+        sketch = self.assembly.CreateSketch(ref2)  # Creates a 2D sketch under the assembly.
 
         # set name for sketch
-        part_name = 'partDrawing'
-        self.sketch.SetProperty('Name', part_name)
+        sketch_name = 'sketch_drawing'
+        sketch.SetProperty('Name', sketch_name)
+        sketch.OpenSketch()    # Starts editing a sketch
 
-        self.sketch.OpenSketch()    # Starts editing a sketch.
-        ref1 = self.assembly.GetItem(part_name)
+        return sketch
+
+    def create_part(self):
+        """Create a new part in JMAG geometry editor"""
+
+        sketch_name = 'sketch_drawing'
+        self.sketch.OpenSketch()  # Start editing sketch
+        ref1 = self.assembly.GetItem(sketch_name)
         ref2 = self.doc.CreateReferenceFromItem(ref1)
         self.assembly.MoveToPart(ref2)  # Moves a 2D sketch that is under [assembly] under a new part.
-        part = self.assembly.GetItem(part_name)
+        part = self.assembly.GetItem(sketch_name)
+        self.sketch.CloseSketch()
 
         return part
 
@@ -262,7 +270,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         return study
 
     def extrude(self, name, material: str, depth: float, token=None) -> any:
-        """ Extrudes a cross-section
+        """ Extrudes a cross-section to a 3D component
 
         Args:
             name: name of the newly extruded component.
@@ -272,14 +280,20 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         Returns:
             Function will return the handle to the new extruded part
         """
+
         depth = eval(self.default_length)(depth)
+
+        self.part = self.create_part()
         ref1 = self.sketch
+
         extrude_part = self.part.CreateExtrudeSolid(ref1, depth)
         self.part.SetProperty('Name', name)
+
         sketch_name = name + '_sketch'
         self.sketch.SetProperty('Name', sketch_name)
 
         self.part = None
+        self.sketch = None
         self.doc.SaveModel(True)
         model_name = name + '_model'
         self.model = self.create_model(model_name)
@@ -291,7 +305,6 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         self.set_default_angle_unit(self.default_angle)
 
         self.study.SetMaterialByName(name, material)
-
         return extrude_part
 
     def set_default_length_unit(self, user_unit):
@@ -329,6 +342,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
 
         Args:
             name: Name of the newly revolved component.
+            material: Material applied to the component.
             center: center point of rotation. Should be of type Location2d defined with eMach Dimensions.
             axis: Axis of rotation. Should be of type Location2d defined with eMach Dimensions.
                   Specifying negative value reverses the axis of rotation.
@@ -340,6 +354,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         axis = eval(self.default_length, axis)
         angle = eval(self.default_angle, angle)
 
+        self.part = self.create_part()
         ref1 = self.sketch
         revolve_part = self.part.CreateRevolveSolid(ref1)
         self.part.GetItem('Revolve').setProperty('SpecificRatio', 1)
