@@ -1,19 +1,26 @@
 Getting Started
 ===============
 
-This document will outline the installation of ``macheval``	 and how to get started using it to design, evaluate, and optimize electric machines.
+This document is designed to serve as an initial introduction to ``MachEval``, a repository for the design, evaluation, and optimization of electric machines. A detailed description of the code docstrings can be found :doc:`here<modules>`. The primary purpose of this document is to highlight the flow of information between various components of the ``MachEval`` repository.
 
 Installation
 ------------
 
-The current code base can be found `here <https://github.com/Severson-Group/MachEval/tree/develop>`_. Download the ``develop`` branch into a folder in which you wish to run the design optimization.
+The current code base can be found `here <https://github.com/Severson-Group/MachEval/>`_, download this branch into a folder in which you wish to run the design optimization. The current version of ``MachEval`` requires Python 3.8 as the ``Protocol`` class for structural sub-typing is utilized. Additional the following dependencies are required:
+
+* numpy
+* scipy
+* pygmo
+
 
 Code Overview
 -------------
 
-The ``macheval`` code base is designed to be used by ``pygmo`` an open source optimization library in python. Full documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
+``MachEval`` is a open source code base designed to facilitate with the design, evaluation, and optimization of electrical machines. Since machine design is an extremely broad and varied field, ``MachEval`` is constructed to be as modular and flexible as possible to be able to accommodate as many machine topologies, evaluation processes, and optimization criteria. While certain base machine optimizations are provided in this repository, the code can be easily modified to produce custom optimizations as well.
 
-The ``macheval`` repository contains two sub-modules which interface with one another and ``pygmo`` as shown below. the ``des_opt`` module is defined to interface with ``pygmo`` by converting free variables to objective values in the required fitness function. the ``mach_eval`` module is used to evaluate a machine design produced by ``des_opt``.
+The ``MachEval`` code base is designed to be used by ``pygmo`` an open source optimization library in python. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
+
+The ``MachEval`` repository contains two sub-modules which interface between ``pygmo`` and one another as shown below. the ``des_opt`` module, short for `Design Optimization` is defined to interface with ``pygmo`` by converting free variables to objective values in the required fitness function. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. The ``mach_eval`` module is used to evaluate a machine design produced by ``des_opt``. ``mach-eval`` is an extension of two of the primary abstract classes in the ``des_opt`` module which provide additional structure and framework to handle more complicated design evaluations. The layered structure of ``MachEval`` allows for the higher level modules to be used independently of the lower level packages.
 
 
 .. figure:: /images/getting_started/CodeOverview.png
@@ -21,35 +28,94 @@ The ``macheval`` repository contains two sub-modules which interface with one an
    :align: center
    :width: 600 
 
-The primary purpose of ``macheval`` is to act as a module framework in which machine design, evaluation, and optimization can occur. The ``des_opt`` module is built as an extension of the user-defined-problem objects of ``pygmo`` and the ``mach_eval`` module extends certain protocols defined in the ``des_opt`` module. Each higher level module is designed such that it can function without the use of the lower-level modules so long as function calls are satisfied. 
 
-The rest of this document will cover both the ``des_opt`` and ``mach_eval`` modules, explaining their purpose and applications. A detailed description of the code can be found here TODO ADD THIS LINK.
+The rest of this document will cover both the ``des_opt`` and ``mach_eval`` modules, explaining their purpose and applications. 
 
 des_opt
 -------
 
-.. figure:: /images/getting_started/desopt_Diagram.png
+.. figure:: /images/getting_started/desopt_Diagram.svg
    :alt: Trial1 
    :align: center
    :width: 400 
 
-The ``des_opt`` module is designed to extend the user-defined-problem definition prescribed by ``pygmo``. In order for ``pygmo`` to run a multi-objective user-defined-problem, the object must have three functions implemented: ``fitness``, ``get_bounds``, and ``get_nobj``. The primary class of the ``des_opt`` module is the ``DesignProblem`` class which implements the required functions.
+The ``des_opt`` module is designed to extend the `user-defined-problem <https://esa.github.io/pygmo2/tutorials/coding_udp_simple.html>`_ definition prescribed by ``pygmo``. In order for ``pygmo`` to run a multi-objective user-defined-problem, the object must have three functions implemented: ``fitness``, ``get_bounds``, and ``get_nobj``. The primary class of the ``des_opt`` module is the ``DesignProblem`` class which implements the required functions. The flow of information between ``pygmo`` and the ``DesignProblem`` can be visualized in the following flowchart. 
+
+.. figure:: /images/RectangleExample/DesOptlFlowChart.svg
+   :alt: Trial1 
+   :align: center
+   :width: 300
 
 The ``DesignProblem`` class is structured such that it takes in several objects on initialization which utilize pythons protocol class introduced in `PEP 544 <https://www.python.org/dev/peps/pep-0544/>`_. These objects and their purpose are summarized as follows:
 
 Designer
-	Responsible for creating the design from the free variables ``x``.
+	The ``Designer`` protocol converts an input tuple into a ``design`` object.
 Evaluator
-	Evaluates the design from the designer.
-Objectives
-	Converts the results of the design evaluation into an objectives tuple for return to ``pygmo``. 
-	Handles free variable bounds, constraints, and number of objectives.
+	The ``Evaluator`` protocol evaluates the ``design`` object for a set of criteria defined in the ``evaluate`` function
+DesignSpace
+	The ``DesignSpace`` protocol handles converting the results of the evaluation into the objective variables.
 DataHandler
 	Saves the design, evaluation results, and objective values so that optimization can be paused and resumed.
 
 Additional details of each of these objects can be found in the code documentation. An example optimization of a rectangle using the ``des_opt`` module can be found :doc:`here <rectangle_example>`.
 
-mach_eval
+Designer
+~~~~~~~~
+
+The ``Designer`` Protocol is used to convert the the free variables from the optimization algorithm, into a ``design`` object. The  ``design`` object, does not have any required function calls, and is used as a container for all the information regarding the design which is being evaluated. In order to be considered a ``Designer`` class the ``create_design`` function must be implemented using the following function signature. 
+
+.. code-block:: python
+
+	@runtime_checkable
+	class Designer(Protocol):
+		"""Parent class for all designers
+
+		"""
+		@abstractmethod
+		def create_design(self, x: 'tuple') -> 'Design':
+			raise NotImplementedError
+
+Evaluator
+~~~~~~~~~
+
+The ``Evaluator`` protocol is used to define an evaluation procedure for the ``design`` object created by the ``Designer``. In order for a class to fulfill the role of an ``Evaluator``, the function call for the ``evaluate`` method must be defined as follows.
+
+.. code-block:: python
+
+	@runtime_checkable
+	class Evaluator(Protocol):
+		"""Parent class for all design evaluators"""
+		@abstractmethod
+		def evaluate(self, design: 'Design') -> Any:
+			pass
+
+DesignSpace
+~~~~~~~~~~~
+
+The ``DesignSpace`` protocol is used to convert the results of the design evaluation back into a form which is usable by the optimization algorithm. Additionally, this is where the other information which the algorithm requires about the design evaluation is injected. The following function signatures must be implemented in order to be considered a ``DesignSpace``.
+
+.. code-block:: python
+
+	class DesignSpace(Protocol):
+		"""Parent class for a optimization DesignSpace classes"""
+		@abstractmethod
+		def check_constraints(self, full_results) -> bool:
+			raise NotImplementedError
+
+		@abstractmethod
+		def n_obj(self) -> int:
+			return NotImplementedError
+
+		@abstractmethod
+		def get_objectives(self, valid_constraints, full_results) -> tuple:
+			raise NotImplementedError
+
+		@abstractmethod
+		def bounds(self) -> tuple:
+			raise NotImplementedError
+
+
+mach-eval
 ---------
 
 .. figure:: /images/getting_started/MachEval.png
