@@ -37,7 +37,7 @@ bspm_designer = MachineDesigner(arch, set_handler)
 # create machine variant using architect
 free_var = (0.00390399, 0.00964596, 35.9925, 0.00358376, 0.00722451, 0.0128492,
             0.0143288, 180.0, 0.00514122, 0.00308507, 0.00363824, 0.0, 0.95, 0,
-            0.05, 2000, 80)
+            0.05, 2000, 25, 80)
 # set operating point for BSPM machine 
 
 
