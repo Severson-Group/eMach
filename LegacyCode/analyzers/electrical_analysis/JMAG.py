@@ -48,6 +48,14 @@ class JMAG(object):  # < ToolBase & DrawerBase & MakerExtrudeBase & MakerRevolve
                 'JMAG project exists already, I will not delete it but create a new one with a different name instead.')
             # os.remove(expected_project_file_path)
             attempts = 2
+
+            # deletes the previous project file to fre up space in the server during iterative run
+            if self.configuration['iterative_execution'] and (self.configuration['iteration_attempt'] > 2):
+                attempts = self.configuration['iteration_attempt']
+                delete_project_file_path = expected_project_file_path[:-len('.jproj')] + 'attempts_%d.jproj' % (
+                            attempts - 1)
+                os.remove(delete_project_file_path)
+
             temp_path = expected_project_file_path[:-len('.jproj')] + 'attempts_%d.jproj' % (attempts)
             while os.path.exists(temp_path):
                 attempts += 1
