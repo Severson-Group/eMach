@@ -10,6 +10,6 @@ class BSPMSettingsHandler:
         pass
 
     def get_settings(self, x):
-        em_op = BSPM_EMAnalyzer_Settings(Id=0, Iq=0.95, Ix=0, Iy=0.05, speed=160000, ambient_temp=25,
-                                         rotor_temp_rise=80)
+        em_op = BSPM_EMAnalyzer_Settings(Id=x[-7], Iq=x[-6], Ix=x[-5], Iy=x[-4], speed=x[-3], ambient_temp=x[-2],
+                                         rotor_temp_rise=x[-1])
         return em_op

@@ -1,0 +1,4 @@
+[submodule "LegacyCode/analyzers/eMach"]
+	path = LegacyCode/analyzers/eMach
+	url = https://github.com/Severson-Group/eMach.git
+	branch = add_coils
