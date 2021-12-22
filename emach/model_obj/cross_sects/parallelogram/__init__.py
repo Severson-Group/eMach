@@ -58,10 +58,10 @@ class CrossSectParallelogram(CrossSectBase):
 
         # draw parallelogram
 
-        side_1 = drawer.draw_line(points[0, :], points[1, :])
-        side_2 = drawer.draw_line(points[1, :], points[2, :])
-        side_3 = drawer.draw_line(points[2, :], points[3, :])
-        side_4 = drawer.draw_line(points[3, :], points[0, :])
+        side_1 = drawer.draw_line(points[0], points[1])
+        side_2 = drawer.draw_line(points[1], points[2])
+        side_3 = drawer.draw_line(points[2], points[3])
+        side_4 = drawer.draw_line(points[3], points[0])
 
         x_coord = (l * np.cos(theta) + t / np.sin(theta)) / 2
         y_coord = l * np.sin(theta) / 2
@@ -70,7 +70,7 @@ class CrossSectParallelogram(CrossSectBase):
         inner_coord = self.location.transform_coords(ic)
         segments = [side_1, side_2, side_3, side_4]
 
-        cs_token = CrossSectToken(inner_coord[0, :], segments)
+        cs_token = CrossSectToken(inner_coord[0], segments)
 
         return cs_token
 

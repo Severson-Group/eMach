@@ -5,6 +5,7 @@ from ..dimensions.dim_linear import DimLinear
 __all__ = ['MakeExtrude']
 
 
+
 class MakeExtrude(MakeSolidBase):
     """Class defining how cross-sections are extruded"""
     def __init__(self, **kwargs: any) -> None:
@@ -20,11 +21,12 @@ class MakeExtrude(MakeSolidBase):
     def _validate_attr(self):
         if not isinstance(self._dim_depth, DimLinear):
             raise TypeError("Expected input to be one of the following type: \
-                             DimLinear. Instead it was of type " + str(type(self._dim_depth)))
+                             DimLinear. Instead it was of type " + \
+                            str(type(self._dim_depth)))
+
 
     def run(self, name, material, cs_token, maker):
         """Extrude cross-section to create component
-
         Args:
             name: Name given to component
             material: Material of component
@@ -36,5 +38,6 @@ class MakeExtrude(MakeSolidBase):
             token1.append(maker.prepare_section(cs_token[i]))
 
         token2 = maker.extrude(name, material, self._dim_depth, token1)
+
         token_make = TokenMake(cs_token, token1, token2)
         return token_make

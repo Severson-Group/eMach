@@ -1,10 +1,12 @@
 import numpy as np
 
-from .dimensions import DimMillimeter, DimRadian
 from .dimensions.dim_linear import DimLinear
 from .dimensions.dim_angular import DimAngular
+from .dimensions import *
 
 __all__ = ['Location2D']
+
+
 
 
 class Location2D:
@@ -64,19 +66,27 @@ class Location2D:
         Args:
             coords : An nx2 array of coordinates of the form [x,y]
             add_theta : Angle in addition to self._theta by which coordinates are rotated
-
         Returns:
             trans_coords : An nx2 array of transformed coordinates of the form [x,y]
         """
+        coords_np = np.array(coords)  # convert coords to number for ease of calc
         if add_theta is None:
             trans = self._rot
         else:
             add_theta = DimRadian(add_theta) + self._theta
             trans = np.array([[np.cos(add_theta), -np.sin(add_theta)],
                               [np.sin(add_theta), np.cos(add_theta)]])
-        rot_coords = np.transpose(np.matmul(trans, np.transpose(coords)))
-        trans_coords = np.zeros(coords.shape)
+        rot_coords = np.transpose(np.matmul(trans, np.transpose(coords_np)))
+        trans_coords = np.zeros(coords_np.shape)
 
-        trans_coords[:, 0] = rot_coords[:, 0] + self._anchor_xy[0]
-        trans_coords[:, 1] = rot_coords[:, 1] + self._anchor_xy[1]
-        return trans_coords
+        # need to convert numpy array to list to ensure dimension is conserved
+        # all entries within numpy array default to type float64
+        trans_coords_list = trans_coords.tolist()
+        row, col = rot_coords.shape
+
+        # add argument coords with anchor to get desired coordinates
+        # convert type of coordinate back to what it was before calculations
+        for i in range(row):
+            trans_coords_list[i][0] = type(coords[i][0])(rot_coords[i, 0]) + self._anchor_xy[0]
+            trans_coords_list[i][1] = type(coords[i][1])(rot_coords[i, 1]) + self._anchor_xy[1]
+        return trans_coords_list

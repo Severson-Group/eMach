@@ -10,6 +10,7 @@ __all__ = ['Component']
 class Component:
     """A logical group of cross sections that make up a component"""
 
+
     def __init__(self, **kwargs):
         self._create_attr(kwargs)
         self._validate_attr()
@@ -81,19 +82,24 @@ class Component:
             setattr(self, '_' + name, value)
 
     def _validate_attr(self):
+
         if not isinstance(self._name, str):
             raise TypeError("Expected input to be one of the following type: \
-                             str. Instead it was of type " + str(type(self._name)))
+                             str. Instead it was of type " + \
+                            str(type(self._name)))
 
         if not isinstance(self._make_solid, MakeSolidBase):
             raise TypeError("Expected input to be one of the following type: \
-                             MakeSolidBase. Instead it was of type " + str(type(self._make_solid)))
+                             MakeSolidBase. Instead it was of type " + \
+                            str(type(self._make_solid)))
 
         if not isinstance(self._material, MaterialGeneric):
             raise TypeError("Expected input to be one of the following type: \
-                             MaterialGeneric. Instead it was of type " + str(type(self._material)))
+                             MaterialGeneric. Instead it was of type " + \
+                            str(type(self._material)))
 
         for i in range(len(self._cross_sections)):
             if not isinstance(self._cross_sections[i], CrossSectBase):
                 raise TypeError("Expected input to be one of the following type: \
-                             CrossSectBase. Instead it was of type " + str(type(self._cross_sections[i])))
+                             CrossSectBase. Instead it was of type " + \
+                                str(type(self._cross_sections[i])))

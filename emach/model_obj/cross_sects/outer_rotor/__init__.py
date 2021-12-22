@@ -113,20 +113,20 @@ class CrossSectOuterRotor(CrossSectBase):
             angle = alpha_total * i
             points_transformed = self.location.transform_coords(points, DimRadian(angle))
 
-            x = points_transformed[:, 0]
-            y = points_transformed[:, 1]
+            # x = points_transformed[0]
+            # y = points_transformed[1]
 
-            p1 = [x[0], y[0]]
-            p2 = [x[1], y[1]]
+            p1 = [points_transformed[0][0], points_transformed[0][1]]
+            p2 = [points_transformed[1][0], points_transformed[1][1]]
 
-            p3 = [x[2], y[2]]
-            p4 = [x[3], y[3]]
+            p3 = [points_transformed[2][0], points_transformed[2][1]]
+            p4 = [points_transformed[3][0], points_transformed[3][1]]
 
-            p5 = [x[4], y[4]]
-            p6 = [x[5], y[5]]
+            p5 = [points_transformed[4][0], points_transformed[4][1]]
+            p6 = [points_transformed[5][0], points_transformed[5][1]]
 
-            p7 = [x[6], y[6]]
-            p8 = [x[7], y[7]]
+            p7 = [points_transformed[6][0], points_transformed[6][1]]
+            p8 = [points_transformed[7][0], points_transformed[7][1]]
 
             arc1.append(drawer.draw_arc(self.location.anchor_xy, p2, p1))
             arc2.append(drawer.draw_arc(self.location.anchor_xy, p3, p4))
@@ -141,7 +141,7 @@ class CrossSectOuterRotor(CrossSectBase):
         ic = np.array([[rad, type(rad)(0)]])
         inner_coord = self.location.transform_coords(np.array(ic))
         data = [arc1]
-        cs_token = CrossSectToken(inner_coord[0, :], data)  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], data)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):

@@ -70,14 +70,14 @@ class CrossSectNotchedRectangle(CrossSectBase):
 
         points = self.location.transform_coords(p)
 
-        seg1 = drawer.draw_line(points[0, :], points[1, :])
-        seg2 = drawer.draw_line(points[1, :], points[2, :])
-        seg3 = drawer.draw_line(points[2, :], points[3, :])
-        seg4 = drawer.draw_line(points[3, :], points[4, :])
-        seg5 = drawer.draw_line(points[4, :], points[5, :])
-        seg6 = drawer.draw_line(points[5, :], points[6, :])
-        seg7 = drawer.draw_line(points[6, :], points[7, :])
-        seg8 = drawer.draw_line(points[7, :], points[0, :])
+        seg1 = drawer.draw_line(points[0], points[1])
+        seg2 = drawer.draw_line(points[1], points[2])
+        seg3 = drawer.draw_line(points[2], points[3])
+        seg4 = drawer.draw_line(points[3], points[4])
+        seg5 = drawer.draw_line(points[4], points[5])
+        seg6 = drawer.draw_line(points[5], points[6])
+        seg7 = drawer.draw_line(points[6], points[7])
+        seg8 = drawer.draw_line(points[7], points[0])
 
         x_coord = w / 2
         y_coord = d / 2
@@ -85,7 +85,7 @@ class CrossSectNotchedRectangle(CrossSectBase):
 
         segments = [seg1, seg2, seg3, seg4,seg5, seg6, seg7, seg8]
 
-        cs_token = CrossSectToken(inner_coord[0, :], segments)  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], segments)  # create CrossSectToken object
 
         return cs_token
 

@@ -2,6 +2,9 @@ from win32com.client import DispatchEx
 
 from ..tool_abc import toolabc as abc
 from ..token_draw import TokenDraw
+from . import document
+from .document import *
+from ...model_obj.dimensions import *
 
 __all__ = []
 __all__ += ["MagNet"]
@@ -84,6 +87,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
 
         self.mn.setVariant(0, 'line', 'python')
         line = self.mn.getVariant(0, 'python');
+
         return TokenDraw(line, 0)
 
     def draw_arc(self, centerxy, startxy, endxy):
@@ -108,6 +112,7 @@ class MagNet(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolv
 
         self.mn.setVariant(0, 'arc', 'python')
         arc = self.mn.getVariant(0, 'python')
+
         return TokenDraw(arc, 1)
 
     def select(self):

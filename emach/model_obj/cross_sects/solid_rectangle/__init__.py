@@ -52,10 +52,10 @@ class CrossSectSolidRectangle(CrossSectBase):
         points = self.location.transform_coords(p)
 
         # Draw Rectangle
-        side_1 = drawer.draw_line(points[0, :], points[1, :])
-        side_2 = drawer.draw_line(points[1, :], points[2, :])
-        side_3 = drawer.draw_line(points[2, :], points[3, :])
-        side_4 = drawer.draw_line(points[3, :], points[0, :])
+        side_1 = drawer.draw_line(points[0], points[1])
+        side_2 = drawer.draw_line(points[1], points[2])
+        side_3 = drawer.draw_line(points[2], points[3])
+        side_4 = drawer.draw_line(points[3], points[0])
 
         # Compute coordinate inside the surface to extrude
         x_coord = w / 2
@@ -64,7 +64,7 @@ class CrossSectSolidRectangle(CrossSectBase):
 
         token = [side_1, side_2, side_3, side_4]  # compile tokens
 
-        cs_token = CrossSectToken(inner_coord[0, :], token)  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], token)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
