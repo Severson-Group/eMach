@@ -19,12 +19,12 @@ add new cross-sections. The following guidelines must be adhered to when adding 
   variable names should be abbreviated and use ``_`` to denote subscripts. For example, designate a variable that denotes the 
   stator yoke thickness as ``t_sy`` rather than ``t_syoke`` or ``t_statoryoke``. 
 - **Drawings:** A vectorized (``.svg``) drawing of the geometry should be provided. This drawing should clearly indicate the 
-  location of the origin and coordinate axes. More details are provided [below](./#drawings).
+  location of the origin and coordinate axes. More details are provided `below <#Drawings>`_
 
 Location and expected content
 ----------------------------------------------------------
 
-When adding a new cross-section, a new folder must be created in [``eMach/model_obj/crosssects``](./). 
+When adding a new cross-section, a new folder must be created in `<eMach/model_obj/crosssects(./)>`. 
 The folder specifications are as follows:
 
 - **Folder Name:** The folder name should be same as the cross-section name without the ``CrossSect`` prefix, and must follow 
@@ -61,4 +61,9 @@ adhered to:
 
 As an example, the ``CrossSectTrapezoid.svg`` file is shown below:
 
-<img src="./trapezoid/CrossSectTrapezoid.svg" width="500" height="500" />
+
+.. figure:: trapezoid/CrossSectTrapezoid.svg
+   :alt: TrapezoidCross 
+   :align: center
+   :scale: 50 %
+   
