@@ -12,6 +12,7 @@ from .inner_notched_rotor import *
 from .hollow_rectangle import *
 from .breadloaf import *
 from .arc import*
+from .flux_barrier_rotor import*
 from .inner_reluctance_rotor import*
 
 
@@ -31,4 +32,6 @@ __all__ += inner_notched_rotor.__all__
 __all__ += hollow_rectangle.__all__
 __all__ += breadloaf.__all__
 __all__ += arc.__all__
+__all__ += flux_barrier_rotor.__all__
 __all__ += inner_reluctance_rotor.__all__
+
