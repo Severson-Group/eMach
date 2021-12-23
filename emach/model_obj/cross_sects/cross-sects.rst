@@ -51,9 +51,9 @@ adhered to:
   - The dimension names should be the same as the variable names in the function.
   - Italicized ``Times New Roman`` font should be used.
   - Variable names containing an ``_`` character should be rendered with all text following the ``_`` as a subscript.
-  - Greek characters should be used where appropriate. For example, an angular dimension maybe called ``alpha_m`` in the function. 
-    However, it should be denoted as :math:`\\alpha_m` in the drawing.
-  - Occassionally, some cross-sections may have variables that aren't dimensions. For example, the ``innerNotchedRotor`` has ``p`` 
+  - Greek characters should be used where appropriate. For example, an angular dimension maybe called ``alpha`` in the function.
+    However, it should be denoted as .. |copy| unicode:: 0x3B1 .. in the drawing.
+  - Occasionally, some cross-sections may have variables that aren't dimensions. For example, the ``innerNotchedRotor`` has ``p``
     (number of pole pairs) as a variable. Such variables should also be indicated in the drawing.
 
 - **Coordinate Axes:** The drawing origin and the coordinate axes should be clearly indicated in the drawing using a red 
@@ -65,5 +65,5 @@ As an example, the ``CrossSectTrapezoid.svg`` file is shown below:
    :alt: TrapezoidCross 
    :align: center
    :width: 500px
-   :height: 500px  %
+   :height: 500px
    
