@@ -22,7 +22,7 @@ A brief summary of guidelines for names in Python includes:
 
 Naming guidelines derived from PEP 8, used in the Google format as well, are provided below:
 
-.. figure:: python/images/pep8.png
+.. figure:: images/pep8.png
    :alt: Trial1 
    :align: center
    :scale: 80 %
