@@ -18,7 +18,7 @@ A brief summary of guidelines for names in Python includes:
 * File, function, and variable names: lowercase with words separated by underscores as necessary to improve readability
 * Class names: start upper case and then move to camel case
 * Keep in mind that certain characters add special functionality: for instance, prepending class methods and variable names 
-	with double underscore (__) make them private to that class
+  with double underscore (__) make them private to that class
 
 Naming guidelines derived from PEP 8, used in the Google format as well, are provided below:
 
