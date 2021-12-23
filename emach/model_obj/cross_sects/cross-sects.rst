@@ -24,7 +24,7 @@ add new cross-sections. The following guidelines must be adhered to when adding 
 Location and expected content
 ----------------------------------------------------------
 
-When adding a new cross-section, a new folder must be created `here <eMach/model_obj/crosssects>`_. 
+When adding a new cross-section, a new folder must be created `here <./>`_. 
 The folder specifications are as follows:
 
 - **Folder Name:** The folder name should be same as the cross-section name without the ``CrossSect`` prefix, and must follow 
@@ -64,5 +64,5 @@ As an example, the ``CrossSectTrapezoid.svg`` file is shown below:
 .. figure:: trapezoid/CrossSectTrapezoid.svg
    :alt: TrapezoidCross 
    :align: center
-   :scale: 100 %
+   :scale: 300 %
    
