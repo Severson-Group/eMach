@@ -52,7 +52,7 @@ adhered to:
   - Italicized ``Times New Roman`` font should be used.
   - Variable names containing an ``_`` character should be rendered with all text following the ``_`` as a subscript.
   - Greek characters should be used where appropriate. For example, an angular dimension maybe called ``alpha_m`` in the function. 
-    However, it should be denoted as :math:`\alpha_m` in the drawing.
+    However, it should be denoted as :math:`\\alpha_m` in the drawing.
   - Occassionally, some cross-sections may have variables that aren't dimensions. For example, the ``innerNotchedRotor`` has ``p`` 
     (number of pole pairs) as a variable. Such variables should also be indicated in the drawing.
 
@@ -64,5 +64,6 @@ As an example, the ``CrossSectTrapezoid.svg`` file is shown below:
 .. figure:: trapezoid/CrossSectTrapezoid.svg
    :alt: TrapezoidCross 
    :align: center
-   :scale: 300 %
+   :width: 500px
+   :height: 500px  %
    
