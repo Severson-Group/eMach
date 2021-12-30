@@ -6,8 +6,7 @@
 
 MachEval
 =======================================================
-MachEval is a code base designed to assist in the evaluation and optimization of electric machines. There are two primary modules: ``desopt`` which extends ``pygmo`` to handle design optimization, and ``macheval`` for evaluation and analysis of electric machines. ``macheval`` is designed to interface directly with ``emach``, a code base for modeling of electrical machines using FEA tooling.
-
+``MachEval`` is a code base designed to assist in the evaluation and optimization of electric machines. There are two primary modules: ``des_opt`` which extends ``pygmo`` to handle design optimization, and ``mach_eval`` for evaluation and analysis of electric machines. ``mach_eval`` is designed to interface directly with ``emach``, a code base for modeling of electrical machines using FEA tooling.
 
 .. toctree::
    :maxdepth: 1
@@ -25,7 +24,6 @@ MachEval is a code base designed to assist in the evaluation and optimization of
    structural_analyzer
    thermal_analyzer
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Guidelines:
@@ -39,6 +37,7 @@ MachEval is a code base designed to assist in the evaluation and optimization of
    :caption: Code:
 
    modules
+
 
    
 Indices
