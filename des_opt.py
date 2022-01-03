@@ -20,15 +20,15 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size, filepath='None'):
+    def run_optimization(self, pop, gen_size=1, filepath='None'):
         algo = pg.algorithm(pg.moead(gen=2, weight_generation="grid",
                                      decomposition="tchebycheff",
                                      neighbours=20,
                                      CR=1, F=0.5, eta_m=20,
                                      realb=0.9,
                                      limit=2, preserve_diversity=True))
-        for _ in range(0, gen_size):
-            print('This is iteration', _)
+        for i in range(0, gen_size):
+            print('This is iteration', i)
             pop = algo.evolve(pop)
             print('Saving current generation')
             self.save_pop(filepath, pop)

@@ -170,7 +170,7 @@ class LengthProblem():
         
     
 class LengthAnalyzer(me.Analyzer):
-    """"Class Analyzes the CubiodProblem  for volume and Surface Areas"""
+    """"Calculates the required machine length to produce deisred torque"""
     
     def analyze(self,problem:'me.Problem'):
         """Performs Analysis on a problem
