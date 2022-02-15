@@ -3,7 +3,7 @@
 Analytical Machine Design Example
 #################################
 
-This is example is constructed to demonstrate how the ``mach_eval`` module can be used to evaluate multiple criteria of a complicated design problem. To simplify the coding required in this example, analytical scripts are used to evaluate the performance of a representative electrical machine. These scripts are used to create a non-convex optimization problem for the framework to solve and are not representative of actual physics.
+This is example is constructed to demonstrate how the ``mach_eval`` module can be used to evaluate multiple criteria of a complicated design problem. To simplify the coding required in this example, analytical scripts are used to evaluate the performance of a representative electrical machine. These scripts are used to create a non-convex optimization problem for the framework to solve. The equations presented here are not representative of actual physics in a machine.
 
 The following objectives are assumed for this optimization:
 
@@ -19,7 +19,7 @@ The ``Designer`` class of the ``des_opt`` module is extended in the ``mach_eval`
 Architect
 =========
 
-The ``Architect`` is a class which is designed to convert free variables ``x`` into a ``Machine`` object. The relevent code for the ``Architect`` used in this example is shown here:
+The ``Architect`` is a class which is designed to convert free variables ``x`` into a ``Machine`` object. The relevant code for the ``Architect`` used in this example is shown here:
 
 .. code-block:: python
 
@@ -42,12 +42,12 @@ The ``Architect`` is a class which is designed to convert free variables ``x`` i
 			machine=Machine(r,delta,self.mat)
 			return machine
 
-The ``Machine`` and ``Material`` classes used in this example is defined as follows:
+The ``Machine`` and ``Material`` classes used in this example are defined as follows:
 
 .. code-block:: python
 	
 	class Material:
-		"""Material object for holding material properites"""
+		"""Material object for holding material properties"""
 		def __init__(self,rho,C_e,C_hy,C_omega):
 			self.rho=rho
 			self.C_e=C_e
