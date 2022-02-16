@@ -18,12 +18,12 @@ Code Overview
 
 ``MachEval`` is a open source code base designed to facilitate with the design, evaluation, and optimization of electrical machines. Since machine design is an extremely broad and varied field, ``MachEval`` is constructed to be as modular and flexible as possible to be able to accommodate as many machine topologies, evaluation processes, and optimization criteria. While certain base machine optimizations are provided in this repository, the code can be easily modified to produce custom optimizations as well.
 
-The ``MachEval`` code base is designed to be used by ``pygmo`` an open source optimization library in python. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
+The ``MachEval`` code base is designed to be used by ``pygmo``, an open source optimization library in python. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
 
-The ``MachEval`` repository contains two sub-modules which interface between ``pygmo`` and one another as shown below. the ``des_opt`` module, short for `Design Optimization` is defined to interface with ``pygmo`` by converting free variables to objective values in the required fitness function. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. The ``mach_eval`` module is used to evaluate a machine design produced by ``des_opt``. ``mach-eval`` is an extension of two of the primary abstract classes in the ``des_opt`` module which provide additional structure and framework to handle more complicated design evaluations. The layered structure of ``MachEval`` allows for the higher level modules to be used independently of the lower level packages.
+The ``MachEval`` repository contains two sub-modules which interface between ``pygmo`` and one another as shown below. The ``des_opt`` module, short for `Design Optimization`, is defined to interface with the specified ``fitness`` function call from ``pygmo`` by converting free variables to objective values in a structured format. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. The ``mach_eval`` module is used to evaluate a machine design produced by ``des_opt``. ``mach_eval`` is an extension of two of the primary abstract classes in the ``des_opt`` module which provide additional structure and framework to handle more complicated design evaluations. The layered structure of ``MachEval`` allows for the higher level modules to be used independently of the lower level packages.
 
 
-.. figure:: /images/getting_started/CodeOverview.png
+.. figure:: ./images/getting_started/CodeOverview.png
    :alt: Trial1 
    :align: center
    :width: 600 
@@ -34,20 +34,18 @@ The rest of this document will cover both the ``des_opt`` and ``mach_eval`` modu
 des_opt Module Overview
 -----------------------
 
-.. figure:: /images/getting_started/desopt_Diagram.svg
+.. figure:: ./images/getting_started/desopt_Diagram.svg
    :alt: Trial1 
    :align: center
    :width: 400 
 
-The ``des_opt`` module is designed to extend the `user-defined-problem <https://esa.github.io/pygmo2/tutorials/coding_udp_simple.html>`_ definition prescribed by ``pygmo``. In order for ``pygmo`` to run a multi-objective user-defined-problem, the injected object must have three functions implemented: ``fitness``, ``get_bounds``, and ``get_nobj``. The primary class of the ``des_opt`` module is ``DesignProblem`` which implements these required functions. The flow of information between ``pygmo`` and the ``DesignProblem`` can be visualized in the following flowchart. 
+The ``des_opt`` module is designed to extend the `user-defined problem <https://esa.github.io/pygmo2/tutorials/coding_udp_simple.html>`_ definition prescribed by ``pygmo``. In order for ``pygmo`` to run a multi-objective user-defined problem, the injected object must have three functions implemented: ``fitness``, ``get_bounds``, and ``get_nobj``. The primary class of the ``des_opt`` module is ``DesignProblem`` which implements these required functions. The flow of information between ``pygmo`` and the ``DesignProblem`` can be visualized in the following flowchart. 
 
 .. figure:: ./images/RectangleExample/DesOptlFlowChart.svg
    :alt: Trial1 
    :align: center
    :width: 300
 
-.. raw:: html
-	:file: images/RectangleExample/DesOptlFlowChart.svg
 
 	
 	
@@ -67,7 +65,7 @@ Additional details of each of these objects can be found in the code documentati
 Designer
 ~~~~~~~~
 
-The ``Designer`` Protocol is used to convert the the free variables from the optimization algorithm, into a ``design`` object. The  ``design`` object, does not have any required function calls, and is used as a container for all the information regarding the design which is being evaluated. In order to be considered a ``Designer`` class the ``create_design`` function must be implemented using the following function signature. 
+The ``Designer`` Protocol is used to convert the free variables from the optimization algorithm, into a ``design`` object. The  ``design`` object, does not have any required function calls, and is used as a container for all the information regarding the design which is being evaluated. In order to be considered a ``Designer`` class the ``create_design`` function must be implemented using the following function signature. 
 
 .. code-block:: python
 
@@ -124,7 +122,7 @@ mach_eval Module Overview
 -------------------------
 
 
-.. figure:: /images/getting_started/MachEval.png
+.. figure:: ./images/getting_started/MachEval.png
    :alt: Trial1 
    :align: center
    :width: 800 
@@ -134,9 +132,9 @@ In this section, both the ``MachineDesigner`` and ``MachineEvaluator`` classes o
 MachineDesigner
 ~~~~~~~~~~~~~~~
 
-The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` protocol from the ``des_opt`` module. This class is responsible for converting free variables from and optimization into a ``MachineDesign`` object. The ``MachineDesign`` object has two attributes: a ``machine``, and  ``settings``.  The ``machine`` attribute is an object that holds all the relevant information about the machine, including geometric dimensions, material properties, nameplate values, and winding specifications. The ``settings`` object describes the operating conditions (temperatures, currents/drive settings, operating speed/torques) as well as any other required information to evaluate the design.
+The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` protocol from the ``des_opt`` module. This class is responsible for converting free variables from and optimization into a ``MachineDesign`` object. The ``MachineDesign`` object has two attributes: a ``machine`` and  ``settings`` object.  The ``machine`` attribute is an object that holds all the relevant information about the machine, including geometric dimensions, material properties, nameplate values, and winding specifications. The ``settings`` object describes the operating conditions (temperatures, currents/drive settings, operating speed/torques) as well as any other required information to evaluate the design.
 
-.. figure:: /images/getting_started/MachineDesignerProtocols.svg
+.. figure:: ./images/getting_started/MachineDesignerProtocols.svg
    :alt: Trial1 
    :align: center
    :width: 800 
@@ -170,9 +168,9 @@ The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` p
 
 
    
-The ``MachineDesigner`` requires two objects to be passed in on initialization: an ``Architect`` and a ``SettingsHandler``. These inputs are defined as protocols and are responsible for the the creation of the ``machine`` and ``settings`` objects respectively. These two objects are packaged together into a ``MachineDesign`` object which holds all the information about the design to be evaluated.
+The ``MachineDesigner`` requires two objects to be passed in on initialization: an ``Architect`` and a ``SettingsHandler``. These inputs are defined as protocols and are responsible for the creation of the ``machine`` and ``settings`` objects respectively. These two objects are packaged together into a ``MachineDesign`` object which holds all the information about the design to be evaluated.
 
-.. figure:: /images/getting_started/machineDesignerExample.png
+.. figure:: ./images/getting_started/machineDesignerExample.png
    :alt: Trial1 
    :align: center
    :width: 800 
@@ -221,9 +219,9 @@ Similar to the ``Architect``, the ``SettingsHandler`` is responsible for creatin
 MachineEvaluator
 ~~~~~~~~~~~~~~~~
 
-The ``MachineEvaluator`` class implements the ``Evaluator`` protocol from the ``des_opt`` module. This class extracts evaluation results from the ``MachineDesign`` object created by the ``MachineDesigner``. The evaluation process is split into distinct steps which are described by an ``EvaluationStep`` protocol. These steps take in an input ``state``, which holds the ``MachineDesign`` and any results from the previous evaluations, preform some evaluation on the design, and then add the results to the ``state`` object. 
+The ``MachineEvaluator`` class implements the ``Evaluator`` protocol from the ``des_opt`` module. This class extracts evaluation results from the ``MachineDesign`` object created by the ``MachineDesigner``. The evaluation process is split into distinct steps which are described by an ``EvaluationStep`` protocol. These step objects take in an input ``state``, which holds the ``MachineDesign`` and any results from the previous evaluations, preform some evaluation on the design, and then package the results to a new ``state`` object. 
 
-.. figure:: /images/getting_started/MachineEvaluatorProtocols.svg
+.. figure:: ./images/getting_started/MachineEvaluatorProtocols.svg
    :alt: Trial1 
    :align: center
    :width: 800 
@@ -258,7 +256,7 @@ The ``MachineEvaluator`` class implements the ``Evaluator`` protocol from the ``
 				state_in = state_out
 			return full_results
 
-As seen in the code block above, during the ``evaluate`` method, a ``design`` object is passed into the method, and then packaged into a ``state`` object. The ``state`` object is a container for the the design object, as well as any results and conditions for the current evaluation. When the ``MachineEvaluator`` is initialized, an ordered list of ``EvaluationStep`` is passed in. During the ``evaluate`` method, this list is stepped through by passing the current ``state`` object into the ``step`` method of the current step. The results of the evaluation step are saved to the ``full_results`` list as an entry of the following form ``[state_in, results, state_out]``. By saving the results in this form before the state object is updated for the next step, a record of how the state changed as it is passed between steps is maintained. 
+As seen in the code block above, during the ``evaluate`` method, a ``design`` object is passed into the method, and then packaged into a ``state`` object. The ``state`` object is a container for the  design object, as well as any results and conditions for the current evaluation. When the ``MachineEvaluator`` is initialized, an ordered list of ``EvaluationStep`` is passed in. During the ``evaluate`` method, this list is stepped through by passing the current ``state`` object into the ``step`` method of the current step. The results of the evaluation step are saved to the ``full_results`` list as an entry of the following form ``[state_in, results, state_out]``. By saving the results in this form before the state object is updated for the next step, a record of how the state changed as it is passed between steps is maintained. 
 
 
 EvaluationStep
@@ -283,11 +281,11 @@ In order to facilitate the use of generalized machine analysis, a concrete imple
 ProblemDefinition
 	Converts the input ``state`` into a ``problem`` class which can be utilized by the ``Analyzer``
 Analyzer
-	Performs an analysis on an problem. These are designed to handle specific analysis of complex machine design problems.
+	Performs an analysis on a problem. These are designed to handle specific analysis of complex machine design problems.
 PostAnalyzer
-	Packages the results of the analysis and the initial state back into the the return state
+	Packages the results of the analysis and the initial state back into the return state
 	
-.. figure:: /images/getting_started/AnalysisStepExample.png
+.. figure:: ./images/getting_started/AnalysisStepExample.png
    :alt: Trial1 
    :align: center
    :width: 800 
