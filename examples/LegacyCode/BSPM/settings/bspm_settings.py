@@ -5,12 +5,23 @@ Created on Sun Feb 28 17:37:05 2021
 @author: Bharat
 """
 
-class BSPM_EMAnalyzer_Settings():
+
+class BSPM_EMAnalyzer_Settings:
     """ This is a wrapper class designed to contain all relevant information
     on the operating point for obtaining electrical performance evaluation of
     bearingless permanent magnet electric machines
     """
-    def __init__(self, Id, Iq, Ix, Iy, speed, ambient_temp, rotor_temp_rise):
+
+    def __init__(
+        self,
+        Id=0,
+        Iq=0.95,
+        Ix=0,
+        Iy=0.05,
+        speed=15000,
+        ambient_temp=25,
+        rotor_temp_rise=80,
+    ):
         """
         Parameters
         ----------
@@ -31,7 +42,7 @@ class BSPM_EMAnalyzer_Settings():
         -------
         None.
         """
-        
+
         self.__Id = Id
         self.__Iq = Iq
         self.__Ix = Ix
@@ -72,4 +83,3 @@ class BSPM_EMAnalyzer_Settings():
     def rotor_temp_rise(self):
         return self.__rotor_temp_rise
 
-    
