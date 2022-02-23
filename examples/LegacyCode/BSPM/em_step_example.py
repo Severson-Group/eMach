@@ -2,7 +2,7 @@ import os
 import sys
 
 os.chdir(os.path.dirname(__file__))
-sys.path.append("../..")
+sys.path.append("../../..")
 
 from machine_design import BSPMArchitectType1
 from specifications.bspm_specification import BSPMMachineSpec
@@ -18,7 +18,7 @@ from specifications.materials.miscellaneous_materials import (
     Air,
 )
 from settings.bspm_settings_handler import BSPM_Settings_Handler
-from analyzers.em import BSPM_EM_Analysis
+from local_analyzers.em import BSPM_EM_Analysis
 from specifications.analyzer_config.em_fea_config import JMAG_FEA_Configuration
 
 from problems.bspm_em_problem import BSPM_EM_Problem
