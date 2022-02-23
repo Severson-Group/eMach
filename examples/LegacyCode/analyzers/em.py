@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 import sys
 sys.path.append("../..")
+print(os.getcwd)
 
-from des_opt import InvalidDesign
+from mach_opt import InvalidDesign
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
