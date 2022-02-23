@@ -30,7 +30,7 @@ class JMAG(object):  # < ToolBase & DrawerBase & MakerExtrudeBase & MakerRevolve
 
     def open(self, expected_project_file_path):
         if self.app is None:
-            app = win32com.client.Dispatch('designer.Application.181')
+            app = win32com.client.Dispatch('designer.Application')
             if self.configuration['designer.Show'] == True:
                 app.Show()
             else:
