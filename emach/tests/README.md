@@ -1,12 +1,12 @@
 # Testing guidelines for eMach
 
 ## Introduction
-This markdown document discusses the testing guidelines to be followed by the eMach contributors. The eMach testing framework is based on [unittest framework](https://docs.python.org/3/library/unittest.html). `unittest` is part of standard Python distribution, and therefore the contributors are not required to install additional Python packages.
+This markdown document discusses the testing guidelines to be followed by eMach contributors. The eMach testing framework is based on [unittest framework](https://docs.python.org/3/library/unittest.html). `unittest` is part of standard Python distribution, and therefore implementing the testing guidelines provided here does not require the installation of additional Python packages.
 
-This document assumes that the contributor is familiar with the unittest framework. However, if you are new to the unittest framework, please check out this [explainer video](https://www.youtube.com/watch?v=6tNS--WetLI&ab_channel=CoreySchafer).
+This document assumes that the reader is familiar with the unittest framework. However, if you are new to the unittest framework, this [introductory video](https://www.youtube.com/watch?v=6tNS--WetLI&ab_channel=CoreySchafer) is a great starting point.
 
 ## Defining Unit in Unit testing
-It is often confusing what constitutes unit in unit testing. eMach contributors should follow the `unit of work` concept discussed over [here](https://livebook.manning.com/book/the-art-of-unit-testing-second-edition/chapter-1/16). The Definition of `unit of work` is as follows,
+It is often confusing what constitutes a "unit" in unit testing. eMach contributors should follow the `unit of work` concept discussed [here](https://livebook.manning.com/book/the-art-of-unit-testing-second-edition/chapter-1/16). The definition of `unit of work` is as follows,
 
 `A unit of work is the sum of actions that take place between the invocation of a method in the system and a single noticeable end result by a test of that system. A noticeable end result can be observed without looking at the internal state of the system and only through its behavior. `
 
@@ -31,9 +31,8 @@ def __sub__(self, other): #<-- Unit of Work
 Based on the above example, separate files should be created to test `__add__` and `__sub__` functions.
 
 ## Guidelines on writing unit test
-The contributors are recommended to follow the guidelines discussed [here](https://docs.python-guide.org/writing/tests/).
-
-A summary of the guidelines include
+Contributors are recommended to follow the guidelines discussed [here](https://docs.python-guide.org/writing/tests/) when writting their own unit tests.
+A summary of the guidelines are provided below:
  - Unit test should test the smallest functionality.
  - Unit test should be fully independent.
  - Unit test should run fast.
@@ -71,7 +70,7 @@ if __name__ == '__main__':
   unittest.main() # This will invoke all the test functions
 ```
 
-An excerpt from `test_dim_linear_plus.py` is shown below where a unit test case is written to test addition to two dim_linear objects (`oneInch + oneInch`), The resultant is compared/asserted against the expected (`DimInch(2)`) for both the value and type using `assertAlmostEqual` and `assertEqual` respectively. If the assertion is true, the test condition will pass and fail if it is false. A list of assertions supported by the unittest framework can be found [here](https://docs.python.org/3/library/unittest.html#assert-methods).
+An excerpt from `test_dim_linear_plus.py` is shown below where a unit test case is written to test addition of two dim_linear objects (`oneInch + oneInch`), The result is compared/asserted against the expected (`DimInch(2)`) for both the value and type using `assertAlmostEqual` and `assertEqual` respectively. If the assertion is true, the test condition will pass and fail if it is false. A list of assertions supported by the unittest framework can be found [here](https://docs.python.org/3/library/unittest.html#assert-methods).
 
 ``` Python
 """
