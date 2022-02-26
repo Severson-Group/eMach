@@ -1,7 +1,7 @@
 # Testing guidelines for eMach
 
 ## Introduction
-This markdown document discusses the testing guidelines to be followed by eMach contributors. The eMach testing framework is based on [unittest framework](https://docs.python.org/3/library/unittest.html). `unittest` is part of standard Python distribution, and therefore implementing the testing guidelines provided here does not require the installation of additional Python packages.
+Unit tests are used to test the code's functionality at different conditions. This markdown document discusses the testing guidelines to be followed by eMach contributors. The eMach testing framework is based on [unittest framework](https://docs.python.org/3/library/unittest.html). `unittest` is part of standard Python distribution, and therefore implementing the testing guidelines provided here does not require the installation of additional Python packages.
 
 This document assumes that the reader is familiar with the unittest framework. However, if you are new to the unittest framework, this [introductory video](https://www.youtube.com/watch?v=6tNS--WetLI&ab_channel=CoreySchafer) is a great starting point.
 
@@ -31,21 +31,25 @@ def __sub__(self, other): #<-- Unit of Work
 Based on the above example, separate files should be created to test `__add__` and `__sub__` functions.
 
 ## Guidelines on writing unit test
-Contributors are recommended to follow the guidelines discussed [here](https://docs.python-guide.org/writing/tests/) when writting their own unit tests.
-A summary of the guidelines are provided below:
+When writing unit tests, contributors are recommended to follow the guidelines discussed [here](https://docs.python-guide.org/writing/tests/).
+
+A summary of the guidelines to be followed is provided below:
  - Unit test should test the smallest functionality.
  - Unit test should be fully independent.
  - Unit test should run fast.
- - Unit test should be readable (follow proper naming convention)
+ - Unit test should be readable (follow proper naming convention)n)
 
  ## Naming convention in writing unit test
-  - Follow [PEP-8](https://www.python.org/dev/peps/pep-0008/) guidelines in naming the class and functions.
-  - Python test modules should start with `test_` followed by the unit of work to be tested (ex: def test_add)
-  - Test class should start with `Test` followed by the unit of work to be tested. (ex: class TestAdd)
-  - Test functions should start with `test_` followed by the feature to be tested. (ex: def test_add_similar_dimlinear_objects). This is one of the [popular naming conventions](https://dzone.com/articles/7-popular-unit-test-naming) used in Agile Programming.
+ - Follow [PEP-8](https://www.python.org/dev/peps/pep-0008/) guidelines in naming the class and functions.
+ - Python test modules should start with `test_` followed by the unit of work to be tested (ex: def test_add)
+ - Test class should start with `Test` followed by the unit of work to be tested. (ex: class TestAdd)
+ - Test functions should start with `test_` followed by the feature to be tested. (ex: def test_add_similar_dimlinear_objects).
+More information about the naming convention for the unit test can be found over [here](https://dzone.com/articles/7-popular-unit-test-naming).
+
 
 ## Directory Structure
-Recommended practice on the directory layout is discussed [here](https://python.plainenglish.io/unit-testing-in-python-structure-57acd51da923). Sample directory layout specific to `dimensions` is as follows,
+eMach contributors should place all the unit test files inside the `tests` folder. Appropriate subfolders should be used to organize the unit test files. An example folder structure specific to `dimensions` is shown below.
+<!---Recommended practice on the directory layout is discussed [here](https://python.plainenglish.io/unit-testing-in-python-structure-57acd51da923). Sample directory layout specific to `dimensions` is as follows--->
 ```
 eMach/ <-- Root Folder
 ├── model_obj
@@ -70,7 +74,7 @@ if __name__ == '__main__':
   unittest.main() # This will invoke all the test functions
 ```
 
-An excerpt from `test_dim_linear_plus.py` is shown below where a unit test case is written to test addition of two dim_linear objects (`oneInch + oneInch`), The result is compared/asserted against the expected (`DimInch(2)`) for both the value and type using `assertAlmostEqual` and `assertEqual` respectively. If the assertion is true, the test condition will pass and fail if it is false. A list of assertions supported by the unittest framework can be found [here](https://docs.python.org/3/library/unittest.html#assert-methods).
+An excerpt from `test_dim_linear_plus.py` is shown below, where a unit test case is written to test the addition of two dim_linear objects (`oneInch + oneInch`). The result is compared/asserted against the expected (`DimInch(2)`) for both the value and type using `assertAlmostEqual` and `assertEqual,` respectively. If the assertion is true, the test condition will pass and fail if it is false. A list of assertions supported by the unittest framework can be found [here](https://docs.python.org/3/library/unittest.html#assert-methods).
 
 ``` Python
 """
