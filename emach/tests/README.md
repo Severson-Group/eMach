@@ -1,7 +1,11 @@
-# Testing guidelines for eMach
+# Unit Testing Guidelines for eMach Contributors
 
 ## Introduction
-Unit tests are used to test the code's functionality at different conditions. This markdown document discusses the testing guidelines to be followed by eMach contributors. The eMach testing framework is based on [unittest framework](https://docs.python.org/3/library/unittest.html). `unittest` is part of standard Python distribution, and therefore implementing the testing guidelines provided here does not require the installation of additional Python packages.
+`To err is human`
+
+It is imperative that humans are bound to make mistakes when writing their code, and it is often difficult to identify and review the issues in the code. Testing is a process of evaluating the software for bugs, thereby maintaining the quality of the code. There are [multiple types of testing methodology](https://www.geeksforgeeks.org/unit-testing-software-testing/) used in the software development environment.
+
+This markdown document focuses on the [unit test methodology](https://en.wikipedia.org/wiki/Unit_testing) and discusses the testing guidelines to be followed by eMach contributors. Unit testing is the process of testing individual unit of code. The unit test framework for eMach is based on [unittest framework](https://docs.python.org/3/library/unittest.html). `unittest` is part of standard Python distribution, and therefore implementing the testing guidelines provided here does not require the installation of additional Python packages.
 
 This document assumes that the reader is familiar with the unittest framework. However, if you are new to the unittest framework, this [introductory video](https://www.youtube.com/watch?v=6tNS--WetLI&ab_channel=CoreySchafer) is a great starting point.
 
