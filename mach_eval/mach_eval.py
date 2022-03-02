@@ -87,7 +87,7 @@ class Architect(Protocol):
         """Creates a new Machine object and returns it
         
         Args:
-            input_arguments: Sny
+            input_arguments: Any
         
         Returns:
             machine: Machine
