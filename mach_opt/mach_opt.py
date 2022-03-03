@@ -32,7 +32,7 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size=1, filepath='None'):
+    def run_optimization(self, pop, gen_size, filepath="None"):
         algo = pg.algorithm(
             pg.moead(
                 gen=2,
@@ -44,9 +44,11 @@ class DesignOptimizationMOEAD:
                 eta_m=20,
                 realb=0.9,
                 limit=2,
-        for i in range(0, gen_size):
-            print('This is iteration', i)
+                preserve_diversity=True,
+            )
         )
+        for _ in range(0, gen_size):
+            print("This is iteration", _)
             pop = algo.evolve(pop)
             print("Saving current generation")
             self.save_pop(filepath, pop)
@@ -74,11 +76,11 @@ class DesignProblem:
 
     Attributes:
         designer: Objects which convert free variables to a design.
-        
+
         evaluator: Objects which evaluate the performance of different designs.
-        
+
         design_space: Objects which characterizes the design space of the optimization.
-        
+
         dh: Data handlers which enable saving optimization results and its resumption.
     """
 
@@ -145,9 +147,7 @@ class DesignProblem:
 
 @runtime_checkable
 class Designer(Protocol):
-    """Parent class for all designers
-
-    """
+    """Parent class for all designers"""
 
     @abstractmethod
     def create_design(self, x: "tuple") -> "Design":
@@ -211,7 +211,7 @@ class OptiData:
 
 
 class InvalidDesign(Exception):
-    """ Exception raised for invalid designs """
+    """Exception raised for invalid designs"""
 
     def __init__(self, message="Invalid Design"):
         self.message = message
