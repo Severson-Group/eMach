@@ -1,12 +1,11 @@
-import sys
 import os
+import sys
 from copy import deepcopy
 
 os.chdir(os.path.dirname(__file__))
-sys.path.append("../../..")
+sys.path.append("../../../..")
 
 from machine_design import BSPMArchitectType1
-
 from specifications.bspm_specification import BSPMMachineSpec
 from specifications.machine_specs.bp1_machine_specs import DesignSpec
 from specifications.materials.electric_steels import Arnon5
