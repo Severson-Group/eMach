@@ -1,47 +1,76 @@
 .. _rectangle_example:
 
-Rectangle Example
-=================
+Rectangle Tutorial 
+==================
+* **Goal:** Understand base ``mach_opt`` classes
+* **Complexity** 2/5
+* **Estimated Time** 20 min
 
-This example demonstrates how the ``des_opt`` module can be used to preform a simple optimization of a rectangle. The goal of this optimization is to maximize the area while minimizing the perimeter. Although this example is extremely simple and can be solved analytically, it allows for the primary protocols and classes of the the ``des_opt`` module to be demonstrated and the flow of information between classes to be easily visualized.
+This tutorial demonstrates how to run a simple optimization of a rectangle using ``eMach``. By the end of this tutorial you will:
 
-.. figure:: /images/RectangleExample.png
+* Understand the use/function of the core ``mach_opt`` classes.
+* Be able to run simple optimizations using ``eMach``.
+
+In this tutorial a rectangle will be optimized to maximize its area while minimizing its perimeter.
+
+.. figure:: ./images/RectangleExample.svg
    :alt: Trial1 
    :align: center
    :width: 800 
 
-The implementation of the following protocols will be discussed in this document:
+Tutorial Requirements 
+---------------------
 
-Designer
-	The ``Designer`` protocol converts an input tuple into a ``design`` object.
-Evaluator
-	The ``Evaluator`` evaluates the ``design`` object for a set of criteria defined in the ``evaluate`` function
-DesignSpace
-	The ``DesignSpace`` handles converting the results of the evaluation into the objective variables.
+This is the first tutorial so the only requirement is:
+
+#. All required Python packages are installed on system
+
+Step 1: Create new repository
+------------------------------------------
+
+First a personal repository for this tutorial will be created. Open a new empty folder and input the following code into git-bash to initialize the repository.
+
+.. code-block:: 
 	
-The final protocol of the ``des_opt`` modules, the ``DataHandler`` is not implemented for this example. The general flow of information in the ``des_opt`` module is shown in the following flow chart. The optimization algorithm will pass a set a free variables to the ``DesignProblem`` object, which in turn will be provided to the ``Designer``. The ``Designer`` will convert the free variables into a ``design`` object which is then passed to the ``Evaluator``. The ``Evaluator`` is responsible for evaluating the ``design`` object. The results of the evaluation, are then handed to the ``DesignSpace`` which converts the results of the evaluation into objective values in a form that the optimization algorithm can handle.
+	git init
 
-.. figure:: /images/DesOptlFlowChart.svg
-   :alt: Trial1 
-   :align: center
-   :width: 300
-   
-des_opt Protocols
------------------ 
+
+Step 2: Clone eMach as a sub-module
+------------------------------------------
+
+In order to utilize the eMach codebase, it must first be installed as a sub-module in your repository. In the root folder of your repository open a git bash and input the following command line:
+
+.. code-block:: 
 	
-Designer
-~~~~~~~~
+	git submodule add https://github.com/Severson-Group/eMach.git
 
-The ``Designer`` class of ``des_opt`` is implemented here by the ``RectDesigner`` class. Again this protocol is used to define the conversion of the free variable tuple ``x`` into a ``design`` object. In this example the ``design`` object is replaced by the ``Rectangle`` object, and is used to store the information of the design. The following code block demonstrates how the ``RectDesigner`` class implements the required ``create_design`` function of the ``Designer`` class.
+This should add the current develop branch of ``eMach`` as a folder in the base layer of your personal repository.
+
+Step 3: Create main optimization file
+------------------------------------------
+
+In the root folder of your repository, create a python file named ``main.py``. All the code used in this example will be written in this file. At the top of ``main.py`` add the following import statements:
 
 .. code-block:: python
 
-	class RectDesigner(do.Designer):
+	from matplotlib import pyplot as plt
+	import pygmo as pg
+	from eMach import mach_opt as mo
+
+Step 4: Create Designer and Design classes
+------------------------------------------
+
+Copy the following code into your ``main.py`` file. These two classes fulfill the ``Designer`` and ``Design`` protocols specified in the ``mach_opt`` repository. This code will convert the free variable tuple ``x`` provided by ``pygmo`` into a ``Rectangle`` object to be evaluated.
+
+.. code-block:: python
+
+	class RectDesigner(mo.Designer):
 		"""Class converts input tuple x into a Rectangle object"""
 		
 		def create_design(self,x:tuple)->"Rectangle":
 			"""
 			converts x tuple into a Rectangle object.
+
 			Args:
 				x (tuple): Input free variables.
 				
@@ -53,13 +82,10 @@ The ``Designer`` class of ``des_opt`` is implemented here by the ``RectDesigner`
 			W=x[1]
 			rect=Rectangle(L,W)
 			return rect
-
-
-The details of the ``Rectangle`` object, which is an extension of the empty ``Design`` class are shown in the following snip it. In this example the design object is extremely simple, as we are only modeling a rectangle, however for more complex design optimization it is useful to have this object as a single source of truth for details of the design.
-
+		
 .. code-block:: python
 
-	class Rectangle(do.Design):
+	class Rectangle(mo.Design):
 		"""Class defines a rectangle object of Length and width
 		
 		Attributes:
@@ -69,46 +95,47 @@ The details of the ``Rectangle`` object, which is an extension of the empty ``De
 		
 		def __init__(self,L:float,W:float):
 			"""Creates Rectangle object.
+
 			Args:
 				L (float): Length of Rectangle
 				W (float): Width of Rectangle
+
 			"""
 			self.L=L
 			self.W=W
-
-Evaluator
-~~~~~~~~~
-
-The ``Evaluator`` protocol is implemented in this example by the ``RectEval`` class. This object has an ``evaluate`` function which takes in a ``Rectangle`` object and returns the Area and Perimeter as a list. 
-
-.. code-block:: python
-
-	class RectEval(do.Evaluator):
-    """"Class evaluates the rectangle object for area and perimeter"""
-    
-    def evaluate(self,rect):
-        """Evalute area and perimeter of rectangle
-        Args:
-            rect (Rectangle): Rectangle Object
-        Returns:
-            [A,Per] (List[float,float]): Area and Perimeter of rectangle
-        """
-        A=rect.L*rect.W
-        Per=2*rect.L+2*rect.W 
-        return [A,Per]
 		
-Again this example is extremely simple, however it demonstrates how the ``design`` object from the ``Designer`` interacts with the ``evaluate`` function of the ``Evaluator``. The ``Evaluator`` must be able to return the results of an evaluation using only the information contained in the ``design`` object or information which is supplied during initialization. 
+Step 5: Create Evaluator class
+------------------------------------------
 
-DesignSpace
-~~~~~~~~~~~
-The ``DesignSpace`` protocol is implemented by the ``RectDesignSpace`` class. This class handles the exchange of information between the optimization algorithm and the rest of the ``des_opt`` module. In order to fulfill the ``DesignSpace`` protocol contract four functions must be implemented: ``get_objectives``, ``check_constraints``, ``n_obj``,and ``bounds``. 
-
-The ``get_objectives`` function is responsible for converting the results of the ``Evaluator`` into a tuple of objective values which can be used by the optimization algorithm. The ``check_constraints`` function is not utilized in this example, however it can be used to perform any final constraint checks on the results of the evaluation. The ``n_obj`` and ``bounds`` functions are implemented as properties and return the number of objectives and bounds of the free variables respectively. These functions are required by ``Pygmo``. 
-
+Copy the following code block into the ``main.py`` file. This code defines the ``Evaluator`` class which will be used to evaluate the rectangle for its Area and Perimeter.
 
 .. code-block:: python
 
-	class RectDesignSpace(do.DesignSpace):
+	class RectEval(mo.Evaluator):
+		""""Class evaluates the rectangle object for area and perimeter"""
+		
+		def evaluate(self,rect):
+			"""Evalute area and perimeter of rectangle
+
+			Args:
+				rect (Rectangle): Rectangle Object
+
+			Returns:
+				[A,Per] (List[float,float]): Area and Perimeter of rectangle
+
+			"""
+			A=rect.L*rect.W
+			Per=2*rect.L+2*rect.W 
+			return [A,Per]
+
+Step 6: Create DesignSpace class
+------------------------------------------
+
+Once again copy the following code section into the ``main.py`` file. This code defines the ``DesignSpace`` class which will be utilize by the optimization. The ``DesignSpace`` protocol is responsible for converting information back into a form usable by ``pygmo``. The primary method on interest in this example is the ``get_objectives`` method. For this tutorial, the ``full_results`` object returned by the ``Evaluator`` class is a list of the area and perimeter of the rectangle. The goal of the optimization is to maximize the area and minimize the perimeter, however ``pygmo`` will always attempt to minimize the objective values. To circumvent this, the ``DesignSpace`` class returns a negative area.
+
+.. code-block:: python
+
+	class RectDesignSpace(mo.DesignSpace):
 		"""Class defines objectives of rectangle optimization"""
 
 		def __init__(self,bounds,n_obj):
@@ -125,7 +152,9 @@ The ``get_objectives`` function is responsible for converting the results of the
 			Returns:
 				Tuple[float,float]: Maximize Area, Minimize Perimeter
 			"""
-			return (-full_results[0],full_results[1])
+			Area = full_results[0]
+			Perimeter = full_results[1]
+			return (-Area,Perimeter)
 		
 		def check_constraints(self, full_results) -> bool:
 			return True
@@ -137,36 +166,91 @@ The ``get_objectives`` function is responsible for converting the results of the
 		@property
 		def bounds(self) -> tuple:
 			return self._bounds
-
-The ``get_objectives`` function takes the results from the evaluator as the ``full_results`` object, and parses out the objective functions. In this example, the objective functions are simply to maximize the area, and to minimize the perimeter. These values are stored as the first and second entry in the ``full_results`` list from the evaluator. The optimization algorithm expects that the objective values be returned as a ordered tuple, of values to minimize. For this reason, a negative sign is added to the front of the area value from ``full_results`` which will cause the algorithm to find the largest negative number (i.e. -1<-.1) effectively converting the problem to maximize the area.
-DesignProblem
--------------
-
-The ``DesignProblem`` class of the ``des_opt`` module, is a concrete class in which the custom implementations of the protocols described above are injected into in order to utilize the optimization framework. The following code snip it demonstrates how the rectangle optimization is performed once the required protocols are implemented
+			
+Step 7: Create dummy DataHandler class
+------------------------------------------
+for this example, we will not be implementing a ``DataHandler`` class to save the optimization results. However ``eMach`` still requires a class with the functions calls to be created. The following code block should be copied into ``main.py`` as a dummy ``DataHandler`` class.
 
 .. code-block:: python
 
-    des=RectDesigner()
-    evaluator=RectEval()
-    dh=DataHandler()
-    bounds=([0,0],[1,1])
-    n_obj=2
-    ds=RectDesignSpace(bounds,n_obj)
-    machDesProb=do.DesignProblem(des,evaluator,ds,dh)
-	
-The ``DesignProblem`` object can the be utilized by a ``Pygmo`` optimization. The code to perform a MOEAD optimization in ``Pygmo``  has been implemented by the ``DesignOptimizationMOEAD`` class of ``des_opt``. This class takes in the ``machDesProb`` and is then used to perform the optimization. As long as the required protocol functions are correctly implemented by the injected ``machDesProb``, then the optimization class will be able to successfully optimize the problem.
+	class DataHandler:
+		def save_to_archive(self, x, design, full_results, objs):
+			"""dummy data handler"""
+			pass
+		def save_designer(self, designer):
+			pass
+
+Step 8: Initialize custom classes
+------------------------------------------
+
+Copy the following code into the bottom of ``main.py``. This code will create instances of the defined ``Designer``, ``Evaluator``, and ``DesignSpace`` classes from earlier steps. 
 
 .. code-block:: python
+
+	###############################
+	### Create mach_opt objects ###
+	###############################
+	des=RectDesigner()
+	evaluator=RectEval()
+	dh=DataHandler()
+	## Define optimization bounds and number of objectives
+	bounds=([0,0],[1,1])
+	n_obj=2
+	## Inject bounds and number of objectives into DesignSpace
+	ds=RectDesignSpace(bounds,n_obj)
+
+Step 9: Inject custom classes into DesignProblem
+------------------------------------------------
+
+Copy the following code into the bottom of ``main.py``. In this step the instances of the the defined ``Designer``, ``Evaluator``, and ``DesignSpace`` classes are injected into the ``DesignProblem`` class of the ``mach_opt`` module. This class is designed to interface directly with ``pygmo`` optimization algorithms.
+
+.. code-block:: python
+
+	machDesProb=mo.DesignProblem(des,evaluator,ds,dh)
+
+Step 10: Set up optimization code
+------------------------------------------------
+
+In ``mach_opt`` the ``DesignOptimizationMOEAD`` class is provided to run a MOEAD optimization problem. This class is simply a container for ``pygmo`` optimization code. Using the following code block, an optimization can be run using the user created ``DesignProblem`` object from the previous step.
+
+.. code-block:: python
+
+	opt=mo.DesignOptimizationMOEAD(machDesProb)
+	pop_size=50
+	pop=opt.initial_pop(pop_size)
+	gen_size=10    
+	pop=opt.run_optimization(pop,gen_size)
+
+Step 11: Extracting and plotting results
+------------------------------------------------
+
+The following code block will extract results from the optimization and plot the Pareto front for this optimization. The ``pop.get_f()`` method returns a vector of the objective values for the optimization, while the ``pop.get_x()`` method returns the free variable tuples for the optimized population. 
+
+.. code-block:: python
+
+	fig1=plt.figure()   
+	plot1=plt.axes()
+	fig1.add_axes(plot1)
+	fits, vectors = pop.get_f(), pop.get_x()
+	ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
+	plot1.plot(fits[ndf[0],0],fits[ndf[0],1],'x')
+	plot1.set_xlabel('Area')
+	plot1.set_ylabel('Perimeter')
+	plot1.set_title('Pareto Front')
 	
-	opt=do.DesignOptimizationMOEAD(machDesProb)
-    pop_size=50
-    pop=opt.initial_pop(pop_size)
-    gen_size=10    
-    pop=opt.run_optimization(pop,gen_size)
+``pygmo`` provides a method to extract the Pareto in the method ``fast_non_dominated_sorting(fits)``, the returned ``ndf`` object is a list of the indexes for the Pareto fronts. If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
 
-The resulting Pareto plot of this optimization is shown here. Note that area is plotted as a negative value, this is due to the fact the objective is to maximize area, but the optimization software is designed to minimize.
-
-.. figure:: /images/Pareto.svg
+.. figure:: ./images/Pareto.svg
    :alt: Trial1 
    :align: center
    :width: 600
+	
+
+Conclusion
+----------
+
+You have successfully completed your first optimization using ``eMach``. This code can be modified to perform other simple optimizations, the following list of optimizations can be created by simply modifying the provided code:
+
+* Optimize a circle for maximum area and minimum perimeter
+* Optimize a cuboid for maximum volume and minimum surface area
+* Optimize a sphere for maximum volume and minimum surface area 
