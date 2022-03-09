@@ -174,7 +174,7 @@ Analyzer
 PostAnalyzer
 	Packages the results of the analysis and the initial state back into the the return state
 	
-.. figure:: /images/getting_started/AnalysisStepExample.png
+.. figure:: /images/AnalysisStepExample.png
    :alt: Trial1 
    :align: center
    :width: 800 

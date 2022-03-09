@@ -2,7 +2,7 @@ import os
 import sys
 
 os.chdir(os.path.dirname(__file__))
-sys.path.append("../../..")
+sys.path.append("../../../..")
 
 from machine_design import BSPMArchitectType1
 from specifications.bspm_specification import BSPMMachineSpec

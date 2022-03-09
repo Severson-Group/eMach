@@ -5,7 +5,7 @@ Rectangle Example
 
 This example demonstrates how the ``des_opt`` module can be used to preform a simple optimization of a rectangle. The goal of this optimization is to maximize the area while minimizing the perimeter. Although this example is extremely simple and can be solved analytically, it allows for the primary protocols and classes of the the ``des_opt`` module to be demonstrated and the flow of information between classes to be easily visualized.
 
-.. figure:: /images/RectangleExample/RectangleExample.png
+.. figure:: /images/RectangleExample.png
    :alt: Trial1 
    :align: center
    :width: 800 
@@ -21,7 +21,7 @@ DesignSpace
 	
 The final protocol of the ``des_opt`` modules, the ``DataHandler`` is not implemented for this example. The general flow of information in the ``des_opt`` module is shown in the following flow chart. The optimization algorithm will pass a set a free variables to the ``DesignProblem`` object, which in turn will be provided to the ``Designer``. The ``Designer`` will convert the free variables into a ``design`` object which is then passed to the ``Evaluator``. The ``Evaluator`` is responsible for evaluating the ``design`` object. The results of the evaluation, are then handed to the ``DesignSpace`` which converts the results of the evaluation into objective values in a form that the optimization algorithm can handle.
 
-.. figure:: /images/RectangleExample/DesOptlFlowChart.svg
+.. figure:: /images/DesOptlFlowChart.svg
    :alt: Trial1 
    :align: center
    :width: 300
@@ -166,7 +166,7 @@ The ``DesignProblem`` object can the be utilized by a ``Pygmo`` optimization. Th
 
 The resulting Pareto plot of this optimization is shown here. Note that area is plotted as a negative value, this is due to the fact the objective is to maximize area, but the optimization software is designed to minimize.
 
-.. figure:: /images/RectangleExample/Pareto.svg
+.. figure:: /images/Pareto.svg
    :alt: Trial1 
    :align: center
    :width: 600
