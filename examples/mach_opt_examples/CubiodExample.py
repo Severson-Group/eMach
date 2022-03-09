@@ -5,15 +5,22 @@ Created on Mon Apr 19 12:17:34 2021
 @author: Martin Johnson
 """
 
+import os
+import sys
+
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))  
+ # add the directory immediately above this file's directory to path for module import
+sys.path.append("../..") 
 import numpy as np
 from matplotlib import pyplot as plt
-import sys
-sys.path.append("..")
-import des_opt as do
-import pygmo as pg
-from typing import List,Tuple
 
-class CubiodDesigner(do.Designer):
+import mach_opt as mo
+import mach_eval as me
+import pygmo as pg
+from copy import deepcopy
+
+class CubiodDesigner(mo.Designer):
     """Class converts input tuple x into a Cubiod object"""
     
     def createDesign(self,x:tuple)->"Cubiod":
@@ -33,7 +40,7 @@ class CubiodDesigner(do.Designer):
         cubiod=Cubiod(L,W,H)
         return cubiod
     
-class Cubiod(do.Design):
+class Cubiod(mo.Design):
     """Class defines a cubiod object of Length and width
     
     Attributes:
@@ -54,7 +61,7 @@ class Cubiod(do.Design):
         self.W=W
         self.H=H
 
-class CubiodEval(do.Evaluator):
+class CubiodEval(mo.Evaluator):
     """"Class evaluates the cubiod object for volume and Surface Areas"""
     
     def evaluate(self,cubiod):
@@ -73,7 +80,7 @@ class CubiodEval(do.Evaluator):
         SA_Lateral=2*cubiod.W*cubiod.H+2*cubiod.L*cubiod.H
         return [V,SA_total,SA_Lateral]
 
-class CubiodObj(do.Objective):
+class CubiodObj():
     """Class defines objectives of cubiod optimization"""
 
     def getObjectives(self,results:"List[float,float]"):
@@ -102,9 +109,9 @@ if __name__ == '__main__':
     dh=DataHandler()
     bounds=([.5,.1,.25],[10,3,5])
     n_obj=3
-    machDesProb=do.DesignProblem(des,evaluator,objectives,dh,
+    machDesProb=mo.DesignProblem(des,evaluator,objectives,dh,
                                         bounds,n_obj)
-    opt=do.DesignOptimizationMOEAD(machDesProb)
+    opt=mo.DesignOptimizationMOEAD(machDesProb)
     pop=opt.run_optimization(496,10)
     fits, vectors = pop.get_f(), pop.get_x()
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 

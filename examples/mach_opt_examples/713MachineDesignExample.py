@@ -4,15 +4,19 @@ Created on Wed Apr 28 11:18:09 2021
 
 @author: Martin Johnson
 """
+import os
+import sys
 
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))  
+ # add the directory immediately above this file's directory to path for module import
+sys.path.append("../..") 
 import numpy as np
 from matplotlib import pyplot as plt
-import sys
-sys.path.append("..")
-import des_opt as do
+
+import mach_opt as mo
 import mach_eval as me
 import pygmo as pg
-from typing import List,Tuple,Any
 from copy import deepcopy
 
 
@@ -117,7 +121,7 @@ class Settings:
     def T(self):
         return self.P_rated/self.Omega
 
-class TipSpeedConstraintEvaluationStep(me.EvaluationStep):
+class TipSpeedConstraintEvaluationStep:
     """Constraint evaluation step template"""
     def __init__(self,maxTipSpeed):
         self.maxTipSpeed=maxTipSpeed
@@ -130,7 +134,7 @@ class TipSpeedConstraintEvaluationStep(me.EvaluationStep):
         omega=stateIn.design.settings.Omega
         v_tip = r*omega 
         if v_tip >=self.maxTipSpeed:
-            raise do.InvalidDesign([v_tip,'Tip Speed Violation'])
+            raise mo.InvalidDesign([v_tip,'Tip Speed Violation'])
         else:
             stateOut=deepcopy(stateIn)
             stateOut.conditions.v_tip=v_tip
@@ -195,14 +199,14 @@ class LengthAnalyzer(me.Analyzer):
 
 class LengthPostAnalyzer(me.PostAnalyzer):
     """Converts input state into output state for TemplateAnalyzer"""
-    def get_next_state(self,results:Any,stateIn:'me.State')->'me.State':
+    def get_next_state(self,results,stateIn:'me.State')->'me.State':
         stateOut=deepcopy(stateIn)
         newMachine=stateOut.design.machine.newMachineFromNewLength(results)
         stateOut.design.machine=newMachine
         #TODO define Post-Analyzer
         return stateOut
        
-class L2rConstraintEvaluationStep(me.EvaluationStep):
+class L2rConstraintEvaluationStep():
     """Constraint evaluation step template"""
     def __init__(self,maxL2r):
         self.maxL2r=maxL2r
@@ -215,7 +219,7 @@ class L2rConstraintEvaluationStep(me.EvaluationStep):
         L=stateIn.design.machine.L
         L2r = L/r #TODO define constraint
         if L2r >=self.maxL2r:
-            raise do.InvalidDesign([L2r,'Length to radius Ratio'])
+            raise mo.InvalidDesign([L2r,'Length to radius Ratio'])
         else:
             stateOut=deepcopy(stateIn)
             stateOut.conditions.L2r=L2r
@@ -469,7 +473,7 @@ class DesignSpace:
 class Objective():
     """Class defines objectives of cubiod optimization"""
 
-    def get_objectives(self,results:"List[do.State,float,do.State]"):
+    def get_objectives(self,results:"List[mo.State,float,mo.State]"):
         """ Calculates objectives from evaluation results
         
 
@@ -536,10 +540,10 @@ if __name__ == '__main__':
     
     #Create Machine Design Problem
     ds=DesignSpace(n_obj, bounds)
-    machDesProb=do.DesignProblem(des,evaluator,ds,dh)
+    machDesProb=mo.DesignProblem(des,evaluator,ds,dh)
     
     #Run Optimization
-    opt=do.DesignOptimizationMOEAD(machDesProb)
+    opt=mo.DesignOptimizationMOEAD(machDesProb)
     pop_size=496
     gen_size=10
     pop=opt.initial_pop(pop_size)
