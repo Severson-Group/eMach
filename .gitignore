@@ -26,6 +26,7 @@ LegacyCode/run_data/
 # Sphinx documentation
 docs/build/
 docs/source/_templates/
+docs/source/_build/
 
 # JMAG simulation files
 run_data/

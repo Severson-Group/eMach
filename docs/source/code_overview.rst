@@ -1,20 +1,5 @@
-Getting Started
-===============
-
-This document is designed to serve as an initial introduction to ``MachEval``, a repository for the design, evaluation, and optimization of electric machines. A detailed description of the code docstrings can be found :doc:`here<modules>`. The primary purpose of this document is to highlight the flow of information between various components of the ``MachEval`` repository.
-
-Installation
-------------
-
-The current code base can be found `here <https://github.com/Severson-Group/MachEval/>`_, download this branch into a folder in which you wish to run the design optimization. The current version of ``MachEval`` requires Python 3.8 as the ``Protocol`` class for structural sub-typing is utilized. Additional the following dependencies are required:
-
-* numpy
-* scipy
-* pygmo
-
-
 Code Overview
--------------
+=============================
 
 ``MachEval`` is a open source code base designed to facilitate with the design, evaluation, and optimization of electrical machines. Since machine design is an extremely broad and varied field, ``MachEval`` is constructed to be as modular and flexible as possible to be able to accommodate as many machine topologies, evaluation processes, and optimization criteria. While certain base machine optimizations are provided in this repository, the code can be easily modified to produce custom optimizations as well.
 
