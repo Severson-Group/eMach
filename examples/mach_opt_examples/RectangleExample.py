@@ -4,15 +4,22 @@ Created on Fri Apr  9 09:07:20 2021
 
 @author: Martin Johnson
 """
+import os
+import sys
+
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))  
+ # add the directory immediately above this file's directory to path for module import
+sys.path.append("../..") 
 import numpy as np
 from matplotlib import pyplot as plt
-import sys
-sys.path.append("..")
-import des_opt as do
-import pygmo as pg
-from typing import List,Tuple
 
-class RectDesigner(do.Designer):
+import mach_opt as mo
+import mach_eval as me
+import pygmo as pg
+from copy import deepcopy
+
+class RectDesigner(mo.Designer):
     """Class converts input tuple x into a Rectangle object"""
     
     def create_design(self,x:tuple)->"Rectangle":
@@ -31,7 +38,7 @@ class RectDesigner(do.Designer):
         rect=Rectangle(L,W)
         return rect
     
-class Rectangle(do.Design):
+class Rectangle(mo.Design):
     """Class defines a rectangle object of Length and width
     
     Attributes:
@@ -50,7 +57,7 @@ class Rectangle(do.Design):
         self.L=L
         self.W=W
 
-class RectEval(do.Evaluator):
+class RectEval(mo.Evaluator):
     """"Class evaluates the rectangle object for area and perimeter"""
     
     def evaluate(self,rect):
@@ -67,7 +74,7 @@ class RectEval(do.Evaluator):
         Per=2*rect.L+2*rect.W 
         return [A,Per]
 
-class RectDesignSpace(do.DesignSpace):
+class RectDesignSpace(mo.DesignSpace):
     """Class defines objectives of rectangle optimization"""
 
     def __init__(self,bounds,n_obj):
@@ -113,9 +120,9 @@ if __name__ == '__main__':
     bounds=([0,0],[1,1])
     n_obj=2
     ds=RectDesignSpace(bounds,n_obj)
-    machDesProb=do.DesignProblem(des,evaluator,ds,dh)
+    machDesProb=mo.DesignProblem(des,evaluator,ds,dh)
     
-    opt=do.DesignOptimizationMOEAD(machDesProb)
+    opt=mo.DesignOptimizationMOEAD(machDesProb)
     pop_size=50
     pop=opt.initial_pop(pop_size)
     gen_size=10    
@@ -130,6 +137,5 @@ if __name__ == '__main__':
     plot1.set_xlabel('Area')
     plot1.set_ylabel('Peremiter')
     plot1.set_title('Pareto Front')
-    plot1.savefig("test.svg")
 
     
