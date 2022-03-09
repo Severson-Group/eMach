@@ -1,10 +1,13 @@
-# add the directory immediately above this file's directory to path for module import
+import os
 import sys
 
-sys.path.append("..")
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))  
+ # add the directory immediately above this file's directory to path for module import
+sys.path.append("../..") 
 
-import emach.tools.magnet as mn
-import emach.model_obj as mo
+import mach_cad.tools.magnet as mn
+import mach_cad.model_obj as mo
 import numpy as np
 
 x = mo.DimMillimeter(4)
@@ -12,12 +15,14 @@ y = mo.DimMillimeter(80)
 z = mo.DimDegree(40)
 
 # create arc crossection object
-arc1 = mo.CrossSectArc(name='arc1', location=mo.Location2D(),
-                       dim_d_a=x, dim_r_o=y, dim_alpha=z)
+arc1 = mo.CrossSectArc(
+    name="arc1", location=mo.Location2D(), dim_d_a=x, dim_r_o=y, dim_alpha=z
+)
 
 # create another arc crossection
-arc2 = mo.CrossSectArc(name='arc2', location=mo.Location2D(),
-                       dim_d_a=x * 2, dim_r_o=y / 2, dim_alpha=z * 3)
+arc2 = mo.CrossSectArc(
+    name="arc2", location=mo.Location2D(), dim_d_a=x * 2, dim_r_o=y / 2, dim_alpha=z * 3
+)
 
 # create an instance of the MagNet class
 toolMn = mn.MagNet(visible=True)
