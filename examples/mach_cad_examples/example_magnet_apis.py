@@ -1,7 +1,12 @@
+import os
 import sys
 
-sys.path.append("..")
-import emach.tools.magnet as mn
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))
+# add the directory immediately above this file's directory to path for module import
+sys.path.append("../..")
+
+import mach_cad.tools.magnet as mn
 
 # create an instance of the MagNet class
 MN = mn.MagNet(visible=True)
@@ -42,8 +47,7 @@ sweep3Status = mn.document.view.make_component_in_a_line(
     MN.view, MN.consts, sweep_dist, section3, material
 )
 
-mat = mn.document.get_parameter(MN.mn,
-                                section3[0], "Material")
+mat = mn.document.get_parameter(MN.mn, section3[0], "Material")
 
 # make a simple coil
 coil1 = mn.document.make_simple_coil(MN.doc, 1, section1)
@@ -74,11 +78,13 @@ speed_array = 1000
 time_speed = [time_array, speed_array]
 direction = [0, 0, -1]
 # set parameters for the motion component
-mn.document.set_parameter(MN.doc, motion, "MotionSourceType",
-                          "VelocityDriven", MN.consts)
+mn.document.set_parameter(
+    MN.doc, motion, "MotionSourceType", "VelocityDriven", MN.consts
+)
 mn.document.set_parameter(MN.doc, motion, "MotionType", "Rotary", MN.consts)
-mn.document.set_parameter(MN.doc, motion, "PositionAtStartup",
-                          position_at_startup, MN.consts)
+mn.document.set_parameter(
+    MN.doc, motion, "PositionAtStartup", position_at_startup, MN.consts
+)
 mn.document.set_parameter(MN.doc, motion, "SpeedAtStartup", speed_at_startup, MN.consts)
 mn.document.set_parameter(MN.doc, motion, "MotionDirection", direction, MN.consts)
 mn.document.set_parameter(MN.doc, motion, "SpeedVsTime", time_speed, MN.consts)

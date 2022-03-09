@@ -1,15 +1,17 @@
+import os
 import sys
 
-sys.path.append("..")
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))
+# add the directory immediately above this file's directory to path for module import
+sys.path.append("../..")
 
-import emach.tools.magnet as mn
-import emach.model_obj as mo
-import numpy as np
-
+import mach_cad.tools.magnet as mn
+import mach_cad.model_obj as mo
 
 
 stator1 = mo.CrossSectOuterRotorStator(
-    name='stator1',
+    name="stator1",
     dim_alpha_st=mo.DimDegree(30),
     dim_alpha_so=mo.DimDegree((30 / 2) * 0.25),
     dim_r_si=mo.DimMillimeter(15),
@@ -22,7 +24,7 @@ stator1 = mo.CrossSectOuterRotorStator(
     dim_r_sf=mo.DimMillimeter(0),
     dim_r_sb=mo.DimMillimeter(0),
     dim_Q=8,
-    location=mo.Location2D()
+    location=mo.Location2D(),
 )
 
 toolMn = mn.MagNet(visible=True)
