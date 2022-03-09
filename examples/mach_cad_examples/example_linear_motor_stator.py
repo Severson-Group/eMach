@@ -1,11 +1,13 @@
-# add the directory immediately above this file's directory to path for module import
+import os
 import sys
 
-sys.path.append("..")
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))
+# add the directory immediately above this file's directory to path for module import
+sys.path.append("../..")
 
-import emach.tools.magnet as mn
-import emach.model_obj as mo
-import numpy as np
+import mach_cad.tools.magnet as mn
+import mach_cad.model_obj as mo
 
 # Stator parameters
 w_s = 65.7  # stator length
@@ -25,19 +27,21 @@ r_sb = 3
 
 # create linear stator crossection object
 
-stator_iron = mo.CrossSectLinearMotorStator(name='stator_iron',
-                                            location=mo.Location2D(),
-                                            dim_w_s=mo.DimMillimeter(w_s),
-                                            dim_w_st=mo.DimMillimeter(w_st),
-                                            dim_w_so=mo.DimMillimeter(w_so),
-                                            dim_r_so=mo.DimMillimeter(r_so),
-                                            dim_r_si=mo.DimMillimeter(r_si),
-                                            dim_d_so=mo.DimMillimeter(d_so),
-                                            dim_d_sp=mo.DimMillimeter(d_sp),
-                                            dim_d_sy=mo.DimMillimeter(d_sy),
-                                            dim_r_st=mo.DimMillimeter(r_st),
-                                            dim_r_sf=mo.DimMillimeter(r_sf),
-                                            dim_r_sb=mo.DimMillimeter(r_sb))
+stator_iron = mo.CrossSectLinearMotorStator(
+    name="stator_iron",
+    location=mo.Location2D(),
+    dim_w_s=mo.DimMillimeter(w_s),
+    dim_w_st=mo.DimMillimeter(w_st),
+    dim_w_so=mo.DimMillimeter(w_so),
+    dim_r_so=mo.DimMillimeter(r_so),
+    dim_r_si=mo.DimMillimeter(r_si),
+    dim_d_so=mo.DimMillimeter(d_so),
+    dim_d_sp=mo.DimMillimeter(d_sp),
+    dim_d_sy=mo.DimMillimeter(d_sy),
+    dim_r_st=mo.DimMillimeter(r_st),
+    dim_r_sf=mo.DimMillimeter(r_sf),
+    dim_r_sb=mo.DimMillimeter(r_sb),
+)
 
 # create an instance of the MagNet class
 toolMn = mn.MagNet(visible=True)
