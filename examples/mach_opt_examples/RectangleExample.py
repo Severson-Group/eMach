@@ -135,7 +135,7 @@ if __name__ == '__main__':
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fits) 
     plot1.plot(fits[ndf[0],0],fits[ndf[0],1],'x')
     plot1.set_xlabel('Area')
-    plot1.set_ylabel('Peremiter')
+    plot1.set_ylabel('Perimeter')
     plot1.set_title('Pareto Front')
-
+    fig1.savefig('Pareto.svg')
     
