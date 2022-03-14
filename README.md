@@ -1,7 +1,7 @@
 # MachEval
 An open source framework for electric machine optimization and evaluation. A detailed
 documentation of this code base attributes and capabilities is available 
-[here](https://macheval.readthedocs.io/en/latest/index.html). A broad overview of the repository
+[here](https://emach.readthedocs.io/en/latest/index.html). A broad overview of the repository
 is provided below.
 
 ## Optimization Workflow
@@ -9,10 +9,10 @@ is provided below.
 The `MachEval` optimization workflow has been developed to make electric machine design
 and optimization flexible, modular, and easily extensible. A flowchart showing a 
 broad view of the workflow is provided below. More information of each block illustrated
-in this workflow is available [here](https://macheval.readthedocs.io/en/latest/getting_started.html#code-overview).
+in this workflow is available [here](https://emach.readthedocs.io/en/latest/index.html).
 
 <p align="center">
-  <img width="400" src="Images/MachEvalFlowChart.svg">
+  <img width="400" src="docs/source/images/Readme/MachEvalFlowChart.svg">
 </p>
 <p align="center">
    Structure of Optimization
@@ -24,7 +24,7 @@ the optimization of these machines is shown below. The evaluator will be modifie
 each optimization based on 
 
 <p align="center">
-  <img width="400" src="Images/EvaluationFlowChart.svg">
+  <img width="400" src="docs/source/images/Readme/EvaluationFlowChart.svg">
 </p>
 <p align="center">
    Optimization Flow Chart
