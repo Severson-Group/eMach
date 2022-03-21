@@ -24,7 +24,7 @@ to browse through the documentation links provided on the left to familiarize th
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: BSPM Analyzers
+   :caption: Analyzers
 
    structural_analyzer
 
