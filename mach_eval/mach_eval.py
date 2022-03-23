@@ -16,6 +16,7 @@ __all__ = [
     "Architect",
     "Machine",
     "MachineEvaluator",
+    "EvaluationStep",
     "Conditions",
     "State",
     "AnalysisStep",
