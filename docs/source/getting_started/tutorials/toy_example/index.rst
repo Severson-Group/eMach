@@ -1,367 +1,419 @@
 .. _toy_example:
+Analytical Machine Design Tutorial 
+==================================
+* **Goal:** Understand the base ``mach_eval`` classes
+* **Complexity** 3/5
+* **Estimated Time** 30 min
 
-Analytical Machine Design Example
-#################################
+This tutorial demonstrates how to set up a ``MachineDesigner`` and implement ``EvaluationSteps`` from the ``mach_eval`` module. By the end of this tutorial you will be able to:
 
-This is example is constructed to demonstrate how the ``mach_eval`` module can be used to evaluate multiple criteria of a complicated design problem. To simplify the coding required in this example, analytical scripts are used to evaluate the performance of a representative electrical machine. These scripts are used to create a non-convex optimization problem for the framework to solve. The equations presented here are not representative of actual physics in a machine.
+* Create a ``MachineDesigner`` for modeling an electric machine.
+* Define ``EvaluationSteps`` to describe an evaluation process for an electric machine
 
-The following objectives are assumed for this optimization:
+The classes used in the example represent a simplified machine topology and evaluation process which is not accurate to real physics. The purpose of this document is to demonstrate how these classes are created and interact.
 
-* Maximize efficiency
-* Minimize cost
-* Minimize torque ripple
+Tutorial Requirements 
+---------------------
 
-Designer
-********
+This tutorial requires that ``eMach`` and the associated packages are installed:
 
-The ``Designer`` class of the ``des_opt`` module is extended in the ``mach_eval`` module to the concrete ``MachineDesigner`` class which takes in an ``Architect`` and a ``SettingsHandler``. The ``MachineDesigner`` converts the free variables ``x`` into a ``Design`` object which is made up of both a ``Machine`` and a ``Settings`` object. The ``Machine`` object is representative of a physical machine, while the ``Settings`` object includes information about the operating point and nameplate conditions of the machine.
+#. All required Python packages are installed on system. (See :doc:`Pre-requisites <../../pre_reqs>`)
+#. ``eMach`` installed as a sub-module in a root folder of a git repository (See :doc:`Rectangle Example <../rectangle_example/index>`)
 
-Architect
-=========
 
-The ``Architect`` is a class which is designed to convert free variables ``x`` into a ``Machine`` object. The relevant code for the ``Architect`` used in this example is shown here:
+Step 1: Create Python file for tutorial
+------------------------------------------
+
+In the root folder of your git repository with ``eMach`` installed as a sub-module, create a new python file to hold the code for this tutorial names ``mach_eval_tutorial.py``
+
+
+Step 2: Define import statements
+------------------------------------------
+
+At the top of the python file copy the following import statements to add the required modules for this tutorial. 
+
+.. code-block:: python
+	
+	import numpy as np
+	from matplotlib import pyplot as plt
+	from eMach import mach_eval as me
+	from copy import deepcopy
+	
+Step 3: Define Machine Class
+------------------------------------------
+
+In this step the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine which could be built. This class can be though of as "What is on the desk", it should hold all the geometric, material, and nameplate information about a machine design. Things like operating condition and other criteria are housed in the ``Settings`` class which is defined in a later step.
+
+For this example, the machine class is kept simple in order to facilitate ease of use in the tutorial. The creation of the machine class in this example is split into five sub steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
+
+Step 3.1: Initialization
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following code block shows how the ``ExampleMachineQ6p1y3`` class is Initialized for this example. The class takes in a set of geometric variables and material dictionaries. The meaning of geometric variables are defined in the comments of the code block. Note that when assigning the properties to the ``self`` object, the protected ``_`` is used, this prevents accidental editing of the properties by the user. 
 
 .. code-block:: python
 
-	class Architect(me.Architect):
-		"""Converts input tuple x into a machine object"""   
-		def __init__(self,mat:'Material'):
-			self.mat=mat
-		def create_new_design(self,x:tuple)->"me.Machine":
-			"""
-			converts x tuple into a machine object.
+	class ExampleMachineQ6p1y3(me.Machine):
+		def __init__(self,r_ro,d_m,d_ag,l_tooth,
+					 w_tooth,d_yoke,z_q,l_st,
+					 magnet_mat,core_mat,coil_mat):
+			self._r_ro = r_ro
+			self._d_m = d_m
+			self._d_ag = d_ag
+			self._l_tooth=l_tooth
+			self._w_tooth = w_tooth
+			self._d_yoke = d_yoke
+			self._z_q = z_q
+			self._l_st = l_st
+			self._magnet_mat= magnet_mat
+			self._core_mat = core_mat
+			self._coil_mat = coil_mat
+			
 
-			Args:
-				x (tuple): Input free variables.
-				
-			Returns:
-				machine (me.Machine): Machine object
-			"""
-			r=x[3]
-			delta=x[2]
-			machine=Machine(r,delta,self.mat)
+
+Step 3.2: Class Constant Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this sub-step certain properties which are assumed to be constant for all instances of the ``Machine`` class are implement. In this example the number of slots/poles and coil span of the machine are constant. The ``@property`` decorator is used to define these values as shown in the following code block. The ``@property`` decorator allows for these properties to be read only once the instance of the machine is created. Copy and paste the following code block into the ``ExampleMachineQ6p1y3`` class created in the last step. This code should be at the same indent level as the ``__init__`` function.
+
+.. code-block:: python
+
+	@property
+    def Q(self):
+        return 6
+    @property
+    def p(self):
+        return 1
+    @property
+    def y(self):
+        return 3
+
+Step 3.3: Input Defined Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. In this step, read only property decorators are used to allow access to these variables. Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class.
+
+.. code-block:: python
+
+    @property
+    def r_ro(self):
+        return self._r_ro
+    @property
+    def d_m(self):
+        return self._d_m
+    @property
+    def d_ag(self):
+        return self._d_ag
+    @property
+    def l_tooth(self):
+        return self._l_tooth
+    @property
+    def w_tooth(self):
+        return self._w_tooth
+    @property
+    def d_yoke(self):
+        return self._d_yoke
+    @property
+    def z_q(self):
+        return self._z_q
+    @property 
+    def l_st(self):
+        return self._l_st
+    @property
+    def magnet_mat(self):
+        return self._magnet_mat
+    @property
+    def core_mat(self):
+        return self._core_mat
+    @property
+    def coil_mat(self):
+        return self._coil_mat
+
+Step 3.4: Derived Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Often it is convenient to define certain machine parameters in terms of others. For example, the geometry of a machine stator can be defined using the inputs in the previous section, but often it is useful to have quick access to other properties like the outer stator radius or the radial location of the stator. Additional parameters can be defined using the ``@property`` decorator in terms of other parameters as shown in the following code block. Copy and paste this code-block into the ``ExampleMachineQ6p1y3`` class.
+
+.. code-block:: python
+
+	@property
+    def r_si(self):
+        return self._r_ro+self._d_ag
+    @property
+    def r_sy(self):
+        return self.r_si+self._l_tooth
+    @property
+    def r_so(self):
+        return self.r_sy+self._d_yoke
+    @property
+    def B_delta(self):
+        return self.d_m*self.magnet_mat['B_r']/(self.magnet_mat['mu_r']*self.d_ag+self.d_m)
+    @property
+    def B_sy(self):
+        return np.pi*self.B_delta*self.r_si/(2*self.p*(self.d_yoke))
+    @property
+    def B_th(self):
+        return self.B_delta*self.r_si*self.alpha_q/(self.w_tooth)
+    @property
+    def k_w(self):
+        alpha=np.pi*((self.Q-2*self.y)/(self.Q*self.p))
+        n=self.Q/(2*self.p)
+        m=self.Q/(6*self.p)
+        Beta=np.pi/n
+        k_w=np.cos(alpha/2)*(np.sin(m*Beta/2))/(m*np.sin(Beta/2))
+        self._k_w=k_w
+        return self._k_w
+    @property
+    def A_slot(self):
+        return np.pi*(self.r_sy**2-self.r_si**2)/self.Q - \
+            self.w_tooth*(self.r_sy-self.r_si)
+	@property 
+    def alpha_q(self):
+        return 2*np.pi/self.Q
+			
+Step 3.5: Auxiliary Functions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There can be certain machine parameters that are useful for defining a machines performance that require some additional outside information that the ``Machine`` class may not know. Auxiliary functions can be added to the machine class to facilitate easy access to certain properties, like electric loading, or tip speed which depend on outside information (i.e. current/speed). Copy the following code-block into the ``ExampleMachineQ6p1y3`` class to add this capability.
+
+.. code-block:: python
+
+	def A_hat(self,I):
+        N=self.Q/3
+        A_hat=3*self.z_q*N*self.k_w*I/(np.pi*self.r_si)
+        return A_hat
+    def v_tip(self,Omega):
+        v_tip=Omega*self.r_ro
+        return v_tip
+		
+Step 4: Define Settings Class
+-----------------------------
+
+Like the ``Machine`` class defined in the previous step, the ``Settings`` class is designed as a container of information. The ``Settings`` class is set up to hold any additional information about the design which will be evaluated in later steps, which does not fit in the ``Machine`` class. For this example, the settings class simply holds the rotational speed Omega, and the motor current I. Copy the following code-block into the python file to add this example settings class.
+
+.. code-block:: python
+
+	class ExampleSettings:
+		def __init__(self,Omega,I):
+			self.Omega=Omega
+			self.I=I
+		
+Step 5: Define the Architect
+-----------------------------
+
+The ``Architect`` class of the ``mach_eval`` module is described in detail in the user guide (TODO fix link). The purpose of the ``Architect`` is to convert an input tuple into a ``Machine`` object. For this example the input tuple is defined using the following:
+
+* ``r_ro`` Outer rotor radius
+* ``d_m_norm`` Normalized magnet thickness
+* ``l_st_norm`` Normalized stack length
+* ``r_sy_norm`` Normalized stator yoke radius
+* ``r_so_norm`` Normalized outer rotor radius
+* ``w_tooth_norm`` Normalized tooth width
+* ``z_q`` Number of turns
+* ``I`` Stator current
+
+Copy the following code into the python file to implement the example architect. In the ``create_new_design`` method, it can be seen how the input tuple values are converted into the input variables needed to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Also note that the material dictionaries are provided to the ``ExampleMotorArchitect`` on initialization, this is required for any information that the ``Machine`` class needs which is not contained in the input tuple. 
+
+.. code-block:: python
+
+	class ExampleMotorArchitect(me.Architect):
+		"""Class converts input tuple x into a machine object"""   
+		def __init__(self,magnet_mat,core_mat,
+					 coil_mat):
+			self.magnet_mat=magnet_mat
+			self.core_mat=core_mat
+			self.coil_mat=coil_mat
+		def create_new_design(self,x:tuple):
+			r_ro=x[0]
+			d_m_norm=x[1]
+			d_m=d_m_norm*r_ro
+			l_st=x[2]*r_ro
+			r_sy_norm=x[3]
+			r_so_norm=x[4]
+			w_tooth_norm=x[5]
+			z_q=x[6]
+			
+			d_ag=.002
+			Q=6
+
+			r_si=r_ro+d_ag
+			alpha_q=2*np.pi/Q
+			w_tooth=2*r_si*np.sin(w_tooth_norm*alpha_q/2)
+			r_so=r_so_norm*r_si
+			r_sy=r_sy_norm*(r_so-r_si)+r_si
+			d_yoke=r_so-r_sy 
+			l_tooth=r_sy-r_si
+
+			
+			machine=ExampleMachineQ6p1y3(r_ro,d_m,d_ag,l_tooth,
+					 w_tooth,d_yoke,z_q,l_st,
+					 self.magnet_mat,self.core_mat,self.coil_mat)
+			
 			return machine
 
-The ``Machine`` and ``Material`` classes used in this example are defined as follows:
+Step 6: Define the SettingsHandler
+-----------------------------------
 
-.. code-block:: python
-	
-	class Material:
-		"""Material object for holding material properties"""
-		def __init__(self,rho,C_e,C_hy,C_omega):
-			self.rho=rho
-			self.C_e=C_e
-			self.C_hy=C_hy
-			self.C_omega=C_omega
-        
-	class Machine:
-		"""Class defines a Machine object 
-		
-		Attributes:
-			TODO
-		"""
-		
-		def __init__(self,r,delta,mat):
-			"""Creates a machine object.
-
-			Args:
-				TODO
-
-			"""
-			
-			self.r=r
-			self.delta=delta
-			self.mat=mat
-			self.L=NotImplementedError
-			
-		@property
-		def V_r(self):
-			return np.pi*self.r**2*self.L
-			
-		@property
-		def V_s(self):
-			return np.pi*((1.5*self.r**2)-self.r**2)*self.L
-		
-		def newMachineFromNewLength(self,L)->'Machine':
-			newMachine=deepcopy(self)
-			newMachine.L=L
-			return newMachine
-			
-SettingsHandler
-===============
-
-The ``SettingsHandler`` class converts free variables ``x`` into a ``Settings`` object. The following code demonstrates how this class is implemented in this example.
+The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the user guide (TODO fix link). The ``SettingsHandler`` has a similar purpose to the ``Architect`` defined in the previous step, it is responsible for converting the input tuple into the ``Settings`` object. Copy the following code into the python file to implement the example ``SettingsHandler``. For this example, the the ``SettingsHandler`` takes in a rotational speed ``Omega`` on initialization, and extracts the current from the input tuple to create the ``ExampleSettings``.
 
 .. code-block:: python
 
-	class SettingsHandler(me.SettingsHandler):
-		def __init__(self,P_rated):
-			self.P_rated=P_rated
-		def get_settings(self,x):
-			B_hat=x[0]
-			A_hat=x[1]
-			Omega=x[4]
-			settings=Settings(B_hat,A_hat,Omega,self.P_rated)
-			return settings
-
-	class Settings:
-		def __init__(self,B_hat,A_hat,Omega,P_rated):
-			self.B_hat=B_hat
-			self.A_hat=A_hat
+	class ExampleSettingsHandler():
+		"""Settings handler for design creation"""
+		def __init__(self,Omega):
 			self.Omega=Omega
-			self.P_rated=P_rated
-			
-		@property
-		def f(self):
-			return self.Omega/(2*np.pi)
+		def get_settings(self,x):
+			I=x[7]
+			settings = ExampleSettings(self.Omega,I)
+			return settings  
+
+Step 6: Define the EvaluationSteps
+----------------------------------
+
+The ``EvaluationStep`` protocol of the ``mach_eval`` module, defines a function signature called ``step``. This is the base level for an evaluation in the ``mach_eval`` module, it is used to define some evaluation that is performed on a design. A detailed explanation of the ``EvaluationStep`` protocol and the associated ``State`` class is provided in the User guide (TODO fix link). In this example two evaluation steps are provided, these steps are used to calculate the total power of the machine and the expected losses. Note the the form of the ``step`` method takes in a ``State`` variable, performs some analysis, and returns the results and an output state. The ``deepcopy`` method is used to provide a copy of the state which can be updated with new information without changing the input state. Copy the following code to define the two evaluation steps for this example.
+
+.. code-block:: python
+
+	class PowerEvalStep(me.EvaluationStep):
+		def step(self,state_in):
+			B_delta=state_in.design.machine.B_delta
+			r_ro=state_in.design.machine.r_ro
+			l_st=state_in.design.machine.l_st
+			I=state_in.design.settings.I
+			A_hat=state_in.design.machine.A_hat(I)
+			Omega=state_in.design.settings.Omega
+			V_r=np.pi*r_ro**2*l_st
+			Power=Omega*V_r*B_delta*A_hat
+			state_out=deepcopy(state_in)
+			state_out.conditions.Power=Power
+			return [Power,state_out]
 		
-		@property
-		def T(self):
-			return self.P_rated/self.Omega
+	class LossesEvalStep(me.EvaluationStep):
+		def step(self,state_in):
+			w_tooth=state_in.design.machine.w_tooth
+			l_tooth=state_in.design.machine.l_tooth
+			alpha_q=state_in.design.machine.alpha_q
+			r_si=state_in.design.machine.r_si
+			r_so=state_in.design.machine.r_so
+			r_sy=state_in.design.machine.r_sy
+			I=state_in.design.settings.I
+			z_q=state_in.design.machine.z_q
+			A_slot=state_in.design.machine.A_slot
+			k_fill=state_in.design.machine.coil_mat['k_fill']
+			sigma=state_in.design.machine.coil_mat['sigma']
+			k_ov=state_in.design.machine.coil_mat['k_ov']
+			l_st=state_in.design.machine.l_st
+			Omega=state_in.design.settings.Omega
+			p=state_in.design.machine.p
+			y=state_in.design.machine.y
+			Q=state_in.design.machine.Q
+			K_h=state_in.design.machine.core_mat['core_ironloss_Kh']
+			b=state_in.design.machine.core_mat['core_ironloss_b']
+			a=state_in.design.machine.core_mat['core_ironloss_a']
+			K_e=state_in.design.machine.core_mat['core_ironloss_Ke']
+			k_stack=state_in.design.machine.core_mat['core_stacking_factor']
+			B_sy=state_in.design.machine.B_sy
+			B_tooth=state_in.design.machine.B_th
 			
-Evaluator
-*********
+			l_turn=2*l_st+y*alpha_q*(r_si+r_sy)*k_ov
+			f=p*Omega/(2*np.pi)
+			g_sy=(K_h*(f**a)*(B_sy**b) + K_e*(f*B_sy)**2)*k_stack
+			g_th=(K_h*(f**a)*(B_tooth**b) + K_e*(f*B_tooth)**2)*k_stack
+			A_cond=k_fill*A_slot/z_q
+			J_hat=I/A_cond
+			Q_tooth=g_th*w_tooth*l_st*l_tooth*Q
+			Q_sy=g_sy*np.pi*(r_so**2-r_sy**2)*l_st
+			Q_coil= (J_hat**2)*l_turn*k_fill*A_slot/(sigma*2)
+			state_out=deepcopy(state_in)
+			state_out.conditions.losses=[Q_tooth,Q_sy,Q_coil]
+			return [[Q_tooth,Q_sy,Q_coil],state_out]
 
-The ``Evaluator`` class of the ``des_opt`` module is extended in the ``mach_eval`` module to the ``MachineEvaluator`` class. This class takes in a list of ``EvaluationStep`` objects which are iterated through to perform the analysis. The following ``EvaluationSteps`` are performed in this evaluation:
+Step 7: Define Material Dictionaries 
+------------------------------------
 
-* Tip Speed Constraint
-* Length Scaling
-* Length to Radius Constraint
-* Loss Calculations
-* Cost Calculations
-* Torque Ripple Calculations
+The following material dictionaries are provided for this example. Note that these hold information about the materials which are used in this example. Copy the following code into the python file.
+		
+.. code-block:: python			
+			
+	core_mat = {
+		'core_material'              : 'M19Gauge29',
+		'core_material_density'      : 7650, # kg/m3
+		'core_youngs_modulus'        : 185E9, # Pa
+		'core_poission_ratio'        : .3,
+		'core_material_cost'         : 17087, # $/m3
+		'core_ironloss_a'            : 1.193,# freq
+		'core_ironloss_b'            : 1.918,# field
+		'core_ironloss_Kh'           : 55.1565, # W/m3
+		'core_ironloss_Ke'           : 0.050949, # W/m3
+		'core_therm_conductivity'    : 28, # W/m-k
+		'core_stacking_factor'       : .96, # percentage
+		'core_saturation_feild'      : 1.6 #T
+		}
 
-Two types of ``EvaluationStep`` objects are used in this example, the first are standard ``EvaluationStep`` which implement the required ``step`` functionality to check a constraint. An example of this type of evaluation is shown in the tip speed constraint.
+	coil_mat = {
+		'Max_temp'                   : 150, # Rise C
+		'k_ov'                       : 1.8,
+		'sigma'                      : 5.80E7,
+		'k_fill'                     : .38}
+	magnet_mat = {
+		'magnet_material'            : "Arnold/Reversible/N40H",
+		'magnet_material_density'    : 7450, # kg/m3
+		'magnet_youngs_modulus'      : 160E9, # Pa
+		'magnet_poission_ratio'      :.24,
+		'magnet_material_cost'       : 712756, # $/m3
+		'magnetization_direction'    : 'Parallel',
+		'B_r'                        : 1.285, # Tesla, magnet residual flux density
+		'mu_r'                       : 1.062, # magnet relative permeability
+		'magnet_max_temperature'     : 80, # deg C
+		'magnet_max_rad_stress'      : 0, # Mpa  
+		'magnet_therm_conductivity'  : 8.95, # W/m-k
+		}
 
+Step 8: Creating MachineDesiger 
+--------------------------------
+
+The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which holds an ``Architect`` and the ``SettingsHandler``. The ``MachineDesigner`` has a method ``create_design`` which takes in the input tuple and returns a ``design`` object. This design object has the ``Machine`` and ``Settings`` object for the associated input tuple as properties (i.e. ``design.machine`` and ``design.setttings``). The following code demonstrate how to initialize both the example ``Architect`` and ``SettingsHandler`` and use them to create a ``MachineDesigner``. A ``design`` object can be created from an input tuple ``x`` as shown. Copy this code into the bottom of the python file.
+
+.. code-block:: python
+					
+	Omega=100
+	arch=ExampleMotorArchitect(magnet_mat,core_mat,coil_mat)
+	settings_handler=ExampleSettingsHandler(Omega)
+	des=me.MachineDesigner(arch,settings_handler)
+	r_ro=.1
+	d_m_norm=.0025
+	l_st_norm=5
+	r_sy_norm=.25
+	r_so_norm=10
+	w_tooth_norm=.8
+	z_q=100
+	I=20
+	x=[r_ro,d_m_norm,l_st_norm,r_sy_norm,r_so_norm,w_tooth_norm,z_q,I]
+	design=des.create_design(x)
+
+Step 9: Creating MachineEvaluator 
+----------------------------------
+
+Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a concrete class provided by ``mach_eval``. This class takes in an ordered list of ``EvaluationSteps`` on initialization. When the ``evaluate`` method is called the ``MachineEvaluator`` will loop over the ``step`` functions of the provided ``EvaluationSteps`` in order. The results of the ``evaluate`` method will be an ordered list of ``[state_in,results,state_out]`` for each step provided. This gives a useful log of how the ``design`` and ``state`` objects have changes over the evaluation process. The following code implements the two example ``EvaluationSteps`` provided, and demonstrates how to initialize the ``MachineEvaluator``. Copy this code into the bottom of the python file and hit run. The results object from the evaluation of the machine should be printed in the console. 
 
 .. code-block:: python
 
-	class TipSpeedConstraintEvaluationStep(me.EvaluationStep):
-		"""Constraint evaluation step template"""
-		def __init__(self,maxTipSpeed):
-			self.maxTipSpeed=maxTipSpeed
-		def step(self,stateIn):
-			"""Checks input state to see if constraint is violated
-			
-			Raises ConstraintError if violated, otherwise appends values to 
-			State conditions and moves forward"""
-			r=stateIn.design.machine.r
-			omega=stateIn.design.settings.Omega
-			v_tip = r*omega 
-			if v_tip >=self.maxTipSpeed:
-				raise do.InvalidDesign([v_tip,'Tip Speed Violation'])
-			else:
-				stateOut=deepcopy(stateIn)
-				stateOut.conditions.v_tip=v_tip
-				return [v_tip,stateOut]
-				
-In this example the machine radius is extracted from the input state in ``r=stateIn.design.machine.r``. The operating speed is extracted from the input state in the same manner in ``omega=stateIn.design.settings.Omega``. The rotational speed of the machine and the radius are used to calculate the circumferential tip speed of the rotor. If the tip speed is found to exceed a maximum tip speed provided on initialization of the evaluation step, then a ``InvalidDesign`` exception is raised. This exception will exit the evaluation process back to the try\except block in the ``fitness` function of the ``DesignProblem`` as shown in the following code. This exception will cause the optimization to set the objective values to a large number for the design, effectively acting as a death penalty constraint.
-
-.. code-block:: python
-
-	    except Exception as e:
-            if type(e) is InvalidDesign:
-                temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
-                objs = temp[0]
-                return objs
-
-The second type of ``EvaluationStep`` used in this example is the ``AnalysisStep`` of the ``mach_eval`` module. The ``AnalysisStep`` class is an extension of the ``EvaluationStep`` which codifies how the information should be handled during evaluation. Three protocols must be passed into the ``AnalysisStep`` upon initialization:
-
-ProblemDefinition
-	Converts the input ``state`` into a ``problem`` class which can be utilized by the ``Analyzer``
-Analyzer
-	Performs an analysis on an problem. These are designed to handle specific analysis of complex machine design problems.
-PostAnalyzer
-	Packages the results of the analysis and the initial state back into the the return state
+	power_step=PowerEvalStep()
+	loss_step=LossesEvalStep()
+	evaluator=me.MachineEvaluator([power_step,loss_step])
+	results=evaluator.evaluate(design)
+	print(results)
 	
-.. figure:: /images/AnalysisStepExample.png
-   :alt: Trial1 
-   :align: center
-   :width: 800 
-   
-The following code demonstrates how these three protocols are implemented to evaluate the machine length required to produce the desired torque. The first protocol, the ``ProblemDefinition`` is implemented as shown. This class is designed to convert the input state revived by the ``AnalysisStep`` into a ``Problem`` class which holds in the information required by the analyzer in the correct format.
-
-.. code-block:: python
-
-	class LengthProblemDefinition(me.ProblemDefinition):
-		"""Class converts input state into a problem"""
-		
-		def get_problem(self,state:'me.State')->'me.Problem':
-			"""Returns Problem from Input State"""
-			T=state.design.settings.T
-			B_hat=state.design.settings.B_hat
-			A_hat=state.design.settings.A_hat
-			r=state.design.machine.r
-			problem=LengthProblem(T,B_hat,A_hat,r)
-			return problem
-
-	class LengthProblem():
-		"""problem class utilized by the Analyzer
-		
-		Attributes:
-			T : required torque of machine
-			B_hat : Magnetic loading
-			A_hat : Electric loading
-			r : Rotor radius
-		"""
-		def __init__(self,T,B_hat,A_hat,r):
-			"""Creates problem class
-			
-			Args:
-				TODO
-				
-			"""
-			#TODO define problem 
-			self.T=T
-			self.B_hat=B_hat
-			self.A_hat=A_hat
-			self.r=r
-
-
-The ``Problem`` class is then passed into the ``analyze`` function of the ``Analyzer`` class. In this class the relevant evaluation calculations are performed and the results are returned.
-
-.. code-block:: python
-		
-	class LengthAnalyzer(me.Analyzer):
-		""""Calculates the required machine length to produce desired torque"""
-		
-		def analyze(self,problem:'me.Problem'):
-			"""Performs Analysis on a problem
-
-			Args:
-				problem (me.Problem): Problem Object
-
-			Returns:
-				results (Any): 
-					Results of Analysis
-
-			"""
-			#TODO Define Analyzer
-			T=problem.T
-			B_hat=problem.B_hat
-			A_hat=problem.A_hat
-			r=problem.r
-			L=T/(B_hat*A_hat*np.pi*r**2)
-			return L
-		
-Finally in the ``PostAnalyzer``, the results from the ``Analyzer`` are packaged back into the ``state`` object and any relevant changes to the ``state`` object are made. The new state now has the information from this analysis stored, and is ready for the next ``EvaluationStep``.
-
-.. code-block:: python
-		
-
-	class LengthPostAnalyzer(me.PostAnalyzer):
-		"""Converts input state into output state for TemplateAnalyzer"""
-		def get_next_state(self,results:Any,stateIn:'me.State')->'me.State':
-			stateOut=deepcopy(stateIn)
-			newMachine=stateOut.design.machine.newMachineFromNewLength(results)
-			stateOut.design.machine=newMachine
-			#TODO define Post-Analyzer
-			return stateOut
-			
-
-
-DesignSpace
-***********
-
-A ``DesignSpace`` object is defined for the optimization as well. This object is used to handle the calculations of objectives from the evaluation results, as well as manage the constraints, number of objectives, and bounds for the optimization. 
-
-.. code-block:: python
-
-	class DesignSpace:
-    """Design space of optimization"""
-    
-    def __init__(self,n_obj,bounds):
-        self._n_obj=n_obj
-        self._bounds=bounds
-    
-    def check_constraints(self, full_results) -> bool:
-        return True
-    @property
-    def n_obj(self) -> int:
-        return self._n_obj
-
-    def get_objectives(self, valid_constraints, full_results) -> tuple:
-        """ Calculates objectives from evaluation results
-        
-
-        Args:
-            full_results (List): Results from MachineEvaluator
-
-        Returns:
-            Tuple: objectives tuple 
-        """
-        final_state=full_results[-1][-1]
-        P_loss=final_state.conditions.P_loss
-        C=final_state.conditions.C
-        T_r=final_state.conditions.T_r
-        P_rated=final_state.design.settings.P_rated
-        
-        Eff=(P_rated-P_loss)/P_rated
-        results=(-Eff,C,T_r) #TODO define objectives
-        return results
-    @property
-    def bounds(self) -> tuple:
-        return self._bounds
-
-    
-
-DesignProblem
-*************
-
-The ``MachineDesigner``, ``MachineEvaluator``, and ``DesignSpace`` described above along with a ``DataHandler`` object are used to initialize a ``DesignProblem`` class from the ``des_opt`` module. First the ``MachineDesigner`` is created from the ``SettingsHandler`` and ``Architect``.
-
-.. code-block:: python
-
-	#Create Designer
-    settingsHandler=SettingsHandler(100E3) #TODO define settings
-    material=Material(7850,6.88E-5,.0186,.002)
-    arch=Architect(material)
-    des=me.MachineDesigner(arch,settingsHandler)
-
-The ``EvaluationSteps`` are initialized inside of an ordered list. This list is then passed to the ``MachineEvaluator`` for initialization, the ``MachineEvaluator`` will iterate through the evaluation steps in the order of the passed list. 
-
-.. code-block:: python
-
-    #Create evaluation steps
-    v_tip_max=150
-    maxL2r=10
-    evalSteps=[TipSpeedConstraintEvaluationStep(v_tip_max),
-               me.AnalysisStep(LengthProblemDefinition(),
-                               LengthAnalyzer(),
-                               LengthPostAnalyzer()),
-               L2rConstraintEvaluationStep(maxL2r),
-               me.AnalysisStep(LossProblemDefinition(),
-                               LossAnalyzer(),
-                               LossPostAnalyzer()),
-               me.AnalysisStep(CostProblemDefinition(),
-                               CostAnalyzer(),
-                               CostPostAnalyzer()),
-               me.AnalysisStep(TorqueRippleProblemDefinition(),
-                               TorqueRippleAnalyzer(),
-                               TorqueRipplePostAnalyzer())]
-    
-    #Create Evaluator
-    evaluator=me.MachineEvaluator(evalSteps)
 	
-A ``DataHandler`` object is not implement for this example, but a dummy object with empty function calls is still provided. The ``DesignSpace`` is provided the number of objectives and the free variable bounds on initialization as shown.
+Conclusion
+----------
 
-.. code-block:: python
-	
-    dh=DataHandler()
-    
-    #set evaluation bounds
-    bounds=([.1,10E3,.1E-3,10E-3,1000*2*np.pi/60],
-            [1,100E3,10E-3,95.5E-3,15000*2*np.pi/60])
+You have successfully completed this tutorial of the base capabilities of the ``mach_eval`` module. The following tasks are provided to demonstrate you understand how these classes work:
 
-    #set number of objectives
-    n_obj=3
+* Create a new ``EvaluationStep`` which calculates the motor efficiency
+* Copy and modify the example ``Machine`` and ``Architect`` classes to analyze a Q12p2y3 machine, could these classes be modified to use the same architect?
+* **Bonus task**: Using the skills learned in the :doc:`Previous tutorial <../rectangle_example/index>`, can you create a simple optimization using the provided ``MachineDesigner`` and ``MachineEvaluator``
 
-Finally the ``MachineDesigner``, MachineEvaluator``, ``DesignSpace``, and ``DataHandler`` objects are passed to the ``DesignProblem``for initialization. The ``DesignProblem`` is now ready for optimization.
 
-.. code-block:: python
-
-    #Create Machine Design Problem
-    ds=DesignSpace(n_obj, bounds)
-    machDesProb=do.DesignProblem(des,evaluator,ds,dh)
 	
 
