@@ -6,7 +6,9 @@ manner suitable for both machine optimization and evaluation.
 
 from typing import Protocol, runtime_checkable, Any, List
 from abc import abstractmethod, ABC
-from mach_opt import Design, Evaluator, Designer
+import sys
+sys.path.append("...")
+from .. import mach_opt as mo
 from copy import deepcopy
 
 __all__ = [
@@ -27,7 +29,7 @@ __all__ = [
 ]
 
 
-class MachineDesign(Design):
+class MachineDesign(mo.Design):
     """Class representing a complete machine design, includes machine physical description and operating conditions.
 
     Attributes:
@@ -41,7 +43,7 @@ class MachineDesign(Design):
         self.settings = settings
 
 
-class MachineDesigner(Designer):
+class MachineDesigner(mo.Designer):
     """Class representing a machine designer.
 
     Attributes:
@@ -99,16 +101,16 @@ class Architect(Protocol):
 class Machine(ABC):
     """Abstract base class for Machine objects"""
 
-    @abstractmethod
-    def check_required_properties(self):
-        pass
+    # @abstractmethod
+    # def check_required_properties(self):
+    #     pass
 
-    @abstractmethod
-    def get_missing_properties(self):
-        pass
+    # @abstractmethod
+    # def get_missing_properties(self):
+    #     pass
 
 
-class MachineEvaluator(Evaluator):
+class MachineEvaluator(mo.Evaluator):
     """Wrapper class for all steps involved in analyzing a MachineDesign
 
     Attributes:
