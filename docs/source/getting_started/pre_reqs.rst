@@ -133,7 +133,16 @@ explaination of Python virtual environments.
 While virtual environments themselves are IDE agnostic, using IDEs such as Visual Studio Code or PyCharm makes it far easier to 
 leverage their potential than using others such as Spyder. This `video <https://www.youtube.com/watch?v=-nh9rCzPJ20>`_ provides a 
 great, easy to understand, step-by-step guide of using VS Code with Python virtual environments. Beginners are adviced to follow 
-this tutorial if they plan on installing ``eMach`` dependecies via approach 3.
+this tutorial if they plan on installing ``eMach`` dependecies via approach 3. Getting the entire workflow up and running with 
+VS Code can be tricky. If you run into issues with running your scripts from a virtual environment in VS code even after following 
+the above tutorial, try adding the following entries to the ``settings.json`` file.
+
+.. code-block:: JSON
+
+    {
+      "python.terminal.activateEnvironment": false,
+      "terminal.integrated.defaultProfile.windows": "Command Prompt"
+    }
 
 .. tip:: When using virtual environments, it is always a good idea to confirm which paths your scripts are looking at to run Python
    and access packages. This can be done by importing the ``sys`` package and running ``print(sys.path)``. Make sure that all paths 
