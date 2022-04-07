@@ -1,17 +1,17 @@
 import os
 import sys
-
 # change current working directory to file location
 os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
 sys.path.append("../..")
 
+import numpy as np
 from matplotlib import pyplot as plt
+from typing import Any, List
 
 import mach_opt as mo
 import mach_eval as me
 import pygmo as pg
-from typing import List, Tuple, Any
 from copy import deepcopy
 
 
