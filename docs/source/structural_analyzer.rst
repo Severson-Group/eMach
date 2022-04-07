@@ -13,12 +13,12 @@ Model Background
 
 The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor.
 
-.. figure:: /images/structural/RotorConfig.svg
+.. figure:: ./images/Structural/RotorConfig.svg
    :alt: Trial1 
    :align: center
    :width: 600 
 
-.. figure:: /images/structural/SleeveOrientation.svg
+.. figure:: ./images/Structural/SleeveOrientation.svg
    :alt: Trial1 
    :align: center
    :width: 600 
