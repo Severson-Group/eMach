@@ -290,7 +290,7 @@ The following code block will extract results from the optimization and plot the
 	
 ``pygmo`` provides a method to extract the Pareto in the method ``fast_non_dominated_sorting(fits)``, the returned ``ndf`` object is a list of the indexes for the Pareto fronts. If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
 
-.. figure:: ./images/Pareto.svg
+.. figure:: ./images/ParetoFront.svg
    :alt: Trial1 
    :align: center
    :width: 600
