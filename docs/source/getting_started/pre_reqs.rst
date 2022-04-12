@@ -140,7 +140,7 @@ the above tutorial, try adding the following entries to the ``settings.json`` fi
 .. code-block:: JSON
 
     {
-      "python.terminal.activateEnvironment": false,
+      "python.terminal.activateEnvironment": true,
       "terminal.integrated.defaultProfile.windows": "Command Prompt"
     }
 
