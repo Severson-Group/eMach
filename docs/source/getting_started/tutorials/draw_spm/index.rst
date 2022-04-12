@@ -1,4 +1,4 @@
-Tutorial: Making an Electric Machine 
+Making an Electric Machine 
 ===========================================
 
 * **Goal:** Code and run script to make an SPM machine using ``mach_cad``
@@ -87,7 +87,7 @@ smaller than the inner radius of the stator bore, and the outer radius of the in
 the arc magnets. Users can create any multiple of 2 arc magnets in their SPM machine.
 
 .. note:: If you get stuck at any point of the tutorial, the example_spm.py script provides a working example of drawing a 4 pole
-, 6 slot surface permanent magnet machine in JMAG using ``eMach`` which can be used as a reference
+  , 6 slot surface permanent magnet machine in JMAG using ``eMach`` which can be used as a reference
 
 
 Step 3: Create ``Components`` from ``CrossSects``
@@ -118,7 +118,7 @@ the same height (25 mm in this case).
 		make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 	)
 
-Step 4: Make components
+Step 4: Make ``Components``
 --------------------------------------------------------------------
 
 After step 3, all the information required to make components in any ``eMach`` tool is available. The final step of actually making
@@ -144,7 +144,8 @@ should be drawn in the sequence they were defined in. The end result is expected
 .. figure:: ./images/SPM_3D.PNG
    :alt: SPM 
    :align: center
-   :width: 600 
+   :width: 400
+   
    
 Conclusion
 ----------------

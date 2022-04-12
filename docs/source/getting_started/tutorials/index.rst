@@ -26,7 +26,7 @@ their own custom scripts for using its functionalities.
 .. toctree::
     :hidden:
 
-	draw_spm/index
     rect_opti/index
     toy_opti/index
+	draw_spm/index
 	
