@@ -32,8 +32,8 @@ rotor1 = mo.CrossSectInnerNotchedRotor(
     location=mo.Location2D(),
     dim_alpha_rm=mo.DimDegree(180),
     dim_alpha_rs=mo.DimDegree(90),
-    dim_d_ri=mo.DimMillimeter(3),
-    dim_r_ri=mo.DimMillimeter(5),
+    dim_d_ri=mo.DimMillimeter(8),
+    dim_r_ri=mo.DimMillimeter(0),
     dim_d_rp=mo.DimMillimeter(5),
     dim_d_rs=mo.DimMillimeter(3),
     p=1,
@@ -73,59 +73,68 @@ magnet4 = mo.CrossSectArc(
 )
 
 
+electric_steel_mat = mo.MaterialGeneric(name="10JNEX900", color=r"#808080")
 comp1 = mo.Component(
     name="Stator",
     cross_sections=[stator1],
-    material=mo.MaterialGeneric(name="10JNEX900"),
+    material=electric_steel_mat,
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 )
 
 comp2 = mo.Component(
     name="Rotor",
     cross_sections=[rotor1],
-    material=mo.MaterialGeneric(name="10JNEX900"),
+    material=electric_steel_mat,
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 )
 
+magnet_mat = mo.MaterialGeneric(name="Arnold/Reversible/N40H", color=r"#4d4b4f")
 comp3 = mo.Component(
     name="Magnet1",
     cross_sections=[magnet1],
-    material=mo.MaterialGeneric(name="Arnold/Reversible/N40H"),
+    material=magnet_mat,
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 )
 
 comp4 = mo.Component(
     name="Magnet2",
     cross_sections=[magnet2],
-    material=mo.MaterialGeneric(name="Arnold/Reversible/N40H"),
+    material=magnet_mat,
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 )
 
 comp5 = mo.Component(
     name="Magnet3",
     cross_sections=[magnet3],
-    material=mo.MaterialGeneric(name="Arnold/Reversible/N40H"),
+    material=magnet_mat,
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 )
 
 comp6 = mo.Component(
     name="Magnet4",
     cross_sections=[magnet4],
-    material=mo.MaterialGeneric(name="Arnold/Reversible/N40H"),
+    material=magnet_mat,
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 )
 
 file = r"full_SPM_4pole2D.jproj"
 
-tool_jmag = jd.JmagDesigner2D()
-tool_jmag.open(comp_filepath=file, study_type="Transient2D")
-tool_jmag.set_visibility(False)
+tool_jmag = jd.JmagDesigner()
+tool_jmag.open(comp_filepath=file, study_type="Transient")
+tool_jmag.set_visibility(True)
 
-stator_tool = comp1.make(tool_jmag, tool_jmag)
-rotor_tool = comp2.make(tool_jmag, tool_jmag)
-magnet1_tool = comp3.make(tool_jmag, tool_jmag)
-magnet2_tool = comp4.make(tool_jmag, tool_jmag)
-magnet3_tool = comp5.make(tool_jmag, tool_jmag)
-magnet4_tool = comp6.make(tool_jmag, tool_jmag)
+# stator_tool = comp1.make(tool_jmag, tool_jmag)
+# rotor_tool = comp2.make(tool_jmag, tool_jmag)
+# magnet1_tool = comp3.make(tool_jmag, tool_jmag)
+# magnet2_tool = comp4.make(tool_jmag, tool_jmag)
+# magnet3_tool = comp5.make(tool_jmag, tool_jmag)
+# magnet4_tool = comp6.make(tool_jmag, tool_jmag)
+
+stator_tool = stator1.draw(tool_jmag)
+rotor_tool = rotor1.draw(tool_jmag)
+magnet1_tool = magnet1.draw(tool_jmag)
+magnet2_tool = magnet2.draw(tool_jmag)
+magnet3_tool = magnet3.draw(tool_jmag)
+magnet4_tool = magnet4.draw(tool_jmag)
 
 tool_jmag.save()
