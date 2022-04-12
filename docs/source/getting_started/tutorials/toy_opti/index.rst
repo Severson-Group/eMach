@@ -18,7 +18,7 @@ Tutorial Requirements
 This tutorial requires that ``eMach`` and the associated packages are installed:
 
 #. All required Python packages are installed on system. (See :doc:`Pre-requisites <../../pre_reqs>`)
-#. ``eMach`` installed as a sub-module in a root folder of a git repository (See :doc:`Rectangle Example <../rectangle_example/index>`)
+#. ``eMach`` installed as a sub-module in a root folder of a git repository (See :doc:`Rectangle Example <../rect_opti/index>`)
 
 
 Step 1: Create Python file for tutorial
@@ -412,7 +412,7 @@ You have successfully completed this tutorial of the base capabilities of the ``
 
 * Create a new ``EvaluationStep`` which calculates the motor efficiency
 * Copy and modify the example ``Machine`` and ``Architect`` classes to analyze a Q12p2y3 machine, could these classes be modified to use the same architect?
-* **Bonus task**: Using the skills learned in the :doc:`Previous tutorial <../rectangle_example/index>`, can you create a simple optimization using the provided ``MachineDesigner`` and ``MachineEvaluator``
+* **Bonus task**: Using the skills learned in the :doc:`Previous tutorial <../rect_opti/index>`, can you create a simple optimization using the provided ``MachineDesigner`` and ``MachineEvaluator``?
 
 
 	
