@@ -1,11 +1,11 @@
-Making an Electric Machine 
+Making an Electric Machine using ``eMach``
 ===========================================
 
-* **Goal:** Code and run script to make an SPM machine using ``mach_cad``
+* **Goal:** Code and execute script to make an SPM machine using ``mach_cad`` module within ``eMach``
 * **Complexity** 2/5
 * **Estimated Time** 15 min
 
-This tutorial demonstrates how to draw / build a SPM machine in any of the `tools` supported by ``eMach``. By the end of this 
+This tutorial demonstrates how to draw / build an SPM machine using the `tools` supported by ``eMach``. By the end of this 
 tutorial you will:
 
 * be able to use ``mach_cad`` classes to define 3D components
@@ -152,5 +152,5 @@ Conclusion
 
 Congratulations! You have successfully used ``eMach`` to make a most of the components required to simulate a surface permament 
 magnet machine! Users are recommended to further explore additional cross-sections currently supported by ``eMach`` or to create 
-their own cross-sections which they feel are generic enough to find use in a wide range of electric machines.
+their own cross-sections which they feel are generic enough to find use in a wide range of electric machine applications.
 
