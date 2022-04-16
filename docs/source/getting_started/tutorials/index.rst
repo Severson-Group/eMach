@@ -27,6 +27,7 @@ their own custom scripts for using its functionalities.
     :hidden:
 
     rect_opti/index
+	rect_opti2/index
     toy_opti/index
 	draw_spm/index
 	
