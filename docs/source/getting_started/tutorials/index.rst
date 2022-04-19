@@ -28,5 +28,5 @@ their own custom scripts for using its functionalities.
 
     rect_opti/index
     toy_opti/index
-	draw_spm/index
+    draw_spm/index
 	
