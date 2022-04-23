@@ -45,7 +45,7 @@ DesignSpace
 DataHandler
 	Saves the design, evaluation results, and objective values so that optimization can be paused and resumed.
 
-Additional details of each of these objects can be found in the code documentation. An example optimization of a rectangle using the ``des_opt`` module can be found :doc:`here <rectangle_example>`.
+Additional details of each of these objects can be found in the code documentation. An example optimization of a rectangle using the ``des_opt`` module can be found :doc:`here <rect_opti>`.
 
 Designer
 ~~~~~~~~
@@ -112,7 +112,7 @@ mach_eval Module Overview
    :align: center
    :width: 800 
 
-In this section, both the ``MachineDesigner`` and ``MachineEvaluator`` classes of the ``mach_eval`` module will be introduced and explained. These classes act an extension of the ``des_opt`` module's ``Designer`` and ``Evaluator`` protocols respectively. The purpose of this extension, is to provide a stronger framework for the flow of information between multiple evaluation steps (i.e. an interdependent multiphysics machine design). These classes are constructed specifically for the design and evaluation of electric machine, however they can be utilized in the optimization of any complex design problem. An example optimization demonstrating the use of the ``mach_eval`` module is provided :doc:`in this document<toy_example>`.
+In this section, both the ``MachineDesigner`` and ``MachineEvaluator`` classes of the ``mach_eval`` module will be introduced and explained. These classes act an extension of the ``des_opt`` module's ``Designer`` and ``Evaluator`` protocols respectively. The purpose of this extension, is to provide a stronger framework for the flow of information between multiple evaluation steps (i.e. an interdependent multiphysics machine design). These classes are constructed specifically for the design and evaluation of electric machine, however they can be utilized in the optimization of any complex design problem. An example optimization demonstrating the use of the ``mach_eval`` module is provided :doc:`in this document<toy_opti>`.
 
 MachineDesigner
 ~~~~~~~~~~~~~~~
