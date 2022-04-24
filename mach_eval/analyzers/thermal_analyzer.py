@@ -6,7 +6,7 @@ Created on Sat Jul 24 10:28:52 2021
 """
 import numpy as np
 import scipy.optimize as op
-from spec_USmotor_Q6p1 import fea_config_dict
+#from spec_USmotor_Q6p1 import fea_config_dict
 
 class ThermalProblem:
     
