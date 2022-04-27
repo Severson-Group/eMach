@@ -8,7 +8,7 @@ from typing import Protocol, runtime_checkable, Any, List
 from abc import abstractmethod, ABC
 import sys
 sys.path.append("..")
-from .. import mach_opt as mo
+import mach_opt as mo
 from copy import deepcopy
 
 __all__ = [
