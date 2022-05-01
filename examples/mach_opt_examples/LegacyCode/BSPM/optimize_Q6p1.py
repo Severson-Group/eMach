@@ -156,7 +156,6 @@ class WindageLossPostAnalyzer:
                 + state_out.conditions.em["rotor_iron_loss"]
                 + state_out.conditions.em["stator_iron_loss"]
                 + state_out.conditions.em["magnet_loss"]
-                + state_out.conditions.em['hysteresis_loss']
             )
         )
         state_out.conditions.windage = {"loss": results, "efficiency": eff}
