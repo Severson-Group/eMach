@@ -849,8 +849,8 @@ class BSPM_EM_Analysis():
             # Check if it is a distributed windg???
             if self.machine_variant.pitch == 1:
                 print('Concentrated winding!')
-                UVW = self.winding_layout.l_leftlayer1[index_leftlayer]
-                UpDown = self.winding_layout.l_leftlayer2[index_leftlayer]
+                UVW = self.machine_variant.layer_phases[1][index_leftlayer]
+                UpDown = self.machine_variant.layer_polarity[1][index_leftlayer]
             else:
                 if self.machine_variant.layer_phases[1][index_leftlayer] != UVW:
                     print('[Warn] Potential bug in your winding layout detected.')
