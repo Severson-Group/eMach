@@ -78,7 +78,7 @@ In this sub-step certain properties which are assumed to be constant for all ins
 
 .. code-block:: python
 
-	@property
+    @property
     def Q(self):
         return 6
     @property
@@ -136,7 +136,7 @@ Often it is convenient to define certain machine parameters in terms of others. 
 
 .. code-block:: python
 
-	@property
+    @property
     def r_si(self):
         return self._r_ro+self._d_ag
     @property
@@ -167,7 +167,7 @@ Often it is convenient to define certain machine parameters in terms of others. 
     def A_slot(self):
         return np.pi*(self.r_sy**2-self.r_si**2)/self.Q - \
             self.w_tooth*(self.r_sy-self.r_si)
-	@property 
+    @property 
     def alpha_q(self):
         return 2*np.pi/self.Q
 			
@@ -178,7 +178,7 @@ There can be certain machine parameters that are useful for defining a machines 
 
 .. code-block:: python
 
-	def A_hat(self,I):
+    def A_hat(self,I):
         N=self.Q/3
         A_hat=3*self.z_q*N*self.k_w*I/(np.pi*self.r_si)
         return A_hat
@@ -369,7 +369,7 @@ The following material dictionaries are provided for this example. Note that the
 		'magnet_therm_conductivity'  : 8.95, # W/m-k
 		}
 
-Step 8: Creating MachineDesiger 
+Step 8: Creating MachineDesigner 
 --------------------------------
 
 The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which holds an ``Architect`` and the ``SettingsHandler``. The ``MachineDesigner`` has a method ``create_design`` which takes in the input tuple and returns a ``design`` object. This design object has the ``Machine`` and ``Settings`` object for the associated input tuple as properties (i.e. ``design.machine`` and ``design.setttings``). The following code demonstrate how to initialize both the example ``Architect`` and ``SettingsHandler`` and use them to create a ``MachineDesigner``. A ``design`` object can be created from an input tuple ``x`` as shown. Copy this code into the bottom of the python file.
