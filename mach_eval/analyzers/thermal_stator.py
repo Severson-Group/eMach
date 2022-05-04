@@ -22,30 +22,30 @@ class ThermalProblemDefinition(me.ProblemDefinition):
     def get_problem(self,state:'me.State')->'me.Problem':
         """Returns Problem from Input State"""
         #TODO define problem definition
-        g_sy=state.conditions.g_sy
-        g_th=state.conditions.g_tooth
-        w_st=state.design.machine.w_tooth
-        l_st=state.design.machine.l_st
-        l_tooth=state.design.machine.l_tooth####
-        alpha_q=state.design.machine.alpha_q
-        r_so=state.design.machine.r_so#####
-        r_sy=state.design.machine.r_sy
+        g_sy=state.conditions.g_sy #Volumetric loss in Stator Yoke [W/m^3]
+        g_th=state.conditions.g_tooth #Volumetric loss in Stator Tooth [W/m^3]
+        w_st=state.design.machine.w_tooth #Tooth width [m]
+        l_st=state.design.machine.l_st # Stack length [m]
+        l_tooth=state.design.machine.l_tooth# Tooth length (r_sy-r_si) [m]
+        alpha_q=state.design.machine.alpha_q # [rad]
+        r_so=state.design.machine.r_so # outer stator radius [m]
+        r_sy=state.design.machine.r_sy # inner stator yoke radius [m]
         
-        k_ins=state.design.machine.ins_mat['k']
-        w_ins=state.design.machine.w_ins
-        k_fe=state.design.machine.core_mat['core_therm_conductivity']
-        h=state.design.settings.h
-        alpha_slot=state.design.machine.alpha_slot
-        T_coil_max=state.design.machine.coil_mat['Max_temp']
+        k_ins=state.design.machine.ins_mat['k'] #thermal insulation conductivity (~1)
+        w_ins=state.design.machine.w_ins # insulation thickness [m] (.5mm)
+        k_fe=state.design.machine.core_mat['core_therm_conductivity'] 
+        h=state.design.settings.h # convection co-eff W/m^2K
+        alpha_slot=state.design.machine.alpha_slot # span of back of stator slot [rad]
+        T_coil_max=state.design.machine.coil_mat['Max_temp'] # Max coil temp [K]
         
-        r_si=state.design.machine.r_si
-        Q=state.design.machine.Q
-        sigma=state.design.machine.coil_mat['sigma']
-        k_fill=state.design.machine.coil_mat['k_fill']
-        y=state.design.machine.y
-        k_ov=state.design.machine.coil_mat['k_ov']
-        J_hat=state.design.machine.J_hat*(1000**2)
-        h_slot=state.design.settings.h_slot
+        r_si=state.design.machine.r_si # inner stator radius
+        Q=state.design.machine.Q # number of slots
+        sigma=state.design.machine.coil_mat['sigma'] # electrical conductivity 5.80E7
+        k_fill=state.design.machine.coil_mat['k_fill'] #fill factor
+        y=state.design.machine.y #Span
+        k_ov=state.design.machine.coil_mat['k_ov'] #coil winding factor
+        J_hat=state.design.machine.J_hat*(1000**2) #Current density [A/mm]
+        h_slot=state.design.settings.h_slot # in slot convection coeff [W/m^2K] set to 0
         
         problem=ThermalProblem(g_sy,g_th,w_st,l_st,l_tooth,alpha_q,r_so,r_sy,k_ins,
                  w_ins,k_fe,h,alpha_slot,T_coil_max,
