@@ -402,6 +402,23 @@ Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a
 		results=evaluator.evaluate(design)
 		print(results)
 	
+Step 10: Interpreting Results 
+----------------------------------
+
+The results of the optimization printed in the console are interpreted in this step. The results object is an ordered list of input states, results, and output states corresponding to each evaluation step. The output state of a step and the input state of the next step are identical, this provides an accounting of how the state object may change during the optimization. 
+
+.. figure:: ./images/Results.svg
+   :alt: Trial1 
+   :align: center
+   :width: 800 
+
+The results of the example code should look like the following. The form shown in the image above can be seen here, for example for the first evaluation step it is input state, results of power evaluation step of 769kW then output state. The same can be seen for the second step, where the losses are provided as [``Q_tooth``, ``Q_sy`` , ``Q_coil``]
+
+.. code-block:: python
+
+		[[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BD60>, 796000.7929035134, <eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BFD0>],
+		[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C4F0>, [47.00334669919978, 44.94622291490794, 947.6525268802451],
+		<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C790>]]
 	
 Conclusion
 ----------
