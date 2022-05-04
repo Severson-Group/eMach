@@ -49,7 +49,7 @@ This should add the current develop branch of ``eMach`` as a folder in the base 
 Step 3: Create main optimization file
 ------------------------------------------
 
-In the root folder of your repository, create a python file named ``main.py``. All the code used in this example will be written in this file. This will be the file where the user inserts their custom code and runs the optimization. At the top of ``main.py`` add the following import statements:
+In the root folder of your repository, create a Python file named ``main.py``. All the code used in this example will be written in this file. This will be the file where the user inserts their custom code and runs the optimization. At the top of ``main.py`` add the following import statements:
 
 .. code-block:: python
 
@@ -67,7 +67,7 @@ In this step the user will fulfill the required ``Protocols`` from the ``mach_op
 Designer
 	The ``Designer`` protocol converts an input tuple into a ``design`` object.
 Evaluator
-	The ``Evaluator`` evaluates the ``design`` object for a set of criteria defined in the ``evaluate`` function
+	The ``Evaluator`` evaluates the ``design`` object for a set of criteria defined in the ``evaluate`` function.
 DesignSpace
 	The ``DesignSpace`` handles converting the results of the evaluation into the objective variables.
 	
@@ -84,10 +84,6 @@ Step 4.1: Create Designer and Design class
 ##########################################
 
 The ``Designer`` protocol of the ``mach_opt`` module is designed as a contract which defines how the optimization will convert the free variables tuple from ``pygmo`` to a ``design`` object. The ``design`` object is a container which holds all the information about a design known at the start of the evaluation process.  Only one function, ``create_design(x)``, is required to be implemented to fulfill the ``Designer`` protocol.
-
-In this example, the ``Designer`` protocol is implemented by the ``RectDesigner`` class. For this example, the required ``create_design(x)`` method of the ``Designer`` protocol extracts the length and width from the free variables and passes them into the ``Rectangle`` object (this optimization's ``Design`` object).
-
-.. note:: In this example both the ``RectDesigner`` and ``Rectangle`` classes explicitly inherent the base protocols from ``mach_opt``.  Since the parent classes are ``Protocols``, child classes do not need to explicitly inherit the parent, just the required methods must be implemented. 
 
 Copy the following code into your ``main.py`` file. These two classes fulfill the ``Designer`` and ``Design`` protocols specified in the ``mach_opt`` repository. This code will convert the free variable tuple ``x`` provided by ``pygmo`` into a ``Rectangle`` object to be evaluated.
 
@@ -132,7 +128,11 @@ Copy the following code into your ``main.py`` file. These two classes fulfill th
 			"""
 			self.L=L
 			self.W=W
-		
+
+In this example, the ``Designer`` protocol is implemented by the ``RectDesigner`` class. For this example, the required ``create_design(x)`` method of the ``Designer`` protocol extracts the length and width from the free variables and passes them into the ``Rectangle`` object (this optimization's ``Design`` object).
+
+.. note:: In this example both the ``RectDesigner`` and ``Rectangle`` classes explicitly inherent the base protocols from ``mach_opt``.  Since the parent classes are ``Protocols``, child classes do not need to explicitly inherit the parent, just the required methods must be implemented. 
+	
 Step 4.2: Create Evaluator class
 ################################
 
@@ -171,7 +171,7 @@ get_objectives(valid_constraints, full_results)
 check_constraints(full_results)
 	This method is used to apply a death penalty constraint if needed for the optimization. This is not used in this example.
 n_objs()
-	This method must be implemented using Python's ``property`` decorator. it returns the number of objective values the optimization returns. This values is required by ``pygmo`` inorder to run the optimization.
+	This method must be implemented using Python's ``property`` decorator. it returns the number of objective values the optimization returns. This values is required by ``pygmo`` to run the optimization.
 bounds()
 	This method must also be implemented using Python's ``property`` decorator. The bounds method must return a 2xN tuple which holds the lower and upper bounds for the free variables. ``pygmo`` will look at this method to determine the number and range of free variables to use.
 
@@ -214,7 +214,7 @@ The ``RectDesignSpace`` class is used in this example to implement the ``DesignS
 			
 Step 4.4: Create dummy DataHandler class
 ########################################
-for this example, we will not be implementing a ``DataHandler`` class to save the optimization results. However ``eMach`` still requires a class with the functions calls to be created. The following code block should be copied into ``main.py`` as a dummy ``DataHandler`` class.
+For this example, we will not be implementing a ``DataHandler`` class to save the optimization results. However ``eMach`` still requires a class with the functions calls to be created. The following code block should be copied into ``main.py`` as a dummy ``DataHandler`` class.
 
 .. code-block:: python
 
@@ -228,7 +228,7 @@ for this example, we will not be implementing a ``DataHandler`` class to save th
 Step 5: Initialize custom classes
 ------------------------------------------
 
-Now that the custom classes implementing the prescribed protocols from ``mach_opt`` have been defined. The user must create instances of the classes to be used for the optimization. For this example, the ``RectDesigner`` and ``RectEval`` classes don't require any initialization variables to be passed in. The ``RectDesignSpace`` object requires the the bounds of the free variables, and the number of objectives to be passed in on initialization. As noted previously the ``bounds`` object is a 2xN tuple that gives the lower and upper bounds for the free variables. For this example we are setting the bounds for the length and width to be 0 to 1.
+Now that the custom classes implementing the prescribed protocols from ``mach_opt`` have been defined. The user must create instances of the classes to be used for the optimization. For this example, the ``RectDesigner`` and ``RectEval`` classes don't require any initialization variables to be passed in. The ``RectDesignSpace`` object requires the the bounds of the free variables, and the number of objectives to be passed in on initialization. As noted previously, the ``bounds`` object is a 2xN tuple that gives the lower and upper bounds for the free variables. For this example, we are setting the bounds for the length and width to be 0 to 1.
 
 
 Copy the following code into the bottom of ``main.py``. This code will create instances of the defined ``Designer``, ``Evaluator``, and ``DesignSpace`` classes from earlier steps. 
@@ -269,7 +269,7 @@ In ``mach_opt`` the ``DesignOptimizationMOEAD`` class is provided to run a MOEAD
 	gen_size=10    
 	pop=opt.run_optimization(pop,gen_size)
 	
-.. note:: If the user wishes to use another algorithm in ``pygmo``, The ``DesignOptimizationMOEAD`` can be modified. The ``DesignProblem`` class is defined so that it is compatible with all multi-objective algorithms in used ``pygmo``. 
+.. note:: If the user wishes to use another algorithm in ``pygmo``, The ``DesignOptimizationMOEAD`` class can be copied and modified. The ``DesignProblem`` class is defined so that it is compatible with all multi-objective algorithms in used ``pygmo``. 
 
 Step 8: Extracting and plotting results
 ------------------------------------------------
@@ -288,7 +288,7 @@ The following code block will extract results from the optimization and plot the
 	plot1.set_ylabel('Perimeter')
 	plot1.set_title('Pareto Front')
 	
-``pygmo`` provides a method to extract the Pareto in the method ``fast_non_dominated_sorting(fits)``, the returned ``ndf`` object is a list of the indexes for the Pareto fronts. If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
+``pygmo`` provides a method to extract the Pareto in the method ``fast_non_dominated_sorting(fits)``, the returned ``ndf`` object is a list of the indexes for designs on the Pareto front. If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
 
 .. figure:: ./images/ParetoFront.svg
    :alt: Trial1 

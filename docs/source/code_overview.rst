@@ -1,22 +1,22 @@
 Code Overview
 =============================
 
-``MachEval`` is a open source code base designed to facilitate with the design, evaluation, and optimization of electrical machines. Since machine design is an extremely broad and varied field, ``MachEval`` is constructed to be as modular and flexible as possible to be able to accommodate as many machine topologies, evaluation processes, and optimization criteria. While certain base machine optimizations are provided in this repository, the code can be easily modified to produce custom optimizations as well.
+``eMach`` is a open source code base designed to facilitate with the design, evaluation, and optimization of electrical machines. Since machine design is an extremely broad and varied field, ``eMach`` is constructed to be as modular and flexible as possible to be able to accommodate as many machine topologies, evaluation processes, and optimization criteria. While certain base machine optimizations are provided in this repository, the code can be easily modified to produce custom optimizations as well.
 
-The ``MachEval`` code base is designed to be used by ``pygmo``, an open source optimization library in python. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
+The ``eMach`` code base is designed to be used by ``pygmo``, an open source optimization library in python. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
 
-The ``MachEval`` repository contains two sub-modules which interface between ``pygmo`` and one another as shown below. The ``des_opt`` module, short for `Design Optimization`, is defined to interface with the specified ``fitness`` function call from ``pygmo`` by converting free variables to objective values in a structured format. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. The ``mach_eval`` module is used to evaluate a machine design produced by ``des_opt``. ``mach_eval`` is an extension of two of the primary abstract classes in the ``des_opt`` module which provide additional structure and framework to handle more complicated design evaluations. The layered structure of ``MachEval`` allows for the higher level modules to be used independently of the lower level packages.
+The ``eMach`` repository contains two sub-modules which interface between ``pygmo`` and one another as shown below. The ``mach_opt`` module, short for `Machine Optimization`, is defined to interface with the specified ``fitness`` function call from ``pygmo`` by converting free variables to objective values in a structured format. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. The ``mach_eval`` module is used to evaluate a machine design produced by ``mach_opt``. ``mach_eval`` is an extension of two of the primary abstract classes in the ``mach_opt`` module which provide additional structure and framework to handle more complicated design evaluations. The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages.
 
 
-.. figure:: ./images/getting_started/CodeOverview.png
+.. figure:: ./images/getting_started/CodeOverview.svg
    :alt: Trial1 
    :align: center
    :width: 600 
 
 
-The rest of this document will cover both the ``des_opt`` and ``mach_eval`` modules, explaining their purpose and applications. 
+The rest of this document will cover both the ``mach_opt`` and ``mach_eval`` modules, explaining their purpose and applications. 
 
-des_opt Module Overview
+mach_opt Module Overview
 -----------------------
 
 .. figure:: ./images/getting_started/desopt_Diagram.svg
@@ -24,7 +24,7 @@ des_opt Module Overview
    :align: center
    :width: 400 
 
-The ``des_opt`` module is designed to extend the `user-defined problem <https://esa.github.io/pygmo2/tutorials/coding_udp_simple.html>`_ definition prescribed by ``pygmo``. In order for ``pygmo`` to run a multi-objective user-defined problem, the injected object must have three functions implemented: ``fitness``, ``get_bounds``, and ``get_nobj``. The primary class of the ``des_opt`` module is ``DesignProblem`` which implements these required functions. The flow of information between ``pygmo`` and the ``DesignProblem`` can be visualized in the following flowchart. 
+The ``mach_opt`` module is designed to extend the `user-defined problem <https://esa.github.io/pygmo2/tutorials/coding_udp_simple.html>`_ definition prescribed by ``pygmo``. In order for ``pygmo`` to run a multi-objective user-defined problem, the injected object must have three functions implemented: ``fitness``, ``get_bounds``, and ``get_nobj``. The primary class of the ``mach_opt`` module is ``DesignProblem`` which implements these required functions. The flow of information between ``pygmo`` and the ``DesignProblem`` can be visualized in the following flowchart. 
 
 .. figure:: ./images/RectangleExample/DesOptlFlowChart.svg
    :alt: Trial1 
@@ -45,7 +45,7 @@ DesignSpace
 DataHandler
 	Saves the design, evaluation results, and objective values so that optimization can be paused and resumed.
 
-Additional details of each of these objects can be found in the code documentation. An example optimization of a rectangle using the ``des_opt`` module can be found :doc:`here <rect_opti>`.
+Additional details of each of these objects can be found in the code documentation. An example optimization of a rectangle using the ``mach_opt`` module can be found :doc:`here <rect_opti>`.
 
 Designer
 ~~~~~~~~
@@ -112,12 +112,12 @@ mach_eval Module Overview
    :align: center
    :width: 800 
 
-In this section, both the ``MachineDesigner`` and ``MachineEvaluator`` classes of the ``mach_eval`` module will be introduced and explained. These classes act an extension of the ``des_opt`` module's ``Designer`` and ``Evaluator`` protocols respectively. The purpose of this extension, is to provide a stronger framework for the flow of information between multiple evaluation steps (i.e. an interdependent multiphysics machine design). These classes are constructed specifically for the design and evaluation of electric machine, however they can be utilized in the optimization of any complex design problem. An example optimization demonstrating the use of the ``mach_eval`` module is provided :doc:`in this document<toy_opti>`.
+In this section, both the ``MachineDesigner`` and ``MachineEvaluator`` classes of the ``mach_eval`` module will be introduced and explained. These classes act an extension of the ``mach_opt`` module's ``Designer`` and ``Evaluator`` protocols respectively. The purpose of this extension, is to provide a stronger framework for the flow of information between multiple evaluation steps (i.e. an interdependent multiphysics machine design). These classes are constructed specifically for the design and evaluation of electric machine, however they can be utilized in the optimization of any complex design problem. An example optimization demonstrating the use of the ``mach_eval`` module is provided :doc:`in this document<toy_opti>`.
 
 MachineDesigner
 ~~~~~~~~~~~~~~~
 
-The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` protocol from the ``des_opt`` module. This class is responsible for converting free variables from and optimization into a ``MachineDesign`` object. The ``MachineDesign`` object has two attributes: a ``machine`` and  ``settings`` object.  The ``machine`` attribute is an object that holds all the relevant information about the machine, including geometric dimensions, material properties, nameplate values, and winding specifications. The ``settings`` object describes the operating conditions (temperatures, currents/drive settings, operating speed/torques) as well as any other required information to evaluate the design.
+The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` protocol from the ``mach_opt`` module. This class is responsible for converting free variables from and optimization into a ``MachineDesign`` object. The ``MachineDesign`` object has two attributes: a ``machine`` and  ``settings`` object.  The ``machine`` attribute is an object that holds all the relevant information about the machine, including geometric dimensions, material properties, nameplate values, and winding specifications. The ``settings`` object describes the operating conditions (temperatures, currents/drive settings, operating speed/torques) as well as any other required information to evaluate the design.
 
 .. figure:: ./images/getting_started/MachineDesignerProtocols.svg
    :alt: Trial1 
@@ -204,7 +204,7 @@ Similar to the ``Architect``, the ``SettingsHandler`` is responsible for creatin
 MachineEvaluator
 ~~~~~~~~~~~~~~~~
 
-The ``MachineEvaluator`` class implements the ``Evaluator`` protocol from the ``des_opt`` module. This class extracts evaluation results from the ``MachineDesign`` object created by the ``MachineDesigner``. The evaluation process is split into distinct steps which are described by an ``EvaluationStep`` protocol. These step objects take in an input ``state``, which holds the ``MachineDesign`` and any results from the previous evaluations, preform some evaluation on the design, and then package the results to a new ``state`` object. 
+The ``MachineEvaluator`` class implements the ``Evaluator`` protocol from the ``mach_opt`` module. This class extracts evaluation results from the ``MachineDesign`` object created by the ``MachineDesigner``. The evaluation process is split into distinct steps which are described by an ``EvaluationStep`` protocol. These step objects take in an input ``state``, which holds the ``MachineDesign`` and any results from the previous evaluations, preform some evaluation on the design, and then package the results to a new ``state`` object. 
 
 .. figure:: ./images/getting_started/MachineEvaluatorProtocols.svg
    :alt: Trial1 
