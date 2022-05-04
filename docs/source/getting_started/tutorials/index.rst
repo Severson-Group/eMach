@@ -31,5 +31,5 @@ their own custom scripts for using its functionalities.
     rect_opti/index
     toy_opti/index
     draw_spm/index
-	  example_machine_optimization/index
+    example_machine_optimization/index
 
