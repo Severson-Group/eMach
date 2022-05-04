@@ -38,7 +38,7 @@ At the top of the python file copy the following import statements to add the re
 	from matplotlib import pyplot as plt
 	from eMach import mach_eval as me
 	from copy import deepcopy
-	
+
 Step 3: Define Machine Class
 ------------------------------------------
 
@@ -68,8 +68,6 @@ The following code block shows how the ``ExampleMachineQ6p1y3`` class is Initial
 			self._magnet_mat= magnet_mat
 			self._core_mat = core_mat
 			self._coil_mat = coil_mat
-			
-
 
 Step 3.2: Class Constant Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,15 +76,15 @@ In this sub-step certain properties which are assumed to be constant for all ins
 
 .. code-block:: python
 
-	@property
-    def Q(self):
-        return 6
-    @property
-    def p(self):
-        return 1
-    @property
-    def y(self):
-        return 3
+		@property
+		def Q(self):
+			return 6
+		@property
+		def p(self):
+			return 1
+		@property
+		def y(self):
+			return 3
 
 Step 3.3: Input Defined Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,39 +93,39 @@ In step 3.1, the inputs to the initialization function were defined so that they
 
 .. code-block:: python
 
-    @property
-    def r_ro(self):
-        return self._r_ro
-    @property
-    def d_m(self):
-        return self._d_m
-    @property
-    def d_ag(self):
-        return self._d_ag
-    @property
-    def l_tooth(self):
-        return self._l_tooth
-    @property
-    def w_tooth(self):
-        return self._w_tooth
-    @property
-    def d_yoke(self):
-        return self._d_yoke
-    @property
-    def z_q(self):
-        return self._z_q
-    @property 
-    def l_st(self):
-        return self._l_st
-    @property
-    def magnet_mat(self):
-        return self._magnet_mat
-    @property
-    def core_mat(self):
-        return self._core_mat
-    @property
-    def coil_mat(self):
-        return self._coil_mat
+		@property
+		def r_ro(self):
+			return self._r_ro
+		@property
+		def d_m(self):
+			return self._d_m
+		@property
+		def d_ag(self):
+			return self._d_ag
+		@property
+		def l_tooth(self):
+			return self._l_tooth
+		@property
+		def w_tooth(self):
+			return self._w_tooth
+		@property
+		def d_yoke(self):
+			return self._d_yoke
+		@property
+		def z_q(self):
+			return self._z_q
+		@property 
+		def l_st(self):
+			return self._l_st
+		@property
+		def magnet_mat(self):
+			return self._magnet_mat
+		@property
+		def core_mat(self):
+			return self._core_mat
+		@property
+		def coil_mat(self):
+			return self._coil_mat
 
 Step 3.4: Derived Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,40 +134,40 @@ Often it is convenient to define certain machine parameters in terms of others. 
 
 .. code-block:: python
 
-	@property
-    def r_si(self):
-        return self._r_ro+self._d_ag
-    @property
-    def r_sy(self):
-        return self.r_si+self._l_tooth
-    @property
-    def r_so(self):
-        return self.r_sy+self._d_yoke
-    @property
-    def B_delta(self):
-        return self.d_m*self.magnet_mat['B_r']/(self.magnet_mat['mu_r']*self.d_ag+self.d_m)
-    @property
-    def B_sy(self):
-        return np.pi*self.B_delta*self.r_si/(2*self.p*(self.d_yoke))
-    @property
-    def B_th(self):
-        return self.B_delta*self.r_si*self.alpha_q/(self.w_tooth)
-    @property
-    def k_w(self):
-        alpha=np.pi*((self.Q-2*self.y)/(self.Q*self.p))
-        n=self.Q/(2*self.p)
-        m=self.Q/(6*self.p)
-        Beta=np.pi/n
-        k_w=np.cos(alpha/2)*(np.sin(m*Beta/2))/(m*np.sin(Beta/2))
-        self._k_w=k_w
-        return self._k_w
-    @property
-    def A_slot(self):
-        return np.pi*(self.r_sy**2-self.r_si**2)/self.Q - \
-            self.w_tooth*(self.r_sy-self.r_si)
-	@property 
-    def alpha_q(self):
-        return 2*np.pi/self.Q
+		@property
+		def r_si(self):
+			return self._r_ro+self._d_ag
+		@property
+		def r_sy(self):
+			return self.r_si+self._l_tooth
+		@property
+		def r_so(self):
+			return self.r_sy+self._d_yoke
+		@property
+		def B_delta(self):
+			return self.d_m*self.magnet_mat['B_r']/(self.magnet_mat['mu_r']*self.d_ag+self.d_m)
+		@property
+		def B_sy(self):
+			return np.pi*self.B_delta*self.r_si/(2*self.p*(self.d_yoke))
+		@property
+		def B_th(self):
+			return self.B_delta*self.r_si*self.alpha_q/(self.w_tooth)
+		@property
+		def k_w(self):
+			alpha=np.pi*((self.Q-2*self.y)/(self.Q*self.p))
+			n=self.Q/(2*self.p)
+			m=self.Q/(6*self.p)
+			Beta=np.pi/n
+			k_w=np.cos(alpha/2)*(np.sin(m*Beta/2))/(m*np.sin(Beta/2))
+			self._k_w=k_w
+			return self._k_w
+		@property
+		def A_slot(self):
+			return np.pi*(self.r_sy**2-self.r_si**2)/self.Q - \
+				self.w_tooth*(self.r_sy-self.r_si)
+		@property 
+		def alpha_q(self):
+			return 2*np.pi/self.Q
 			
 Step 3.5: Auxiliary Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -178,13 +176,13 @@ There can be certain machine parameters that are useful for defining a machines 
 
 .. code-block:: python
 
-	def A_hat(self,I):
-        N=self.Q/3
-        A_hat=3*self.z_q*N*self.k_w*I/(np.pi*self.r_si)
-        return A_hat
-    def v_tip(self,Omega):
-        v_tip=Omega*self.r_ro
-        return v_tip
+		def A_hat(self,I):
+			N=self.Q/3
+			A_hat=3*self.z_q*N*self.k_w*I/(np.pi*self.r_si)
+			return A_hat
+		def v_tip(self,Omega):
+			v_tip=Omega*self.r_ro
+			return v_tip
 		
 Step 4: Define Settings Class
 -----------------------------
@@ -193,10 +191,10 @@ Like the ``Machine`` class defined in the previous step, the ``Settings`` class 
 
 .. code-block:: python
 
-	class ExampleSettings:
-		def __init__(self,Omega,I):
-			self.Omega=Omega
-			self.I=I
+		class ExampleSettings:
+			def __init__(self,Omega,I):
+				self.Omega=Omega
+				self.I=I
 		
 Step 5: Define the Architect
 -----------------------------
@@ -216,40 +214,40 @@ Copy the following code into the python file to implement the example architect.
 
 .. code-block:: python
 
-	class ExampleMotorArchitect(me.Architect):
-		"""Class converts input tuple x into a machine object"""   
-		def __init__(self,magnet_mat,core_mat,
-					 coil_mat):
-			self.magnet_mat=magnet_mat
-			self.core_mat=core_mat
-			self.coil_mat=coil_mat
-		def create_new_design(self,x:tuple):
-			r_ro=x[0]
-			d_m_norm=x[1]
-			d_m=d_m_norm*r_ro
-			l_st=x[2]*r_ro
-			r_sy_norm=x[3]
-			r_so_norm=x[4]
-			w_tooth_norm=x[5]
-			z_q=x[6]
-			
-			d_ag=.002
-			Q=6
+		class ExampleMotorArchitect(me.Architect):
+			"""Class converts input tuple x into a machine object"""   
+			def __init__(self,magnet_mat,core_mat,
+						 coil_mat):
+				self.magnet_mat=magnet_mat
+				self.core_mat=core_mat
+				self.coil_mat=coil_mat
+			def create_new_design(self,x:tuple):
+				r_ro=x[0]
+				d_m_norm=x[1]
+				d_m=d_m_norm*r_ro
+				l_st=x[2]*r_ro
+				r_sy_norm=x[3]
+				r_so_norm=x[4]
+				w_tooth_norm=x[5]
+				z_q=x[6]
+				
+				d_ag=.002
+				Q=6
 
-			r_si=r_ro+d_ag
-			alpha_q=2*np.pi/Q
-			w_tooth=2*r_si*np.sin(w_tooth_norm*alpha_q/2)
-			r_so=r_so_norm*r_si
-			r_sy=r_sy_norm*(r_so-r_si)+r_si
-			d_yoke=r_so-r_sy 
-			l_tooth=r_sy-r_si
+				r_si=r_ro+d_ag
+				alpha_q=2*np.pi/Q
+				w_tooth=2*r_si*np.sin(w_tooth_norm*alpha_q/2)
+				r_so=r_so_norm*r_si
+				r_sy=r_sy_norm*(r_so-r_si)+r_si
+				d_yoke=r_so-r_sy 
+				l_tooth=r_sy-r_si
 
-			
-			machine=ExampleMachineQ6p1y3(r_ro,d_m,d_ag,l_tooth,
-					 w_tooth,d_yoke,z_q,l_st,
-					 self.magnet_mat,self.core_mat,self.coil_mat)
-			
-			return machine
+				
+				machine=ExampleMachineQ6p1y3(r_ro,d_m,d_ag,l_tooth,
+						 w_tooth,d_yoke,z_q,l_st,
+						 self.magnet_mat,self.core_mat,self.coil_mat)
+				
+				return machine
 
 Step 6: Define the SettingsHandler
 -----------------------------------
@@ -258,14 +256,14 @@ The ``SettingsHandler`` class of the ``mach_eval`` module is also described in d
 
 .. code-block:: python
 
-	class ExampleSettingsHandler():
-		"""Settings handler for design creation"""
-		def __init__(self,Omega):
-			self.Omega=Omega
-		def get_settings(self,x):
-			I=x[7]
-			settings = ExampleSettings(self.Omega,I)
-			return settings  
+		class ExampleSettingsHandler():
+			"""Settings handler for design creation"""
+			def __init__(self,Omega):
+				self.Omega=Omega
+			def get_settings(self,x):
+				I=x[7]
+				settings = ExampleSettings(self.Omega,I)
+				return settings  
 
 Step 6: Define the EvaluationSteps
 ----------------------------------
@@ -274,59 +272,59 @@ The ``EvaluationStep`` protocol of the ``mach_eval`` module, defines a function 
 
 .. code-block:: python
 
-	class PowerEvalStep(me.EvaluationStep):
-		def step(self,state_in):
-			B_delta=state_in.design.machine.B_delta
-			r_ro=state_in.design.machine.r_ro
-			l_st=state_in.design.machine.l_st
-			I=state_in.design.settings.I
-			A_hat=state_in.design.machine.A_hat(I)
-			Omega=state_in.design.settings.Omega
-			V_r=np.pi*r_ro**2*l_st
-			Power=Omega*V_r*B_delta*A_hat
-			state_out=deepcopy(state_in)
-			state_out.conditions.Power=Power
-			return [Power,state_out]
-		
-	class LossesEvalStep(me.EvaluationStep):
-		def step(self,state_in):
-			w_tooth=state_in.design.machine.w_tooth
-			l_tooth=state_in.design.machine.l_tooth
-			alpha_q=state_in.design.machine.alpha_q
-			r_si=state_in.design.machine.r_si
-			r_so=state_in.design.machine.r_so
-			r_sy=state_in.design.machine.r_sy
-			I=state_in.design.settings.I
-			z_q=state_in.design.machine.z_q
-			A_slot=state_in.design.machine.A_slot
-			k_fill=state_in.design.machine.coil_mat['k_fill']
-			sigma=state_in.design.machine.coil_mat['sigma']
-			k_ov=state_in.design.machine.coil_mat['k_ov']
-			l_st=state_in.design.machine.l_st
-			Omega=state_in.design.settings.Omega
-			p=state_in.design.machine.p
-			y=state_in.design.machine.y
-			Q=state_in.design.machine.Q
-			K_h=state_in.design.machine.core_mat['core_ironloss_Kh']
-			b=state_in.design.machine.core_mat['core_ironloss_b']
-			a=state_in.design.machine.core_mat['core_ironloss_a']
-			K_e=state_in.design.machine.core_mat['core_ironloss_Ke']
-			k_stack=state_in.design.machine.core_mat['core_stacking_factor']
-			B_sy=state_in.design.machine.B_sy
-			B_tooth=state_in.design.machine.B_th
+		class PowerEvalStep(me.EvaluationStep):
+			def step(self,state_in):
+				B_delta=state_in.design.machine.B_delta
+				r_ro=state_in.design.machine.r_ro
+				l_st=state_in.design.machine.l_st
+				I=state_in.design.settings.I
+				A_hat=state_in.design.machine.A_hat(I)
+				Omega=state_in.design.settings.Omega
+				V_r=np.pi*r_ro**2*l_st
+				Power=Omega*V_r*B_delta*A_hat
+				state_out=deepcopy(state_in)
+				state_out.conditions.Power=Power
+				return [Power,state_out]
 			
-			l_turn=2*l_st+y*alpha_q*(r_si+r_sy)*k_ov
-			f=p*Omega/(2*np.pi)
-			g_sy=(K_h*(f**a)*(B_sy**b) + K_e*(f*B_sy)**2)*k_stack
-			g_th=(K_h*(f**a)*(B_tooth**b) + K_e*(f*B_tooth)**2)*k_stack
-			A_cond=k_fill*A_slot/z_q
-			J_hat=I/A_cond
-			Q_tooth=g_th*w_tooth*l_st*l_tooth*Q
-			Q_sy=g_sy*np.pi*(r_so**2-r_sy**2)*l_st
-			Q_coil= (J_hat**2)*l_turn*k_fill*A_slot/(sigma*2)
-			state_out=deepcopy(state_in)
-			state_out.conditions.losses=[Q_tooth,Q_sy,Q_coil]
-			return [[Q_tooth,Q_sy,Q_coil],state_out]
+		class LossesEvalStep(me.EvaluationStep):
+			def step(self,state_in):
+				w_tooth=state_in.design.machine.w_tooth
+				l_tooth=state_in.design.machine.l_tooth
+				alpha_q=state_in.design.machine.alpha_q
+				r_si=state_in.design.machine.r_si
+				r_so=state_in.design.machine.r_so
+				r_sy=state_in.design.machine.r_sy
+				I=state_in.design.settings.I
+				z_q=state_in.design.machine.z_q
+				A_slot=state_in.design.machine.A_slot
+				k_fill=state_in.design.machine.coil_mat['k_fill']
+				sigma=state_in.design.machine.coil_mat['sigma']
+				k_ov=state_in.design.machine.coil_mat['k_ov']
+				l_st=state_in.design.machine.l_st
+				Omega=state_in.design.settings.Omega
+				p=state_in.design.machine.p
+				y=state_in.design.machine.y
+				Q=state_in.design.machine.Q
+				K_h=state_in.design.machine.core_mat['core_ironloss_Kh']
+				b=state_in.design.machine.core_mat['core_ironloss_b']
+				a=state_in.design.machine.core_mat['core_ironloss_a']
+				K_e=state_in.design.machine.core_mat['core_ironloss_Ke']
+				k_stack=state_in.design.machine.core_mat['core_stacking_factor']
+				B_sy=state_in.design.machine.B_sy
+				B_tooth=state_in.design.machine.B_th
+				
+				l_turn=2*l_st+y*alpha_q*(r_si+r_sy)*k_ov
+				f=p*Omega/(2*np.pi)
+				g_sy=(K_h*(f**a)*(B_sy**b) + K_e*(f*B_sy)**2)*k_stack
+				g_th=(K_h*(f**a)*(B_tooth**b) + K_e*(f*B_tooth)**2)*k_stack
+				A_cond=k_fill*A_slot/z_q
+				J_hat=I/A_cond
+				Q_tooth=g_th*w_tooth*l_st*l_tooth*Q
+				Q_sy=g_sy*np.pi*(r_so**2-r_sy**2)*l_st
+				Q_coil= (J_hat**2)*l_turn*k_fill*A_slot/(sigma*2)
+				state_out=deepcopy(state_in)
+				state_out.conditions.losses=[Q_tooth,Q_sy,Q_coil]
+				return [[Q_tooth,Q_sy,Q_coil],state_out]
 
 Step 7: Define Material Dictionaries 
 ------------------------------------
@@ -335,61 +333,61 @@ The following material dictionaries are provided for this example. Note that the
 		
 .. code-block:: python			
 			
-	core_mat = {
-		'core_material'              : 'M19Gauge29',
-		'core_material_density'      : 7650, # kg/m3
-		'core_youngs_modulus'        : 185E9, # Pa
-		'core_poission_ratio'        : .3,
-		'core_material_cost'         : 17087, # $/m3
-		'core_ironloss_a'            : 1.193,# freq
-		'core_ironloss_b'            : 1.918,# field
-		'core_ironloss_Kh'           : 55.1565, # W/m3
-		'core_ironloss_Ke'           : 0.050949, # W/m3
-		'core_therm_conductivity'    : 28, # W/m-k
-		'core_stacking_factor'       : .96, # percentage
-		'core_saturation_feild'      : 1.6 #T
-		}
+		core_mat = {
+			'core_material'              : 'M19Gauge29',
+			'core_material_density'      : 7650, # kg/m3
+			'core_youngs_modulus'        : 185E9, # Pa
+			'core_poission_ratio'        : .3,
+			'core_material_cost'         : 17087, # $/m3
+			'core_ironloss_a'            : 1.193,# freq
+			'core_ironloss_b'            : 1.918,# field
+			'core_ironloss_Kh'           : 55.1565, # W/m3
+			'core_ironloss_Ke'           : 0.050949, # W/m3
+			'core_therm_conductivity'    : 28, # W/m-k
+			'core_stacking_factor'       : .96, # percentage
+			'core_saturation_feild'      : 1.6 #T
+			}
 
-	coil_mat = {
-		'Max_temp'                   : 150, # Rise C
-		'k_ov'                       : 1.8,
-		'sigma'                      : 5.80E7,
-		'k_fill'                     : .38}
-	magnet_mat = {
-		'magnet_material'            : "Arnold/Reversible/N40H",
-		'magnet_material_density'    : 7450, # kg/m3
-		'magnet_youngs_modulus'      : 160E9, # Pa
-		'magnet_poission_ratio'      :.24,
-		'magnet_material_cost'       : 712756, # $/m3
-		'magnetization_direction'    : 'Parallel',
-		'B_r'                        : 1.285, # Tesla, magnet residual flux density
-		'mu_r'                       : 1.062, # magnet relative permeability
-		'magnet_max_temperature'     : 80, # deg C
-		'magnet_max_rad_stress'      : 0, # Mpa  
-		'magnet_therm_conductivity'  : 8.95, # W/m-k
-		}
+		coil_mat = {
+			'Max_temp'                   : 150, # Rise C
+			'k_ov'                       : 1.8,
+			'sigma'                      : 5.80E7,
+			'k_fill'                     : .38}
+		magnet_mat = {
+			'magnet_material'            : "Arnold/Reversible/N40H",
+			'magnet_material_density'    : 7450, # kg/m3
+			'magnet_youngs_modulus'      : 160E9, # Pa
+			'magnet_poission_ratio'      :.24,
+			'magnet_material_cost'       : 712756, # $/m3
+			'magnetization_direction'    : 'Parallel',
+			'B_r'                        : 1.285, # Tesla, magnet residual flux density
+			'mu_r'                       : 1.062, # magnet relative permeability
+			'magnet_max_temperature'     : 80, # deg C
+			'magnet_max_rad_stress'      : 0, # Mpa  
+			'magnet_therm_conductivity'  : 8.95, # W/m-k
+			}
 
-Step 8: Creating MachineDesiger 
+Step 8: Creating MachineDesigner 
 --------------------------------
 
 The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which holds an ``Architect`` and the ``SettingsHandler``. The ``MachineDesigner`` has a method ``create_design`` which takes in the input tuple and returns a ``design`` object. This design object has the ``Machine`` and ``Settings`` object for the associated input tuple as properties (i.e. ``design.machine`` and ``design.setttings``). The following code demonstrate how to initialize both the example ``Architect`` and ``SettingsHandler`` and use them to create a ``MachineDesigner``. A ``design`` object can be created from an input tuple ``x`` as shown. Copy this code into the bottom of the python file.
 
 .. code-block:: python
 					
-	Omega=100
-	arch=ExampleMotorArchitect(magnet_mat,core_mat,coil_mat)
-	settings_handler=ExampleSettingsHandler(Omega)
-	des=me.MachineDesigner(arch,settings_handler)
-	r_ro=.1
-	d_m_norm=.0025
-	l_st_norm=5
-	r_sy_norm=.25
-	r_so_norm=10
-	w_tooth_norm=.8
-	z_q=100
-	I=20
-	x=[r_ro,d_m_norm,l_st_norm,r_sy_norm,r_so_norm,w_tooth_norm,z_q,I]
-	design=des.create_design(x)
+		Omega=100
+		arch=ExampleMotorArchitect(magnet_mat,core_mat,coil_mat)
+		settings_handler=ExampleSettingsHandler(Omega)
+		des=me.MachineDesigner(arch,settings_handler)
+		r_ro=.1
+		d_m_norm=.0025
+		l_st_norm=5
+		r_sy_norm=.25
+		r_so_norm=10
+		w_tooth_norm=.8
+		z_q=100
+		I=20
+		x=[r_ro,d_m_norm,l_st_norm,r_sy_norm,r_so_norm,w_tooth_norm,z_q,I]
+		design=des.create_design(x)
 
 Step 9: Creating MachineEvaluator 
 ----------------------------------
@@ -398,12 +396,29 @@ Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a
 
 .. code-block:: python
 
-	power_step=PowerEvalStep()
-	loss_step=LossesEvalStep()
-	evaluator=me.MachineEvaluator([power_step,loss_step])
-	results=evaluator.evaluate(design)
-	print(results)
+		power_step=PowerEvalStep()
+		loss_step=LossesEvalStep()
+		evaluator=me.MachineEvaluator([power_step,loss_step])
+		results=evaluator.evaluate(design)
+		print(results)
 	
+Step 10: Interpreting Results 
+----------------------------------
+
+The results of the optimization printed in the console are interpreted in this step. The results object is an ordered list of input states, results, and output states corresponding to each evaluation step. The output state of a step and the input state of the next step are identical, this provides an accounting of how the state object may change during the optimization. 
+
+.. figure:: ./images/Results.svg
+   :alt: Trial1 
+   :align: center
+   :width: 800 
+
+The results of the example code should look like the following. The form shown in the image above can be seen here, for example for the first evaluation step it is input state, results of power evaluation step of 769kW then output state. The same can be seen for the second step, where the losses are provided as [``Q_tooth``, ``Q_sy`` , ``Q_coil``]
+
+.. code-block:: python
+
+		[[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BD60>, 796000.7929035134, <eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BFD0>],
+		[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C4F0>, [47.00334669919978, 44.94622291490794, 947.6525268802451],
+		<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C790>]]
 	
 Conclusion
 ----------
