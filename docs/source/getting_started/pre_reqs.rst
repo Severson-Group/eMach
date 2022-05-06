@@ -18,13 +18,13 @@ selectively install only the packages they require can go with the ``Miniconda``
 <https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html#anaconda-or-miniconda>`_ succintly summarizes when
 either installer should be used.
 
-After installing ``Anaconda````Miniconda``/, please ensure that paths to the Python and conda installations are included in the 
+After installing ``Anaconda`` / ``Miniconda``, please ensure that paths to the Python and conda installations are included in the 
 ``Path`` ``User Variables`` (for Windows systems). This is required for your system to know how to run Python scripts, find relavent
-Python packages, run ``conda`` commands etc. To verify this, 
+Python packages, run ``conda`` commands, etc. To verify this, 
 
 1. Search ``environment variables`` in the Windows search bar.
 2. Select ``Edit the system environment variables``.
-3. Now click on the ``Environment Variables...`` button from the ``System Properties`` window
+3. Now click on the ``Environment Variables...`` button from the ``System Properties`` window.
 4. Within ``User Variables``, double click on ``Path``.
 5. A list of directories should now be visible, among which the directories where the newly install ``python.exe`` and
    ``conda.exe`` files reside should be included. It will most likely be in the folder ``C:\Users\YourName\anaconda3`` and 
@@ -73,11 +73,11 @@ In this approach, the base Python installation is updated to include the package
 easiest approach in terms of complexity as users simply need to launch ``Command Prompt`` and effectively type in a single command.
 Users can follow the steps provided below to install ``eMach`` packages as per this approach.
 
-1. Launch Windows ``Command Prompt`` 
-2. Navigate to the location of the ``environment.yml`` file or the root of ``eMach`` git repository within ``Command Prompt`` 
-3. Run the following command : ``conda env update --name base --file environment.yml --prune``
-4. Wait for the packages to install, enter ``y`` if required
-5. Run ``rectangle_example.py`` from ``examples/mach_opt_examples`` to confirm everything is in order 
+1. Launch Windows ``Command Prompt``.
+2. Navigate to the location of the ``environment.yml`` file or the root of ``eMach`` git repository within ``Command Prompt``.
+3. Run the following command : ``conda env update --name base --file environment.yml --prune``.
+4. Wait for the packages to install, enter ``y`` if required.
+5. Run ``rectangle_example.py`` from ``examples/mach_opt_examples`` to confirm everything is in order.
 
 .. warning:: ``Anaconda`` comes with a **large** Python ``base``. Updating such environments can take a very long time. If you are 
    running into this issue, consider following approach 2 or 3. 
@@ -104,11 +104,11 @@ Beginners to Python virtual environments are recommended to go through the secti
 approach. Here, the procedure by which a new ``eMach`` conda environment, having all the required dependecies and the right Python 
 version, can be created is provided.
 
-1. Launch Windows ``Command Prompt`` 
-2. Navigate to the location of the ``environment.yml`` file or the root of ``eMach`` git repository within ``Command Prompt`` 
-3. Run command ``conda env create -f environment.yml``
-4. Wait for the packages to install, enter ``y`` wherever required
-5.  Run ``rectangle_example.py`` from ``examples/mach_opt_examples`` to confirm everything is in order 
+1. Launch Windows ``Command Prompt``.
+2. Navigate to the location of the ``environment.yml`` file or the root of ``eMach`` git repository within ``Command Prompt``.
+3. Run command ``conda env create -f environment.yml``.
+4. Wait for the packages to install, enter ``y`` wherever required.
+5.  Run ``rectangle_example.py`` from ``examples/mach_opt_examples`` to confirm everything is in order.
 
 Congratulations! You have successfully completed all installations required to start using ``eMach``. You can now try running other 
 examples provided within the ``examples`` folder to confirm everything is working as expected.
