@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Feb 28 17:37:05 2021
-
-@author: Bharat
-"""
-
-
 class BSPM_EMAnalyzer_Settings:
     """ This is a wrapper class designed to contain all relevant information
     on the operating point for obtaining electrical performance evaluation of
@@ -18,29 +10,20 @@ class BSPM_EMAnalyzer_Settings:
         Iq=0.95,
         Ix=0,
         Iy=0.05,
-        speed=15000,
+        speed=150000,
         ambient_temp=25,
         rotor_temp_rise=80,
     ):
         """
-        Parameters
-        ----------
-        Id : float
-            PU value of d-axis current.
-        Iq : float
-            PU value of q-axis current.
-        Ix : float
-            PU value of x-axis current.
-        Iy : float
-            PU value of y-axis current.
-        speed : float
-            Machine rotational speed in rad/s.
-        ambient_temp : float
-            Magnet temperature in celsius.
+        Args:
+            Id: PU value of d-axis current.
+            Iq: PU value of q-axis current.
+            Ix: PU value of x-axis current.
+            Iy: PU value of y-axis current.
+            speed: Machine rotational speed in RPM.
+            ambient_temp: ambient temperature in celsius.
+            rotor_temp_rise: allowed rotor temperature rise in K
 
-        Returns
-        -------
-        None.
         """
 
         self.__Id = Id
