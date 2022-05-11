@@ -299,7 +299,7 @@ evaluator = MachineEvaluator(
 
 # evaluate example design if script is run
 if __name__ == "__main__":
-    from bspm_designer import bspm_designer
+    from bspm_designer import designer
 
     # create machine variant using architect
     free_var = (
@@ -324,5 +324,5 @@ if __name__ == "__main__":
     )
     # set operating point for BSPM machine
 
-    design_variant = bspm_designer.create_design(free_var)
+    design_variant = designer.create_design(free_var)
     results = evaluator.evaluate(design_variant)
