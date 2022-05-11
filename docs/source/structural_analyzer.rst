@@ -54,7 +54,6 @@ To use the eMach structural analyzer, the user must import the ``structural_anal
 
 
 ..
-
     Base Structural Analyzer
     ************************
 
