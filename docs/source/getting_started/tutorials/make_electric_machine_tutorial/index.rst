@@ -17,7 +17,7 @@ Requirements
 
 #. All required Python packages are installed on system (see :doc:`Pre-requisites <../../pre_reqs>`)
 #. Installation of any one of the tools supported by ``eMach`` (eg: JMAG, MAGNET)
-#. Personal repo using ``eMach`` as submodule established (see :doc:`Rectangle Tutorial <../rect_opti/index>`)
+#. Personal repo using ``eMach`` as submodule established (see :doc:`Rectangle Tutorial <../rectangle_tutorial/index>`)
 
 
 Step 1: Create script file with required module imports
@@ -28,8 +28,8 @@ written in this file. At the top of ``draw_spm.py`` add the following import sta
 
 .. code-block:: python
 
-	from eMach import mach_cad.tools.jmag as jd
-	from eMach import mach_cad.model_obj as mo
+    from eMach import mach_cad.tools.jmag as jd
+    from eMach import mach_cad.model_obj as mo
 
 These imports give the user access to capabilites offered by ``mach_cad``, in particular the JMAG-Python interface tool and the 
 ``model_obj`` classes which contain the smarts to draw different types of geometries commonly found in electric machines using 
@@ -47,24 +47,24 @@ in 3D.
 
 .. code-block:: python
 	
-	# define stator cross-section
-	stator1 = mo.CrossSectInnerRotorStator(
-		name="stator",
-		dim_alpha_st=mo.DimDegree(44.5),
-		dim_alpha_so=mo.DimDegree((44.5 / 2)),
-		dim_r_si=mo.DimMillimeter(14.16),
-		dim_d_sy=mo.DimMillimeter(13.54),
-		dim_d_st=mo.DimMillimeter(16.94),
-		dim_d_sp=mo.DimMillimeter(8.14),
-		dim_d_so=mo.DimMillimeter(5.43),
-		dim_w_st=mo.DimMillimeter(9.1),
-		dim_r_st=mo.DimMillimeter(0),
-		dim_r_sf=mo.DimMillimeter(0),
-		dim_r_sb=mo.DimMillimeter(0),
-		Q=6,
-		location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
-		theta=mo.DimDegree(0),
-	)
+    # define stator cross-section
+    stator1 = mo.CrossSectInnerRotorStator(
+        name="stator",
+        dim_alpha_st=mo.DimDegree(44.5),
+        dim_alpha_so=mo.DimDegree((44.5 / 2)),
+        dim_r_si=mo.DimMillimeter(14.16),
+        dim_d_sy=mo.DimMillimeter(13.54),
+        dim_d_st=mo.DimMillimeter(16.94),
+        dim_d_sp=mo.DimMillimeter(8.14),
+        dim_d_so=mo.DimMillimeter(5.43),
+        dim_w_st=mo.DimMillimeter(9.1),
+        dim_r_st=mo.DimMillimeter(0),
+        dim_r_sf=mo.DimMillimeter(0),
+        dim_r_sb=mo.DimMillimeter(0),
+        Q=6,
+        location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
+        theta=mo.DimDegree(0),
+    )
 
 Each of the arguments provided in the above class definition corresponds directly to a geomtric parameter of the inner rotor stator.
 To know what these arguments correspond to users can navigate to the folder in which the implementation of each cross-section resides.
@@ -111,11 +111,11 @@ the same height (25 mm in this case).
 
 .. code-block:: python
 	
-	stator_comp = mo.Component(
-		name="Stator",
-		cross_sections=[stator1],
-		material=mo.MaterialGeneric(name="10JNEX900", color=r"#808080"),
-		make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
+    stator_comp = mo.Component(
+        name="Stator",
+        cross_sections=[stator1],
+        material=mo.MaterialGeneric(name="10JNEX900", color=r"#808080"),
+        make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 	)
 
 Step 4: Make ``Components``
@@ -127,16 +127,16 @@ stator component alone.
 
 .. code-block:: python
 	
-	# create an instance of the JMAG class
-	tool_jmag = jd.JmagDesigner()
-	
-	file = r"full_SPM_trial.jproj"
-	tool_jmag.open(comp_filepath=file, study_type="Transient")
+    # create an instance of the JMAG class
+    tool_jmag = jd.JmagDesigner()
+    
+    file = r"full_SPM_trial.jproj"
+    tool_jmag.open(comp_filepath=file, study_type="Transient")
 
-	# make stator component
-	stator1_handle = stator_comp.make(tool_jmag, tool_jmag)
+    # make stator component
+    stator1_handle = stator_comp.make(tool_jmag, tool_jmag)
 	
-	# add code below for remaining components
+    # add code below for remaining components
 
 Upon running the above script, am instance of the JMAG application should be launched on your PC and the corresponding components
 should be drawn in the sequence they were defined in. The end result is expected to look as shown in the figure below.
