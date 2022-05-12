@@ -239,6 +239,12 @@ The following code initializes the ``DataHandler`` and ``DesignSpace`` classes, 
 	plot1.set_title('Pareto Front')
 	plt.savefig('ParetoFront.svg')
 
+If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
+
+.. figure:: ./images/ParetoFront.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600
 
 Conclusion
 ----------
