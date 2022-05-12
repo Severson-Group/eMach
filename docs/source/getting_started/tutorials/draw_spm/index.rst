@@ -6,9 +6,9 @@ Making an Electric Machine using ``eMach``
 * **Estimated Time** 15 min
 
 This tutorial demonstrates how to draw / build an SPM machine using the `tools` supported by ``eMach``. By the end of this 
-tutorial you will:
+tutorial you will be able to:
 
-* be able to use ``mach_cad`` classes to define 3D components
+* use ``mach_cad`` classes to define 3D components
 * draw 3D components in any ``eMach`` supported tool of your choice
 
 
@@ -38,11 +38,11 @@ certain parameter inputs.
 Step 2: Create required ``mach_cad`` cross-sections
 --------------------------------------------------------------------
 
-In this step the user will create the different cross-sections required to define an inner rotor surface permanent magnet rotor.
+In this step the user will create the different cross-sections required to define an `inner rotor surface permanent magnet`.
 This includes cross-sections defining the stator iron, permanent magnets, and rotor back iron. Cross-sections supported by ``eMach``
 vary greatly with regards to their degree of complexity from basic rectangles, to more involved geometries such as the stator of a
 linear motor. The stator of the machine in this particular tutorial can be defined using the ``CrossSectInnerRotorStator`` class.
-The below example code creates a inner rotor stator cross-section object which can be used subsequently for creating the component
+The below example code creates an inner rotor stator cross-section object which can be used subsequently for creating the component
 in 3D. 
 
 .. code-block:: python
@@ -68,15 +68,15 @@ in 3D.
 
 Each of the arguments provided in the above class definition corresponds directly to a geomtric parameter of the inner rotor stator.
 To know what these arguments correspond to users can navigate to the folder in which the implementation of each cross-section resides.
-Here a README.md file and a .svg describing each parameter is provided. This makes it convinient to view the geometry within github. 
+Here a `README.md` file and a `.svg` file describing each parameter is provided. This makes it convinient to view the geometry within github. 
 The link to the inner rotor stator folder is provided `here <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/cross_sects/inner_rotor_stator>`_.
-Please navigate to this link to get a better understanding of what each argument provided for the CrossSectInnerRotorStator
+Please navigate to this link to get a better understanding of what each argument provided for the `CrossSectInnerRotorStator`
 actually mean. All cross-sections also include the additional arguments of ``location`` and ``theta``. This is used to define the
-displacement of the cross-section from the origin (x=0, y=0, theta=0). 
+displacement of the cross-section from the global origin (x=0, y=0, theta=0). 
 
 Another key feature of ``eMach`` worth touching upon at this juncture is its capability to handle different ``dimensions``. In 
 order to ensure that the dimensions expected by the user are respected across different platforms, ``eMach`` defines its own 
-classes for linear and angular dimensions. More information on the ``eMach`` dimensions is available here. In this particular 
+classes for linear and angular dimensions. In this particular 
 example, we have used ``DimMillimeter`` to describe linear dimensions in mm and ``DimDegree`` to describe angular dimensions in 
 degrees.
 
@@ -138,7 +138,7 @@ stator component alone.
 	
 	# add code below for remaining components
 
-Upon running the above script, am instance of the JMAG application should be launched on your PC and the corresponding components
+Upon running the above script, an instance of the JMAG application should be launched on your PC and the corresponding components
 should be drawn in the sequence they were defined in. The end result is expected to look as shown in the figure below.
 
 .. figure:: ./images/SPM_3D.PNG
