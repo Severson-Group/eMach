@@ -78,7 +78,7 @@ Finally, note that this class is implementing the protocol `me.Machine`.
 Step 3.2: Class Constant Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into your ``ExampleMachineQ6p1y3`` class to create read-only parameters for the class. This code should be at the same indent level as the ``__init__`` function.
+Copy and paste the following code block into your ``ExampleMachineQ6p1y3`` class to create read-only parameters for the class. This code should be at the same indent level as the ``__init__`` function. The step illustrates adding constant parameters to the machine class.
 
 When creating machine classes, users may desire to create read-only, constant values for the machine. In this example, the number of slots ``Q``, pole-pairs ``p``, and the coil span ``y`` of the machine are constant. To accomplish this, the ``@property`` decorator is used to define these values to make these "read-only." By coding in literal return values (instead of variable names), these properties are constants.
 
@@ -97,9 +97,7 @@ When creating machine classes, users may desire to create read-only, constant va
 Step 3.3: Input Defined Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class.
-
-Step 3.2 demonstrated how the ``@property`` decorator can be used to create constants in a class. This step now demonstrates that this decorator can also be used to expose "read-only" variables. 
+Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property" decorator can be used to expose "read-only" variables. 
 
 In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. The code that you have copy-and-pasted in this step uses property decorators to allow reading the values of these variables. 
 
@@ -142,7 +140,9 @@ In step 3.1, the inputs to the initialization function were defined so that they
 Step 3.4: Derived Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Often it is convenient to define certain machine parameters in terms of others. For example, the geometry of a machine stator can be defined using the inputs in the previous section, but often it is useful to have quick access to other properties like the outer stator radius or the radial location of the stator. Additional parameters can be defined using the ``@property`` decorator in terms of other parameters as shown in the following code block. Copy and paste this code-block into the ``ExampleMachineQ6p1y3`` class.
+Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This code demonstrates how the ``@property`` decorator can also be used to expose parameters that are defined as a function of multiple variables. 
+
+It is frequently convenient to define certain machine parameters in terms of other parameters. For example, while the geometry of a machine stator can be defined strictly based on the variables passed into the initializer (Step 3.1), this can be cumbersome to interpret and it can be useful to have quick access to derived  properties, such as the inner stator radius (``r_si`` below). 
 
 .. code-block:: python
 
@@ -184,7 +184,9 @@ Often it is convenient to define certain machine parameters in terms of others. 
 Step 3.5: Auxiliary Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There can be certain machine parameters that are useful for defining a machines performance that require some additional outside information that the ``Machine`` class may not know. Auxiliary functions can be added to the machine class to facilitate easy access to certain properties, like electric loading, or tip speed which depend on outside information (i.e. current/speed). Copy the following code-block into the ``ExampleMachineQ6p1y3`` class to add this capability.
+Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This code illustrates the use-case for auxiliary functions added to a machine class to facilitate calculation of performance properties. 
+
+There are several useful machine performance calculations which require combining information from within a machine class and information that a machine class does not contain. Auxiliary functions can be added to facilitate easy implementation of these calculations. Examples of this include electric loading ``A_hat`` and tip speed ``v_tip``, both of which depend on outside information (i.e. current and speed).
 
 .. code-block:: python
 
@@ -198,8 +200,9 @@ There can be certain machine parameters that are useful for defining a machines 
 		
 Step 4: Define Settings Class
 -----------------------------
+Copy and paste the following code block to create a settings class that can be used alongside the ``ExampleMachineQ6p1y3`` machine.
 
-Like the ``Machine`` class defined in the previous step, the ``Settings`` class is designed as a container of information. The ``Settings`` class is set up to hold any additional information about the design which will be evaluated in later steps, which does not fit in the ``Machine`` class. For this example, the settings class simply holds the rotational speed Omega, and the motor current I. Copy the following code-block into the Python file to add this example settings class.
+``mach_eval`` uses settings clases to hold information necessary for analyzing the machine, such as the current operating condition. In this tutorial, the settings class simply holds the rotational speed ``Omega`` and the motor phase current ``I``.
 
 .. code-block:: python
 
@@ -211,18 +214,20 @@ Like the ``Machine`` class defined in the previous step, the ``Settings`` class 
 Step 5: Define the Architect
 -----------------------------
 
-The ``Architect`` class of the ``mach_eval`` module is described in detail in the user guide (TODO fix link). The purpose of the ``Architect`` is to convert an input tuple into a ``Machine`` object. For this example the input tuple is defined using the following:
+The ``Architect`` class of the ``mach_eval`` module is described in detail in the user guide (TODO fix link). The purpose of the ``Architect`` is to convert an input tuple (which is presumably set up to compactly encode the free variables of an optimization) into a machine object (which likely requires far more information than is contained by the free variables). For this example, the input tuple is defined using the following:
 
-* ``r_ro`` Outer rotor radius
-* ``d_m_norm`` Normalized magnet thickness
-* ``l_st_norm`` Normalized stack length
-* ``r_sy_norm`` Normalized stator yoke radius
-* ``r_so_norm`` Normalized outer rotor radius
-* ``w_tooth_norm`` Normalized tooth width
-* ``z_q`` Number of turns
-* ``I`` Stator current
+* ``x[0] = r_ro`` Outer rotor radius
+* ``x[1] = d_m_norm`` Normalized magnet thickness
+* ``x[2] = l_st_norm`` Normalized stack length
+* ``x[3] = r_sy_norm`` Normalized stator yoke radius
+* ``x[4] = r_so_norm`` Normalized outer rotor radius
+* ``x[5] = w_tooth_norm`` Normalized tooth width
+* ``x[6] = z_q`` Number of turns
+* ``x[7] = I`` Stator current
 
-Copy the following code into the Python file to implement the example architect. In the ``create_new_design`` method, it can be seen how the input tuple values are converted into the input variables needed to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Also note that the material dictionaries are provided to the ``ExampleMotorArchitect`` on initialization, this is required for any information that the ``Machine`` class needs which is not contained in the input tuple. 
+Copy the following code into the Python file to implement the example architect. 
+
+The ``create_new_design`` method demonstrates how the input tuple values are interpretted to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Notice that material dictionaries (``magnet_mat``, ``core_mat``, and ``coil_mat``) are provided to the ``ExampleMotorArchitect`` upon initialization. This is the typical programming pattern for providing information that is required to create a machine class but is not contained in the input tuple. 
 
 .. code-block:: python
 
@@ -264,7 +269,9 @@ Copy the following code into the Python file to implement the example architect.
 Step 6: Define the SettingsHandler
 -----------------------------------
 
-The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the user guide (TODO fix link). The ``SettingsHandler`` has a similar purpose to the ``Architect`` defined in the previous step, it is responsible for converting the input tuple into the ``Settings`` object. Copy the following code into the Python file to implement the example ``SettingsHandler``. For this example, the the ``SettingsHandler`` takes in a rotational speed ``Omega`` on initialization, and extracts the current from the input tuple to create the ``ExampleSettings``.
+The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the user guide (TODO fix link). The ``SettingsHandler`` has a similar purpose to the ``Architect`` (step 5) in that it is responsible for converting the input tuple into the settings object. 
+
+Copy the following code into the Python file to implement the example ``SettingsHandler``. In this tutorial, the ``SettingsHandler`` takes in a rotational speed ``Omega`` on initialization and extracts the current from the input tuple to create the ``ExampleSettings``.
 
 .. code-block:: python
 
@@ -277,10 +284,12 @@ The ``SettingsHandler`` class of the ``mach_eval`` module is also described in d
 				settings = ExampleSettings(self.Omega,I)
 				return settings  
 
-Step 6: Define the EvaluationSteps
+Step 7: Define the EvaluationSteps
 ----------------------------------
 
-The ``EvaluationStep`` protocol of the ``mach_eval`` module, defines a function signature called ``step``. This is the base level for an evaluation in the ``mach_eval`` module, it is used to define some evaluation that is performed on a design. A detailed explanation of the ``EvaluationStep`` protocol and the associated ``State`` class is provided in the User guide (TODO fix link). In this example two evaluation steps are provided, these steps are used to calculate the total power of the machine and the expected losses. Note the the form of the ``step`` method takes in a ``State`` variable, performs some analysis, and returns the results and an output state. The ``deepcopy`` method is used to provide a copy of the state which can be updated with new information without changing the input state. Copy the following code to define the two evaluation steps for this example.
+The ``EvaluationStep`` protocol of the ``mach_eval`` module defines a function signature called ``step``. This is the base level for an evaluation in the ``mach_eval`` module and is used to define an evaluation that is performed on a design. A detailed explanation of the ``EvaluationStep`` protocol and the associated ``State`` class is provided in the User guide (TODO fix link). 
+
+Copy and paste the following code to add two evaluation steps. These steps are used to calculate the total power of the machine and the expected losses. Per the ``EvaluationStep`` protocol, each step class must contain a ``step`` method that takes in a state variable, performs some analysis, and returns the results along with an output state. The ``deepcopy`` method is used to provide a copy of the state which can be updated with new information without changing the input state. 
 
 .. code-block:: python
 
@@ -338,10 +347,10 @@ The ``EvaluationStep`` protocol of the ``mach_eval`` module, defines a function 
 				state_out.conditions.losses=[Q_tooth,Q_sy,Q_coil]
 				return [[Q_tooth,Q_sy,Q_coil],state_out]
 
-Step 7: Define Material Dictionaries 
+Step 8: Define Material Dictionaries 
 ------------------------------------
 
-The following material dictionaries are provided for this example. Note that these hold information about the materials which are used in this example. Copy the following code into the Python file.
+Copy and paste the following material dictionaries into ``mach_eval_tutorial.py``. These dictionaries hold standard material information needed to model that machine.
 		
 .. code-block:: python			
 			
@@ -379,10 +388,12 @@ The following material dictionaries are provided for this example. Note that the
 			'magnet_therm_conductivity'  : 8.95, # W/m-k
 			}
 
-Step 8: Creating MachineDesigner 
+Step 9: Creating MachineDesigner 
 --------------------------------
 
-The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which holds an ``Architect`` and the ``SettingsHandler``. The ``MachineDesigner`` has a method ``create_design`` which takes in the input tuple and returns a ``design`` object. This design object has the ``Machine`` and ``Settings`` object for the associated input tuple as properties (i.e. ``design.machine`` and ``design.setttings``). The following code demonstrate how to initialize both the example ``Architect`` and ``SettingsHandler`` and use them to create a ``MachineDesigner``. A ``design`` object can be created from an input tuple ``x`` as shown. Copy this code into the bottom of the Python file.
+The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an architect (created in step 5)  and a ``SettingsHandler`` (created in step 6). The `MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the architect and ``SettingsHandler`` to create a machine and settings object. The function returns a ``design`` object containing the machine and settings (``design.machine`` and ``design.setttings``). 
+
+Copy and paste this code into the bottom of the Python file.
 
 .. code-block:: python
 					
@@ -401,10 +412,12 @@ The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which hold
 		x=[r_ro,d_m_norm,l_st_norm,r_sy_norm,r_so_norm,w_tooth_norm,z_q,I]
 		design=des.create_design(x)
 
-Step 9: Creating MachineEvaluator 
+Step 10: Creating MachineEvaluator 
 ----------------------------------
 
-Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a concrete class provided by ``mach_eval``. This class takes in an ordered list of ``EvaluationSteps`` on initialization. When the ``evaluate`` method is called the ``MachineEvaluator`` will loop over the ``step`` functions of the provided ``EvaluationSteps`` in order. The results of the ``evaluate`` method will be an ordered list of ``[state_in,results,state_out]`` for each step provided. This gives a useful log of how the ``design`` and ``state`` objects have changes over the evaluation process. The following code implements the two example ``EvaluationSteps`` provided, and demonstrates how to initialize the ``MachineEvaluator``. Copy this code into the bottom of the Python file and hit run. The results object from the evaluation of the machine should be printed in the console. 
+Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a concrete class provided by ``mach_eval``. This class takes in an ordered list of ``EvaluationSteps`` on initialization. When the ``evaluate`` method is called the ``MachineEvaluator`` will loop over the ``step`` functions of the provided ``EvaluationSteps`` in order. The results of the ``evaluate`` method will be an ordered list of ``[state_in,results,state_out]`` for each step provided. This gives a useful log of how the ``design`` and ``state`` objects have changed over the evaluation process. 
+
+The following code implements the two example ``EvaluationSteps`` provided, and demonstrates how to initialize the ``MachineEvaluator``. Copy this code into the bottom of the Python file and hit run. The results object from the evaluation of the machine should be printed in the console. 
 
 .. code-block:: python
 
@@ -414,7 +427,7 @@ Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a
 		results=evaluator.evaluate(design)
 		print(results)
 	
-Step 10: Interpreting Results 
+Step 11: Interpreting Results 
 ----------------------------------
 
 The results of the optimization printed in the console are interpreted in this step. The results object is an ordered list of input states, results, and output states corresponding to each evaluation step. The output state of a step and the input state of the next step are identical, this provides an accounting of how the state object may change during the optimization. 
