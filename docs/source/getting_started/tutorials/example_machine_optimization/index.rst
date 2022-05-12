@@ -5,7 +5,7 @@ Analytical Machine Optimization Tutorial
 * **Complexity** 3/5
 * **Estimated Time** 30 min
 
-This tutorial will introduce the ``AnalysisStep`` protocols, and demonstrate how the functionallity of ``mach_eval`` can be integrated with ``mach_opt``. By the end of this tutorial you will be able to:
+This tutorial will introduce the ``AnalysisStep`` protocols and demonstrate how the functionality of ``mach_eval`` can be integrated with ``mach_opt``. A machine topology will be optimized to maximize both the output power and power density, while keeping the tip speed and the stator temperature within the given limits. By the end of this tutorial you will be able to:
 
 * Create ``AnalysisSteps`` to define complex analysis steps in the evaluation process
 * Integrate ``mach_eval`` class with the optimization tools of ``mach_opt``
@@ -18,13 +18,13 @@ Tutorial Requirements
 This tutorial requires that ``eMach`` and the associated packages are installed:
 
 #. All required Python packages are installed on system. (See :doc:`Pre-requisites <../../pre_reqs>`)
-#. ``eMach`` installed as a sub-module in a root folder of a git repository (See :doc:`Rectangle Example <../rectangle_example/index>`)
-#. Completion of the previous analytical machine design tutorial (See :doc:`analytical design tutorial <../toy_example/index>`)
+#. ``eMach`` installed as a sub-module in a root folder of a git repository (See :doc:`Rectangle Example <../rect_opti/index>`)
+#. Completion of the :doc:`Rectangle Tutorial <../rect_opti/index>` and :doc:`Analytical Machine Design Tutorial <../toy_opti/index>`.
 
 Step 1: Open Previous Tutorial File
 ------------------------------------------
 
-This tutorial will take example of the classes created in the analytical machine design tutorial. All code for this tutorial should be placed in the ``mach_eval_tutorial.py`` file.
+This tutorial will take example of the classes created in the :doc:`analytical machine design tutorial <../toy_opti/index>`. All code for this tutorial should be placed in the ``mach_eval_tutorial.py`` file.
 
 
 Step 2: Update Import Statements
@@ -39,8 +39,7 @@ At the top of the python file add the following import statements to add the req
 	
 Step 3: Add Constraints Step
 ------------------------------------------
-The following class defines an additional ``EvaluationStep`` introduced in the previous tutorial. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to discarded during the evaluation process. Copy this code into the python file near the other ``EvalutationSteps``. 
-
+The following class defines an additional ``EvaluationStep`` introduced in the `previous tutorial <https://emach.readthedocs.io/en/latest/getting_started/tutorials/toy_opti/index.html>`_. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to be discarded during the evaluation process. Copy this code into the python file near the other ``EvalutationSteps``. 
 
 .. code-block:: python
 
@@ -61,7 +60,7 @@ The following class defines an additional ``EvaluationStep`` introduced in the p
 Step 4: Define AnalysisStep
 -----------------------------
 
-The ``AnalysisStep`` class of ``mach_eval`` is a concrete class which implements the ``EvaluationStep`` protocol. This class defines three protocols it must take in on initialization:
+The ``AnalysisStep`` class of ``mach_eval`` is a concrete class which implements the ``EvaluationStep`` protocol (see `here <https://emach.readthedocs.io/en/latest/code_overview.html#analysisstep>`_). This class defines three protocols it must take in on initialization:
 
 * ``ProblemDefinition``
 * ``Analyzer``
@@ -72,9 +71,9 @@ The example provided in this step will demonstrate the functionality of these pr
 Step 4.1: ProblemDefinition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``ProblemDefinition`` protocol is designed to convert the input state the ``AnalysisStep`` receives, into a ``problem`` class which the ``Analyzer`` can use. The purpose for this class is to allow for ``Analyzers`` to be written generally, not in respect to a specific optimization. By parsing the ``state`` object into a set ``problem`` the ``Analyzer`` does not need to interact with any superfluous information contained in the ``state`` object.
+The ``ProblemDefinition`` protocol is designed to convert the input state the ``AnalysisStep`` receives, into a ``problem`` class which the ``Analyzer`` can use. The purpose for this class is to allow for ``Analyzers`` to be written generally, not in respect to a specific optimization. By parsing the ``state`` object into a set ``problem``, the ``Analyzer`` does not need to interact with any superfluous information contained in the ``state`` object.
 
-In this example the ``problem`` defined by the ``Analyzer`` (discussed in the following sub-step) is given in the following code block. The ``problem`` class effectively acts as container of relevant information for the ``Analyzer``. Copy this code into the python file near the other class definitions. 
+In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the following sub-step) is given in the following code block. The ``problem`` class effectively acts as container of relevant information for the ``Analyzer``. Copy this code into the python file near the other class definitions. 
 
 .. code-block:: python
 
@@ -107,7 +106,7 @@ Step 4.2: Analyzer
 
 As mentioned in the previous sub-step, the ``Analyzer`` protocol is designed to allow for modular and generalized analysis process to be utilized by multiple optimization. Typically implementations of ``Analyzers`` should be code which is lengthy enough to warrant the added complexity over the ``EvaluationStep`` protocol, or be code which is designed to be utilized by multiple optimization. For this example, the ``Analyzer`` is simple and could have been defined as an ``EvaluationStep`` but is defined this way to demonstrate how to implement the relevant classes. 
 
-The only required method of the ``Analyzer`` protocol is the ``analyze`` method, which takes in a ``problem`` object and returns results of the analysis. Though not explicitly checked, each analyzer will have a problem class which it is associated, which defines the information which the analyzer needs. The example analyzer for this tutorial is provided in the following code block. The class checks to see if the temperature rise of the stator will exceed the maximum allowable temperature. If this occurs then the analyzer raises the ``mo.InvalidDesign`` exception. Copy this code under the ``ThermalProblemDefinition`` class in the python file.
+The only required method of the ``Analyzer`` protocol is the ``analyze`` method, which takes in a ``problem`` object and returns results of the analysis. Though not explicitly checked, each analyzer will have a problem class it is associated with, which defines the information that the analyzer needs. The example analyzer for this tutorial is provided in the following code block. The class checks to see if the temperature rise of the stator will exceed the maximum allowable temperature. If this occurs, then the analyzer raises the ``mo.InvalidDesign`` exception. Copy this code under the ``ThermalProblemDefinition`` class in the python file.
 
 .. code-block:: python
 
@@ -126,10 +125,10 @@ The only required method of the ``Analyzer`` protocol is the ``analyze`` method,
 			else:
 				return T_stator
 
-Step 4.2: PostAnalyzer
+Step 4.3: PostAnalyzer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step, back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the previous tutorial. Copy the following code block into the python file under the ``ThermalAnalyzer`` class.
+The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step, back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../toy_opti/index>`. Copy the following code block into the python file under the ``ThermalAnalyzer`` class.
 
 .. code-block:: python
 
@@ -143,7 +142,7 @@ The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition
 Step 5: Create DesignSpace 
 --------------------------------
 
-In this step a ``DesignSpace`` class is created to allow for the example machine to be optimized for maximizing power and power density. The following code block demonstrates how the results returned by the ``MachineEvaluator`` of the ``mach_eval`` can be utilized by the ``DesignSpace`` class of the ``mach_opt`` module. 
+In this step, a ``DesignSpace`` class is created to allow for the example machine to be optimized for maximizing power and power density. The following code block demonstrates how the results returned by the ``MachineEvaluator`` of the ``mach_eval`` can be utilized by the ``DesignSpace`` class of the ``mach_opt`` module. 
 
 .. note:: The results of the ``MachineEvaluator`` are an ordered list of [ input_state, evaluation results, output_state] for each ``EvaluationStep`` which is injected. The ``DesignSpace`` class often needs only to access the last state of the evaluation process. The code ``last_results=full_results[-1]`` and ``last_state=last_results[-1]`` provide the user easy access to the final state of the evaluation process.
 
@@ -152,7 +151,7 @@ Copy the following code into the python file to define the ``DesignSpace`` for t
 .. code-block:: python
 
 	class ExampleMachineDesignSpace(mo.DesignSpace):
-		"""Class defines objectives of rectangle optimization"""
+		"""Class defines objectives of machine optimization"""
 
 		def __init__(self,bounds,n_obj):
 			self._n_obj=n_obj
@@ -179,7 +178,7 @@ Copy the following code into the python file to define the ``DesignSpace`` for t
 		def bounds(self) -> tuple:
 			return self._bounds
 
-Once again a dummy ``DataHandler`` is defined for this tutorial. Copy the following code into the python file.
+Once again, a dummy ``DataHandler`` is defined for this tutorial. Copy the following code into the python file.
 			
 .. code-block:: python
 		
@@ -190,10 +189,10 @@ Once again a dummy ``DataHandler`` is defined for this tutorial. Copy the follow
 		def save_designer(self, designer):
 			pass      
 
-Step 5: Run the optimization
+Step 6: Run the optimization
 --------------------------------
 
-In order to run the optimization, the new classes must be initialized, and the evaluator must be modified to include the new steps. Modify the code at the bottom of the python file to include the following when defining the ``MachineEvaluator``, note that the new steps are injected into the list of ``EvalutationSteps``
+In order to run the optimization, the new classes must be initialized, and the evaluator must be modified to include the new steps. Modify the code at the bottom of the python file to include the following when defining the ``MachineEvaluator``. Note that the new steps are injected into the list of ``EvalutationSteps``
 
 .. code-block:: python
 
@@ -208,7 +207,7 @@ In order to run the optimization, the new classes must be initialized, and the e
 	thermal_step=me.AnalysisStep(problem_def, analyzer, post_analyzer)
 	evaluator=me.MachineEvaluator([const_step,power_step,loss_step,thermal_step]) 
 	
-The following code initializes the ``DataHandler``, and ``DesignSpace`` classes, and then injects them into the ``DesignProblem`` of the ``mach_opt`` module. The ``DesignProblem`` class is then used to create the optimization and the results are plotted.
+The following code initializes the ``DataHandler`` and ``DesignSpace`` classes, and then injects them into the ``DesignProblem`` of the ``mach_opt`` module. The ``DesignProblem`` class is then used to create the optimization and the results are plotted.
 
 .. code-block:: python
 
@@ -240,6 +239,12 @@ The following code initializes the ``DataHandler``, and ``DesignSpace`` classes,
 	plot1.set_title('Pareto Front')
 	plt.savefig('ParetoFront.svg')
 
+If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
+
+.. figure:: ./images/ParetoFront.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600
 
 Conclusion
 ----------
