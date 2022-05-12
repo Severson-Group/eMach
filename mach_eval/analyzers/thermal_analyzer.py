@@ -6,14 +6,15 @@ Created on Sat Jul 24 10:28:52 2021
 """
 import numpy as np
 import scipy.optimize as op
-#from spec_USmotor_Q6p1 import fea_config_dict
+from spec_USmotor_Q6p1 import fea_config_dict
 
 class ThermalProblem:
     
-    def __init__(self,res,Q_dot,T_ref):
+    def __init__(self,res,Q_dot,T_ref,N_nodes):
         self.res=res
         self.Q_dot=Q_dot
         self.T_ref=T_ref
+        self.N_nodes=N_nodes
 
 class StatorProblemDef:
     def __init__(self,mat_dict):
@@ -32,6 +33,7 @@ class StatorProblemDef:
         self.h_in=h_in
         self.r_so=r_si+d_st+w_sy
         self.l_st=l_st
+        N_nodes=5
         Res= self.create_resistance_network()
         ################################################
         #           Load Losses into loss Vector
@@ -47,7 +49,7 @@ class StatorProblemDef:
         
         T_ref=np.zeros([4,1])
         T_ref[0]=self.T_ref
-        prob=ThermalProblem(Res,Q_dot,T_ref)
+        prob=ThermalProblem(Res,Q_dot,T_ref,N_nodes)
         return prob
     
     def create_resistance_network(self):
@@ -157,7 +159,7 @@ class RotorThemalProblemDef:
         self.R_2=self.R_1+self.r_sh
         self.R_3=self.r_ro
         self.R_4=self.R_3+self.d_sl
-        
+        N_nodes=33
         Res= self.create_resistance_network()
         ################################################
         #           Load Losses into loss Vector
@@ -174,7 +176,7 @@ class RotorThemalProblemDef:
         
         T_ref=np.zeros([33,1])
         T_ref[0]=self.T_ref
-        prob=ThermalProblem(Res,Q_dot,T_ref)
+        prob=ThermalProblem(Res,Q_dot,T_ref,N_nodes)
         return prob
     
     def create_resistance_network(self):
@@ -311,7 +313,7 @@ class RotorThemalProblemDef:
         Descr='Outer rotor edge to Air'
         A_rotor_out=stack_length*(2*np.pi*R_4)
         Resistances.append(air_gap_conv(air_mat,8,0,omega,R_4,R_st,u_z,A_rotor_out))
-        print(Resistances[7].h)
+        print("h =",Resistances[7].h)
         Resistances[7].Descr=Descr
         ##############
         #Path 8
@@ -561,7 +563,7 @@ class RotorThemalProblemDef:
 
 class ThermalAnalyzer:
     def analyze(self,problem):
-        R_inv=np.zeros([33,33])
+        R_inv=np.zeros([problem.N_nodes,problem.N_nodes])
         for i,r in enumerate(problem.res):
             N1=r.Node1
             N2=r.Node2
@@ -879,28 +881,26 @@ class conv(Resistance):
 
 
 if __name__ == "__main__":
-    mat_dict=fea_config_dict
-    stress_limits={'rad_sleeve':-100E6,
-                   'tan_sleeve':1300E6,
-                   'rad_magnets':0,
-                   'tan_magnets':80E6}
-    mat_dict['alpha_sh']=1.2E-5
-    mat_dict['alpha_rc']=1.2E-5
-    mat_dict['alpha_pm']=5E-6
-    mat_dict['alpha_sl_t']=-4.7E-7
-    mat_dict['alpha_sl_r']=0.3E-6
-    r_sh=5E-3
-    d_m=3E-3
-    r_ro=12.5E-3
-    d_ri=r_ro-r_sh-d_m
-    d_sl=1E-3
-    l_st=50E-3
-    l_hub=3E-3
-    T_ref=25
-    r_si=r_ro+d_sl+1E-3
-    omega=120E3*2*np.pi/60
-    deltaT=10
-    N=10E3
+    # mat_dict=fea_config_dict
+    mat_dict= {'shaft_therm_conductivity': 51.9, # W/m-k ,
+               'core_therm_conductivity': 28, # W/m-k
+               'magnet_therm_conductivity': 8.95, # W/m-k ,
+               'sleeve_therm_conductivity': 0.71, # W/m-k,
+               'air_therm_conductivity'     :.02624, #W/m-K
+               'air_viscosity'              :1.562E-5, #m^2/s
+               'air_cp'                     :1, #kJ/kg
+               'rotor_hub_therm_conductivity':205.0}#W/m-K}
+
+    r_sh=5E-3 # [m]
+    d_m=3E-3 # [m]
+    r_ro=12.5E-3 # [m]
+    d_ri=r_ro-r_sh - d_m # [m]
+    d_sl=1E-3 # [m]
+    l_st=50E-3 # [m]
+    l_hub=3E-3 # [m]
+    T_ref=25 # [C]
+    r_si=r_ro+d_sl+1E-3 # [m]
+    omega=120E3*2*np.pi/60 # [rad/s]
     losses={'rotor_iron_loss':.001,'magnet_loss':135}
     afp=AirflowProblem(r_sh, d_ri, r_ro, d_sl, r_si, l_st, l_hub, T_ref,
                        losses, omega, mat_dict)

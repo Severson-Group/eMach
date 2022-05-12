@@ -27,6 +27,7 @@ to browse through the documentation links provided on the left to familiarize th
    :caption: Analyzers
 
    structural_analyzer
+   thermal_analyzer
 
 .. toctree::
    :hidden:
