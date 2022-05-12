@@ -1,0 +1,11 @@
+Variable name,Description,Units
+Shaft,,
+mat_dict['shaft_material_density'],Shaft material density,kg/m3
+mat_dict['shaft_youngs_modulus'],Shaft youngs modulus,Pa
+mat_dict['shaft_poission_ratio'],Shaft poission ratio,
+mat_dict['alpha_sh'],Shaft temperature coefficient,1/K
+Rotor core,,
+mat_dict['core_material_density'],Rotor core material density,kg/m3
+mat_dict['core_youngs_modulus'],Rotor core yougs modulus,Pa
+mat_dict['core_poission_ratio'],Rotor core poission ratio,
+mat_dict['alpha_rc'],Rotor core temperature coefficient,1/K
