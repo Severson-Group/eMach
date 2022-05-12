@@ -55,6 +55,8 @@ This class has been named ``ExampleMachineQ6p1y3`` to tell the user that it desc
 
 Notice the use of the ``_`` character at the start of the local variable names. This is a naming convention in Python that informs users that these variables should be considered private and should therefore not be editted by code that resides outside of the ``ExampleMachineQ6p1y3`` class. 
 
+Finally, note that this class is implementing the protocol `me.Machine`.
+
 .. code-block:: python
 
 	class ExampleMachineQ6p1y3(me.Machine):
@@ -76,7 +78,9 @@ Notice the use of the ``_`` character at the start of the local variable names. 
 Step 3.2: Class Constant Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this sub-step certain properties which are assumed to be constant for all instances of the ``Machine`` class are implement. In this example the number of slots/poles and coil span of the machine are constant. The ``@property`` decorator is used to define these values as shown in the following code block. The ``@property`` decorator allows for these properties to be read only once the instance of the machine is created. Copy and paste the following code block into the ``ExampleMachineQ6p1y3`` class created in the last step. This code should be at the same indent level as the ``__init__`` function.
+Copy and paste the following code block into your ``ExampleMachineQ6p1y3`` class to create read-only parameters for the class. This code should be at the same indent level as the ``__init__`` function.
+
+When creating machine classes, users may desire to create read-only, constant values for the machine. In this example, the number of slots ``Q``, pole-pairs ``p``, and the coil span ``y`` of the machine are constant. To accomplish this, the ``@property`` decorator is used to define these values to make these "read-only." By coding in literal return values (instead of variable names), these properties are constants.
 
 .. code-block:: python
 
@@ -93,7 +97,11 @@ In this sub-step certain properties which are assumed to be constant for all ins
 Step 3.3: Input Defined Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. In this step, read only property decorators are used to allow access to these variables. Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class.
+Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class.
+
+Step 3.2 demonstrated how the ``@property`` decorator can be used to create constants in a class. This step now demonstrates that this decorator can also be used to expose "read-only" variables. 
+
+In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. The code that you have copy-and-pasted in this step uses property decorators to allow reading the values of these variables. 
 
 .. code-block:: python
 
