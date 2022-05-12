@@ -34,22 +34,73 @@ Inputs for structural analyzer
 ******************************************
 The current implementation of the structural analyzer requires a material dictionary (``mat_dict``), temperature coefficient, and dimensions of the shaft, rotor core, magnet, and sleeve. The following table shows the list of required inputs for the structural analyzer.
 
-.. csv-table:: Inputs for structural analyzer
-   :file: inputs.csv
-   :widths: 70, 70, 70
+.. csv-table:: Inputs for structural analyzer -- ``mat_dict``
+   :file: inputs_mat_dict.csv
+   :widths: 70, 70, 30
    :header-rows: 1
+
+.. csv-table:: Inputs for structural analyzer -- Dimensions
+   :file: inputs_dimensions.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+.. csv-table:: Inputs for structural analyzer -- ``stress_limits``
+   :file: inputs_sleeve_stress.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
 
 How to use the structural analyzer
 **********************************
-To use the eMach structural analyzer, the user must import the ``structural_analyzer`` module and call the ``SleeveAnalyzer`` class. The ``SleeveAnalyzer`` class needs a dictionary containing radial and tangential stress limits for the sleeve and magnet as an input. An example of using the structural analyzer is shown in the following snippet.
+To use the eMach structural analyzer, the user must import the ``structural_analyzer`` module and call the ''SleeveProblemDef'', ``SleeveProblem``, and ``SleeveAnalyzer`` class. An example of using the structural analyzer is shown in the following snippet.
 
 .. code-block:: python
 
-    from analyzers import structrual_analyzer as sta
-    stress_limits = {'rad_sleeve': -100E6 #Pa,
-                 'tan_sleeve': 1300E6 #Pa,
-                 'rad_magnets': 0 #Pa,
-                 'tan_magnets': 80E6 #Pa}
-    struct_ana = sta.SleeveAnalyzer(stress_limits)
+    from mach_eval.analyzers import structrual_analyzer as sta
+
+    mat_dict = {
+        'core_material_density': 7650,  # kg/m3
+        'core_youngs_modulus': 185E9,  # Pa
+        'core_poission_ratio': .3,
+        'alpha_rc' : 1.2E-5,
+
+        'magnet_material_density'    : 7450, # kg/m3
+        'magnet_youngs_modulus'      : 160E9, # Pa
+        'magnet_poission_ratio'      :.24,
+        'alpha_pm'                   :5E-6,
+
+        'sleeve_material_density'    : 1800, # kg/m3
+        'sleeve_youngs_th_direction' : 125E9,  #Pa
+        'sleeve_youngs_p_direction'  : 8.8E9,  #Pa
+        'sleeve_poission_ratio_p'    :.015,
+        'sleeve_poission_ratio_tp'   :.28,
+        'alpha_sl_t'                :-4.7E-7,
+        'alpha_sl_r'                :0.3E-6,
+
+        'sleeve_max_tan_stress': 1950E6,  # Pa
+        'sleeve_max_rad_stress': -100E6,  # Pa
+
+        'shaft_material_density': 7870,  # kg/m3
+        'shaft_youngs_modulus': 206E9,  # Pa
+        'shaft_poission_ratio': .3,  # []
+        'alpha_sh' : 1.2E-5
+    }
+
+
+
+    stress_limits = {'rad_sleeve': -100E6,
+                     'tan_sleeve': 1300E6,
+                     'rad_magnets': 0,
+                     'tan_magnets': 80E6}
+    r_sh = 5E-3
+    d_m = 3E-3
+    r_ro = 12.5E-2
+    deltaT = 10
+    N = 10E3
+    spd = sta.SleeveProblemDef(mat_dict)
+    problem = sta.SleeveProblem(r_sh, d_m, r_ro, deltaT, mat_dict, N)
+    ana = sta.SleeveAnalyzer(stress_limits)
+    sleeve_dim = ana.analyze(problem)
+    print(sleeve_dim)
 
 
