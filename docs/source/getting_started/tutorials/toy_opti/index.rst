@@ -279,7 +279,7 @@ Copy the following code into the Python file to implement the example ``Settings
 			"""Settings handler for design creation"""
 			def __init__(self,Omega):
 				self.Omega=Omega
-			def get_settings(self,x):
+			def get_settings(self,x:tuple):
 				I=x[7]
 				settings = ExampleSettings(self.Omega,I)
 				return settings  
@@ -295,14 +295,19 @@ Copy and paste the following code to add two evaluation steps. These steps are u
 
 		class PowerEvalStep(me.EvaluationStep):
 			def step(self,state_in):
+				#unpack the input state
 				B_delta=state_in.design.machine.B_delta
 				r_ro=state_in.design.machine.r_ro
 				l_st=state_in.design.machine.l_st
 				I=state_in.design.settings.I
 				A_hat=state_in.design.machine.A_hat(I)
 				Omega=state_in.design.settings.Omega
+				
+				#perform evaluation
 				V_r=np.pi*r_ro**2*l_st
 				Power=Omega*V_r*B_delta*A_hat
+				
+				#write the state out
 				state_out=deepcopy(state_in)
 				state_out.conditions.Power=Power
 				return [Power,state_out]
