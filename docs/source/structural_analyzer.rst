@@ -30,6 +30,14 @@ Sleeve Analyzer
 ***************
 The rotor sleeve analyzer described here is used to design an optimal rotor sleeve which minimizes the required sleeve thickness in order to reduce cost, windage loss, and thermal issues. The sleeve analyzer expects a ``SleeveProblem`` in its analyze function signature. The ``SleeveProblemDef`` extracts the relevant information from the input state object to create the required problem object. Unlike the base structural analyzer, the sleeve analyzer is directly called by the ``MachineEvaluator`` object during evaluation. The implementation of ``SleeveProblem`` and ``SleeveProblemDef`` can be found in ``structural_analyzer.py``.
 
+Inputs for structural analyzer
+******************************************
+The current implementation of the structural analyzer requires a material dictionary (``mat_dict``), temperature coefficient, and dimensions of the shaft, rotor core, magnet, and sleeve. The following table shows the list of required inputs for the structural analyzer.
+
+.. csv-table:: Inputs for structural analyzer
+   :file: inputs.csv
+   :widths: 70, 70, 70
+   :header-rows: 1
 
 How to use the structural analyzer
 **********************************
