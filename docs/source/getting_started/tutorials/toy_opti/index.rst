@@ -10,12 +10,12 @@ This tutorial demonstrates how to set up a ``MachineDesigner`` and implement ``E
 * Create a ``MachineDesigner`` for modeling an electric machine.
 * Define ``EvaluationSteps`` to describe an evaluation process for an electric machine
 
-The classes used in the example represent a simplified machine topology and evaluation process which is not accurate to real physics. The purpose of this document is to demonstrate how these classes are created and interact.
+The example classes used in this tutorial are chosen to illustrate the machine topology specification and evaluation process in a simple manner and are not intended to accurately model any physical details. 
 
 Tutorial Requirements 
 ---------------------
 
-This tutorial requires that ``eMach`` and the associated packages are installed:
+Prior to starting this tutorial, the user must configure their system with the following:
 
 #. All required Python packages are installed on system. (See :doc:`Pre-requisites <../../pre_reqs>`)
 #. ``eMach`` installed as a sub-module in a root folder of a git repository (See :doc:`Rectangle Example <../rect_opti/index>`)
@@ -24,13 +24,13 @@ This tutorial requires that ``eMach`` and the associated packages are installed:
 Step 1: Create Python file for tutorial
 ------------------------------------------
 
-In the root folder of your git repository with ``eMach`` installed as a sub-module, create a new python file to hold the code for this tutorial names ``mach_eval_tutorial.py``
+In the root folder of your private Git repository (the repository that houses ``eMach`` as a submodule), create a new Python file ``mach_eval_tutorial.py`` to hold the code for this tutorial. 
 
 
 Step 2: Define import statements
 ------------------------------------------
 
-At the top of the python file copy the following import statements to add the required modules for this tutorial. 
+Add the following import statements to the newly created ``mach_eval_tutorial.py`` file to load the required modules for this tutorial: 
 
 .. code-block:: python
 	
@@ -42,14 +42,18 @@ At the top of the python file copy the following import statements to add the re
 Step 3: Define Machine Class
 ------------------------------------------
 
-In this step the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine which could be built. This class can be though of as "What is on the desk", it should hold all the geometric, material, and nameplate information about a machine design. Things like operating condition and other criteria are housed in the ``Settings`` class which is defined in a later step.
+In this step, the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine (i.e.,  geometric, material, and nameplate information). This class can be though of as "what is on the desk." Items such as operating conditions and other information needed to perform analysis are housed in the ``Settings`` class (defined in a later step).
 
-For this example, the machine class is kept simple in order to facilitate ease of use in the tutorial. The creation of the machine class in this example is split into five sub steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
+The creation of the machine class is split into five sub-steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
 
 Step 3.1: Initialization
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following code block shows how the ``ExampleMachineQ6p1y3`` class is Initialized for this example. The class takes in a set of geometric variables and material dictionaries. The meaning of geometric variables are defined in the comments of the code block. Note that when assigning the properties to the ``self`` object, the protected ``_`` is used, this prevents accidental editing of the properties by the user. 
+Copy and paste the following code block into your ``mach_eval_tutorial.py`` file to create a machine class entitled ``ExampleMachineQ6p1y3``. This code is used to initialize an object of the class. It takes in a set of geometric variables and material dictionaries and saves them to local variables within the object. 
+
+This class has been named ``ExampleMachineQ6p1y3`` to tell the user that it describes a machine with 6 stator slots, 2 rotor poles, and a coil span of 3 slots. Descriptive names like this are helpful for creating clean and understandable code.
+
+Notice the use of the ``_`` character at the start of the local variable names. This is a naming convention in Python that informs users that these variables should be considered private and should therefore not be editted by code that resides outside of the ``ExampleMachineQ6p1y3`` class. 
 
 .. code-block:: python
 
@@ -187,7 +191,7 @@ There can be certain machine parameters that are useful for defining a machines 
 Step 4: Define Settings Class
 -----------------------------
 
-Like the ``Machine`` class defined in the previous step, the ``Settings`` class is designed as a container of information. The ``Settings`` class is set up to hold any additional information about the design which will be evaluated in later steps, which does not fit in the ``Machine`` class. For this example, the settings class simply holds the rotational speed Omega, and the motor current I. Copy the following code-block into the python file to add this example settings class.
+Like the ``Machine`` class defined in the previous step, the ``Settings`` class is designed as a container of information. The ``Settings`` class is set up to hold any additional information about the design which will be evaluated in later steps, which does not fit in the ``Machine`` class. For this example, the settings class simply holds the rotational speed Omega, and the motor current I. Copy the following code-block into the Python file to add this example settings class.
 
 .. code-block:: python
 
@@ -210,7 +214,7 @@ The ``Architect`` class of the ``mach_eval`` module is described in detail in th
 * ``z_q`` Number of turns
 * ``I`` Stator current
 
-Copy the following code into the python file to implement the example architect. In the ``create_new_design`` method, it can be seen how the input tuple values are converted into the input variables needed to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Also note that the material dictionaries are provided to the ``ExampleMotorArchitect`` on initialization, this is required for any information that the ``Machine`` class needs which is not contained in the input tuple. 
+Copy the following code into the Python file to implement the example architect. In the ``create_new_design`` method, it can be seen how the input tuple values are converted into the input variables needed to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Also note that the material dictionaries are provided to the ``ExampleMotorArchitect`` on initialization, this is required for any information that the ``Machine`` class needs which is not contained in the input tuple. 
 
 .. code-block:: python
 
@@ -252,7 +256,7 @@ Copy the following code into the python file to implement the example architect.
 Step 6: Define the SettingsHandler
 -----------------------------------
 
-The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the user guide (TODO fix link). The ``SettingsHandler`` has a similar purpose to the ``Architect`` defined in the previous step, it is responsible for converting the input tuple into the ``Settings`` object. Copy the following code into the python file to implement the example ``SettingsHandler``. For this example, the the ``SettingsHandler`` takes in a rotational speed ``Omega`` on initialization, and extracts the current from the input tuple to create the ``ExampleSettings``.
+The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the user guide (TODO fix link). The ``SettingsHandler`` has a similar purpose to the ``Architect`` defined in the previous step, it is responsible for converting the input tuple into the ``Settings`` object. Copy the following code into the Python file to implement the example ``SettingsHandler``. For this example, the the ``SettingsHandler`` takes in a rotational speed ``Omega`` on initialization, and extracts the current from the input tuple to create the ``ExampleSettings``.
 
 .. code-block:: python
 
@@ -329,7 +333,7 @@ The ``EvaluationStep`` protocol of the ``mach_eval`` module, defines a function 
 Step 7: Define Material Dictionaries 
 ------------------------------------
 
-The following material dictionaries are provided for this example. Note that these hold information about the materials which are used in this example. Copy the following code into the python file.
+The following material dictionaries are provided for this example. Note that these hold information about the materials which are used in this example. Copy the following code into the Python file.
 		
 .. code-block:: python			
 			
@@ -370,7 +374,7 @@ The following material dictionaries are provided for this example. Note that the
 Step 8: Creating MachineDesigner 
 --------------------------------
 
-The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which holds an ``Architect`` and the ``SettingsHandler``. The ``MachineDesigner`` has a method ``create_design`` which takes in the input tuple and returns a ``design`` object. This design object has the ``Machine`` and ``Settings`` object for the associated input tuple as properties (i.e. ``design.machine`` and ``design.setttings``). The following code demonstrate how to initialize both the example ``Architect`` and ``SettingsHandler`` and use them to create a ``MachineDesigner``. A ``design`` object can be created from an input tuple ``x`` as shown. Copy this code into the bottom of the python file.
+The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which holds an ``Architect`` and the ``SettingsHandler``. The ``MachineDesigner`` has a method ``create_design`` which takes in the input tuple and returns a ``design`` object. This design object has the ``Machine`` and ``Settings`` object for the associated input tuple as properties (i.e. ``design.machine`` and ``design.setttings``). The following code demonstrate how to initialize both the example ``Architect`` and ``SettingsHandler`` and use them to create a ``MachineDesigner``. A ``design`` object can be created from an input tuple ``x`` as shown. Copy this code into the bottom of the Python file.
 
 .. code-block:: python
 					
@@ -392,7 +396,7 @@ The ``MachineDesigner`` is a concrete class provided by ``mach_eval`` which hold
 Step 9: Creating MachineEvaluator 
 ----------------------------------
 
-Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a concrete class provided by ``mach_eval``. This class takes in an ordered list of ``EvaluationSteps`` on initialization. When the ``evaluate`` method is called the ``MachineEvaluator`` will loop over the ``step`` functions of the provided ``EvaluationSteps`` in order. The results of the ``evaluate`` method will be an ordered list of ``[state_in,results,state_out]`` for each step provided. This gives a useful log of how the ``design`` and ``state`` objects have changes over the evaluation process. The following code implements the two example ``EvaluationSteps`` provided, and demonstrates how to initialize the ``MachineEvaluator``. Copy this code into the bottom of the python file and hit run. The results object from the evaluation of the machine should be printed in the console. 
+Like the ``MachineDesigner`` in the previous step, the ``MachineEvaluator`` is a concrete class provided by ``mach_eval``. This class takes in an ordered list of ``EvaluationSteps`` on initialization. When the ``evaluate`` method is called the ``MachineEvaluator`` will loop over the ``step`` functions of the provided ``EvaluationSteps`` in order. The results of the ``evaluate`` method will be an ordered list of ``[state_in,results,state_out]`` for each step provided. This gives a useful log of how the ``design`` and ``state`` objects have changes over the evaluation process. The following code implements the two example ``EvaluationSteps`` provided, and demonstrates how to initialize the ``MachineEvaluator``. Copy this code into the bottom of the Python file and hit run. The results object from the evaluation of the machine should be printed in the console. 
 
 .. code-block:: python
 
