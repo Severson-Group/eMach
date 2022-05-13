@@ -1,0 +1,5 @@
+Variable/key_value name,Description,Units
+rad_sleeve,Allowable sleeve stress in radial direction,Pa
+tan_sleeve,Allowable sleeve stress in tangential direction,Pa
+rad_magnets,Allowable magnet in radial direction,Pa
+tan_magnets,Allowable magnet in tangential direction,Pa
