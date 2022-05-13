@@ -215,7 +215,7 @@ Copy and paste the following code block to create a settings class that can be u
 Step 5: Define the Architect
 -----------------------------
 
-The ``Architect`` class of the ``mach_eval`` module is described in detail in the user guide (TODO fix link). The purpose of the ``Architect`` is to convert an input tuple (which is presumably set up to compactly encode the free variables of an optimization) into a machine object (which likely requires far more information than is contained by the free variables). For this example, the input tuple is defined using the following:
+The ``Architect`` class of the ``mach_eval`` module is described in detail in the :doc:`user guide <../../../code_overview>`. The purpose of the ``Architect`` is to convert an input tuple (which is presumably set up to compactly encode the free variables of an optimization) into a machine object (which likely requires far more information than is contained by the free variables). For this example, the input tuple is defined using the following:
 
 * ``x[0] = r_ro`` Outer rotor radius
 * ``x[1] = d_m_norm`` Normalized magnet thickness
@@ -270,7 +270,7 @@ The ``create_new_design`` method demonstrates how the input tuple values are int
 Step 6: Define the SettingsHandler
 -----------------------------------
 
-The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the user guide (TODO fix link). The ``SettingsHandler`` has a similar purpose to the ``Architect`` (step 5) in that it is responsible for converting the input tuple into the settings object. 
+The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the :doc:`user guide <../../../code_overview>`. The ``SettingsHandler`` has a similar purpose to the ``Architect`` (step 5) in that it is responsible for converting the input tuple into the settings object. 
 
 Copy the following code into the Python file to implement the example ``SettingsHandler``. In this tutorial, the ``SettingsHandler`` takes in a rotational speed ``Omega`` on initialization and extracts the current from the input tuple to create the ``ExampleSettings``.
 
@@ -288,7 +288,7 @@ Copy the following code into the Python file to implement the example ``Settings
 Step 7: Define the EvaluationSteps
 ----------------------------------
 
-The ``EvaluationStep`` protocol of the ``mach_eval`` module defines a function signature called ``step``. This is the base level for an evaluation in the ``mach_eval`` module and is used to define an evaluation that is performed on a design. A detailed explanation of the ``EvaluationStep`` protocol and the associated ``State`` class is provided in the User guide (TODO fix link). 
+The ``EvaluationStep`` protocol of the ``mach_eval`` module defines a function signature called ``step``. This is the base level for an evaluation in the ``mach_eval`` module and is used to define an evaluation that is performed on a design. A detailed explanation of the ``EvaluationStep`` protocol and the associated ``State`` class is provided in the :doc:`user guide <../../../code_overview>`. 
 
 Copy and paste the following code to add two evaluation steps. These steps are used to calculate the total power of the machine and the expected losses. Per the ``EvaluationStep`` protocol, each step class must contain a ``step`` method that takes in a state variable, performs some analysis, and returns the results along with an output state. The ``deepcopy`` method is used to provide a copy of the state which can be updated with new information without changing the input state. 
 
