@@ -1,4 +1,4 @@
-Code Overview
+User Guide
 =============================
 
 ``eMach`` is a open source codebase designed to facilitate with the design, evaluation, and optimization of electrical machines. Since machine design is an extremely broad and varied field, ``eMach`` is constructed to be as modular and flexible as possible to be able to accommodate as many machine topologies, evaluation processes, and optimization criteria. While certain base machine optimizations are provided in this repository, the code can be easily modified to produce custom optimizations as well.
@@ -18,7 +18,7 @@ The ``eMach`` repository contains two sub-modules which interface between ``pygm
 The rest of this document will cover both the ``mach_opt`` and ``mach_eval`` modules, explaining their purpose and applications. 
 
 mach_opt Module Overview
------------------------
+------------------------
 
 .. figure:: ./images/getting_started/desopt_Diagram.svg
    :alt: Trial1 
@@ -161,6 +161,7 @@ The ``MachineDesigner`` requires two objects to be passed in on initialization: 
    :align: center
    :width: 800 
 
+.. _arch-label:
 Architect
 +++++++++
 
