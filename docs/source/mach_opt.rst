@@ -1,10 +1,10 @@
-mach\_eval package
-==================
+mach\_opt package
+=================
 
 Module contents
 ---------------
 
-.. automodule:: mach_eval
+.. automodule:: mach_opt
    :members:
    :undoc-members:
    :show-inheritance:
