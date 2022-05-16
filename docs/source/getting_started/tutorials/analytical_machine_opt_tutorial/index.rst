@@ -1,4 +1,3 @@
-.. _toy_example:
 Analytical Machine Optimization Tutorial
 ========================================
 
@@ -61,7 +60,7 @@ The following class defines an additional ``EvaluationStep`` introduced in the `
 Step 4: Define AnalysisStep
 -----------------------------
 
-The ``AnalysisStep`` class of ``mach_eval`` is a concrete class which implements the ``EvaluationStep`` protocol (see `here <https://emach.readthedocs.io/en/latest/code_overview.html#analysisstep>`_). This class defines three protocols it must take in on initialization:
+The ``AnalysisStep`` class of ``mach_eval`` is a concrete class which implements the ``EvaluationStep`` protocol (see :ref:`here <analysis-step>`). This class defines three protocols it must take in on initialization:
 
 * ``ProblemDefinition``
 * ``Analyzer``
