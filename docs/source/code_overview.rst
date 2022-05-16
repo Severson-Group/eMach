@@ -162,6 +162,7 @@ The ``MachineDesigner`` requires two objects to be passed in on initialization: 
    :width: 800 
 
 .. _arch-label:
+
 Architect
 +++++++++
 
@@ -188,6 +189,8 @@ The ``Architect`` protocol defines a function call for the creation of a ``machi
 				machine: Machine
 			"""
 			pass
+
+.. _settings-handler:
 
 SettingsHandler
 +++++++++++++++
@@ -245,6 +248,7 @@ The ``MachineEvaluator`` class implements the ``Evaluator`` protocol from the ``
 
 As seen in the code block above, during the ``evaluate`` method, a ``design`` object is passed into the method, and then packaged into a ``state`` object. The ``state`` object is a container for the  design object, as well as any results and conditions for the current evaluation. When the ``MachineEvaluator`` is initialized, an ordered list of ``EvaluationStep`` is passed in. During the ``evaluate`` method, this list is stepped through by passing the current ``state`` object into the ``step`` method of the current step. The results of the evaluation step are saved to the ``full_results`` list as an entry of the following form ``[state_in, results, state_out]``. By saving the results in this form before the state object is updated for the next step, a record of how the state changed as it is passed between steps is maintained. 
 
+.. _eval-step:
 
 EvaluationStep
 ++++++++++++++
@@ -259,6 +263,8 @@ The ``EvaluationStep`` protocol, is simple class which defines, how the state in
 		@abstractmethod
 		def step(self, state_in: 'State') -> [Any, 'State']:
 			pass
+
+.. _analysis-step:
 
 AnalysisStep
 ++++++++++++
