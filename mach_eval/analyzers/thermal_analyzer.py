@@ -589,7 +589,7 @@ class ThermalAnalyzer:
 
 
 class AirflowAnalyzer:
-    def analyze(problem):
+    def analyze(self,problem):
         nlc1 = op.NonlinearConstraint(problem.magnet_temp, 0, problem.max_temp)
         const = nlc1
         sol = op.minimize(
