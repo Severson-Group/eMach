@@ -1,141 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 23 09:34:29 2022
+
+@author: Martin Johnson
+"""
 import numpy as np
 import scipy.optimize as op
-#from spec_USmotor_Q6p1 import fea_config_dict
+from thermal_analyzer_base import *
 
-class ThermalProblem:
-    
-    def __init__(self,res,Q_dot,T_ref,N_nodes):
-        self.res=res
-        self.Q_dot=Q_dot
-        self.T_ref=T_ref
-        self.N_nodes=N_nodes
-
-
-class StatorProblemDef:
-    def __init__(self, mat_dict):
-        self.mat_dict = mat_dict
-
-    def get_problem(
-        self, r_si, d_sp, d_st, w_st, w_sy, alpha_st, l_st, T_ref, losses, h_out, h_in
-    ):
-        self.r_si = r_si
-        self.d_sp = d_sp
-        self.d_st = d_st
-        self.w_st = w_st
-        self.w_sy = w_sy
-        self.alpha_st = alpha_st
-        self.losses = losses
-        self.T_ref = T_ref
-        #self.omega = omega
-        self.h_out=h_out
-        self.h_in=h_in
-        self.r_so=r_si+d_st+w_sy
-        self.l_st=l_st
-        N_nodes=5
-        Res= self.create_resistance_network()
-
-        ################################################
-        #           Load Losses into loss Vector
-        ################################################
-        Q_dot = np.zeros([5, 1])
-        Q_dot[1] = losses["copper"] / 6
-        Q_dot[3] = losses["total"] - losses["copper"]
-
-        # print('Magnet Losses:',Q_dot[5])
-        ################################################
-        #    Create Reference Temperature Vector
-        ################################################
-        
-        T_ref=np.zeros([4,1])
-        T_ref[0]=self.T_ref
-        prob=ThermalProblem(Res,Q_dot,T_ref,N_nodes)
-
-        return prob
-
-    def create_resistance_network(self):
-        ################################################
-        #           Load Material Properties
-        ################################################
-        stator_core_k = self.mat_dict["core_therm_conductivity"]
-        air_k = self.mat_dict["air_therm_conductivity"]
-        air_mu = self.mat_dict["air_viscosity"]
-        air_cp = self.mat_dict["air_cp"]
-        coil_k = self.mat_dict["coil_therm_cond"]
-        ################################################
-        #             Load Operating Point
-        ################################################
-        ################################################
-        #           Create Material Objects
-        ################################################
-
-        ##############
-        # Rotor Core
-        ##############
-        sc_mat = Material(stator_core_k)
-
-        ##############
-        # coil
-        ##############
-        coil_mat = Material(coil_k)
-
-        ##############
-        # Air
-        ##############
-        air_mat = Material(air_k)
-        air_mat.set_cp(air_cp)
-        air_mat.set_mu(air_mu)
-
-        #############################
-        ####Geometric Values#########
-        #############################
-
-        R1 = self.r_si + self.d_sp
-        R2 = self.r_so - self.w_sy
-        R3 = self.r_so
-        stack_length = self.l_st
-
-        Resistances = []
-        ##############
-        # Path 0
-        ##############
-        Descr = "Coil to StatorInt)"
-        A_1 = stack_length * (2 * np.pi / 6 - self.alpha_st) * (R1 + R2) / 2
-        Resistances.append(plane_wall(coil_mat, 1, 2, R1, R2, A_1))
-        Resistances[0].Descr = Descr
-        ##############
-        # Path 1
-        ##############
-        Descr = "coil inter, to stator out"
-        A_2 = stack_length * (2 * np.pi / 6 - self.alpha_st) * (R2 + R3) / 2
-        Resistances.append(plane_wall(sc_mat, 2, 3, R2, R3, A_2))
-        Resistances[1].Descr = Descr
-        ##############
-        # Path 2
-        ##############
-        A_3 = stack_length * (2 * np.pi) * (R3)
-        Descr = "Rotor Core center to PM/RC interface"
-        Resistances.append(conv(air_mat, 3, 0, self.h_out, A_3))
-        Resistances[2].Descr = Descr
-
-        ##############
-        # Path 3
-        ##############
-        Descr = "Outer rotor edge to Air"
-        A_rotor_out = stack_length * (6 * self.alpha_st * self.r_si)
-        Resistances.append(conv(air_mat, 4, 0, self.h_in, A_rotor_out))
-        Resistances[3].Descr = Descr
-        ##############
-        # Path 4
-        ##############
-        A_4 = stack_length * self.w_st
-        Descr = "Rotor Core center to PM/RC interface"
-        Resistances.append(plane_wall(sc_mat, 3, 4, self.r_si, R1, A_4))
-        Resistances[4].Descr = Descr
-
-        return Resistances
-
-
-class RotorThemalProblemDef:
+class SPM_RotorThemalProblemDef:
     def __init__(self,mat_dict):
         self.mat_dict=mat_dict
 
@@ -557,36 +430,132 @@ class RotorThemalProblemDef:
         Resistances[45].Descr = Descr
 
         return Resistances
+    
+class StatorProblemDef:
+    """Legacy do not use"""
+    def __init__(self, mat_dict):
+        self.mat_dict = mat_dict
 
+    def get_problem(
+        self, r_si, d_sp, d_st, w_st, w_sy, alpha_st, l_st, T_ref, losses, h_out, h_in
+    ):
+        self.r_si = r_si
+        self.d_sp = d_sp
+        self.d_st = d_st
+        self.w_st = w_st
+        self.w_sy = w_sy
+        self.alpha_st = alpha_st
+        self.losses = losses
+        self.T_ref = T_ref
+        #self.omega = omega
+        self.h_out=h_out
+        self.h_in=h_in
+        self.r_so=r_si+d_st+w_sy
+        self.l_st=l_st
+        N_nodes=5
+        Res= self.create_resistance_network()
 
-class ThermalAnalyzer:
-    def analyze(self,problem):
-        R_inv=np.zeros([problem.N_nodes,problem.N_nodes])
-        for i,r in enumerate(problem.res):
-            N1=r.Node1
-            N2=r.Node2
-            res=r.resistance_value
-            R_inv[N1,N2]=(1/res)
-            R_inv[N2,N1]=(1/res)
-        one=np.ones([len(R_inv[:,1]),1])
-        Sum_R=np.dot(R_inv,one)
-        G=-R_inv
-        for i,r in enumerate(R_inv[:,1]):
-            E=np.zeros([len(R_inv[:,1]),len(R_inv[:,1])])
-            E[i,i]=1
-            e=np.zeros([1,len(R_inv[:,1])])
-            e[0,i]=1
-            G=G+np.dot(np.dot(E,Sum_R),e)
-            
-        G_aug=G
-        G_aug[0,:]=np.zeros_like(G_aug[0,:])
-        G_aug[0,0]=1
-        Q_dot_aug=problem.Q_dot
-        Q_dot_aug[0]=problem.T_ref[0]
-        T=np.dot(np.linalg.inv(G_aug),Q_dot_aug) 
-        print(T)
-        return T
+        ################################################
+        #           Load Losses into loss Vector
+        ################################################
+        Q_dot = np.zeros([5, 1])
+        Q_dot[1] = losses["copper"] / 6
+        Q_dot[3] = losses["total"] - losses["copper"]
 
+        # print('Magnet Losses:',Q_dot[5])
+        ################################################
+        #    Create Reference Temperature Vector
+        ################################################
+        
+        T_ref=np.zeros([4,1])
+        T_ref[0]=self.T_ref
+        prob=ThermalProblem(Res,Q_dot,T_ref,N_nodes)
+
+        return prob
+
+    def create_resistance_network(self):
+        ################################################
+        #           Load Material Properties
+        ################################################
+        stator_core_k = self.mat_dict["core_therm_conductivity"]
+        air_k = self.mat_dict["air_therm_conductivity"]
+        air_mu = self.mat_dict["air_viscosity"]
+        air_cp = self.mat_dict["air_cp"]
+        coil_k = self.mat_dict["coil_therm_cond"]
+        ################################################
+        #             Load Operating Point
+        ################################################
+        ################################################
+        #           Create Material Objects
+        ################################################
+
+        ##############
+        # Rotor Core
+        ##############
+        sc_mat = Material(stator_core_k)
+
+        ##############
+        # coil
+        ##############
+        coil_mat = Material(coil_k)
+
+        ##############
+        # Air
+        ##############
+        air_mat = Material(air_k)
+        air_mat.set_cp(air_cp)
+        air_mat.set_mu(air_mu)
+
+        #############################
+        ####Geometric Values#########
+        #############################
+
+        R1 = self.r_si + self.d_sp
+        R2 = self.r_so - self.w_sy
+        R3 = self.r_so
+        stack_length = self.l_st
+
+        Resistances = []
+        ##############
+        # Path 0
+        ##############
+        Descr = "Coil to StatorInt)"
+        A_1 = stack_length * (2 * np.pi / 6 - self.alpha_st) * (R1 + R2) / 2
+        Resistances.append(plane_wall(coil_mat, 1, 2, R1, R2, A_1))
+        Resistances[0].Descr = Descr
+        ##############
+        # Path 1
+        ##############
+        Descr = "coil inter, to stator out"
+        A_2 = stack_length * (2 * np.pi / 6 - self.alpha_st) * (R2 + R3) / 2
+        Resistances.append(plane_wall(sc_mat, 2, 3, R2, R3, A_2))
+        Resistances[1].Descr = Descr
+        ##############
+        # Path 2
+        ##############
+        A_3 = stack_length * (2 * np.pi) * (R3)
+        Descr = "Rotor Core center to PM/RC interface"
+        Resistances.append(conv(air_mat, 3, 0, self.h_out, A_3))
+        Resistances[2].Descr = Descr
+
+        ##############
+        # Path 3
+        ##############
+        Descr = "Outer rotor edge to Air"
+        A_rotor_out = stack_length * (6 * self.alpha_st * self.r_si)
+        Resistances.append(conv(air_mat, 4, 0, self.h_in, A_rotor_out))
+        Resistances[3].Descr = Descr
+        ##############
+        # Path 4
+        ##############
+        A_4 = stack_length * self.w_st
+        Descr = "Rotor Core center to PM/RC interface"
+        Resistances.append(plane_wall(sc_mat, 3, 4, self.r_si, R1, A_4))
+        Resistances[4].Descr = Descr
+
+        return Resistances
+
+#%% Airflow Analyzer
 
 class AirflowAnalyzer:
     def analyze(self,problem):
@@ -643,7 +612,7 @@ class AirflowProblem:
         self.omega = omega
         self.max_temp = max_temp
 
-        self.therm_prob_def = RotorThemalProblemDef(mat_dict)
+        self.therm_prob_def = SPM_RotorThemalProblemDef(mat_dict)
         self.therm_ana = ThermalAnalyzer()
 
     def magnet_temp(self, u_z):
@@ -771,207 +740,8 @@ class WindageLossAnalyzer:
             windage_loss_radial + windage_loss_endFace + windage_loss_axial
         )
         return windage_loss_total
-
-
-class Material:
-    def __init__(self, k):
-        self.k = k
-
-    def set_cp(self, cp):
-        self.cp = cp
-
-    def set_mu(self, mu):
-        self.mu = mu
-
-
-class Resistance:
-    def __init__(self, Material, Node1, Node2):
-        self.Material = Material
-        self.Node1 = Node1
-        self.Node2 = Node2
-
-    @property
-    def resistance_value(self):
-        return None
-
-
-class plane_wall(Resistance):
-    """Material,Node1,Node2,L1,L2,A"""
-
-    def __init__(self, Material, Node1, Node2, L1, L2, A):
-        super().__init__(Material, Node1, Node2)
-        self.L1 = L1
-        self.L2 = L2
-        self.A = A
-
-    @property
-    def resistance_value(self):
-        return (self.L2 - self.L1) / (self.Material.k * self.A)
-
-
-class cylind_wall(Resistance):
-    def __init__(self, Material, Node1, Node2, R1, R2, H):
-        super().__init__(Material, Node1, Node2)
-        self.R1 = R1
-        self.R2 = R2
-        self.H = H
-
-    @property
-    def resistance_value(self):
-        return np.log(self.R2 / self.R1) / (2 * np.pi * self.H * self.Material.k)
-
-
-class air_gap_conv(Resistance):
-    def __init__(self, Material, Node1, Node2, omega, R_r, R_s, u_z, A):
-        super().__init__(Material, Node1, Node2)
-        self.omega = omega
-        self.R_r = R_r
-        self.R_s = R_s
-        self.u_z = u_z
-        self.A = A
-
-    @property
-    def h(self):
-        g = self.R_s = self.R_r
-        r_m = (self.R_r + self.R_s) / 2
-        a = self.R_r
-        b = self.R_s
-        D_h = 2 * g
-        u_theta = self.omega * self.R_r
-        Re_g = (self.omega * g * self.R_r) / self.Material.mu
-        Re_theta = (self.omega * (self.R_r ** 2)) / self.Material.mu
-        Re_z = (
-            np.sqrt((self.omega * self.R_r) ** 2 + self.u_z ** 2)
-            * D_h
-            / self.Material.mu
-        )
-        g_dim = g / self.R_r
-        Ta_m = Re_g * ((g / self.R_r) ** (0.5))
-        Pr = 1000 * self.Material.cp * self.Material.mu / self.Material.k
-        if Ta_m <= 41:
-            self.Nu = 2
-        elif Ta_m > 41 and Ta_m < 100:
-            self.Nu = 0.202 * (Ta_m ** (0.63)) * (Pr ** (0.27))
-        elif Ta_m >= 100:
-            if self.u_z == 0:
-                self.Nu = 0.03 * Re_z ** 0.8
-            else:
-                self.Nu = (
-                    (
-                        0.022
-                        * (1 + D_h * u_theta / (np.pi * a * self.u_z) ** 2) ** 0.8714
-                    )
-                    * (Re_z ** 0.8)
-                    * (Pr ** 0.5)
-                )
-        else:
-            self.Nu = None
-        return self.Nu * self.Material.k / D_h
-
-    def conv_coeff(self):
-        g = self.R_s = self.R_r
-        r_m = (self.R_r + self.R_s) / 2
-        a = self.R_r
-        b = self.R_s
-        D_h = 2 * g
-        u_theta = self.omega * self.R_r
-        Re_g = (self.omega * g * self.R_r) / self.Material.mu
-        Re_theta = (self.omega * (self.R_r ** 2)) / self.Material.mu
-        Re_z = (
-            np.sqrt((self.omega * self.R_r) ** 2 + self.u_z ** 2)
-            * D_h
-            / self.Material.mu
-        )
-        g_dim = g / self.R_r
-        Ta_m = Re_g * ((g / self.R_r) ** (0.5))
-        Pr = 1000 * self.Material.cp * self.Material.mu / self.Material.k
-        if Ta_m <= 41:
-            self.Nu = 2
-        elif Ta_m > 41 and Ta_m < 100:
-            self.Nu = 0.202 * (Ta_m ** (0.63)) * (Pr ** (0.27))
-        elif Ta_m >= 100:
-            if self.u_z == 0:
-                self.Nu = 0.03 * Re_z ** 0.8
-            else:
-                self.Nu = (
-                    (
-                        0.022
-                        * (1 + D_h * u_theta / (np.pi * a * self.u_z) ** 2) ** 0.8714
-                    )
-                    * (Re_z ** 0.8)
-                    * (Pr ** 0.5)
-                )
-        else:
-            self.Nu = None
-        return self.Nu * self.Material.k / D_h
-
-    @property
-    def resistance_value(self):
-        return 1 / (self.h * self.A)
-
-
-class hub_conv(Resistance):
-    def __init__(self, Material, Node1, Node2, omega, A):
-        super().__init__(Material, Node1, Node2)
-        self.omega = omega
-        # self.R=R
-        self.A = A
-
-    @property
-    def h(self):
-        return 0.35 * self.Material.k * (self.omega / self.Material.mu) ** 0.5
-
-    @property
-    def resistance_value(self):
-        return 1 / (self.h * self.A)
-
-
-class shaft_conv(Resistance):
-    def __init__(self, Material, Node1, Node2, omega, R, A, u_z):
-        super().__init__(Material, Node1, Node2)
-        self.omega = omega
-        self.R = R
-        self.A = A
-        self.u_z = u_z
-
-    @property
-    def Re(self):
-        return ((self.R * self.omega)) * self.R / self.Material.mu
-        # return np.sqrt((self.R*self.omega)**2+self.u_z**2)*self.R/self.Material.mu
-
-    @property
-    def Pr(self):
-        return 1000 * self.Material.cp * self.Material.mu / self.Material.k
-
-    @property
-    def Nu(self):
-        return 0.036 * self.Re ** 0.8 * self.Pr ** 0.33
-
-    @property
-    def h(self):
-        return self.Nu * self.Material.k / (2 * self.R)
-
-    @property
-    def resistance_value(self):
-        return 1 / (self.h * self.A)
-
-
-class conv(Resistance):
-    def __init__(self, Material, Node1, Node2, h, A):
-        super().__init__(Material, Node1, Node2)
-        self.omega = omega
-        self._h = h
-        self.A = A
-
-    @property
-    def h(self):
-        return self._h
-
-    @property
-    def resistance_value(self):
-        return 1 / (self.h * self.A)
-
-
+    
+    
 if __name__ == "__main__":
     # mat_dict=fea_config_dict
     mat_dict= {'shaft_therm_conductivity': 51.9, # W/m-k ,
@@ -993,10 +763,11 @@ if __name__ == "__main__":
     T_ref=25 # [C]
     r_si=r_ro+d_sl+1E-3 # [m]
     omega=120E3*2*np.pi/60 # [rad/s]
+    max_temp=80
     losses={'rotor_iron_loss':.001,'magnet_loss':135}
     afp=AirflowProblem(r_sh, d_ri, r_ro, d_sl, r_si, l_st, l_hub, T_ref,
-                       losses, omega, mat_dict)
-    ana=AirflowAnalyzer(80)
+                       losses, omega,max_temp, mat_dict)
+    ana=AirflowAnalyzer()
     sleeve_dim=ana.analyze(afp)
     print(sleeve_dim)
 

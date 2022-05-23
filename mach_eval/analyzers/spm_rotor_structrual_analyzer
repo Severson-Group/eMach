@@ -2,8 +2,8 @@ import numpy as np
 import scipy.optimize as op
 from typing import Tuple
 
-
-class StructuralProblem:
+#%% Base SPM Structural Analyzer
+class SPM_RotorStructuralProblem:
     """Problem class for StructuralAnalyzer.
 
     Attributes:
@@ -36,140 +36,14 @@ class StructuralProblem:
         self.omega = omega
 
 
-class StructuralProblemDef:
-    """ProblemDefinition class for StructuralAnalyzer.
-
-    Attributes:
-        mat_dict (dict): material parameters dictionary.
-
-    """
-
-    def __init__(self, mat_dict: dict) -> "StructuralProblemDef":
-        """StructuralProblemDef __init__ method.
-
-        Args:
-            mat_dict (dict): material parameters dictionary.
-
-        """
-        self.mat_dict = mat_dict
-
-    def get_problem(
-        self,
-        r_sh: float,
-        d_m: float,
-        r_ro: float,
-        d_sl: float,
-        delta_sl: float,
-        deltaT: float,
-        N: float,
-    ) -> "StructuralProblem":
-        """Creates StructuralProblem object from input
-
-        Args:
-            r_sh (float): Shaft outer radius.
-            d_m (float): Shaft outer radius.
-            r_ro (float): Shaft outer radius.
-            d_sl (float): Shaft outer radius.
-            delta_sl (float): Shaft outer radius.
-            deltaT (float): Shaft outer radius.
-            N (float): Shaft outer radius.
-
-        Returns:
-            problem (StructuralProblem): StructuralProblem
-
-        """
-        R1 = r_sh
-        R2 = r_ro - d_m
-        R3 = r_ro
-        R4 = r_ro + d_sl
-        # print('R1:',R1,'R2:',R2,'R3:',R3)
-        ##############################
-        #    Load Operating Point
-        ##############################
-        omega = N * 2 * np.pi / 60
-        ##############################
-        #   Load Material Properties
-        ##############################
-        rho_sh = self.mat_dict["shaft_material_density"]
-        E_sh = self.mat_dict["shaft_youngs_modulus"]
-        nu_sh = self.mat_dict["shaft_poission_ratio"]
-        alpha_sh = self.mat_dict["alpha_sh"]  # 1.2E-5
-
-        rho_rc = self.mat_dict["core_material_density"]
-        E_rc = self.mat_dict["core_youngs_modulus"]
-        nu_rc = self.mat_dict["core_poission_ratio"]
-        alpha_rc = self.mat_dict["alpha_rc"]  # 1.2E-5
-
-        rho_pm = self.mat_dict["magnet_material_density"]
-        E_pm = self.mat_dict["magnet_youngs_modulus"]
-        nu_pm = self.mat_dict["magnet_poission_ratio"]
-        alpha_pm = self.mat_dict["alpha_pm"]  # 5E-6
-
-        rho_sl = self.mat_dict["sleeve_material_density"]
-        E_t_sl = self.mat_dict["sleeve_youngs_th_direction"]
-        E_p_sl = self.mat_dict["sleeve_youngs_p_direction"]
-        nu_p_sl = self.mat_dict["sleeve_poission_ratio_p"]
-        nu_tp_sl = self.mat_dict["sleeve_poission_ratio_tp"]
-        alpha_t = self.mat_dict["alpha_sl_t"]  # -4.7E-7
-        alpha_r = self.mat_dict["alpha_sl_r"]  # .3E-6
-        MaxRadialSleeveStress = self.mat_dict["sleeve_max_rad_stress"]
-        MaxTanSleeveStress = self.mat_dict["sleeve_max_tan_stress"]
-        ##############################
-        #   Make Rotor Materials
-        ##############################
-        ShaftMaterial = Material_Isotropic(rho_sh, E_sh, nu_sh, alpha_sh)
-        RotorCoreMaterial = Material_Isotropic(rho_rc, E_rc, nu_rc, alpha_rc)
-        MagnetMaterial = Material_Isotropic(rho_pm, E_pm, nu_pm, alpha_pm)
-        SleeveMaterial = Material_Transverse_Isotropic(
-            rho_sl, E_t_sl, E_p_sl, nu_tp_sl, nu_p_sl, alpha_r, alpha_t
-        )
-
-        #######################################################################
-        #                      Create Rotor Section Objects
-        #######################################################################
-
-        ##############################
-        #    Create Shaft Object
-        ##############################
-
-        sh = RotorComponent(ShaftMaterial, 0, R1)
-
-        ##############################
-        #  Create Rotor Core Object
-        ##############################
-
-        rc = RotorComponent(RotorCoreMaterial, R1, R2)
-
-        ##############################
-        #    Create Magnets Object
-        ##############################
-
-        pm = RotorComponent(MagnetMaterial, R2, R3)
-        pm.set_MaxRadialStress(0)
-
-        ##############################
-        #   Create Sleeve Object
-        ##############################
-
-        sl = RotorComponent(SleeveMaterial, R3, R4)
-        sl.set_MaxRadialStress(MaxRadialSleeveStress)
-        sl.set_MaxTanStress(MaxTanSleeveStress)
-
-        sl.set_th(d_sl)
-        sl.set_delta_sl(delta_sl)
-
-        problem = StructuralProblem(sh, rc, pm, sl, deltaT, omega)
-        return problem
-
-
-class StructuralAnalyzer:
+class SPM_RotorStructuralAnalyzer:
     def analyze(
-        self, problem: "StructuralProblem"
+        self, problem: "SPM_RotorStructuralProblem"
     ) -> Tuple["Sigma", "Sigma", "Sigma", "Sigma"]:
         """Analyze structural problem
 
         Args:
-            problem (StructuralProblem): problem for analyzer.
+            problem (SPM_RotorStructuralProblem): problem for analyzer.
 
         Returns:
             results (['Sigma','Sigma','Sigma','Sigma']): Sigma objects
@@ -547,6 +421,133 @@ class Sigma:
         return sigma_t
 
 
+#%% Sleeve (Design) Analyzer
+class SPM_RotorProblemInterpreter:
+    """Creates SPM_RotorStructuralProblem class from set of inputs.
+
+    Attributes:
+        mat_dict (dict): material parameters dictionary.
+
+    """
+
+    def __init__(self, mat_dict: dict) -> "SPM_RotorProblemInterpreter":
+        """SPM_RotorProblemInterpreter __init__ method.
+
+        Args:
+            mat_dict (dict): material parameters dictionary.
+
+        """
+        self.mat_dict = mat_dict
+
+    def get_problem(
+        self,
+        r_sh: float,
+        d_m: float,
+        r_ro: float,
+        d_sl: float,
+        delta_sl: float,
+        deltaT: float,
+        N: float,
+    ) -> "SPM_RotorStructuralProblem":
+        """Creates SPM_RotorStructuralProblem object from input
+
+        Args:
+            r_sh (float): Shaft outer radius [m].
+            d_m (float): Magnet Thickness [m].
+            r_ro (float): Outer Rotor Radius [m].
+            d_sl (float): Sleeve Thickness [m].
+            delta_sl (float): Sleeve Undersize [m].
+            deltaT (float): Temperature Rise [K].
+            N (float): Rotor Speed [RPM].
+
+        Returns:
+            problem (StructuralProblem): StructuralProblem
+
+        """
+        R1 = r_sh
+        R2 = r_ro - d_m
+        R3 = r_ro
+        R4 = r_ro + d_sl
+        # print('R1:',R1,'R2:',R2,'R3:',R3)
+        ##############################
+        #    Load Operating Point
+        ##############################
+        omega = N * 2 * np.pi / 60
+        ##############################
+        #   Load Material Properties
+        ##############################
+        rho_sh = self.mat_dict["shaft_material_density"]
+        E_sh = self.mat_dict["shaft_youngs_modulus"]
+        nu_sh = self.mat_dict["shaft_poission_ratio"]
+        alpha_sh = self.mat_dict["alpha_sh"]  # 1.2E-5
+
+        rho_rc = self.mat_dict["core_material_density"]
+        E_rc = self.mat_dict["core_youngs_modulus"]
+        nu_rc = self.mat_dict["core_poission_ratio"]
+        alpha_rc = self.mat_dict["alpha_rc"]  # 1.2E-5
+
+        rho_pm = self.mat_dict["magnet_material_density"]
+        E_pm = self.mat_dict["magnet_youngs_modulus"]
+        nu_pm = self.mat_dict["magnet_poission_ratio"]
+        alpha_pm = self.mat_dict["alpha_pm"]  # 5E-6
+
+        rho_sl = self.mat_dict["sleeve_material_density"]
+        E_t_sl = self.mat_dict["sleeve_youngs_th_direction"]
+        E_p_sl = self.mat_dict["sleeve_youngs_p_direction"]
+        nu_p_sl = self.mat_dict["sleeve_poission_ratio_p"]
+        nu_tp_sl = self.mat_dict["sleeve_poission_ratio_tp"]
+        alpha_t = self.mat_dict["alpha_sl_t"]  # -4.7E-7
+        alpha_r = self.mat_dict["alpha_sl_r"]  # .3E-6
+        MaxRadialSleeveStress = self.mat_dict["sleeve_max_rad_stress"]
+        MaxTanSleeveStress = self.mat_dict["sleeve_max_tan_stress"]
+        ##############################
+        #   Make Rotor Materials
+        ##############################
+        ShaftMaterial = Material_Isotropic(rho_sh, E_sh, nu_sh, alpha_sh)
+        RotorCoreMaterial = Material_Isotropic(rho_rc, E_rc, nu_rc, alpha_rc)
+        MagnetMaterial = Material_Isotropic(rho_pm, E_pm, nu_pm, alpha_pm)
+        SleeveMaterial = Material_Transverse_Isotropic(
+            rho_sl, E_t_sl, E_p_sl, nu_tp_sl, nu_p_sl, alpha_r, alpha_t
+        )
+
+        #######################################################################
+        #                      Create Rotor Section Objects
+        #######################################################################
+
+        ##############################
+        #    Create Shaft Object
+        ##############################
+
+        sh = RotorComponent(ShaftMaterial, 0, R1)
+
+        ##############################
+        #  Create Rotor Core Object
+        ##############################
+
+        rc = RotorComponent(RotorCoreMaterial, R1, R2)
+
+        ##############################
+        #    Create Magnets Object
+        ##############################
+
+        pm = RotorComponent(MagnetMaterial, R2, R3)
+        pm.set_MaxRadialStress(0)
+
+        ##############################
+        #   Create Sleeve Object
+        ##############################
+
+        sl = RotorComponent(SleeveMaterial, R3, R4)
+        sl.set_MaxRadialStress(MaxRadialSleeveStress)
+        sl.set_MaxTanStress(MaxTanSleeveStress)
+
+        sl.set_th(d_sl)
+        sl.set_delta_sl(delta_sl)
+
+        problem = SPM_RotorStructuralProblem(sh, rc, pm, sl, deltaT, omega)
+        return problem
+
+
 class SleeveProblem:
     def __init__(
         self,
@@ -584,9 +585,9 @@ class SleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        struc_prob_def = StructuralProblemDef(self.mat_dict)
+        struc_prob_def = SPM_RotorProblemInterpreter(self.mat_dict)
         problem = struc_prob_def.get_problem(r_sh, d_m, R_ro, d_sl, delta_sl, deltaT, N)
-        analyzer = StructuralAnalyzer()
+        analyzer = SPM_RotorStructuralAnalyzer()
         sigmas = analyzer.analyze(problem)
         x_sl = np.linspace(R_ro, R_ro + d_sl, 50)
         sigma_t_sl = sigmas[3].tangential(x_sl)
@@ -602,9 +603,9 @@ class SleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        struc_prob_def = StructuralProblemDef(self.mat_dict)
+        struc_prob_def = SPM_RotorProblemInterpreter(self.mat_dict)
         problem = struc_prob_def.get_problem(r_sh, d_m, R_ro, d_sl, delta_sl, deltaT, N)
-        analyzer = StructuralAnalyzer()
+        analyzer = SPM_RotorStructuralAnalyzer()
         sigmas = analyzer.analyze(problem)
         x_sl = np.linspace(R_ro, R_ro + d_sl, 50)
         sigma_r_sl = sigmas[3].radial(x_sl)
@@ -620,9 +621,9 @@ class SleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        struc_prob_def = StructuralProblemDef(self.mat_dict)
+        struc_prob_def = SPM_RotorProblemInterpreter(self.mat_dict)
         problem = struc_prob_def.get_problem(r_sh, d_m, R_ro, d_sl, delta_sl, deltaT, N)
-        analyzer = StructuralAnalyzer()
+        analyzer = SPM_RotorStructuralAnalyzer()
         sigmas = analyzer.analyze(problem)
         x_pm = np.linspace(R_ro - d_m, R_ro, 50)
         sigma_r_pm = sigmas[2].radial(x_pm)
@@ -638,9 +639,9 @@ class SleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        struc_prob_def = StructuralProblemDef(self.mat_dict)
+        struc_prob_def = SPM_RotorProblemInterpreter(self.mat_dict)
         problem = struc_prob_def.get_problem(r_sh, d_m, R_ro, d_sl, delta_sl, deltaT, N)
-        analyzer = StructuralAnalyzer()
+        analyzer = SPM_RotorStructuralAnalyzer()
         sigmas = analyzer.analyze(problem)
         x_pm = np.linspace(R_ro - d_m, R_ro, 50)
         sigma_t_pm = sigmas[2].tangential(x_pm)
@@ -657,7 +658,7 @@ class SleeveProblemDef:
 
     def get_problem(
         self, r_sh: float, d_m: float, r_ro: float, deltaT: float, N: float
-    ) -> "StructuralProblem":
+    ) -> "SleeveProblem":
         problem = SleeveProblem(r_sh, d_m, r_ro, deltaT, self.mat_dict, N)
         return problem
 
