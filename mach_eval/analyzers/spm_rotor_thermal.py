@@ -8,11 +8,9 @@ import numpy as np
 import scipy.optimize as op
 from thermal_analyzer_base import *
 
-class SPM_RotorThemalProblemDef:
-    def __init__(self,mat_dict):
+class SPM_RotorThemalProblem:
+    def __init__(self,mat_dict,r_sh,d_ri,r_ro,d_sl,r_si,l_st,l_hub,T_ref,u_z,losses,omega):
         self.mat_dict=mat_dict
-
-    def get_problem(self,r_sh,d_ri,r_ro,d_sl,r_si,l_st,l_hub,T_ref,u_z,losses,omega):
         self.r_sh=r_sh
         self.d_ri=d_ri
         self.r_ro=r_ro
@@ -30,16 +28,22 @@ class SPM_RotorThemalProblemDef:
         self.R_2=self.R_1+self.r_sh
         self.R_3=self.r_ro
         self.R_4=self.R_3+self.d_sl
+
+
+class SPM_RotorThemalAnalyzer:
+    def __init__(self):
+        self.base_ana=ThermalAnalyzer()
+    def analyze(self,problem):
         N_nodes=33
-        Res= self.create_resistance_network()
+        Res= self.create_resistance_network(problem)
 
         ################################################
         #           Load Losses into loss Vector
         ################################################
         Q_dot = np.zeros([33, 1])
         Q_dot[1] = 0  # No shaft losses
-        Q_dot[3] = losses["rotor_iron_loss"]
-        Q_dot[5] = losses["magnet_loss"]
+        Q_dot[3] = problem.losses["rotor_iron_loss"]
+        Q_dot[5] = problem.losses["magnet_loss"]
 
         # print('Magnet Losses:',Q_dot[5])
         ################################################
@@ -47,28 +51,29 @@ class SPM_RotorThemalProblemDef:
         ################################################
         
         T_ref=np.zeros([33,1])
-        T_ref[0]=self.T_ref
-        prob=ThermalProblem(Res,Q_dot,T_ref,N_nodes)
+        T_ref[0]=problem.T_ref
+        
+        base_prob=ThermalProblem(Res,Q_dot,T_ref,N_nodes)
+        T=self.base_ana.analyze(base_prob)
+        return T
 
-        return prob
-
-    def create_resistance_network(self):
+    def create_resistance_network(self,problem):
         ################################################
         #           Load Material Properties
         ################################################
-        shaft_k = self.mat_dict["shaft_therm_conductivity"]
-        rotor_core_k = self.mat_dict["core_therm_conductivity"]
-        pm_k = self.mat_dict["magnet_therm_conductivity"]
-        sleeve_k = self.mat_dict["sleeve_therm_conductivity"]
-        air_k = self.mat_dict["air_therm_conductivity"]
-        air_mu = self.mat_dict["air_viscosity"]
-        air_cp = self.mat_dict["air_cp"]
-        hub_k = self.mat_dict["rotor_hub_therm_conductivity"]
+        shaft_k = problem.mat_dict["shaft_therm_conductivity"]
+        rotor_core_k = problem.mat_dict["core_therm_conductivity"]
+        pm_k = problem.mat_dict["magnet_therm_conductivity"]
+        sleeve_k = problem.mat_dict["sleeve_therm_conductivity"]
+        air_k = problem.mat_dict["air_therm_conductivity"]
+        air_mu = problem.mat_dict["air_viscosity"]
+        air_cp = problem.mat_dict["air_cp"]
+        hub_k = problem.mat_dict["rotor_hub_therm_conductivity"]
 
         ################################################
         #             Load Operating Point
         ################################################
-        omega = self.omega
+        omega = problem.omega
         ################################################
         #           Create Material Objects
         ################################################
@@ -107,12 +112,12 @@ class SPM_RotorThemalProblemDef:
         ##############
         # Radial Direction
         ##############
-        R_1 = self.R_1
-        R_2 = self.R_2
-        R_3 = self.R_3
-        R_4 = self.R_4
-        R_st = self.r_si
-        # delta=self.delta
+        R_1 = problem.R_1
+        R_2 = problem.R_2
+        R_3 = problem.R_3
+        R_4 = problem.R_4
+        R_st = problem.r_si
+        # delta=problem.delta
         R_rc = (R_1 + R_2) / 2
         R_pm = (R_2 + R_3) / 2
         R_sl = (R_3 + R_4) / 2
@@ -120,15 +125,15 @@ class SPM_RotorThemalProblemDef:
         ##############
         # Axial Direction
         ##############
-        stack_length = self.l_st
+        stack_length = problem.l_st
         # print('stack length is:',stack_length)
-        hub_length = self.l_hub
+        hub_length = problem.l_hub
         shaft_out = 0.030 + hub_length + stack_length
         L_1 = stack_length / 2
         L_2 = stack_length / 2 + hub_length / 2
         L_3 = stack_length / 2 + hub_length
         L_4 = shaft_out
-        u_z = self.u_z
+        u_z = problem.u_z
 
         ################################################
         #           Create Resistance Objects
@@ -611,12 +616,13 @@ class AirflowProblem:
         self.T_ref = T_ref
         self.omega = omega
         self.max_temp = max_temp
-
-        self.therm_prob_def = SPM_RotorThemalProblemDef(mat_dict)
-        self.therm_ana = ThermalAnalyzer()
+        self.mat_dict=mat_dict
+        self.therm_prob_def = SPM_RotorThemalProblem
+        self.therm_ana = SPM_RotorThemalAnalyzer()
 
     def magnet_temp(self, u_z):
-        prob = self.therm_prob_def.get_problem(
+        prob = self.therm_prob_def(
+            self.mat_dict,
             self.r_sh,
             self.d_ri,
             self.r_ro,
