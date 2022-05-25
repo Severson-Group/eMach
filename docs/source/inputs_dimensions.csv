@@ -3,4 +3,4 @@ r_sh,Shaft radius,m
 d_m,Magnet thickness,m
 r_ro,Rotor outer radius,m
 deltaT,Allowable temperature rise,K
-N,Rotor speed,m/s
+N,Rotor speed,RPM
