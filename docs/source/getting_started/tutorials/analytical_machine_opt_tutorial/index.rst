@@ -39,7 +39,7 @@ At the top of the python file add the following import statements to add the req
 	
 Step 3: Add Constraints Step
 ------------------------------------------
-The following class defines an additional ``EvaluationStep`` introduced in the `previous tutorial <https://emach.readthedocs.io/en/latest/getting_started/tutorials/toy_opti/index.html>`_. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to be discarded during the evaluation process. Copy this code into the python file near the other ``EvalutationSteps``. 
+The following class defines an additional ``EvaluationStep`` introduced in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to be discarded during the evaluation process. Copy this code into the python file near the other ``EvalutationSteps``. 
 
 .. code-block:: python
 
