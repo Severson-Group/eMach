@@ -1,7 +1,7 @@
-.. _thermal_analyzer:
+.. _thermal_res_net_analyzer:
 
-Thermal Analyzer
-###################
+Thermal Resistance Network Analyzer
+#######################################
 
 
 This page describes how the thermal performance of a surface-mounted permanent magnet (SPM) rotor is evaluated using the eMach code base. The thermal analyzer implemented is a combination of two analyzers. A base thermal analyzer is used to solve a thermal resistance network for steady state temperatures, and an airflow analyzer calculates the the required additional axial airflow needed to properly cool the rotor. A detailed description of the math and physics for this problem can be found in Chapter 3 of Martin Johnson's Master's Thesis (TODO add this when the thesis is finished...)

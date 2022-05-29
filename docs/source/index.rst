@@ -23,11 +23,12 @@ to browse through the documentation links provided on the left to familiarize th
    
 .. toctree::
    :hidden:
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: Analyzers
 
-   structural_analyzer
-   thermal_analyzer
+   general_analyzers
+   SPM_analyzers
+   
 
 .. toctree::
    :hidden:

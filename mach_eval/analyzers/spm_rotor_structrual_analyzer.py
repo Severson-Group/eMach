@@ -650,6 +650,8 @@ class SleeveProblem:
         deltaT: float,
         mat_dict: dict,
         N: float,
+        problem_class=SPM_RotorStructuralProblem,
+        analyzer_class=SPM_RotorStructuralAnalyzer
     ):
         """__init__ definition for SleeveProblem class
         
@@ -668,6 +670,8 @@ class SleeveProblem:
         self.deltaT = deltaT
         self.mat_dict = mat_dict
         self.N = N
+        self.problem_class=problem_class
+        self.analyzer_class=analyzer_class
 
     def tan_sleeve(self, x):
         """Calculate sigma_t_sl_max for given sleeve design"""
@@ -679,8 +683,8 @@ class SleeveProblem:
         d_m = self.d_m
         deltaT = self.deltaT
         mat_dict=self.mat_dict
-        problem = SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
-        analyzer = SPM_RotorStructuralAnalyzer()
+        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_sl = np.linspace(r_ro, r_ro + d_sl, 50)
         sigma_t_sl = sigmas[3].tangential(x_sl)
@@ -697,9 +701,8 @@ class SleeveProblem:
         d_m = self.d_m
         deltaT = self.deltaT
         mat_dict=self.mat_dict
-        problem = SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
-
-        analyzer = SPM_RotorStructuralAnalyzer()
+        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_sl = np.linspace(r_ro, r_ro + d_sl, 50)
         sigma_r_sl = sigmas[3].radial(x_sl)
@@ -716,9 +719,8 @@ class SleeveProblem:
         d_m = self.d_m
         deltaT = self.deltaT
         mat_dict=self.mat_dict
-        problem = SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
-
-        analyzer = SPM_RotorStructuralAnalyzer()
+        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_pm = np.linspace(r_ro - d_m, r_ro, 50)
         sigma_r_pm = sigmas[2].radial(x_pm)
@@ -735,17 +737,15 @@ class SleeveProblem:
         d_m = self.d_m
         deltaT = self.deltaT
         mat_dict=self.mat_dict
-        problem = SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
-
-        analyzer = SPM_RotorStructuralAnalyzer()
+        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_pm = np.linspace(r_ro - d_m, r_ro, 50)
         sigma_t_pm = sigmas[2].tangential(x_pm)
         stress = sigma_t_pm[0]
         return stress
 
-    def cost(self, x):
-        return x[0]
+    
 
 
 class SleeveProblemDef:
@@ -778,7 +778,7 @@ class SleeveAnalyzer:
         )
         const = [nlc1, nlc2, nlc3, nlc4]
         sol = op.minimize(
-            problem.cost,
+            self.cost,
             [1e-3, -1e-3],
             tol=1e-4,
             constraints=const,
@@ -790,7 +790,8 @@ class SleeveAnalyzer:
             return sol.x
         else:
             return False
-
+    def cost(self, x):
+        return x[0]
 
 if __name__ == "__main__":
     from spec_USmotor_Q6p1 import fea_config_dict
