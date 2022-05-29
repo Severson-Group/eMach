@@ -10,7 +10,7 @@ The rotor sleeve analyzer ``SleeveAnalyzer`` is used to design an optimal sleeve
 Model Background
 ****************
 
-The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor. This analyzer is designed to calculate the optimal sleeve geometry based on `Section 4.A <https://ieeexplore.ieee.org/document/9595523>`_. 
+The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case, the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor. This analyzer is designed to calculate the optimal sleeve geometry based on `Section 4.A <https://ieeexplore.ieee.org/document/9595523>`_. 
 
 .. figure:: ./images/RotorConfig.svg
    :alt: Trial1 
@@ -34,7 +34,7 @@ The ``SPM_sleeve_analyzer`` requires the following stresses to be defined on ini
    :header-rows: 1
    
 
-The ``sleeve_analyzer`` is designed to minimize the sleeve thickness without violating the stress constraints. The analyzer requires the problem object to have a set of methods (``rad_magnet``, ``tan_magnet``, ``rad_sleeve``, ``tan_sleeve``) which take in a tuple of [``d_sl``, ``delta_sl``], representing the sleeve thickness and sleeve undersize, and return back the values for each of the critical stresses. In addition, the problem object is required to have a method ``cost`` which takes in the same tuple and returns back the sleeve thickness ``d_sl``.
+The ``sleeve_analyzer`` is designed to minimize the sleeve thickness without violating the stress constraints. The analyzer requires the problem object to have a set of methods (``rad_magnet``, ``tan_magnet``, ``rad_sleeve``, ``tan_sleeve``) which take in a tuple of [``d_sl``, ``delta_sl``], representing the sleeve thickness and sleeve undersize, and return back the values for each of the critical stresses. 
 
 The ``sleeve_problem`` by default utilizes the :doc:`SPM Structural Analyzer <SPM_structural_analyzer>`. However, other structural which utilize the same function signature may also be used. The problem class requires a material dictionary ``mat_dict`` to be implemented as well as a set of rotor geometry and operating conditions. The required properties for the problem class are listed in the following tables.
 

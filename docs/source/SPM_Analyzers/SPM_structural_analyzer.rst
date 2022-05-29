@@ -5,12 +5,12 @@ SPM Rotor Structural Analyzer
 ##############################
 
 
-This page describes how the structural performance of a surface-mounted permanent magnet (SPM) rotor is evaluated using the eMach code base. A detailed description of the math and physics for this problem can be found in the `this paper <https://ieeexplore.ieee.org/document/9595523>`_.
+This page describes how the structural performance of a surface-mounted permanent magnet (SPM) rotor is evaluated using the eMach code base. A detailed description of the math and physics for this problem can be found in `this paper <https://ieeexplore.ieee.org/document/9595523>`_.
 
 Model Background
 ****************
 
-The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor.
+The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case, the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor.
 
 .. figure:: ./images/RotorConfig.svg
    :alt: Trial1 
