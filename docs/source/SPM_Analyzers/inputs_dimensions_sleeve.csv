@@ -1,0 +1,6 @@
+Variable/key_value name,Description,Units
+r_sh,Shaft radius,m
+d_m,Magnet thickness,m
+r_ro,Rotor outer radius,m
+deltaT,Allowable temperature rise,K
+N,Rotor speed,RPM

@@ -1,5 +1,4 @@
 Variable/key_value name,Description,Units
-mat_dict = Dictionary containing material properties,,
 shaft_material_density,Shaft material density,kg/m3
 shaft_youngs_modulus,Shaft youngs modulus,Pa
 shaft_poission_ratio,Shaft poission ratio,
