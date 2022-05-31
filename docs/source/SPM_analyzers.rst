@@ -10,5 +10,7 @@ This page contains links to analyzers in eMach which are specific to the SPM mot
     
     SPM_Analyzers/SPM_structural_analyzer	
     SPM_Analyzers/SPM_sleeve_analyzer
+    SPM_Analyzers/SPM_rotor_thermal_analyzer
+    SPM_Analyzers/SPM_rotor_airflow_analyzer
     
     

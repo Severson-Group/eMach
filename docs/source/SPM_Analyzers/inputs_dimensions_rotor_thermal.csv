@@ -1,0 +1,8 @@
+Variable/key_value name,Description,Units
+r_sh,Shaft radius,m
+d_m,Magnet thickness,m
+r_ro,Rotor outer radius,m
+d_sl,Sleeve Thickness,m
+l_st,Stack length,m
+l_hub,Hub thickness,m
+u_z,Axial Air Flow Rate ,m/s
