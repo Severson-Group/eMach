@@ -29,10 +29,11 @@ class ThermalAnalyzer:
             G=G+np.dot(np.dot(E,Sum_R),e)
             
         G_aug=G
-        G_aug[0,:]=np.zeros_like(G_aug[0,:])
-        G_aug[0,0]=1
-        Q_dot_aug=problem.Q_dot
-        Q_dot_aug[0]=problem.T_ref[0]
+        for node,temp in problem.T_ref:
+            G_aug[node,:]=np.zeros_like(G_aug[0,:])
+            G_aug[node,node]=1
+            Q_dot_aug=problem.Q_dot
+            Q_dot_aug[node]=temp
         T=np.dot(np.linalg.inv(G_aug),Q_dot_aug) 
         print(T)
         return T
