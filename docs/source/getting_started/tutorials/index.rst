@@ -28,6 +28,8 @@ their own custom scripts for using its functionalities.
 .. toctree::
     :hidden:
 
-    rectangle_example/index
-    toy_example/index
-    example_machine_optimization/index
+    rectangle_tutorial/index
+    analytical_machine_des_tutorial/index
+    analytical_machine_opt_tutorial/index
+    make_electric_machine_tutorial/index
+

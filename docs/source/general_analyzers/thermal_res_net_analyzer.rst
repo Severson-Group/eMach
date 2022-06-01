@@ -11,6 +11,7 @@ Model Background
 
 Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. eMach has several thermal resistances predefined as classes in the the ``thermal_analyzer_base`` module.
 
+
 .. figure:: /Images/ResistanceNetwork.svg
    :alt: Trial1 
    :align: center
@@ -28,6 +29,7 @@ This document will utilize the model shown above as an example of how to impleme
     #################
     #Define Materials
     #################
+
     k_1=10 #Base Material Thermal Conductivity W/m-K
     k_2=100 #Conductive Material Thermal Conductivity W/m-K
     k_3=.01 #Insulating Material Thermal Conductivity W/m-K
@@ -42,6 +44,7 @@ This document will utilize the model shown above as an example of how to impleme
     #################
     #Define Geometry
     #################
+
     w=0.1 #Width m
     L=.75 #Length m
     d=.1 #Depth m

@@ -1,0 +1,25 @@
+Variable/key_value name,Description,Units
+shaft_material_density,Shaft material density,kg/m3
+shaft_youngs_modulus,Shaft youngs modulus,Pa
+shaft_poission_ratio,Shaft poission ratio,
+alpha_sh,Shaft temperature coefficient,1/K
+,,
+core_material_density,Rotor core material density,kg/m3
+core_youngs_modulus,Rotor core youngs modulus,Pa
+core_poission_ratio,Rotor core poission ratio,
+alpha_rc,Rotor core temperature coefficient,1/K
+,,
+magnet_material_density,Magnet material density,kg/m3
+magnet_youngs_modulus,Magnet youngs modulus,Pa
+magnet_poission_ratio,Magnet poission ratio,
+alpha_pm,Magnet temperature coefficient,1/K
+,,
+sleeve_material_density,Sleeve material density,kg/m3
+sleeve_youngs_th_direction,Sleeve youngs thread direction,Pa
+sleeve_youngs_p_direction,Sleeve youngs plane direction,Pa
+sleeve_poission_ratio_p,Sleeve poission ratio plane,
+sleeve_poission_ratio_tp,Sleeve poission ratio thread x plane,
+alpha_sl_t,Temperature coefficient (Thread),1/K
+alpha_sl_r,Temperature coefficient (plane),1/K
+sleeve_max_rad_stress,Maximum radial stress of sleeve,Pa
+sleeve_max_tan_stress,Maximum tangential stress of sleeve,Pa

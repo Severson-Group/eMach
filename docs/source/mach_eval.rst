@@ -1,7 +1,10 @@
-mach\_eval module
-=================
+mach\_eval package
+==================
+
+Module contents
+---------------
 
 .. automodule:: mach_eval
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

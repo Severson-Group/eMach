@@ -6,7 +6,6 @@ __all__ += ["JmagDesigner2D"]
 
 
 class JmagDesigner2D(JmagDesigner):
-
     def extrude(self, name, material: str, depth: float, token=None) -> any:
         """ Extrudes a cross-section by extending the model
 
@@ -21,19 +20,22 @@ class JmagDesigner2D(JmagDesigner):
 
         depth = eval(self.default_length)(depth)
 
-        self.sketch.SetProperty('Name', name)
+        self.sketch.SetProperty("Name", name)
+        self.sketch.SetProperty("Color", material.color)
+        part = self.sketch.GetProperty("Name")
         self.sketch = None
         self.doc.SaveModel(True)
-        model_name = name + '_model'
+        model_name = name + "_model"
         self.model = self.create_model(model_name)
 
-        study_name = name + '_study'
+        study_name = name + "_study"
         self.study = self.create_study(study_name, self.study_type, self.model)
         self.study.GetStudyProperties().SetValue("ModelThickness", depth)
 
         self.set_default_length_unit(self.default_length)
         self.set_default_angle_unit(self.default_angle)
-        self.study.SetMaterialByName(name, material)
+        self.study.SetMaterialByName(name, material.name)
+        return part
 
-        extrude_part = self.study.GetMaterial(name)
-        return extrude_part
+    def revolve(self, name, material: str, center, axis, angle: float) -> any:
+        raise Exception("Not implemented!")

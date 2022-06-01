@@ -517,6 +517,7 @@ class Sigma:
 #%% Sleeve (Design) Analyzer
 
 class SPM_RotorSleeveProblem:
+
     def __init__(
         self,
         r_sh: float,
@@ -621,11 +622,13 @@ class SPM_RotorSleeveProblem:
         return stress
 
 
+
 class SPM_RotorSleeveAnalyzer:
     def __init__(self, stress_limits):
         self.stress_limits = stress_limits
 
     def analyze(self, problem: "SPM_RotorSleeveProblem"):
+
         nlc1 = op.NonlinearConstraint(
             problem.rad_sleeve, self.stress_limits["rad_sleeve"], 0
         )
@@ -678,5 +681,6 @@ if __name__ == "__main__":
 
     problem = SPM_RotorSleeveProblem(r_sh, d_m, r_ro, deltaT,mat_dict, N)
     ana = SPM_RotorSleeveAnalyzer(stress_limits)
+
     sleeve_dim = ana.analyze(problem)
     print(sleeve_dim)
