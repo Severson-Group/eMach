@@ -2,9 +2,9 @@ import os
 import sys
 
 # change current working directory to file location
-os.chdir(os.path.dirname(__file__))  
- # add the directory immediately above this file's directory to path for module import
-sys.path.append("../..") 
+os.chdir(os.path.dirname(__file__))
+# add the directory immediately above this file's directory to path for module import
+sys.path.append("../..")
 
 import mach_cad.tools.magnet as mn
 import mach_cad.model_obj as mo

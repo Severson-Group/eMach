@@ -13,7 +13,7 @@ CarbonFiber = {
     }
 
 Steel = {
-    'shaft_material'             : 'Steel',
+    'shaft_material'             : 'S45C',
     'shaft_material_density'     : 7870, # kg/m3
     'shaft_youngs_modulus'       : 206E9, #Pa
     'shaft_poission_ratio'       : .3, #[]
