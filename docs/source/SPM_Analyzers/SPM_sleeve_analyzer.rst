@@ -4,7 +4,8 @@
 SPM Sleeve Analyzer
 ###################
 
-The rotor sleeve analyzer ``SleeveAnalyzer`` is used to design an optimal sleeve which produces the maximum amount of compressive force while being as thin as possible. The ``SleeveAnalyzer`` is designed to use the :doc:`SPM Structural Analyzer <SPM_structural_analyzer>`, however other analyzers which are able to calculate the four required stresses (`See Table VI <https://ieeexplore.ieee.org/document/9595523>`_) could be used as well. 
+
+The rotor sleeve analyzer ``SPM_RotorSleeveAnalyzer`` is used to design an optimal sleeve which produces the maximum amount of compressive force while being as thin as possible based on Section 4.A of `this paper <https://ieeexplore.ieee.org/document/9595523>`_. The ``SPM_RotorSleeveAnalyzer`` is designed to use the :doc:`SPM Structural Analyzer <SPM_structural_analyzer>`, however other analyzers which are able to calculate the four required stresses (`See Table VI <https://ieeexplore.ieee.org/document/9595523>`_) could be used as well. 
 
 
 Model Background
@@ -12,12 +13,14 @@ Model Background
 
 The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case, the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor. This analyzer is designed to calculate the optimal sleeve geometry based on `Section 4.A <https://ieeexplore.ieee.org/document/9595523>`_. 
 
-.. figure:: ./images/RotorConfig.svg
+
+.. figure:: /images/RotorConfig.svg
    :alt: Trial1 
    :align: center
    :width: 300 
 
-.. figure:: ./images/SleeveOrientation.svg
+
+.. figure:: /images/SleeveOrientation.svg
    :alt: Trial1 
    :align: center
    :width: 300 
@@ -26,7 +29,8 @@ The SPM rotor can be modeled as a series of concentric cylinders as shown in the
 Inputs for SPM Sleeve Analyzers
 ************************************
 
-The ``SPM_sleeve_analyzer`` requires the following stresses to be defined on initialization of the analyzer through a ``dict`` object. These stress values represent the limits of the critical stresses (`See Table VI <https://ieeexplore.ieee.org/document/9595523>`_) need to design an optimal sleeve.
+
+The ``SPM_RotorSleeveAnalyzer`` requires the following stresses to be defined on initialization of the analyzer through a ``dict`` object. These stress values represent the limits of the critical stresses (`See Table VI <https://ieeexplore.ieee.org/document/9595523>`_) need to design an optimal sleeve.
 
 .. csv-table:: Inputs for structural analyzer -- ``stress_limits``
    :file: inputs_sleeve_stress.csv
@@ -34,16 +38,13 @@ The ``SPM_sleeve_analyzer`` requires the following stresses to be defined on ini
    :header-rows: 1
    
 
-The ``sleeve_analyzer`` is designed to minimize the sleeve thickness without violating the stress constraints. The analyzer requires the problem object to have a set of methods (``rad_magnet``, ``tan_magnet``, ``rad_sleeve``, ``tan_sleeve``) which take in a tuple of [``d_sl``, ``delta_sl``], representing the sleeve thickness and sleeve undersize, and return back the values for each of the critical stresses. 
 
-The ``sleeve_problem`` by default utilizes the :doc:`SPM Structural Analyzer <SPM_structural_analyzer>`. However, other structural which utilize the same function signature may also be used. The problem class requires a material dictionary ``mat_dict`` to be implemented as well as a set of rotor geometry and operating conditions. The required properties for the problem class are listed in the following tables.
+The ``SPM_RotorSleeveAnalyzer`` is designed to minimize the sleeve thickness without violating the stress constraints. The analyzer requires the problem object to have a set of methods (``rad_magnet``, ``tan_magnet``, ``rad_sleeve``, ``tan_sleeve``) which take in a tuple of [``d_sl``, ``delta_sl``], representing the sleeve thickness and sleeve undersize, and return back the values for each of the critical stresses. 
 
-.. csv-table:: Inputs for structural analyzer -- ``mat_dict``
-   :file: inputs_mat_dict.csv
-   :widths: 70, 70, 30
-   :header-rows: 1
+The ``SPM_RotorSleeveProblem`` by default utilizes the :doc:`SPM Structural Analyzer <SPM_structural_analyzer>`. However, other structural which utilize the same function signature may also be used. The problem class requires the material dictionary ``mat_dict`` (see :ref:`here <mat-dict>`) to be implemented as well as a set of rotor geometry and operating conditions. The required properties for the problem class are listed in the following tables.
 
-.. csv-table:: Inputs for structural analyzer -- Dimensions
+
+.. csv-table:: Inputs for structural problem -- Dimensions
    :file: inputs_dimensions_sleeve.csv
    :widths: 70, 70, 30
    :header-rows: 1
@@ -105,8 +106,9 @@ The following code block demonstrates how to create both the problem and analyze
     ######################################################
     #Create problem and analyzer
     ######################################################
-    problem = sta.SleeveProblem(r_sh, d_m, r_ro, deltaT, mat_dict, N)
-    ana = sta.SleeveAnalyzer(stress_limits)
+    problem = sta.SPM_RotorSleeveProblem(r_sh, d_m, r_ro, deltaT, mat_dict, N)
+    ana = sta.SPM_RotorSleeveAnalyzer(stress_limits)
+
 	
 Outputs for SPM Sleeve Analyzers
 *********************************
