@@ -12,7 +12,8 @@ Model Background
 
 The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThemalAnalyzer``.
 
-.. figure:: ./images/Resistance_Network.svg
+
+.. figure:: /images/Resistance_Network.svg
    :alt: Trial1 
    :align: center
    :width: 600 

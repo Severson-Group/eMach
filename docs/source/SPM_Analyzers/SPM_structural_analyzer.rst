@@ -12,12 +12,13 @@ Model Background
 
 The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case, the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor.
 
-.. figure:: ./images/RotorConfig.svg
+
+.. figure:: /images/RotorConfig.svg
    :alt: Trial1 
    :align: center
    :width: 300 
 
-.. figure:: ./images/SleeveOrientation.svg
+.. figure:: /images/SleeveOrientation.svg
    :alt: Trial1 
    :align: center
    :width: 300 
@@ -26,12 +27,15 @@ Inputs for SPM Structural Analyzer
 **********************************
 The current implementation of the structural analyzer requires a material dictionary (``mat_dict``), temperature coefficient, and dimensions of the shaft, rotor core, magnet, and sleeve. The following table shows the list of required inputs for the structural analyzer.
 
-.. csv-table:: Inputs for structural analyzer -- ``mat_dict``
+
+.. _mat-dict:
+.. csv-table:: Inputs for SPM structural problem -- ``mat_dict``
    :file: inputs_mat_dict.csv
    :widths: 70, 70, 30
    :header-rows: 1
 
-.. csv-table:: Inputs for structural analyzer -- Dimensions
+
+.. csv-table:: Inputs for SPM structural problem -- Dimensions
    :file: inputs_dimensions.csv
    :widths: 70, 70, 30
    :header-rows: 1
@@ -95,7 +99,15 @@ The following code demonstrates how to initialize the ``SPM_RotorStructuralProbl
 Outputs for SPM Structural Analyzer
 ***********************************
 
-The SPM structural analyzer returns a list of ``sigma`` objects. These objects represent the analytical solution for stress in each of the rotor components described by equation (4) in the supporting `paper <https://ieeexplore.ieee.org/document/9595523>`_. By returning these objects, the user is able calculate the stress at any location `r` in the rotor component using the `radial` and `tangential` methods of the sigma objects. The follow code-block demonstrates how list of sigma objects is returns by the analyzer, and how they can be utilized to calculate the stress distribution in the rotor.
+
+The ``analyze`` method of the SPM structural analyzer returns a list of ``sigma`` objects referred to here as ``sigmas``. Each ``sigma`` object represents the analytical solution for stress in each of the rotor components described by equation (4) in the supporting `paper <https://ieeexplore.ieee.org/document/9595523>`_. The ``sigma`` object corresponding to each rotor components can be found using the following indexing of the list ``sigmas``:
+
+* ``sigmas[0]``: Stresses in Shaft
+* ``sigmas[1]``: Stresses in Rotor Core
+* ``sigmas[2]``: Stresses in Magnets
+* ``sigmas[3]``: Stresses in Sleeve
+
+The user is able calculate the stress at any location `r` in a rotor component using the ``radial`` and ``tangential`` methods of the ``sigma`` objects. For example ``sigmas[2].radial(r_ro)`` would return the radial stress at the outer edge of the magnets ``r_ro``, and ``sigmas[2].tangential(r_ro)`` would return the tangential stress at this location. The following code-block demonstrates how a list of sigma objects are return by the analyzer, and how they can be utilized to calculate the stress distribution in the rotor.
 
 
 .. code-block:: python
@@ -134,7 +146,8 @@ The SPM structural analyzer returns a list of ``sigma`` objects. These objects r
         
 Running the code provided in this document should produce the follow plot of radial and tangential stress in the example rotor.
 
-.. figure:: ./images/ExampleStress.svg
+
+.. figure:: /images/ExampleStress.svg
    :alt: Trial1 
    :align: center
    :width: 600 

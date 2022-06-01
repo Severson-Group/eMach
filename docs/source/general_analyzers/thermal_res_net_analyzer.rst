@@ -11,7 +11,8 @@ Model Background
 
 Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. eMach has several thermal resistances predefined as classes in the the ``thermal_analyzer_base`` module.
 
-.. figure:: ./Images/ResistanceNetwork.svg
+
+.. figure:: /Images/ResistanceNetwork.svg
    :alt: Trial1 
    :align: center
    :width: 600 
@@ -28,9 +29,10 @@ This document will utilize the model shown above as an example of how to impleme
     #################
     #Define Materials
     #################
-    k_1=10 #Base Material
-    k_2=100 #Conductive Material
-    k_3=.01 #Insulating Material
+
+    k_1=10 #Base Material Thermal Conductivity W/m-K
+    k_2=100 #Conductive Material Thermal Conductivity W/m-K
+    k_3=.01 #Insulating Material Thermal Conductivity W/m-K
 
     mat1=Material(k_1)
     mat2=Material(k_2)
@@ -42,9 +44,10 @@ This document will utilize the model shown above as an example of how to impleme
     #################
     #Define Geometry
     #################
-    w=0.1 #Width
-    L=.75 #Length
-    d=.1 #Depth
+
+    w=0.1 #Width m
+    L=.75 #Length m
+    d=.1 #Depth m
 
     L_1=.5*L #Length of base
     L_2=L*3/4 #Length to mid section 2 and 4
@@ -241,7 +244,7 @@ The following code will produce a plot of the temperature distribution for the e
     ax.set_yticks([])
     ax.set_xticks([])
 
-.. figure:: ./Images/ExampleTempDist.svg
+.. figure:: /Images/ExampleTempDist.svg
    :alt: Trial1 
    :align: center
    :width: 600 
