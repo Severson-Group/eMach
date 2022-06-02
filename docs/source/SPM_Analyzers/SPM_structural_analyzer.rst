@@ -13,12 +13,12 @@ Model Background
 The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case, the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor.
 
 
-.. figure:: /images/RotorConfig.svg
+.. figure:: ./Images/RotorConfig.svg
    :alt: Trial1 
    :align: center
    :width: 300 
 
-.. figure:: /images/SleeveOrientation.svg
+.. figure:: ./Images/SleeveOrientation.svg
    :alt: Trial1 
    :align: center
    :width: 300 
@@ -147,7 +147,7 @@ The user is able calculate the stress at any location `r` in a rotor component u
 Running the code provided in this document should produce the follow plot of radial and tangential stress in the example rotor.
 
 
-.. figure:: /images/ExampleStress.svg
+.. figure:: ./Images/ExampleStress.svg
    :alt: Trial1 
    :align: center
    :width: 600 

@@ -659,20 +659,40 @@ class SPM_RotorSleeveAnalyzer:
         return x[0]
 
 if __name__ == "__main__":
-    from spec_USmotor_Q6p1 import fea_config_dict
+    mat_dict = {
+    'core_material_density': 7650,  # kg/m3
+    'core_youngs_modulus': 185E9,  # Pa
+    'core_poission_ratio': .3,
+    'alpha_rc' : 1.2E-5,
 
-    mat_dict = fea_config_dict
+    'magnet_material_density'    : 7450, # kg/m3
+    'magnet_youngs_modulus'      : 160E9, # Pa
+    'magnet_poission_ratio'      :.24,
+    'alpha_pm'                   :5E-6,
+
+    'sleeve_material_density'    : 1800, # kg/m3
+    'sleeve_youngs_th_direction' : 125E9,  #Pa
+    'sleeve_youngs_p_direction'  : 8.8E9,  #Pa
+    'sleeve_poission_ratio_p'    :.015,
+    'sleeve_poission_ratio_tp'   :.28,
+    'alpha_sl_t'                :-4.7E-7,
+    'alpha_sl_r'                :0.3E-6,
+
+    'sleeve_max_tan_stress': 1950E6,  # Pa
+    'sleeve_max_rad_stress': -100E6,  # Pa
+
+    'shaft_material_density': 7870,  # kg/m3
+    'shaft_youngs_modulus': 206E9,  # Pa
+    'shaft_poission_ratio': .3,  # []
+    'alpha_sh' : 1.2E-5
+    }
     stress_limits = {
         "rad_sleeve": -100e6,
         "tan_sleeve": 1300e6,
         "rad_magnets": 0,
         "tan_magnets": 80e6,
     }
-    mat_dict["alpha_sh"] = 1.2e-5
-    mat_dict["alpha_rc"] = 1.2e-5
-    mat_dict["alpha_pm"] = 5e-6
-    mat_dict["alpha_sl_t"] = -4.7e-7
-    mat_dict["alpha_sl_r"] = 0.3e-6
+
     r_sh = 5e-3
     d_m = 3e-3
     r_ro = 12.5e-2

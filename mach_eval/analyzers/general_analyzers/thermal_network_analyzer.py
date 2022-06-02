@@ -2,14 +2,14 @@ import numpy as np
 import scipy.optimize as op
 
 #%% Thermal Resistance Network Analyzer
-class ThermalProblem:
+class ThermalNetworkProblem:
     def __init__(self,res,Q_dot,T_ref,N_nodes):
         self.res=res
         self.Q_dot=Q_dot
         self.T_ref=T_ref
         self.N_nodes=N_nodes
 
-class ThermalAnalyzer:
+class ThermalNetworkAnalyzer:
     def analyze(self,problem):
         R_inv=np.zeros([problem.N_nodes,problem.N_nodes])
         for i,r in enumerate(problem.res):
