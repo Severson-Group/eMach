@@ -12,7 +12,7 @@ Model Background
 Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. eMach has several thermal resistances predefined as classes in the the ``thermal_analyzer_base`` module.
 
 
-.. figure:: /Images/ResistanceNetwork.svg
+.. figure:: ./Images/ResistanceNetwork.svg
    :alt: Trial1 
    :align: center
    :width: 600 
@@ -40,7 +40,7 @@ This document will utilize the model shown above as an example of how to impleme
     ##################
     #Define Convection
     ##################
-    h=10 #Convection coefficient
+    h=10 #Convection coefficient W/m^2-K
     #################
     #Define Geometry
     #################
@@ -73,36 +73,86 @@ Each of these inputs will be discussed in detail in the following subsections.
 Resistances
 ~~~~~~~~~~~
 
-The ``Resistance`` protocol is defined in the ``thermal_analyzer_base`` module. Several concrete implementation of this protocol are provided as well. This class is defined to hold the information about a thermal resistance. In the example problem for this document the ``plane_wall`` and ``conv`` resistances are used.
+The ``Resistance`` protocol is defined in the ``thermal_analyzer_base`` module. Several concrete implementation of this protocol are provided as well. This class is defined to hold the information about a thermal resistance. In the example problem for this document the ``plane_wall`` and ``conv`` resistances are used. 
 
-.. code-block:: python
+All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization. ``Material`` is an object which holds the required material parameters.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting. The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
+ 
+plane_wall
+----------
 
-    class plane_wall(Resistance):
-        """Material,Node1,Node2,L1,L2,A"""
+The plane wall resistance is initialized by the following: ``plane_wall(Material,Node_1,Node_2,L1,L2,A)``. The required parameters are defined as follows:
 
-        def __init__(self, Material, Node1, Node2, L1, L2, A):
-            super().__init__(Material, Node1, Node2)
-            self.L1 = L1
-            self.L2 = L2
-            self.A = A
+* ``L1`` Location of node 1 on first face of plane wall [m]
+* ``L2`` Location of node 2 on second face of plane wall [m]
+* ``A`` cross sectional area of plane wall [m^2]
 
-        @property
-        def resistance_value(self):
-            return (self.L2 - self.L1) / (self.Material.k * self.A)
-            
-    class conv(Resistance):
-        def __init__(self, Material, Node1, Node2, h, A):
-            super().__init__(Material, Node1, Node2)
-            self._h = h
-            self.A = A
+Note that the thickness of the plane wall is ``L2-L1``, so ``L2`` should be defined as the larger value of the two nodes.
 
-        @property
-        def h(self):
-            return self._h
+cylind_wall
+-----------
 
-        @property
-        def resistance_value(self):
-            return 1 / (self.h * self.A)
+The cylindrical wall resistance is initialized by the following code:
+``cylind_wall(Material,Node_1,Node_2,R_1,R_2,H)``. The required parameters are defined as follows:
+
+* ``R_1`` radial location of node 1 [m]
+* ``R_2`` radial location of node 2 [m]
+* ``H`` Height of cylindrical wall [m]
+
+air_gap_conv
+------------
+
+The air gap convection resistance is initialized by the following code:
+``air_gap_conv(Material,Node_1,Node_2,omega,R_r,R_s,u_z,A)``. The required parameters are defined as follows:
+
+* ``omega`` rotational speed [rad/s]
+* ``R_r`` Outer radius of rotor [m]
+* ``R_2`` Inner radius of stator [m]
+* ``u_z`` Axial airflow velocity [m/s]
+* ``A`` Surface area of rotor [m^2]
+
+The calculations in this class are based on the following paper:
+
+D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+
+hub_conv
+------------
+
+The rotor hub convection resistance is initialized by the following code:
+``hub_conv(Material,Node_1,Node_2,omega,A)``. The required parameters are defined as follows:
+
+* ``omega`` rotational speed [rad/s]
+* ``A`` Surface area of rotor [m^2]
+
+The calculations in this class are based on the following paper:
+
+D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+
+air_gap_conv
+------------
+
+The shaft convection resistance is initialized by the following code:
+``shaft_conv(Material,Node_1,Node_2,omega,R,A,u_z)``. The required parameters are defined as follows:
+
+* ``omega`` rotational speed [rad/s]
+* ``R`` Outer radius of shaft [m]
+* ``A`` Surface area of rotor [m^2]
+* ``u_z`` Axial airflow velocity [m/s]
+
+The calculations in this class are based on the following paper:
+
+D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+
+conv
+----
+
+A general convection resistance is initialized by the following code:
+``conv(Material,Node_1,Node_2,h,A)``. The required parameters are defined as follows:
+
+* ``h`` Convection coefficient [W/m^2-K]
+* ``A`` Surface area [m^2]
+
+Example Resistance Network
+--------------------------
 
 The following code-block demonstrate how to generate the list of ``Resistance`` objects for this example:
 
@@ -244,7 +294,7 @@ The following code will produce a plot of the temperature distribution for the e
     ax.set_yticks([])
     ax.set_xticks([])
 
-.. figure:: /Images/ExampleTempDist.svg
+.. figure:: ./Images/ExampleTempDist.svg
    :alt: Trial1 
    :align: center
    :width: 600 
