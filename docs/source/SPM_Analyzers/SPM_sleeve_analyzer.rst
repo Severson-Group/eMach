@@ -109,7 +109,7 @@ The following code block demonstrates how to create both the problem and analyze
     problem = sta.SPM_RotorSleeveProblem(r_sh, d_m, r_ro, deltaT, mat_dict, N)
     ana = sta.SPM_RotorSleeveAnalyzer(stress_limits)
 
-	
+    
 Outputs for SPM Sleeve Analyzers
 *********************************
 
