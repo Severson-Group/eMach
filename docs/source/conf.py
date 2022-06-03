@@ -17,6 +17,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath("..\.."))
 
+# import packages for which autodocs need to be created
+import mach_eval
+import mach_opt
 
 # -- Project information -----------------------------------------------------
 
@@ -82,10 +85,10 @@ html_theme = "sphinx_rtd_theme"
 #
 # html_theme_options = {}
 html_theme_options = {
-    'collapse_navigation': True,
-    'sticky_navigation': True,
-    'navigation_depth': -1,
-    'includehidden': True,
+    "collapse_navigation": True,
+    "sticky_navigation": True,
+    "navigation_depth": -1,
+    "includehidden": True,
 }
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
