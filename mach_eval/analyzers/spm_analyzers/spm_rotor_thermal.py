@@ -149,9 +149,7 @@ class SPM_RotorThermalAnalyzer:
         ##############
         # Air
         ##############
-        air_mat = tb.Material(air_k)
-        air_mat.set_cp(air_cp)
-        air_mat.set_mu(air_mu)
+        air_mat = tb.Material(air_k,cp=air_cp,mu=air_mu)
 
         ################################################
         #           Define Geometric Values

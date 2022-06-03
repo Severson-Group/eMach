@@ -69,18 +69,17 @@ class Material:
     Attributes:
         
         k: Thermal conductivity [W/m-K]
+        cp: cp value of fluid []
+        mu: Viscosity of fluid []
         
     """
-    def __init__(self, k:float):
+    def __init__(self, k:float,
+                 cp: float = 0.0,
+                 mu: float = 0.0):
         self.k = k
+        self.cp=cp
+        self.mu=mu
 
-    def set_cp(self, cp:float):
-        """Set cp value of fluid"""
-        self.cp = cp
-
-    def set_mu(self, mu:float):
-        """Set viscosity of fluid"""
-        self.mu = mu
 
 
 class Resistance:
