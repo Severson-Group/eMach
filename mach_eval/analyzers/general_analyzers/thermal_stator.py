@@ -3,95 +3,66 @@ from typing import Any
 from copy import deepcopy
 
 
-class ThermalProblemDefinition:
-    """Class converts input state into a problem"""
 
-    def get_problem(self, state: "State") -> "Problem":
-        """Returns Problem from Input State"""
-        # TODO define problem definition
-        g_sy = state.conditions.g_sy  # Volumetric loss in Stator Yoke [W/m^3]
-        g_th = state.conditions.g_tooth  # Volumetric loss in Stator Tooth [W/m^3]
-        w_st = state.design.machine.w_tooth  # Tooth width [m]
-        l_st = state.design.machine.l_st  # Stack length [m]
-        l_tooth = (
-            state.design.machine.r_sy - state.design.machine.r_si
-        )  # Tooth length r_sy-r_si [m]
-        alpha_q = state.design.machine.alpha_q  # [rad]
-        r_so = state.design.machine.r_so  # outer stator radius [m]
-        r_sy = state.design.machine.r_sy  # inner stator yoke radius [m]
-
-        k_ins = state.design.machine.ins_mat[
-            "k"
-        ]  # thermal insulation conductivity (~1)
-        w_ins = state.design.machine.w_ins  # insulation thickness [m] (.5mm)
-        k_fe = state.design.machine.core_mat["core_therm_conductivity"]
-        h = state.design.settings.h  # convection co-eff W/m^2K
-        alpha_slot = (
-            state.design.machine.alpha_slot
-        )  # span of back of stator slot [rad]
-        T_coil_max = state.design.machine.coil_mat["max_temp"]  # Max coil temp [K]
-
-        r_si = state.design.machine.r_si  # inner stator radius
-        Q_coil = state.conditions.Q_coil  # ohmic loss per coil
-        h_slot = (
-            state.design.settings.h_slot
-        )  # in slot convection coeff [W/m^2K] set to 0
-
-        problem = ThermalProblem(
-            g_sy,
-            g_th,
-            w_st,
-            l_st,
-            l_tooth,
-            alpha_q,
-            r_so,
-            r_sy,
-            k_ins,
-            w_ins,
-            k_fe,
-            h,
-            alpha_slot,
-            T_coil_max,
-            r_si,
-            Q_coil,
-            h_slot,
-        )
-        return problem
-
-
-class ThermalProblem:
-    """problem class utilized by the Analyzer
+class StatorThermalProblem:
+    """Problem class utilized by the stator thermal analyzer
     
     Attributes:
-        TODO
+        g_sy: Volumetric Heating of stator yoke [W/m^3]
+        
+        g_th: Volumetric Heating of stator tooth [W/m^3]
+        
+        w_st: Width of stator tooth [m]
+        
+        l_st: Stack length [m]
+        
+        l_tooth: Length of stator tooth [m]
+        
+        alpha_q: slot span 2pi/Q [rad]
+        
+        r_so: Outer stator radius [m]
+        
+        r_sy: Radius of inner stator yoke [m]
+        
+        k_ins: Thermal conductivity of insulation paper [W/m-K]
+        
+        w_ins: Thickness of Insulation paper [m]
+        
+        k_fe: Thermal conductivty of stator iron [W/m-K]
+        
+        h: Convection rate on exterior of stator [W/m^2-K]
+        
+        alpha_slot: Angle of back of slot on stator yoke [rad]
+        
+        T_coil_max: Maximum coil temperature [K]
+        
+        r_si: Inner stator radius [m]
+        
+        Q_coil: Resistive coil losses [W]
+        
+        h_slot: Inslot convection rate [W/m^2-K]
     """
 
     def __init__(
         self,
-        g_sy,
-        g_th,
-        w_st,
-        l_st,
-        l_tooth,
-        alpha_q,
-        r_so,
-        r_sy,
-        k_ins,
-        w_ins,
-        k_fe,
-        h,
-        alpha_slot,
-        T_coil_max,
-        r_si,
-        Q_coil,
-        h_slot,
+        g_sy: float,
+        g_th: float,
+        w_st: float,
+        l_st: float,
+        l_tooth: float,
+        alpha_q: float,
+        r_so: float,
+        r_sy: float,
+        k_ins: float,
+        w_ins: float,
+        k_fe: float,
+        h: float,
+        alpha_slot: float,
+        T_coil_max: float,
+        r_si: float,
+        Q_coil: float,
+        h_slot: float,
     ):
-        """Creates problem class
-        
-        Args:
-            TODO
-            
-        """
         self.g_sy = g_sy
         self.g_th = g_th
         self.w_st = w_st
@@ -112,18 +83,23 @@ class ThermalProblem:
         self.h_slot = h_slot
 
 
-class ThermalAnalyzer:
-    """"Class Analyzes the CubiodProblem  for volume and Surface Areas"""
+class StatorThermalAnalyzer:
+    """"Stator Thermal Analyzer calculates coil temperatures"""
 
     def analyze(problem):
-        """Performs Analysis on a problem
+        """calculates coil temperature from problem class.
 
         Args:
-            problem (me.Problem): Problem Object
+            problem (StatorThermalProblem): Problem Object
 
         Returns:
-            results (Any): 
-                Results of Analysis
+            results : 
+                [Coil temperature,
+                 Stator Yoke temperature,
+                 Coil losses,
+                 Yoke losses,
+                 Tooth losses,
+                 valid temperature flag]
 
         """
         g_sy = problem.g_sy
@@ -177,7 +153,6 @@ class ThermalAnalyzer:
 
         else:
             R_cd = 1 / (h_slot * (A_cd))
-            # print(R_cd,R_coil,R_coil_sy,R_coil_st)
             T_coil = (
                 Q_coil * (R_coil + R_sy)
                 + g_sy * M_sy
@@ -185,7 +160,7 @@ class ThermalAnalyzer:
                 - M_th * g_th * R_coil
                 + Q_tooth * R_coil
             ) / (1 + R_coil / R_cd)
-            T_sy = g_sy * M_sy + (Q_coil + 2 * Q_tooth) * R_sy  # Check this math
+            T_sy = g_sy * M_sy + (Q_coil + 2 * Q_tooth) * R_sy  
 
         valid = True
         if T_coil > T_coil_max:
@@ -193,23 +168,4 @@ class ThermalAnalyzer:
         return [T_coil, T_sy, Q_coil, Q_sy, Q_tooth, valid]
 
 
-class ThermalPostAnalyzer:
-    """Converts input state into output state for TemplateAnalyzer"""
-
-    def get_next_state(results: Any, stateIn: "me.State") -> "me.State":
-        stateOut = deepcopy(stateIn)
-        stateOut.conditions.T_coil = results[0]
-        stateOut.conditions.T_sy = results[1]
-        stateOut.conditions.Q_coil = results[2]
-        stateOut.conditions.Q_yoke = results[3]
-        stateOut.conditions.Q_tooth = results[4]
-
-        print("Coil Temp is ", results[0])
-        print("Stator Temp is ", results[1])
-        return stateOut
-
-
-problem_def = ThermalProblemDefinition()
-analyzer = ThermalAnalyzer()
-post_analyzer = ThermalPostAnalyzer()
 
