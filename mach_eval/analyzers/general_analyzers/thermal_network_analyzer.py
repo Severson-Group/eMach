@@ -1,16 +1,41 @@
 import numpy as np
 import scipy.optimize as op
+from typing import List,Any
 
 #%% Thermal Resistance Network Analyzer
 class ThermalNetworkProblem:
-    def __init__(self,res,Q_dot,T_ref,N_nodes):
+    """Problem class from Thermal Resistance Network Analyzer.
+    
+    Attributes:
+        res: List of Resistance objects
+        
+        Q_dot: List of Thermal sources at nodal locations
+        
+        T_ref: List of [ref_node,ref_temp]
+        
+        N_nodes: Number of Nodes in system
+    """
+    def __init__(self,res: List['Resistance'],
+                 Q_dot: List[float],
+                 T_ref: List[List[int,float]],
+                 N_nodes: int):
         self.res=res
         self.Q_dot=Q_dot
         self.T_ref=T_ref
         self.N_nodes=N_nodes
 
 class ThermalNetworkAnalyzer:
-    def analyze(self,problem):
+    """Thermal Resistance Network Analyzer.
+    """
+    def analyze(self,problem: ThermalNetworkProblem):
+        """Analyze imported resistance network problem
+
+        Args:
+            problem: ThermalNetworkProblem object to be analyzed
+                
+        Returns:
+            T: Temperature distribution at each node in system
+        """
         R_inv=np.zeros([problem.N_nodes,problem.N_nodes])
         for i,r in enumerate(problem.res):
             N1=r.Node1
@@ -39,18 +64,41 @@ class ThermalNetworkAnalyzer:
         return T
 
 class Material:
-    def __init__(self, k):
+    """ Class holding material parameters.
+    
+    Attributes:
+        
+        k: Thermal conductivity [W/m-K]
+        
+    """
+    def __init__(self, k:float):
         self.k = k
 
-    def set_cp(self, cp):
+    def set_cp(self, cp:float):
+        """Set cp value of fluid"""
         self.cp = cp
 
-    def set_mu(self, mu):
+    def set_mu(self, mu:float):
+        """Set viscosity of fluid"""
         self.mu = mu
 
 
 class Resistance:
-    def __init__(self, Material, Node1, Node2):
+    """Base class for thermal resisance
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int):
         self.Material = Material
         self.Node1 = Node1
         self.Node2 = Node2
@@ -61,9 +109,30 @@ class Resistance:
 
 
 class plane_wall(Resistance):
-    """Material,Node1,Node2,L1,L2,A"""
-
-    def __init__(self, Material, Node1, Node2, L1, L2, A):
+    """Plane wall thermal resistance.
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+        L1: Position of node-1 [m]
+        
+        L2: Position of node-2 [m]
+        
+        A: Cross sectional area [m^2]
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int,
+                 L1: float,
+                 L2: float,
+                 A: float):
         super().__init__(Material, Node1, Node2)
         self.L1 = L1
         self.L2 = L2
@@ -75,7 +144,30 @@ class plane_wall(Resistance):
 
 
 class cylind_wall(Resistance):
-    def __init__(self, Material, Node1, Node2, R1, R2, H):
+    """Cylindrical wall thermal resistance.
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+        R1: Radial position of node-1 [m]
+        
+        R2: Radial position of node-2 [m]
+        
+        H: Height of wall [m]
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int,
+                 R1: float,
+                 R2: float,
+                 H: float):
         super().__init__(Material, Node1, Node2)
         self.R1 = R1
         self.R2 = R2
@@ -87,7 +179,38 @@ class cylind_wall(Resistance):
 
 
 class air_gap_conv(Resistance):
-    def __init__(self, Material, Node1, Node2, omega, R_r, R_s, u_z, A):
+    """Air gap convection thermal resistance
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+        omega: rotational speed [rad/s]
+        
+        R_r: Rotor outer radius [m]
+         
+        R_s: Stator inner radius [m]
+        
+        u_z: Axial airflow speed [m/s]
+        
+        A: Cross sectional area [m^2]
+        
+        h: Convection Coeff [W/m^2-K]
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int,
+                 omega: float,
+                 R_r: float,
+                 R_s: float,
+                 u_z: float,
+                 A: float):
         super().__init__(Material, Node1, Node2)
         self.omega = omega
         self.R_r = R_r
@@ -133,50 +256,35 @@ class air_gap_conv(Resistance):
             self.Nu = None
         return self.Nu * self.Material.k / D_h
 
-    def conv_coeff(self):
-        g = self.R_s = self.R_r
-        r_m = (self.R_r + self.R_s) / 2
-        a = self.R_r
-        b = self.R_s
-        D_h = 2 * g
-        u_theta = self.omega * self.R_r
-        Re_g = (self.omega * g * self.R_r) / self.Material.mu
-        Re_theta = (self.omega * (self.R_r ** 2)) / self.Material.mu
-        Re_z = (
-            np.sqrt((self.omega * self.R_r) ** 2 + self.u_z ** 2)
-            * D_h
-            / self.Material.mu
-        )
-        g_dim = g / self.R_r
-        Ta_m = Re_g * ((g / self.R_r) ** (0.5))
-        Pr = 1000 * self.Material.cp * self.Material.mu / self.Material.k
-        if Ta_m <= 41:
-            self.Nu = 2
-        elif Ta_m > 41 and Ta_m < 100:
-            self.Nu = 0.202 * (Ta_m ** (0.63)) * (Pr ** (0.27))
-        elif Ta_m >= 100:
-            if self.u_z == 0:
-                self.Nu = 0.03 * Re_z ** 0.8
-            else:
-                self.Nu = (
-                    (
-                        0.022
-                        * (1 + D_h * u_theta / (np.pi * a * self.u_z) ** 2) ** 0.8714
-                    )
-                    * (Re_z ** 0.8)
-                    * (Pr ** 0.5)
-                )
-        else:
-            self.Nu = None
-        return self.Nu * self.Material.k / D_h
-
     @property
     def resistance_value(self):
         return 1 / (self.h * self.A)
 
 
 class hub_conv(Resistance):
-    def __init__(self, Material, Node1, Node2, omega, A):
+    """Hub convection thermal resistance
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+        omega: rotational speed [rad/s]
+        
+        A: Cross sectional area [m^2]
+        
+        h: Convection Coeff [W/m^2-K]
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int,
+                 omega: float,
+                 A: float):
         super().__init__(Material, Node1, Node2)
         self.omega = omega
         # self.R=R
@@ -192,7 +300,41 @@ class hub_conv(Resistance):
 
 
 class shaft_conv(Resistance):
-    def __init__(self, Material, Node1, Node2, omega, R, A, u_z):
+    """Shaft convection thermal resistance
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+        omega: rotational speed [rad/s]
+        
+        R: Shaft outer radius [m]
+        
+        u_z: Axial airflow speed [m/s]
+        
+        A: Cross sectional area [m^2]
+        
+        h: Convection Coeff [W/m^2-K]
+        
+        Re: Reynolds number []
+        
+        Pr: Prandlt number []
+        
+        Nu: Nusselt number []
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int,
+                 omega: float,
+                 R: float,
+                 A: float,
+                 u_z: float):
         super().__init__(Material, Node1, Node2)
         self.omega = omega
         self.R = R
@@ -222,7 +364,27 @@ class shaft_conv(Resistance):
 
 
 class conv(Resistance):
-    def __init__(self, Material, Node1, Node2, h, A):
+    """Air gap convection thermal resistance
+    
+    Attributes: 
+        Material: Material object holding material properties
+        
+        Node1: First node connected to resistance
+        
+        Node2: Second node connected to resistance
+        
+        resistance_value: Thermal resistance [K/W]
+        
+        A: Cross sectional area [m^2]
+        
+        h: Convection Coeff [W/m^2-K]
+        
+    """
+    def __init__(self, Material: Material,
+                 Node1: int,
+                 Node2: int,
+                 h: float,
+                 A: float):
         super().__init__(Material, Node1, Node2)
         self._h = h
         self.A = A

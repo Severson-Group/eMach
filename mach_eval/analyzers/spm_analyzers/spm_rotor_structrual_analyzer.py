@@ -1,10 +1,10 @@
 import numpy as np
 import scipy.optimize as op
-from typing import Tuple
+from typing import Tuple,List
 
 #%% Base SPM Structural Analyzer
 class SPM_RotorStructuralProblem:
-    """Problem class for StructuralAnalyzer.
+    """Problem class for SPM_RotorStructuralAnalyzer.
 
     Attributes:
         sh (RotorComponent): Shaft RotorComponent object.
@@ -624,10 +624,24 @@ class SPM_RotorSleeveProblem:
 
 
 class SPM_RotorSleeveAnalyzer:
-    def __init__(self, stress_limits):
+    """Analyzer for designing a rotor sleeve
+    
+    Attributes:
+        stress_limits: list of limits for critical stresses
+    
+    """
+    def __init__(self, stress_limits: List[float,float,float,float]):
         self.stress_limits = stress_limits
 
     def analyze(self, problem: "SPM_RotorSleeveProblem"):
+        """ analyzes input problem to design optimal rotor sleeve
+        
+        Args:
+            problem (SPM_RotorSleeveProblem): input problem
+            
+        Returns:
+            sol: solution from design problem
+        """
 
         nlc1 = op.NonlinearConstraint(
             problem.rad_sleeve, self.stress_limits["rad_sleeve"], 0
@@ -656,6 +670,14 @@ class SPM_RotorSleeveAnalyzer:
         else:
             return False
     def cost(self, x):
+        """returns sleeve thickness
+        
+        Args:
+            x: tuple of sleeve thickness and undersize
+            
+        Returns:
+            x[0]: sleeve thickness
+        """        
         return x[0]
 
 if __name__ == "__main__":
