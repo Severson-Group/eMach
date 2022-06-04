@@ -59,7 +59,6 @@ class StatorThermalProblem:
         h: float,
         alpha_slot: float,
         T_coil_max: float,
-        r_si: float,
         Q_coil: float,
         h_slot: float,
     ):
@@ -78,7 +77,6 @@ class StatorThermalProblem:
         self.h = h
         self.alpha_slot = alpha_slot
         self.T_coil_max = T_coil_max
-        self.r_si = r_si
         self.Q_coil = Q_coil
         self.h_slot = h_slot
 
@@ -86,7 +84,7 @@ class StatorThermalProblem:
 class StatorThermalAnalyzer:
     """"Stator Thermal Analyzer calculates coil temperatures"""
 
-    def analyze(problem):
+    def analyze(self,problem):
         """calculates coil temperature from problem class.
 
         Args:
@@ -165,7 +163,13 @@ class StatorThermalAnalyzer:
         valid = True
         if T_coil > T_coil_max:
             valid = False
-        return [T_coil, T_sy, Q_coil, Q_sy, Q_tooth, valid]
+        results = {'Coil temperature': T_coil,
+                   'Stator yoke temperature': T_sy,
+                   'Coil losses': Q_coil,
+                   'Stator yoke losses': Q_sy,
+                   'Stator tooth losses': Q_tooth,
+                   'Valid temperature': valid}
+        return results
 
 
 
