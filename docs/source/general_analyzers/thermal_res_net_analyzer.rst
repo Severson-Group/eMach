@@ -75,7 +75,9 @@ Resistances
 
 The ``Resistance`` protocol is defined in the ``thermal_analyzer_base`` module. Several concrete implementation of this protocol are provided as well. This class is defined to hold the information about a thermal resistance. In the example problem for this document the ``plane_wall`` and ``conv`` resistances are used. 
 
-All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization. ``Material`` is an object which holds the required material parameters.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting. The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
+All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting.  ``Material`` is an object which holds the required material parameters, it can be implement with ``Material(k)`` where ``k`` is the material thermal conductivity. For fluid materials, additional properties ``cp`` and ``mu`` can be passed in as named arguments for the specific heat capacity and viscosity. 
+
+The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
  
 plane_wall
 ----------
