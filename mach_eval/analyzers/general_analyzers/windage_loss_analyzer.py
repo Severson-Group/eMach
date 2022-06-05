@@ -6,7 +6,7 @@ Created on Thu Jun  2 15:24:23 2022
 """
 import numpy as np
 
-class WindageProblem:
+class WindageLossProblem:
     """Problem analyzer for windage anlyzer
     Attributes:
         Omega: rotational speed [rad/s]
@@ -27,13 +27,13 @@ class WindageProblem:
     """
     
     def __init__(
-        self, Omega, R_ro, stack_length, R_st, air_gap, u_z, TEMPERATURE_OF_AIR=25
+        self, Omega, R_ro, stack_length, R_st, u_z, TEMPERATURE_OF_AIR=25
     ):
         self.Omega = Omega
         self.R_ro = R_ro
         self.stack_length = stack_length
         self.R_st = R_st
-        self.air_gap = air_gap
+        self.air_gap = R_st-R_ro
         self.u_z=u_z
         self.TEMPERATURE_OF_AIR = TEMPERATURE_OF_AIR
 
