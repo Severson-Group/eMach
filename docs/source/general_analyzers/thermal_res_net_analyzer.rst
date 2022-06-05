@@ -80,6 +80,11 @@ All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their
 plane_wall
 ----------
 
+.. figure:: ./Images/PlaneWall.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+
 The plane wall resistance is initialized by the following: ``plane_wall(Material,Node_1,Node_2,L1,L2,A)``. The required parameters are defined as follows:
 
 * ``L1`` Location of node 1 on first face of plane wall [m]
@@ -90,7 +95,11 @@ Note that the thickness of the plane wall is ``L2-L1``, so ``L2`` should be defi
 
 cylind_wall
 -----------
-
+.. figure:: ./Images/CylindWall.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The cylindrical wall resistance is initialized by the following code:
 ``cylind_wall(Material,Node_1,Node_2,R_1,R_2,H)``. The required parameters are defined as follows:
 
@@ -100,23 +109,31 @@ The cylindrical wall resistance is initialized by the following code:
 
 air_gap_conv
 ------------
-
+.. figure:: ./Images/AirGapConv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The air gap convection resistance is initialized by the following code:
 ``air_gap_conv(Material,Node_1,Node_2,omega,R_r,R_s,u_z,A)``. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``R_r`` Outer radius of rotor [m]
-* ``R_2`` Inner radius of stator [m]
+* ``R_s`` Inner radius of stator [m]
 * ``u_z`` Axial airflow velocity [m/s]
 * ``A`` Surface area of rotor [m^2]
 
 The calculations in this class are based on the following paper:
 
-D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
 
 hub_conv
 ------------
-
+.. figure:: ./Images/HubConv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The rotor hub convection resistance is initialized by the following code:
 ``hub_conv(Material,Node_1,Node_2,omega,A)``. The required parameters are defined as follows:
 
@@ -125,11 +142,15 @@ The rotor hub convection resistance is initialized by the following code:
 
 The calculations in this class are based on the following paper:
 
-D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
 
-air_gap_conv
+shaft_conv
 ------------
-
+.. figure:: ./Images/ShaftConv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The shaft convection resistance is initialized by the following code:
 ``shaft_conv(Material,Node_1,Node_2,omega,R,A,u_z)``. The required parameters are defined as follows:
 
@@ -140,11 +161,16 @@ The shaft convection resistance is initialized by the following code:
 
 The calculations in this class are based on the following paper:
 
-D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
 
 conv
 ----
 
+.. figure:: ./Images/Conv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 A general convection resistance is initialized by the following code:
 ``conv(Material,Node_1,Node_2,h,A)``. The required parameters are defined as follows:
 
