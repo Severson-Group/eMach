@@ -139,5 +139,5 @@ class WindageLossAnalyzer:
         windage_loss_total = (
             windage_loss_radial + windage_loss_endFace + windage_loss_axial
         )
-        return windage_loss_total
+        return [windage_loss_radial,windage_loss_endFace,windage_loss_axial]
     
