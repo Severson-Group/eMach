@@ -24,7 +24,7 @@ The following code demonstrates how the eMach thermal analyzer for the rotor can
 .. code-block:: python
 
     import numpy as np
-    from eMach.mach_eval.analyzers.thermal_analyzer import AirflowProblem,AirflowAnalyzer
+    from eMach.mach_eval.analyzers.spm.rotor_thermal import AirflowProblem,AirflowAnalyzer
 
     # Example Machine Dimensions
     r_sh=5E-3 # [m]

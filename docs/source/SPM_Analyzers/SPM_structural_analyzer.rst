@@ -46,7 +46,7 @@ The following code demonstrates how to initialize the ``SPM_RotorStructuralProbl
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers import spm_rotor_structrual_analyzer as sta
+    import eMach.mach_eval.analyzers.spm.rotor_structrual as sta
     ######################################################
     # Creating the required Material Dictionary 
     ######################################################

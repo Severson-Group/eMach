@@ -54,7 +54,7 @@ The following code block demonstrates how to create both the problem and analyze
    
 .. code-block:: python
 
-    from eMach.mach_eval.analyzers import spm_rotor_structrual_analyzer as sta
+    import eMach.mach_eval.analyzers.spm.rotor_structrual as sta
     
     ######################################################
     # Creating the required Material Dictionary 
