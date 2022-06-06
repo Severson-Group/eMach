@@ -34,7 +34,7 @@ The following code-block demonstrates how to initialize the windage loss analyze
 .. code-block:: python
 
     import numpy as np
-    import eMach.mach_eval.analyzers.general_analyzers.windage_loss_analyzer as wla
+    import eMach.mach_eval.analyzers.general.windage_loss as wla
     from matplotlib import pyplot as plt
 
     Omega=1000

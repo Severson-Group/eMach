@@ -70,8 +70,7 @@ The following code-block demonstrates how to create a ``SPM_RotorThermalProblem`
 .. code-block:: python
 
     import numpy as np
-    from eMach.mach_eval.analyzers.spm_rotor_thermal import SPM_RotorThermalProblem,SPM_RotorThermalAnalyzer
-    from eMach.mach_eval.analyzers.spm_rotor_thermal import AirflowProblem,AirflowAnalyzer
+    from eMach.mach_eval.analyzers.spm.rotor_thermal import SPM_RotorThermalProblem,SPM_RotorThermalAnalyzer
     # Example Machine Dimensions
     r_sh=5E-3 # [m]
     d_m=3E-3 # [m]

@@ -27,7 +27,7 @@ This document will utilize the model shown above as an example of how to impleme
     import scipy.optimize as op
     from matplotlib import pyplot as plt
     from matplotlib.patches import Rectangle
-    from eMach.mach_eval.analyzers.thermal_analyzer_base import *
+    from eMach.mach_eval.analyzers.general.thermal_network import *
     #################
     #Define Materials
     #################
