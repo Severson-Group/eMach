@@ -37,10 +37,10 @@ The following code block demonstrates how to initialize the stator thermal probl
     Q= 6 #Number of Slots
     g_sy = 10000 #Volumetric losses in yoke [W/m^3]
     g_th = 50000 #Volumetric losses in tooth [W/m^3]
-    w_st = 0.02 #Tooth width [m]
+    w_tooth = 0.02 #Tooth width [m]
     l_st = 0.05 #Stack length
-    l_tooth = 0.05 #Tooth length
     alpha_q = np.pi/Q #slot span [rad]
+	r_si = .04 # Inner stator Radius [m]
     r_so = 0.1 #Outer stator radius [m]
     r_sy = .08 #Inner stator yoke radius [m]
     k_ins = 1 #Insulation thermal conductivity [W/m-K]
@@ -55,10 +55,10 @@ The following code block demonstrates how to initialize the stator thermal probl
     problem = sta.StatorThermalProblem(
                 g_sy,
                 g_th,
-                w_st,
+                w_tooth,
                 l_st,
-                l_tooth,
                 alpha_q,
+				r_si,
                 r_so,
                 r_sy,
                 k_ins,
@@ -104,7 +104,7 @@ The analyzer can be utilized in to examine the effect of changing stator geometr
         problem = sta.StatorThermalProblem(
                 g_sy,
                 g_th,
-                w_st,
+                w_tooth,
                 l_st,
                 l_tooth,
                 alpha_q,
