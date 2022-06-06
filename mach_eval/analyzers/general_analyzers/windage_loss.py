@@ -21,13 +21,13 @@ class WindageLossProblem:
         
         u_z: axial air flow speed [m/s]
         
-        TEMPERATURE_OF_AIR: Air temperature        
+        T_air: Air temperature        
     
     
     """
     
     def __init__(
-        self, Omega, R_ro, stack_length, R_st, u_z, TEMPERATURE_OF_AIR=25
+        self, Omega, R_ro, stack_length, R_st, u_z, T_air=25
     ):
         self.Omega = Omega
         self.R_ro = R_ro
@@ -35,7 +35,7 @@ class WindageLossProblem:
         self.R_st = R_st
         self.air_gap = R_st-R_ro
         self.u_z=u_z
-        self.TEMPERATURE_OF_AIR = TEMPERATURE_OF_AIR
+        self.T_air = T_air
 
 
 class WindageLossAnalyzer:
@@ -51,7 +51,7 @@ class WindageLossAnalyzer:
             windage_loss_total: Total windage loss on rotor
         
         """
-        # Omega, R_ro ,stack_length,R_st,air_gap,m_dot_air, TEMPERATURE_OF_AIR=25):
+        # Omega, R_ro ,stack_length,R_st,air_gap,m_dot_air, T_air=25):
 
         # %Air friction loss calculation
         nu_0_Air = 13.3e-6  # ;  %[m^2/s] kinematic viscosity of air at 0
@@ -64,7 +64,7 @@ class WindageLossAnalyzer:
         ]  # 0];        %Airgap in mm
         # Num_shaft_section = 1
         T_Air = (
-            problem.TEMPERATURE_OF_AIR
+            problem.T_air
         )  # 20:(120-20)/((SpeedMax-SpeedMin)/SpeedStep):120         #; % Air temperature []
 
         nu_Air = nu_0_Air * ((T_Air + 273) / (0 + 273)) ** 1.76

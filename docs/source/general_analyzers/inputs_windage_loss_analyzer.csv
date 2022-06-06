@@ -1,8 +1,7 @@
 Variable/key_value name,Description,Units
         Omega,Rotational Speed,rad/s
         R_ro,Outer rotor radius ,m
-        stack_length,Stack length,m
+        axial_length,Axial length,m
         R_st,Inner Stator Radius,m
-        air_gap,Aig gap length,m
         u_z,Axial airflow speed ,m/s
-        TEMPERATURE_OF_AIR,Air temperature,C
+T_air,Air temperature,C
