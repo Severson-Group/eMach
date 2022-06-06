@@ -10,14 +10,17 @@ This page describes how the thermal performance of a surface-mounted permanent m
 Model Background
 ****************
 
-The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThemalAnalyzer``.
+The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThermalAnalyzer``.
 
 
 .. figure:: ./Images/Resistance_Network.svg
    :alt: Trial1 
    :align: center
    :width: 600 
-   
+
+Geometric Dimensions
+~~~~~~~~~~~~~~~~~~~~
+  
 The required geometric dimensions and operating conditions needed to implement this model are shown in the following figure.
 
 .. _therm-geo:
@@ -26,10 +29,22 @@ The required geometric dimensions and operating conditions needed to implement t
    :align: center
    :width: 600 
 
+.. _node-loc:
+
+Nodal Locations
+~~~~~~~~~~~~~~~
+
+The location of the nodes and resistance network used in this analyzer are highlighted in the following figure. It should be noted that the iron losses are injected at node-3, and the magnet losses are injected at node-5. The convection resistance are shown as any resistance going to node-0. The numbering of the nodes corresponds with the index of the ``T`` vector returned by the analyzer (i.e. the magnet temperature would be provided by ``T[5]``).
+
+.. figure:: ./Images/Resistance_Network_Full.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600 
+
 Inputs to Rotor Thermal Analyzer
 ********************************
 
-The ``SPM_RotorThemalAnalyzer`` takes in a ``SPM_RotorThemalProblem`` with inputs listed in the following tables.
+The ``SPM_RotorThermalAnalyzer`` takes in a ``SPM_RotorThermalProblem`` with inputs listed in the following tables.
 
 .. _mat-dict-therm:
 .. csv-table:: Material dictionary for rotor thermal problem -- ``mat_dict``
@@ -49,7 +64,7 @@ The ``SPM_RotorThemalAnalyzer`` takes in a ``SPM_RotorThemalProblem`` with input
 
    
    
-The following code-block demonstrates how to create a ``SPM_RotorThemalProblem`` and ``SPM_RotorThemalAnalyzer``.
+The following code-block demonstrates how to create a ``SPM_RotorThermalProblem`` and ``SPM_RotorThermalAnalyzer``.
 
 
 .. code-block:: python
@@ -88,11 +103,7 @@ The following code-block demonstrates how to create a ``SPM_RotorThemalProblem``
 
 Outputs from Rotor Thermal Analyzer
 ***********************************
-The ``SPM_RotorThemalAnalyzer``'s analyze method returns back the temperature at each node for the solution to the resistance network. (``T=ana.analyze(prob)``). The location of each numbered node in the machine is visualized in the figure below: 
+The ``SPM_RotorThermalAnalyzer``'s analyze method returns back the temperature at each node for the solution to the resistance network. (``T=ana.analyze(prob)``). The location of each node corresponds with the indexes shown in this :ref:`figure <node-loc>` from the model background section.
 
-.. figure:: ./Images/Resistance_Network_Full.svg
-   :alt: Trial1 
-   :align: center
-   :width: 600 
 
 

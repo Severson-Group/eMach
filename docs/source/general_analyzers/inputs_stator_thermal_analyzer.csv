@@ -1,10 +1,10 @@
 Variable/key_value name,Description,Units
 g_sy,Volumetric Heating in Stator Yoke,W/m^3
 g_th,Volumetric Heating in Stator Tooth,W/m^3
-w_st,Width of Stator Tooth,m
+w_tooth,Width of Stator Tooth,m
 l_st,Stack Length,m
-l_tooth,Tooth Length,m
 alpha_q,Slot Angle,rad
+r_si,Inner Stator Radius,m
 r_so,Outer Stator Radius,m
 r_sy,Inner Stator Yoke Radius,m
 k_ins,Thermal Conductivity of Insulation Paper,W/m-K
@@ -12,8 +12,6 @@ w_ins,Width of Insulation Paper,m
 k_fe,Thermal Conductivity of Stator Iron,W/m-K
 h,External Convection Rate,W/m^3-K
 alpha_slot,Angle of Back of Slot,rad
-T_coil_max,Maxium Coil Temperature,K 
 r_si,Inner Stator Tooth Radius,m
 Q_coil,Ohmic Losses in Coil,W
 h_slot,Direct Coil Convection Rate,W/m^3-K
-,,

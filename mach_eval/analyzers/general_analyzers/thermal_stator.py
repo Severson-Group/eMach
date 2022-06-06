@@ -20,6 +20,8 @@ class StatorThermalProblem:
         
         alpha_q: slot span 2pi/Q [rad]
         
+        r_si: Inner stator radius [m]
+        
         r_so: Outer stator radius [m]
         
         r_sy: Radius of inner stator yoke [m]
@@ -58,7 +60,6 @@ class StatorThermalProblem:
         k_fe: float,
         h: float,
         alpha_slot: float,
-        T_coil_max: float,
         Q_coil: float,
         h_slot: float,
     ):
@@ -76,7 +77,6 @@ class StatorThermalProblem:
         self.k_fe = k_fe
         self.h = h
         self.alpha_slot = alpha_slot
-        self.T_coil_max = T_coil_max
         self.Q_coil = Q_coil
         self.h_slot = h_slot
 
@@ -114,7 +114,6 @@ class StatorThermalAnalyzer:
         k_fe = problem.k_fe
         h = problem.h
         alpha_slot = problem.alpha_slot
-        T_coil_max = problem.T_coil_max
         h_slot = problem.h_slot
         Q_coil = problem.Q_coil
 
@@ -160,15 +159,9 @@ class StatorThermalAnalyzer:
             ) / (1 + R_coil / R_cd)
             T_sy = g_sy * M_sy + (Q_coil + 2 * Q_tooth) * R_sy  
 
-        valid = True
-        if T_coil > T_coil_max:
-            valid = False
+        
         results = {'Coil temperature': T_coil,
-                   'Stator yoke temperature': T_sy,
-                   'Coil losses': Q_coil,
-                   'Stator yoke losses': Q_sy,
-                   'Stator tooth losses': Q_tooth,
-                   'Valid temperature': valid}
+                   'Stator yoke temperature': T_sy}
         return results
 
 
