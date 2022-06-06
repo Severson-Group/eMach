@@ -39,12 +39,12 @@ The following code-block demonstrates how to initialize the windage loss analyze
 
     Omega=1000
     R_ro=.01
-    stack_length=.05
+    axial_length=.05
     R_st=.105
     u_z=.01
-    TEMPERATURE_OF_AIR=25
+    T_air=25
 
-    problem=wla.WindageLossProblem(Omega,R_ro,stack_length,R_st,u_z,TEMPERATURE_OF_AIR)
+    problem=wla.WindageLossProblem(Omega,R_ro,axial_length,R_st,u_z,T_air)
     ana=wla.WindageLossAnalyzer
 
 Outputs from Windage Loss Analyzer
