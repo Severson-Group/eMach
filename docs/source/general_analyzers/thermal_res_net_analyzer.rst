@@ -278,7 +278,7 @@ N_nodes
 Outputs from Thermal Resistance Network Analyzer
 ************************************************
 
-The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a list of temperatures as ``float``s for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
+The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a ``list`` of temperatures as ``float`` objects for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
 
 .. code-block:: python
 
