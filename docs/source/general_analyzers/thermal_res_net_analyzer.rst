@@ -241,7 +241,7 @@ The following code-block demonstrate how to generate the list of ``Resistance`` 
 Q_dot
 ~~~~~
 
-The ``Q_dot`` input is a list of the thermal sources at each node. In this problem, there are two thermal sources, one at node-1 and one at node-5. The following code-block creates a list of 0's of length ``N_nodes``, and then sets the sources at nodes 1 and 5.
+The ``Q_dot`` input is a list of the thermal sources in Watts at each node. In this problem, there are two thermal sources, one at node-1 and one at node-5. The following code-block creates a list of 0's of length ``N_nodes``, and then sets the sources at nodes 1 and 5.
 
 .. code-block:: python
 
@@ -249,14 +249,14 @@ The ``Q_dot`` input is a list of the thermal sources at each node. In this probl
     #Define Heat Sources
     ####################
     Q_dot=[0,]*N_nodes
-    Q_dot[1]=10
-    Q_dot[5]=10
+    Q_dot[1]=10 #W
+    Q_dot[5]=10 #W
 
 
 T_ref
 ~~~~~
 
-The ``T_ref`` input to the problem class expects a list of ``[[ref_node_1,ref_temp_1],[ref_node_2,ref_temp_2]..]`` where each pair represents a fixed temperature at a reference node. For this example, only one reference temperatures is used, so the ``T_ref`` object would look as follows:
+The ``T_ref`` input to the problem class expects a list of ``[[ref_node_1,ref_temp_1],[ref_node_2,ref_temp_2]..]`` where each pair represents a fixed temperature in Celsius at a reference node. For this example, only one reference temperatures is used, so the ``T_ref`` object would look as follows:
 
 .. code-block:: python
 
@@ -264,7 +264,7 @@ The ``T_ref`` input to the problem class expects a list of ``[[ref_node_1,ref_te
     #Define Reference Temps
     ######################
     ref_node=0
-    ref_temp=25
+    ref_temp=25 #C
     T_ref=[[ref_node,ref_temp],]
     
 N_nodes
@@ -276,7 +276,7 @@ N_nodes
 Outputs from Thermal Resistance Network Analyzer
 ************************************************
 
-The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a list of temperatures for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
+The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a list of temperatures as ``float``s for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
 
 .. code-block:: python
 

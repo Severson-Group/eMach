@@ -12,7 +12,7 @@ class StatorThermalProblem:
         
         g_th: Volumetric Heating of stator tooth [W/m^3]
         
-        w_st: Width of stator tooth [m]
+        w_tooth: Width of stator tooth [m]
         
         l_st: Stack length [m]
         
@@ -47,10 +47,10 @@ class StatorThermalProblem:
         self,
         g_sy: float,
         g_th: float,
-        w_st: float,
+        w_tooth: float,
         l_st: float,
-        l_tooth: float,
         alpha_q: float,
+        r_si: float,
         r_so: float,
         r_sy: float,
         k_ins: float,
@@ -64,9 +64,9 @@ class StatorThermalProblem:
     ):
         self.g_sy = g_sy
         self.g_th = g_th
-        self.w_st = w_st
+        self.w_tooth = w_tooth
         self.l_st = l_st
-        self.l_tooth = l_tooth  ####
+        self.l_tooth = r_sy-r_si  ####
         self.alpha_q = alpha_q
         self.r_so = r_so  #####
         self.r_sy = r_sy
@@ -102,7 +102,7 @@ class StatorThermalAnalyzer:
         """
         g_sy = problem.g_sy
         g_th = problem.g_th
-        w_st = problem.w_st
+        w_tooth = problem.w_tooth
         l_st = problem.l_st
         l_tooth = problem.l_tooth  ####
         alpha_q = problem.alpha_q
@@ -120,11 +120,11 @@ class StatorThermalAnalyzer:
 
         # r_vect=np.linspace(r_sy,r_so,100)
 
-        Q_tooth = g_th * w_st * l_st * l_tooth / 2
+        Q_tooth = g_th * w_tooth * l_st * l_tooth / 2
         Q_sy = g_sy * alpha_q / 2 * (r_so ** 2 - r_sy ** 2) * l_st
-        zeta = np.sqrt(2 * k_ins / (w_st * w_ins * k_fe))
+        zeta = np.sqrt(2 * k_ins / (w_tooth * w_ins * k_fe))
 
-        M_th = w_st * l_st / (2 * zeta) * np.tanh(zeta * l_tooth)
+        M_th = w_tooth * l_st / (2 * zeta) * np.tanh(zeta * l_tooth)
         R_sy = 1 / (h * r_so * alpha_q * l_st) + np.log(r_so / r_sy) / (
             k_fe * alpha_q * l_st
         )
