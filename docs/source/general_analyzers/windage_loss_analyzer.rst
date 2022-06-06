@@ -62,15 +62,16 @@ The windage loss analyzer returns back the a list of the windage loss components
     total_loss_vect=np.zeros_like(Omega_vect)
     for ind,Omega in enumerate(Omega_vect):
         problem=wla.WindageLossProblem(Omega,R_ro,stack_length,R_st,u_z,TEMPERATURE_OF_AIR)
-        loss=ana.analyze(problem)
-        loss_vect[:,ind]=loss
-        total_loss_vect[ind]=sum(loss)
+        [windage_loss_radial,windage_loss_endface,windage_loss_axial]=ana.analyze(problem)
+        loss_vect[:,ind]=[windage_loss_radial,windage_loss_endface,windage_loss_axial]
+        total_loss_vect[ind]=sum([windage_loss_radial,windage_loss_endface,windage_loss_axial])
     fig,ax=plt.subplots(1,1)   
     ax.plot(Omega_vect,loss_vect.T)
     ax.plot(Omega_vect,total_loss_vect)
     ax.legend(['Radial','Endface','Axial','Total'])
     ax.set_xlabel('Rotational Speed [rad/s]')
     ax.set_ylabel('Windage Loss [W]')
+    fig.savefig('WindageLossPlot.svg')
     
     
 .. figure:: ./Images/WindageLossPlot.svg
