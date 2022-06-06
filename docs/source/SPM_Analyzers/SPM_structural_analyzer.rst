@@ -27,7 +27,7 @@ All materials except for the sleeve are assumed to be isotropic. The sleeve is m
 
 Inputs for SPM Structural Analyzer
 **********************************
-The structural analyzer problem requires a material dictionary (``mat_dict``), temperature coefficient, and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. 
+The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. 
 
 
 .. _mat-dict:
