@@ -31,7 +31,7 @@ Inputs to Windage Loss Analyzer
 
 The following inputs are required to create a `WindageLossProblem` object (with dimensions defined in the figure above):
  
-.. csv-table:: Inputs for windage loss analyzer 
+.. csv-table:: Inputs for windage loss problem 
    :file: inputs_windage_loss_analyzer.csv
    :widths: 70, 70, 30
    :header-rows: 1
