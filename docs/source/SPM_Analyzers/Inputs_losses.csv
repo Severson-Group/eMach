@@ -1,0 +1,3 @@
+Variable/key_value name,Description,Units
+rotor_iron_loss,Iron losses in rotor back iron,W
+magnet_loss,Magnet losses in rotor,W

@@ -75,7 +75,7 @@ Resistances
 
 The ``Resistance`` protocol is defined in the ``thermal_analyzer_base`` module. Several concrete implementation of this protocol are provided as well. This class is defined to hold the information about a thermal resistance. In the example problem for this document the ``plane_wall`` and ``conv`` resistances are used. 
 
-All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting.  ``Material`` is an object which holds the required material parameters, it can be implement with ``Material(k)`` where ``k`` is the material thermal conductivity. For fluid materials, additional properties ``cp`` and ``mu`` can be passed in as named arguments for the specific heat capacity and viscosity. 
+All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting.  ``Material`` is an object which holds the required material parameters, it can be implement with ``Material(k)`` where ``k`` is the material thermal conductivity in units of W/m-K. For fluid materials, additional properties specific heat ``cp`` in units of kJ/kg and viscosity ``mu`` in units of m^2/s can be passed in as named arguments. 
 
 The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
  
@@ -103,7 +103,7 @@ cylind_wall
    :width: 200 
    
 The cylindrical wall resistance is initialized by the following code:
-``cylind_wall(Material,Node_1,Node_2,R_1,R_2,H)``. The required parameters are defined as follows:
+``cylind_wall(Material,Node_1,Node_2,R_1,R_2,H)``. Node-1 is located at the inner surface of the cylinder and Node-2 is located at the outer cylinder.The required parameters are defined as follows:
 
 * ``R_1`` radial location of node 1 [m]
 * ``R_2`` radial location of node 2 [m]
@@ -117,7 +117,7 @@ air_gap_conv
    :width: 200 
    
 The air gap convection resistance is initialized by the following code:
-``air_gap_conv(Material,Node_1,Node_2,omega,R_r,R_s,u_z,A)``. The required parameters are defined as follows:
+``air_gap_conv(Material,Node_1,Node_2,omega,R_r,R_s,u_z,A)``. Node-1 is located on the surface of the inner cylinder and Node-2 is located in the air-gap fluid. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``R_r`` Outer radius of rotor [m]
@@ -137,7 +137,7 @@ hub_conv
    :width: 200 
    
 The rotor hub convection resistance is initialized by the following code:
-``hub_conv(Material,Node_1,Node_2,omega,A)``. The required parameters are defined as follows:
+``hub_conv(Material,Node_1,Node_2,omega,A)``.  Node-1 is located on the top surface of the cylinder and Node-2 is located in the fluid above. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``A`` Surface area of rotor [m^2]
@@ -154,7 +154,7 @@ shaft_conv
    :width: 200 
    
 The shaft convection resistance is initialized by the following code:
-``shaft_conv(Material,Node_1,Node_2,omega,R,A,u_z)``. The required parameters are defined as follows:
+``shaft_conv(Material,Node_1,Node_2,omega,R,A,u_z)``.  Node-1 is located on the surface of the cylinder and Node-2 is located in the fluid. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``R`` Outer radius of shaft [m]
@@ -174,7 +174,7 @@ conv
    :width: 200 
    
 A general convection resistance is initialized by the following code:
-``conv(Material,Node_1,Node_2,h,A)``. The required parameters are defined as follows:
+``conv(Material,Node_1,Node_2,h,A)``. Node-1 is located on the surface and Node-2 is located in the fluid. The required parameters are defined as follows:
 
 * ``h`` Convection coefficient [W/m^2-K]
 * ``A`` Surface area [m^2]

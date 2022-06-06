@@ -6,4 +6,4 @@ sleeve_therm_conductivity,Sleeve Thermal Conductivity,W/m-k
 rotor_hub_therm_conductivity,Rotor Hub Thermal Conductivity,W/m-k
 air_therm_conductivity,Air Thermal Conductivity,W/m-k
 air_viscosity,Viscostiy of Air,m^2/s
-air_cp,cp of Air,kJ/kg
+air_cp,Specific Heat of Air,kJ/kg

@@ -17,23 +17,37 @@ The SPM rotor is modeled using a thermal resistance network as shown in the figu
    :alt: Trial1 
    :align: center
    :width: 600 
+   
+The required geometric dimensions and operating conditions needed to implement this model are shown in the following figure.
 
+.. _therm-geo:
+.. figure:: ./Images/Resistance_Network_Dim.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600 
 
 Inputs to Rotor Thermal Analyzer
 ********************************
 
 The ``SPM_RotorThemalAnalyzer`` takes in a ``SPM_RotorThemalProblem`` with inputs listed in the following tables.
 
-.. csv-table:: Material dictionary for rotor thermal analyzer -- ``mat_dict``
+.. _mat-dict-therm:
+.. csv-table:: Material dictionary for rotor thermal problem -- ``mat_dict``
    :file: inputs_mat_dict_rotor_thermal.csv
    :widths: 70, 70, 30
    :header-rows: 1
    
-.. csv-table:: Input dimensions for rotor thermal analyzer 
+.. csv-table:: Input losses for rotor thermal problem
+   :file: Inputs_losses.csv
+   :widths: 70, 70, 30
+   :header-rows: 1     
+   
+.. csv-table:: Input dimensions and operating conditions for rotor thermal problem
    :file: inputs_dimensions_rotor_thermal.csv
    :widths: 70, 70, 30
    :header-rows: 1
-      
+
+   
    
 The following code-block demonstrates how to create a ``SPM_RotorThemalProblem`` and ``SPM_RotorThemalAnalyzer``.
 
@@ -41,7 +55,7 @@ The following code-block demonstrates how to create a ``SPM_RotorThemalProblem``
 .. code-block:: python
 
     import numpy as np
-    from eMach.mach_eval.analyzers.spm_rotor_thermal import SPM_RotorThemalProblem,SPM_RotorThemalAnalyzer
+    from eMach.mach_eval.analyzers.spm_rotor_thermal import SPM_RotorThermalProblem,SPM_RotorThermalAnalyzer
     from eMach.mach_eval.analyzers.spm_rotor_thermal import AirflowProblem,AirflowAnalyzer
     # Example Machine Dimensions
     r_sh=5E-3 # [m]
@@ -68,14 +82,17 @@ The following code-block demonstrates how to create a ``SPM_RotorThemalProblem``
     losses={'rotor_iron_loss':.001,'magnet_loss':135}
     u_z=0
 
-    prob=SPM_RotorThemalProblem(mat_dict,r_sh,d_ri,r_ro,d_sl,r_si,l_st,l_hub,T_ref,u_z,losses,omega)
-    ana=SPM_RotorThemalAnalyzer()
+    prob=SPM_RotorThermalProblem(mat_dict,r_sh,d_ri,r_ro,d_sl,r_si,l_st,l_hub,T_ref,u_z,losses,omega)
+    ana=SPM_RotorThermalAnalyzer()
 
 
 Outputs from Rotor Thermal Analyzer
 ***********************************
-The ``SPM_RotorThemalAnalyzer``'s analyze method returns back the temperature at each node for the solution to the resistance network. (``T=ana.analyze(prob)``). 
+The ``SPM_RotorThemalAnalyzer``'s analyze method returns back the temperature at each node for the solution to the resistance network. (``T=ana.analyze(prob)``). The location of each numbered node in the machine is visualized in the figure below: 
 
-
+.. figure:: ./Images/Resistance_Network_Full.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600 
 
 
