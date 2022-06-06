@@ -9,7 +9,9 @@ This page outlines the use the the thermal resistance network analyzer used by e
 Model Background
 ****************
 
-Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. eMach has several thermal resistances predefined as classes in the the ``thermal_analyzer_base`` module.
+Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. 
+
+This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes (of varying types as described below), and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system.
 
 
 .. figure:: ./Images/ResistanceNetwork.svg
