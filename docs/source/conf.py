@@ -14,9 +14,7 @@
 #
 import os
 import sys
-
 sys.path.insert(0, os.path.abspath("..\.."))
-
 
 # -- Project information -----------------------------------------------------
 
@@ -39,7 +37,11 @@ release = "0.0.1"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.githubpages", "sphinx.ext.intersphinx"]
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.napoleon',
+]
 
 # Add mock packages for non-standard or C based python packages used in modules
 autodoc_mock_imports  = ["pygmo", "numpy", "pandas", "pickle"]
