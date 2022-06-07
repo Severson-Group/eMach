@@ -41,7 +41,7 @@ The location of the nodes and resistance network used in this analyzer are highl
    :align: center
    :width: 600 
 
-Inputs to Rotor Thermal Analyzer
+Inputs from User
 ********************************
 
 The ``SPM_RotorThermalAnalyzer`` takes in a ``SPM_RotorThermalProblem`` with inputs listed in the following tables.
@@ -100,7 +100,7 @@ The following code-block demonstrates how to create a ``SPM_RotorThermalProblem`
     ana=SPM_RotorThermalAnalyzer()
 
 
-Outputs from Rotor Thermal Analyzer
+Outputs to User
 ***********************************
 The ``SPM_RotorThermalAnalyzer``'s analyze method returns back the temperature at each node for the solution to the resistance network. (``T=ana.analyze(prob)``). The location of each node corresponds with the indexes shown in this :ref:`figure <node-loc>` from the model background section.
 

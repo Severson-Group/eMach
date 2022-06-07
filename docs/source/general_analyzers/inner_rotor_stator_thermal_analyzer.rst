@@ -28,7 +28,7 @@ The presented analyzer is designed to operate under the following assumptions:
 
 
 
-Inputs to Stator Thermal Analyzer
+Inputs from User
 *********************************
 
 The required inputs to initializes the ``StatorThermalProblem`` are summarized in the table below and the geometric inputs are visualized in the cross section shown above.
@@ -92,7 +92,7 @@ The following code block demonstrates how to initialize the stator thermal probl
 	ana = sta.StatorThermalAnalyzer()
 
 
-Outputs from Stator Thermal Analyzer
+Outputs to User
 ************************************
 
 The ``StatorThermalAnalyzer`` outputs a dictionary object with the following keys:
