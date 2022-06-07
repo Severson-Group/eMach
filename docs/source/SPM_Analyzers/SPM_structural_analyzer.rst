@@ -4,14 +4,12 @@
 SPM Rotor Structural Analyzer
 ##############################
 
-
-This page describes how the structural performance of a surface-mounted permanent magnet (SPM) rotor is evaluated using the eMach code base. A detailed description of the math and physics for this problem can be found in `this paper <https://ieeexplore.ieee.org/document/9595523>`_.
+This analyzer determines the stress in a surface-mounted permanent magnet (SPM) rotor with a retaining sleeve. 
 
 Model Background
 ****************
 
-The SPM rotor can be modeled as a series of concentric cylinders as shown in the figure below. In this case, the rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor.
-
+The analyzer models the SPM rotor as a series of concentric cylinders, shown in the figure below. The rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor. In addition to the compressive force from the sleeve, loading due to thermal expansion is also considered.
 
 .. figure:: ./Images/RotorConfig.svg
    :alt: Trial1 
@@ -23,19 +21,25 @@ The SPM rotor can be modeled as a series of concentric cylinders as shown in the
    :align: center
    :width: 300 
    
-Inputs for SPM Structural Analyzer
+All materials except for the sleeve are assumed to be isotropic. The sleeve is modeled as anisotropic, which allows consideration of high performance materials such as carbon fiber. The analyzer implements the rotor model developed in `this paper <https://ieeexplore.ieee.org/document/9595523>`_:
+
+* M Johnson, K. Hanson and E. L. Severson, "Normalized Analytical Model of Stresses in a Surface Mounted Permanent Magnet Rotor," `2021 IEEE Energy Conversion Congress and Exposition (ECCE)`, 2021, pp. 3928-3935.
+
+Inputs from User
 **********************************
-The current implementation of the structural analyzer requires a material dictionary (``mat_dict``), temperature coefficient, and dimensions of the shaft, rotor core, magnet, and sleeve. The following table shows the list of required inputs for the structural analyzer.
+
+.. _deltaT:
+The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise to account for thermal expansion. The ``deltaT`` values should be thought of as the temperature rise from rest, so if when the rotor is not in use it rests at 20C, then the temperature rise would be relative to that temperature.
 
 
 .. _mat-dict:
-.. csv-table:: Inputs for SPM structural problem -- ``mat_dict``
+.. csv-table:: ``mat_dict`` input to SPM structural problem
    :file: inputs_mat_dict.csv
    :widths: 70, 70, 30
    :header-rows: 1
 
 
-.. csv-table:: Inputs for SPM structural problem -- Dimensions
+.. csv-table:: Additional inputs for SPM structural problem
    :file: inputs_dimensions.csv
    :widths: 70, 70, 30
    :header-rows: 1
@@ -46,7 +50,7 @@ The following code demonstrates how to initialize the ``SPM_RotorStructuralProbl
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers import spm_rotor_structrual_analyzer as sta
+    import eMach.mach_eval.analyzers.spm.rotor_structural as sta
     ######################################################
     # Creating the required Material Dictionary 
     ######################################################
@@ -95,20 +99,44 @@ The following code demonstrates how to initialize the ``SPM_RotorStructuralProbl
     analyzer=sta.SPM_RotorStructuralAnalyzer()
 
 
+Example with No Rotor Sleeve
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+To analyze a rotor with no sleeve, simple set ``d_sl``, ``delta_sl``, and ``deltaT`` to zero when creating the problem as shown in the following code:
 
-Outputs for SPM Structural Analyzer
+.. code-block:: python
+
+    ######################################################
+    #Setting the machine geometry and operating conditions
+    ######################################################
+    r_sh = 5E-3 # [m]
+    d_m = 2E-3 # [m]
+    r_ro = 12.5E-3 # [m]
+    deltaT = 0 # [K]
+    N = 50E3 # [RPM]
+    d_sl=0 # [m]
+    delta_sl=0 # [m]
+
+    ######################################################
+    #Creating problem and analyzer class
+    ######################################################
+    problem = sta.SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+    analyzer=sta.SPM_RotorStructuralAnalyzer()
+
+
+Outputs to User
 ***********************************
 
+The SPM structural analyzer returns a list of ``sigma`` objects (referred to as ``sigmas``). Each ``sigma`` object contains the analytic solution for radial and tangential stress in a single rotor components, as follows: 
 
-The ``analyze`` method of the SPM structural analyzer returns a list of ``sigma`` objects referred to here as ``sigmas``. Each ``sigma`` object represents the analytical solution for stress in each of the rotor components described by equation (4) in the supporting `paper <https://ieeexplore.ieee.org/document/9595523>`_. The ``sigma`` object corresponding to each rotor components can be found using the following indexing of the list ``sigmas``:
+* ``sigmas[0]``: Shaft
+* ``sigmas[1]``: Rotor Core
+* ``sigmas[2]``: Magnets
+* ``sigmas[3]``: Sleeve
 
-* ``sigmas[0]``: Stresses in Shaft
-* ``sigmas[1]``: Stresses in Rotor Core
-* ``sigmas[2]``: Stresses in Magnets
-* ``sigmas[3]``: Stresses in Sleeve
+The user can obtain the stress (in units of Pa) at any radius in a rotor component using the ``sigma.radial()`` and ``sigma.tangential()`` methods. For example, ``sigmas[2].radial(r_ro)`` would return the radial stress at the outer edge of the magnets (radius of ``r_ro`` in units of m), and ``sigmas[2].tangential(r_ro)`` would return the tangential stress. Note that the sigma objects determine the stress by solving equation (4) in the supporting `paper <https://ieeexplore.ieee.org/document/9595523>`_.
 
-The user is able calculate the stress at any location `r` in a rotor component using the ``radial`` and ``tangential`` methods of the ``sigma`` objects. For example ``sigmas[2].radial(r_ro)`` would return the radial stress at the outer edge of the magnets ``r_ro``, and ``sigmas[2].tangential(r_ro)`` would return the tangential stress at this location. The following code-block demonstrates how a list of sigma objects are return by the analyzer, and how they can be utilized to calculate the stress distribution in the rotor.
 
+Example code to calculate the stress distribution in the rotor:
 
 .. code-block:: python
 
@@ -142,13 +170,50 @@ The user is able calculate the stress at any location `r` in a rotor component u
     ax[1].set_ylabel('Tangential Stress [Pa]')
     ax[1].set_xlabel('Radial Position [m]')
         
-        
-        
-Running the code provided in this document should produce the follow plot of radial and tangential stress in the example rotor.
-
 
 .. figure:: ./Images/ExampleStress.svg
    :alt: Trial1 
    :align: center
    :width: 600 
+   
+Example with No Rotor Sleeve
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following code will calculate the stress distribution for a rotor which is not utilizing a rotor sleeve:
+
+
+.. code-block:: python
+
+    ######################################################
+    #Analyzing Problem
+    ######################################################
+    sigmas=analyzer.analyze(problem)
+    
+    ######################################################
+    #Creating vectors of radius used for plotting
+    ######################################################
+    r_vect_sh=np.linspace(r_sh/10000,r_sh,100)
+    r_vect_rc=np.linspace(r_sh,r_ro-d_m,100)
+    r_vect_pm=np.linspace(r_ro-d_m,r_ro,100)
+    r_vect_sl=np.linspace(r_ro,r_ro+d_sl,100)
+    
+    ######################################################
+    #Plotting Stress distribution in rotor
+    ######################################################
+    fig,ax=plt.subplots(2,1)
+    ax[0].plot(r_vect_sh,sigmas[0].radial(r_vect_sh))
+    ax[0].plot(r_vect_rc,sigmas[1].radial(r_vect_rc))
+    ax[0].plot(r_vect_pm,sigmas[2].radial(r_vect_pm))
+    ax[0].set_xticks([])
+    ax[0].set_ylabel('Radial Stress [Pa]')
+    ax[1].plot(r_vect_sh,sigmas[0].tangential(r_vect_sh))
+    ax[1].plot(r_vect_rc,sigmas[1].tangential(r_vect_rc))
+    ax[1].plot(r_vect_pm,sigmas[2].tangential(r_vect_pm))
+    ax[1].set_ylabel('Tangential Stress [Pa]')
+    ax[1].set_xlabel('Radial Position [m]')
+        
+
+.. figure:: ./Images/ExampleStress_NoSleeve.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600 
