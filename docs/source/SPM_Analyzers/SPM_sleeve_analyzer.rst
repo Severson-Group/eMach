@@ -29,7 +29,7 @@ This analyzer implements the sleeve design approach developed in Section IV-A of
 Input from User
 ************************************
 
-To create the problem object, the user must specify the following dimensions (defined in the drawings above) and the maximum operating temperature and speed: 
+To create the problem object, the user must specify the following dimensions (defined in the drawings above) and the maximum rotor temperature rise (as defined :ref:`here <deltaT>`) and speed: 
 
 .. csv-table:: Input for sleeve problem -- Dimensions and Operating Conditions 
    :file: inputs_dimensions_sleeve.csv
