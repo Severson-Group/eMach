@@ -3,15 +3,15 @@
 Thermal Resistance Network Analyzer
 #######################################
 
-This page outlines the use the the thermal resistance network analyzer used by eMach. This analyzer is designed to solve steady state temperature distribution problems. This analyzer is utilized by other analyzers in eMach, to calculate the temperature distribution for certain machine geometries. In this document a simple thermal resistance network is defined to demonstrate how to use this analyzer.
+This analyzer is designed to solve steady state temperature distribution problems for thermal resistance networks.
 
 
 Model Background
 ****************
 
-Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. 
+Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow.  
 
-This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes (of varying types as described below), and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system.
+This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes (of varying types as described below), and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system. This analyzer is utilized by other analyzers in eMach, to calculate the temperature distribution for certain machine geometries. In this document a simple thermal resistance network is defined to demonstrate how to use this analyzer.
 
 
 .. figure:: ./Images/ResistanceNetwork.svg
@@ -278,7 +278,11 @@ N_nodes
 Outputs to User
 ************************************************
 
-The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a ``list`` of temperatures as ``float`` objects for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
+The ``ThermalAnalyzer`` returns back 
+
+* ``T`` a list of temperatures for each node defined by the resistance network.
+
+The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
 
 .. code-block:: python
 

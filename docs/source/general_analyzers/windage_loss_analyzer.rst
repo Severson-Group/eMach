@@ -56,8 +56,13 @@ Example code initializing the windage loss analyzer and problem:
 
 Outputs to User
 **********************************
+The windage analyzer returns a list of windage losses in Watts in the following order:
 
-The windage loss analyzer returns a list of the calculated loss components as ``[windage_loss_radial,windage_loss_endface,windage_loss_axial]`` in Watts. The endface losses are split evenly between the two rotor axial surfaces. The total windage loss is the sum of all these losses.
+1. ``windage_loss_radial``
+2. ``windage_loss_endface`` (The endface losses are split evenly between the two rotor axial surfaces)
+3. ``windage_loss_axial`` 
+
+The total windage loss is the sum of all these losses.
 
 Example code using the windage loss analyzer to determine losses as over a range of rotational speed ``Omega`` and plotting the results.
 
