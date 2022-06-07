@@ -27,7 +27,7 @@ All materials except for the sleeve are assumed to be isotropic. The sleeve is m
 
 Inputs from User
 **********************************
-The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise to account for thermal expansion.
+The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise to account for thermal expansion. The ``deltaT`` values should be thought of as the temperature rise from rest, so if when the rotor is not in use it rests at 20C, then the temperature rise would be relative to that temperature.
 
 
 .. _mat-dict:
@@ -97,6 +97,29 @@ The following code demonstrates how to initialize the ``SPM_RotorStructuralProbl
     analyzer=sta.SPM_RotorStructuralAnalyzer()
 
 
+Example with No Rotor Sleeve
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+To analyze a rotor with no sleeve, simple set ``d_sl``, ``delta_sl``, and ``deltaT`` to zero when creating the problem as shown in the following code:
+
+.. code-block:: python
+
+    ######################################################
+    #Setting the machine geometry and operating conditions
+    ######################################################
+    r_sh = 5E-3 # [m]
+    d_m = 2E-3 # [m]
+    r_ro = 12.5E-3 # [m]
+    deltaT = 0 # [K]
+    N = 50E3 # [RPM]
+    d_sl=0 # [m]
+    delta_sl=0 # [m]
+
+    ######################################################
+    #Creating problem and analyzer class
+    ######################################################
+    problem = sta.SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+    analyzer=sta.SPM_RotorStructuralAnalyzer()
+
 
 Outputs to User
 ***********************************
@@ -150,4 +173,45 @@ Example code to calculate the stress distribution in the rotor:
    :alt: Trial1 
    :align: center
    :width: 600 
+   
+Example with No Rotor Sleeve
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following code will calculate the stress distribution for a rotor which is not utilizing a rotor sleeve:
+
+
+.. code-block:: python
+
+    ######################################################
+    #Analyzing Problem
+    ######################################################
+    sigmas=analyzer.analyze(problem)
+    
+    ######################################################
+    #Creating vectors of radius used for plotting
+    ######################################################
+    r_vect_sh=np.linspace(r_sh/10000,r_sh,100)
+    r_vect_rc=np.linspace(r_sh,r_ro-d_m,100)
+    r_vect_pm=np.linspace(r_ro-d_m,r_ro,100)
+    r_vect_sl=np.linspace(r_ro,r_ro+d_sl,100)
+    
+    ######################################################
+    #Plotting Stress distribution in rotor
+    ######################################################
+    fig,ax=plt.subplots(2,1)
+    ax[0].plot(r_vect_sh,sigmas[0].radial(r_vect_sh))
+    ax[0].plot(r_vect_rc,sigmas[1].radial(r_vect_rc))
+    ax[0].plot(r_vect_pm,sigmas[2].radial(r_vect_pm))
+    ax[0].set_xticks([])
+    ax[0].set_ylabel('Radial Stress [Pa]')
+    ax[1].plot(r_vect_sh,sigmas[0].tangential(r_vect_sh))
+    ax[1].plot(r_vect_rc,sigmas[1].tangential(r_vect_rc))
+    ax[1].plot(r_vect_pm,sigmas[2].tangential(r_vect_pm))
+    ax[1].set_ylabel('Tangential Stress [Pa]')
+    ax[1].set_xlabel('Radial Position [m]')
+        
+
+.. figure:: ./Images/ExampleStress_NoSleeve.svg
+   :alt: Trial1 
+   :align: center
+   :width: 600 
