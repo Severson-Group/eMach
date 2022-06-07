@@ -133,7 +133,7 @@ The SPM structural analyzer returns a list of ``sigma`` objects (referred to as 
 * ``sigmas[2]``: Magnets
 * ``sigmas[3]``: Sleeve
 
-The user can obtain the stress (in units of Pa) at any radius in a rotor component using the ``sigma.radial()`` and ``sigma.tangential()`` methods. For example, ``sigmas[2].radial(r_ro)`` would return the radial stress at the outer edge of the magnets (radius of ``r_ro`` in units of m), and ``sigmas[2].tangential(r_ro)`` would return the tangential stress. Note that the sigma objects determine the stress by solving equation (4) in the supporting `paper <https://ieeexplore.ieee.org/document/9595523>`_.
+The user can obtain the stress (in units of Pa) at any radius in a rotor component using the ``sigma.radial()`` and ``sigma.tangential()`` methods. For example, ``sigmas[2].radial(r_ro)`` would return the radial stress at the outer edge of the magnets (radius of ``r_ro`` in units of m), and ``sigmas[2].tangential(r_ro)`` would return the tangential stress. If the user attempts to pass a radius which is outside of the range of the rotor component, then the ``sigma`` object will raise a ``ValueError``. Note that the sigma objects determine the stress by solving equation (4) in the supporting `paper <https://ieeexplore.ieee.org/document/9595523>`_.
 
 
 Example code to calculate the stress distribution in the rotor:
