@@ -89,13 +89,11 @@ plane_wall
    :align: center
    :width: 200 
 
-The plane wall resistance is initialized by the following: ``plane_wall(Material,Node_1,Node_2,L1,L2,A)``. The required parameters are defined as follows:
+The plane wall resistance is initialized by the following: ``plane_wall(Material,Node_1,Node_2,L,A)``. Node-1 is located on one of the walls perpendicular to the heat flow, while Node-2 is located on the opposite face. The required parameters are defined as follows:
 
-* ``L1`` Location of node 1 on first face of plane wall [m]
-* ``L2`` Location of node 2 on second face of plane wall [m]
+* ``L`` Thickness of plane wall [m]
 * ``A`` cross sectional area of plane wall [m^2]
 
-Note that the thickness of the plane wall is ``L2-L1``, so ``L2`` should be defined as the larger value of the two nodes.
 
 cylind_wall
 -----------
@@ -196,34 +194,34 @@ The following code-block demonstrate how to generate the list of ``Resistance`` 
     # Path 0
     ##############
     Descr = "R_1,2"
-    Resistances.append(plane_wall(mat1, 1, 2, 0, L_1, A_1))
+    Resistances.append(plane_wall(mat1, 1, 2, L_1, A_1))
     Resistances[0].Descr = Descr
     ##############
     # Path 1
     ##############
     Descr = "R_2,3"
-    Resistances.append(plane_wall(mat2, 2, 3, L_1, L_2, A_2))
+    Resistances.append(plane_wall(mat2, 2, 3, L_2-L_1, A_2))
     Resistances[1].Descr = Descr
 
     ##############
     # Path 2
     ##############
     Descr = "R_2,4"
-    Resistances.append(plane_wall(mat3, 2, 4, L_1, L_2, A_2))
+    Resistances.append(plane_wall(mat3, 2, 4, L_2-L_1, A_2))
     Resistances[2].Descr = Descr
 
     ##############
     # Path 3
     ##############
     Descr = "R_3,5"
-    Resistances.append(plane_wall(mat2, 3, 5, 0, w/4, A_3))
+    Resistances.append(plane_wall(mat2, 3, 5, w/4, A_3))
     Resistances[3].Descr = Descr
 
     ##############
     # Path 4
     ##############
     Descr = "R_4,5"
-    Resistances.append(plane_wall(mat3, 4, 5, 0, w/4, A_3))
+    Resistances.append(plane_wall(mat3, 4, 5, w/4, A_3))
     Resistances[4].Descr = Descr
 
     ##############
