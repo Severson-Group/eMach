@@ -132,7 +132,7 @@ class plane_wall(Resistance):
                  L: float,
                  A: float):
         super().__init__(Material, Node1, Node2)
-        self.L= L
+        self.L= abs(L)
         self.A = A
 
     @property
