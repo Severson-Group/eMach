@@ -190,13 +190,13 @@ class SPM_RotorThermalAnalyzer:
         ##############
         Descr = "Shaft to rotor core interface (Approximated as Plane Wall)"
         A_sh_1 = stack_length * 2 * np.pi * R_1
-        Resistances.append(tb.plane_wall(sh_mat, 1, 2, 0, R_1, A_sh_1))
+        Resistances.append(tb.plane_wall(sh_mat, 1, 2, R_1, A_sh_1))
         Resistances[0].Descr = Descr
         ##############
         # Path 1
         ##############
         Descr = "Shaft/RC interface to rotor core center"
-        Resistances.append(tb.cylind_wall(rc_mat, 2, 3, R_1, R_rc, stack_length))
+        Resistances.append(tb.cylind_wall(rc_mat, 2, 3,R_1,R_rc, stack_length))
         Resistances[1].Descr = Descr
         ##############
         # Path 2
@@ -243,53 +243,53 @@ class SPM_RotorThermalAnalyzer:
         ##############
         Descr = "Rotor core center to Hub/RotorCore Interface"
         A_rcHub = np.pi * (R_2 ** 2 - R_1 ** 2)
-        Resistances.append(tb.plane_wall(rc_mat, 3, 9, 0, L_1, A_rcHub))
+        Resistances.append(tb.plane_wall(rc_mat, 3, 9, L_1, A_rcHub))
         Resistances[8].Descr = Descr
         ##############
         # Path 9
         ##############
         Descr = "PM center to Hub/PM Interface"
         A_pmHub = np.pi * (R_3 ** 2 - R_2 ** 2)
-        Resistances.append(tb.plane_wall(pm_mat, 5, 10, 0, L_1, A_pmHub))
+        Resistances.append(tb.plane_wall(pm_mat, 5, 10, L_1, A_pmHub))
         Resistances[9].Descr = Descr
         ##############
         # Path 10
         ##############
         Descr = "Sleeve center to Hub/Sleeve Interface"
         A_slHub = np.pi * (R_4 ** 2 - R_3 ** 2)
-        Resistances.append(tb.plane_wall(sl_mat, 7, 11, 0, L_1, A_slHub))
+        Resistances.append(tb.plane_wall(sl_mat, 7, 11, L_1, A_slHub))
         Resistances[10].Descr = Descr
         ##############
         # Path 11
         ##############
         Descr = "Shaft Center to shaft Inline with Hub center"
         A_sh = np.pi * (R_1 ** 2)
-        Resistances.append(tb.plane_wall(sh_mat, 1, 12, 0, L_2, A_sh))
+        Resistances.append(tb.plane_wall(sh_mat, 1, 12, L_2, A_sh))
         Resistances[11].Descr = Descr
         ##############
         # Path 12
         ##############
         Descr = "Hub/Rotor Core interface to Center of Hub inline with Rotor Core"
-        Resistances.append(tb.plane_wall(hub_mat, 9, 14, L_1, L_2, A_rcHub))
+        Resistances.append(tb.plane_wall(hub_mat, 9, 14, L_2-L_1, A_rcHub))
         Resistances[12].Descr = Descr
         ##############
         # Path 13
         ##############
         Descr = "Hub/PM interface to Center of Hub inline with PM"
-        Resistances.append(tb.plane_wall(hub_mat, 10, 15, L_1, L_2, A_pmHub))
+        Resistances.append(tb.plane_wall(hub_mat, 10, 15, L_2-L_1, A_pmHub))
         Resistances[13].Descr = Descr
         ##############
         # Path 14
         ##############
         Descr = "Hub/Sleeve interface to Center of Hub inline with Sleeve"
-        Resistances.append(tb.plane_wall(hub_mat, 11, 16, L_1, L_2, A_slHub))
+        Resistances.append(tb.plane_wall(hub_mat, 11, 16, L_2-L_1, A_slHub))
         Resistances[14].Descr = Descr
         ##############
         # Path 15
         ##############
         Descr = "Shaft inline with Hub center to Hub/Shaft interface"
         A_sh_2 = 2 * np.pi * R_1 * hub_length
-        Resistances.append(tb.plane_wall(sh_mat, 12, 13, 0, R_1, A_sh_2))
+        Resistances.append(tb.plane_wall(sh_mat, 12, 13, R_1, A_sh_2))
         Resistances[15].Descr = Descr
         ##############
         # Path 16
@@ -313,25 +313,25 @@ class SPM_RotorThermalAnalyzer:
         # Path 19
         ##############
         Descr = "Shaft inline with Hub center to Shaft Out "
-        Resistances.append(tb.plane_wall(sh_mat, 12, 17, L_2, L_4, A_sh))
+        Resistances.append(tb.plane_wall(sh_mat, 12, 17, L_4-L_2, A_sh))
         Resistances[19].Descr = Descr
         ##############
         # Path 20
         ##############
         Descr = "Hub inline with Rotor Core to Outer Hub Inline with Rotor Core "
-        Resistances.append(tb.plane_wall(hub_mat, 14, 18, L_2, L_3, A_rcHub))
+        Resistances.append(tb.plane_wall(hub_mat, 14, 18, L_3-L_2, A_rcHub))
         Resistances[20].Descr = Descr
         ##############
         # Path 21
         ##############
         Descr = "Hub inline with PM to Outer Hub Inline with PM "
-        Resistances.append(tb.plane_wall(hub_mat, 15, 19, L_2, L_3, A_pmHub))
+        Resistances.append(tb.plane_wall(hub_mat, 15, 19, L_3-L_2, A_pmHub))
         Resistances[21].Descr = Descr
         ##############
         # Path 22
         ##############
         Descr = "Hub inline with Sleeve to Outer Hub Inline with Sleeve"
-        Resistances.append(tb.plane_wall(hub_mat, 16, 20, L_2, L_3, A_slHub))
+        Resistances.append(tb.plane_wall(hub_mat, 16, 20, L_3-L_2, A_slHub))
         Resistances[22].Descr = Descr
         ##############
         # Path 23
@@ -363,53 +363,53 @@ class SPM_RotorThermalAnalyzer:
         ##############
         Descr = "Rotor Core center to Hub/RotorCore Interface"
         A_rcHub = np.pi * (R_2 ** 2 - R_1 ** 2)
-        Resistances.append(tb.plane_wall(rc_mat, 3, 21, 0, L_1, A_rcHub))
+        Resistances.append(tb.plane_wall(rc_mat, 3, 21, L_1, A_rcHub))
         Resistances[27].Descr = Descr
         ##############
         # Path 28
         ##############
         Descr = "PM center to Hub/PM Interface"
         A_pmHub = np.pi * (R_3 ** 2 - R_4 ** 2)
-        Resistances.append(tb.plane_wall(pm_mat, 5, 22, 0, L_1, A_pmHub))
+        Resistances.append(tb.plane_wall(pm_mat, 5, 22, L_1, A_pmHub))
         Resistances[28].Descr = Descr
         ##############
         # Path 29
         ##############
         Descr = "Sleeve center to Hub/Sleeve Interface"
         A_slHub = np.pi * (R_4 ** 2 - R_3 ** 2)
-        Resistances.append(tb.plane_wall(sl_mat, 7, 23, 0, L_1, A_slHub))
+        Resistances.append(tb.plane_wall(sl_mat, 7, 23, L_1, A_slHub))
         Resistances[29].Descr = Descr
         ##############
         # Path 30
         ##############
         Descr = "Shaft Center to shaft Inline with Hub center"
         A_sh = np.pi * (R_1 ** 2)
-        Resistances.append(tb.plane_wall(sh_mat, 1, 24, 0, L_2, A_sh))
+        Resistances.append(tb.plane_wall(sh_mat, 1, 24, L_2, A_sh))
         Resistances[30].Descr = Descr
         ##############
         # Path 31
         ##############
         Descr = "Hub/Rotor Core interface to Center of Hub inline with Rotor Core"
-        Resistances.append(tb.plane_wall(hub_mat, 21, 26, L_1, L_2, A_rcHub))
+        Resistances.append(tb.plane_wall(hub_mat, 21, 26, L_2-L_1, A_rcHub))
         Resistances[31].Descr = Descr
         ##############
         # Path 32
         ##############
         Descr = "Hub/PM interface to Center of Hub inline with PM"
-        Resistances.append(tb.plane_wall(hub_mat, 22, 27, L_1, L_2, A_pmHub))
+        Resistances.append(tb.plane_wall(hub_mat, 22, 27,  L_2-L_1, A_pmHub))
         Resistances[32].Descr = Descr
         ##############
         # Path 33
         ##############
         Descr = "Hub/Sleeve interface to Center of Hub inline with Sleeve"
-        Resistances.append(tb.plane_wall(hub_mat, 23, 28, L_1, L_2, A_slHub))
+        Resistances.append(tb.plane_wall(hub_mat, 23, 28,  L_2-L_1, A_slHub))
         Resistances[33].Descr = Descr
         ##############
         # Path 34
         ##############
         Descr = "Shaft inline with Hub center to Hub/Shaft interface"
         A_sh_2 = 2 * np.pi * R_1 * hub_length
-        Resistances.append(tb.plane_wall(sh_mat, 24, 25, 0, R_1, A_sh_2))
+        Resistances.append(tb.plane_wall(sh_mat, 24, 25, R_1, A_sh_2))
         Resistances[34].Descr = Descr
         ##############
         # Path 35
@@ -433,25 +433,25 @@ class SPM_RotorThermalAnalyzer:
         # Path 38
         ##############
         Descr = "Shaft inline with Hub center to Shaft Out "
-        Resistances.append(tb.plane_wall(sh_mat, 24, 29, L_2, L_4, A_sh))
+        Resistances.append(tb.plane_wall(sh_mat, 24, 29,  L_4-L_2, A_sh))
         Resistances[38].Descr = Descr
         ##############
         # Path 39
         ##############
         Descr = "Hub inline with Rotor Core to Outer Hub Inline with Rotor Core "
-        Resistances.append(tb.plane_wall(hub_mat, 26, 30, L_2, L_3, A_rcHub))
+        Resistances.append(tb.plane_wall(hub_mat, 26, 30,  L_3-L_2, A_rcHub))
         Resistances[39].Descr = Descr
         ##############
         # Path 40
         ##############
         Descr = "Hub inline with PM to Outer Hub Inline with PM "
-        Resistances.append(tb.plane_wall(hub_mat, 27, 31, L_2, L_3, A_pmHub))
+        Resistances.append(tb.plane_wall(hub_mat, 27, 31, L_3-L_2, A_pmHub))
         Resistances[40].Descr = Descr
         ##############
         # Path 41
         ##############
         Descr = "Hub inline with Sleeve to Outer Hub Inline with Sleeve"
-        Resistances.append(tb.plane_wall(hub_mat, 28, 32, L_2, L_3, A_slHub))
+        Resistances.append(tb.plane_wall(hub_mat, 28, 32, L_3-L_2, A_slHub))
         Resistances[41].Descr = Descr
         ##############
         # Path 42
