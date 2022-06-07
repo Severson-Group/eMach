@@ -129,17 +129,15 @@ class plane_wall(Resistance):
     def __init__(self, Material: Material,
                  Node1: int,
                  Node2: int,
-                 L1: float,
-                 L2: float,
+                 L: float,
                  A: float):
         super().__init__(Material, Node1, Node2)
-        self.L1 = L1
-        self.L2 = L2
+        self.L= abs(L)
         self.A = A
 
     @property
     def resistance_value(self):
-        return (self.L2 - self.L1) / (self.Material.k * self.A)
+        return (self.L) / (self.Material.k * self.A)
 
 
 class cylind_wall(Resistance):
