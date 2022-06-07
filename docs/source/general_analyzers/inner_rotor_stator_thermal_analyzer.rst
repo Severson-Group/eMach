@@ -27,7 +27,6 @@ The presented analyzer is designed to operate under the following assumptions:
 
 
 
-
 Inputs from User
 *********************************
 
@@ -38,7 +37,7 @@ The required inputs to initializes the ``StatorThermalProblem`` are summarized i
    :widths: 70, 70, 30
    :header-rows: 1
    
-The analyzer takes in convection coefficients ``h`` and ``h_slot``. The ``h`` convection coefficient represents the convection rate on the exterior of the stator at ``r_so``. The analyzer is capable of modeling direct coil cooling though the ``h_slot`` which models a convection rate directly on the coil as discussed in Chapter V Section 5.4.2 of Martin Johnson's Masters Thesis. The following papers provide general ranges of convection coefficients which may assumed:
+The analyzer takes in convection coefficients ``h`` and ``h_slot``. The ``h`` convection coefficient represents the convection rate on the exterior of the stator at ``r_so``. The analyzer is capable of modeling direct coil cooling though the ``h_slot`` which models a convection rate directly on the coil as discussed in Chapter V Section 5.4.2 of Martin Johnson's Masters Thesis. The fluid temperature is assumed to be constant at ``T_ref`` for both the exterior stator cooling, and the direct coil cooling. The following papers provide general ranges of convection coefficients which may assumed:
 
 * F. Nishanth; Martin Johnson; Eric L. Severson: “A Review of Thermal Analysis and Management of Power Dense Electric Machines”, 2021 IEEE International Electric Machines & Drives Conference, 2021, pp. 1-8.
 * K. Bennion and G. Moreno, “Convective heat transfer coefficients of automatic transmission fluid jets with implications for electric machine thermal management,” in ASME 2015 International Technical Conference and Exhibition on Packaging and Integration of Electronic and Photonic Microsystems, vol. 3, 2015.
@@ -46,6 +45,8 @@ The analyzer takes in convection coefficients ``h`` and ``h_slot``. The ``h`` co
 * W. Sixel, M. Liu, G. Nellis, and B. Sarlioglu, “Ceramic 3d printed direct winding heat exchangers for improving electric machine thermal management,” in 2019 IEEE Energy Conversion Congress and Exposition (ECCE), 2019, pp. 769–776.
 * W. Sixel, M. Liu, G. Nellis, and B. Sarlioglu, “Cooling of windings in electric machines via 3-d printed heat exchanger,” IEEE Transactions on Industry Applications, vol. 56, no. 5, pp. 4718–4726, 2020.
 * F. Nishanth; Martin Johnson; Eric L. Severson: “A Review of Thermal Analysis and Management of Power Dense Electric Machines”, 2021 IEEE International Electric Machines & Drives Conference, 2021, pp. 1-8.
+
+
 
 The following code block demonstrates how to initialize the stator thermal problem and analyzer:
 
@@ -71,6 +72,7 @@ The following code block demonstrates how to initialize the stator thermal probl
     alpha_slot = .7 *alpha_q # back of slot span [rad]
     Q_coil = 40 # Coil losses [W]
     h_slot =0 #Inslot convection coefficient [W/m^2-K]
+    T_ref = 20 #Reference Temperature
 
     problem = sta.StatorThermalProblem(
                 g_sy,
@@ -88,6 +90,7 @@ The following code block demonstrates how to initialize the stator thermal probl
                 alpha_slot,
                 Q_coil,
                 h_slot,
+                T_ref
             )
     ana = sta.StatorThermalAnalyzer()
 
@@ -108,8 +111,7 @@ The following code-block demonstrates how the results are returned by the analyz
     results = ana.analyze(problem)
     print(results)
     
-    {'Coil temperature': 196.31038291260649, 'Stator yoke temperature': 184.06667848224436}
-    
+    {'Coil temperature': 216.31038291260649, 'Stator yoke temperature': 204.06667848224436}
 The analyzer can be utilized in to examine the effect of changing stator geometry as demonstrated in the following code-block. The stator tooth length is swept over ``l_tooth_vect``, and the coil temperature is collected for each entry. The following code will produce the plot shown below, provided the rest of the inputs to the ``StatorThermalProblem`` are used from the previous section.
 
 .. code-block:: python
@@ -135,6 +137,7 @@ The analyzer can be utilized in to examine the effect of changing stator geometr
                 alpha_slot,
                 Q_coil,
                 h_slot,
+                T_ref
             )
         ana = sta.StatorThermalAnalyzer()
         results = ana.analyze(problem)  
