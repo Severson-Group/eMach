@@ -35,7 +35,7 @@ Nodal Locations
 
 The location of the nodes and resistance network used in this analyzer are highlighted in the following figure. It should be noted that the iron losses are injected at node-3, and the magnet losses are injected at node-5. The convection resistance are shown as any resistance going to node-0. The numbering of the nodes corresponds with the index of the ``T`` vector returned by the analyzer (i.e. the magnet temperature would be provided by ``T[5]``).
 
-.. figure:: ./Images/Resistance_Network_Full.svg
+.. figure:: ./Images/Resistance_Network_full.svg
    :alt: Trial1 
    :align: center
    :width: 600 
