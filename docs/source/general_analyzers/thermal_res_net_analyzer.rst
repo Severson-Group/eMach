@@ -79,7 +79,7 @@ The ``Resistance`` protocol is defined in the ``thermal_analyzer_base`` module. 
 
 All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting.  ``Material`` is an object which holds the required material parameters, it can be implement with ``Material(k)`` where ``k`` is the material thermal conductivity in units of W/m-K. For fluid materials, additional properties specific heat ``cp`` in units of kJ/kg and viscosity ``mu`` in units of m^2/s can be passed in as named arguments. 
 
-The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
+The following subsections highlight the provided resistance defined in the ``thermal_network`` module.
  
 plane_wall
 ----------
