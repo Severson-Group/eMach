@@ -60,7 +60,7 @@ This document will utilize the model shown above as an example of how to impleme
     N_nodes=6 #Number of Nodes
 
 
-Inputs into Thermal Resistance Network Analyzer
+Inputs from User
 ***********************************************
 
 The thermal resistance network analyzer expects a problem class which has the following items:
@@ -275,7 +275,7 @@ N_nodes
 ``N_nodes`` is an integer input which represents the number of nodes in the system.
 
 
-Outputs from Thermal Resistance Network Analyzer
+Outputs to User
 ************************************************
 
 The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a ``list`` of temperatures as ``float`` objects for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.

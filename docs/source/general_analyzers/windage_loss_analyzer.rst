@@ -26,7 +26,7 @@ This analyzer determines the windage losses by implementing the model presented 
 * B. Riemer, M. Leßmann and K. Hameyer, "Rotor design of a high-speed Permanent Magnet Synchronous Machine rating 100,000 rpm at 10kW," `2010 IEEE Energy Conversion Congress and Exposition`, Atlanta, GA, 2010, pp. 3978-3985.
 
 
-Inputs to Windage Loss Analyzer
+Inputs from User
 *********************************
 
 The following inputs are required to create a `WindageLossProblem` object (with dimensions defined in the figure above):
@@ -54,7 +54,7 @@ Example code initializing the windage loss analyzer and problem:
     problem=wla.WindageLossProblem(Omega,R_ro,axial_length,R_st,u_z,T_air)
     ana=wla.WindageLossAnalyzer
 
-Outputs from Windage Loss Analyzer
+Outputs to User
 **********************************
 
 The windage loss analyzer returns a list of the calculated loss components as ``[windage_loss_radial,windage_loss_endface,windage_loss_axial]`` in Watts. The endface losses are split evenly between the two rotor axial surfaces. The total windage loss is the sum of all these losses.

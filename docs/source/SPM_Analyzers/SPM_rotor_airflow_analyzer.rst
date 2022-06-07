@@ -8,7 +8,7 @@ Model Background
 The SPM rotor is modeled using the thermal resistance network described in :doc:`SPM Rotor Thermal Analyzer <SPM_rotor_thermal_analyzer>`. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThemalAnalyzer``. In this analyzer, the axial airflow is varied to increase the convection rate on the rotor in order to improve cooling.
 
 
-Inputs to the Rotor Airflow Analyzer
+Inputs from User
 ************************************
 
 The airflow analyzer utilizes the same ``mat_dict`` and ``losses`` dictionary as the SPM Rotor Thermal Analyzer (see :ref:`here <mat-dict-therm>`). In addition, the following inputs must be defined for the problem class. The location of these inputs are shown on this :ref:`figure <therm-geo>`:
@@ -58,7 +58,7 @@ The following code demonstrates how the eMach thermal analyzer for the rotor can
     # Create an Airflow Analyzer
     ana=AirflowAnalyzer()
 
-Outputs from the Rotor Airflow Analyzer
+Outputs to User
 ****************************************
  
 The following code demonstrates how to use the airflow analyzer to solve the airflow problem. The ``results`` object is a dictionary which contains the magnet temperature in Celsius and the required airflow needed to cool the machine in m/s. If the rotor can not be cooled by axial airflow, then the ``message`` key of the dictionary will return ``False``.

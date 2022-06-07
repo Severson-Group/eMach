@@ -25,7 +25,7 @@ All materials except for the sleeve are assumed to be isotropic. The sleeve is m
 
 * M Johnson, K. Hanson and E. L. Severson, "Normalized Analytical Model of Stresses in a Surface Mounted Permanent Magnet Rotor," `2021 IEEE Energy Conversion Congress and Exposition (ECCE)`, 2021, pp. 3928-3935.
 
-Inputs for SPM Structural Analyzer
+Inputs from User
 **********************************
 The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise to account for thermal expansion.
 
@@ -98,7 +98,7 @@ The following code demonstrates how to initialize the ``SPM_RotorStructuralProbl
 
 
 
-Outputs for SPM Structural Analyzer
+Outputs to User
 ***********************************
 
 The SPM structural analyzer returns a list of ``sigma`` objects (referred to as ``sigmas``). Each ``sigma`` object contains the analytic solution for radial and tangential stress in a single rotor components, as follows: 
