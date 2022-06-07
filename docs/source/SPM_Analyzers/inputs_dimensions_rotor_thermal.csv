@@ -6,3 +6,5 @@ d_sl,Sleeve Thickness,m
 l_st,Stack length,m
 l_hub,Hub thickness,m
 u_z,Axial Air Flow Rate ,m/s
+omega,Rotational Speed,rad/s
+T_ref,Air Temperature,C

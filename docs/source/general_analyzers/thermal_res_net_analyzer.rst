@@ -3,13 +3,15 @@
 Thermal Resistance Network Analyzer
 #######################################
 
-This page outlines the use the the thermal resistance network analyzer used by eMach. This analyzer is designed to solve steady state temperature distribution problems. This analyzer is utilized by other analyzers in eMach, to calculate the temperature distribution for certain machine geometries. In this document a simple thermal resistance network is defined to demonstrate how to use this analyzer.
+This analyzer is designed to solve steady state temperature distribution problems for thermal resistance networks.
 
 
 Model Background
 ****************
 
-Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow. eMach has several thermal resistances predefined as classes in the the ``thermal_analyzer_base`` module.
+Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow.  
+
+This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes (of varying types as described below), and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system. This analyzer is utilized by other analyzers in eMach, to calculate the temperature distribution for certain machine geometries. In this document a simple thermal resistance network is defined to demonstrate how to use this analyzer.
 
 
 .. figure:: ./Images/ResistanceNetwork.svg
@@ -25,7 +27,7 @@ This document will utilize the model shown above as an example of how to impleme
     import scipy.optimize as op
     from matplotlib import pyplot as plt
     from matplotlib.patches import Rectangle
-    from eMach.mach_eval.analyzers.thermal_analyzer_base import *
+    from eMach.mach_eval.analyzers.general.thermal_network import *
     #################
     #Define Materials
     #################
@@ -58,7 +60,7 @@ This document will utilize the model shown above as an example of how to impleme
     N_nodes=6 #Number of Nodes
 
 
-Inputs into Thermal Resistance Network Analyzer
+Inputs from User
 ***********************************************
 
 The thermal resistance network analyzer expects a problem class which has the following items:
@@ -75,10 +77,17 @@ Resistances
 
 The ``Resistance`` protocol is defined in the ``thermal_analyzer_base`` module. Several concrete implementation of this protocol are provided as well. This class is defined to hold the information about a thermal resistance. In the example problem for this document the ``plane_wall`` and ``conv`` resistances are used. 
 
-All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization. ``Material`` is an object which holds the required material parameters.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting. The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
+All Resistance objects take in ``Material``, ``Node_1``, and ``Node_2`` as their first three inputs on initialization.  ``Node_1`` and ``Node_2`` are ``int`` objects which represent the nodes the resistance is connecting.  ``Material`` is an object which holds the required material parameters, it can be implement with ``Material(k)`` where ``k`` is the material thermal conductivity in units of W/m-K. For fluid materials, additional properties specific heat ``cp`` in units of kJ/kg and viscosity ``mu`` in units of m^2/s can be passed in as named arguments. 
+
+The following subsections highlight the provided resistance defined in the ``thermal_analyzer_base`` module.
  
 plane_wall
 ----------
+
+.. figure:: ./Images/PlaneWall.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
 
 The plane wall resistance is initialized by the following: ``plane_wall(Material,Node_1,Node_2,L1,L2,A)``. The required parameters are defined as follows:
 
@@ -90,9 +99,13 @@ Note that the thickness of the plane wall is ``L2-L1``, so ``L2`` should be defi
 
 cylind_wall
 -----------
-
+.. figure:: ./Images/CylindWall.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The cylindrical wall resistance is initialized by the following code:
-``cylind_wall(Material,Node_1,Node_2,R_1,R_2,H)``. The required parameters are defined as follows:
+``cylind_wall(Material,Node_1,Node_2,R_1,R_2,H)``. Node-1 is located at the inner surface of the cylinder and Node-2 is located at the outer cylinder.The required parameters are defined as follows:
 
 * ``R_1`` radial location of node 1 [m]
 * ``R_2`` radial location of node 2 [m]
@@ -100,38 +113,50 @@ The cylindrical wall resistance is initialized by the following code:
 
 air_gap_conv
 ------------
-
+.. figure:: ./Images/AirGapConv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The air gap convection resistance is initialized by the following code:
-``air_gap_conv(Material,Node_1,Node_2,omega,R_r,R_s,u_z,A)``. The required parameters are defined as follows:
+``air_gap_conv(Material,Node_1,Node_2,omega,R_r,R_s,u_z,A)``. Node-1 is located on the surface of the inner cylinder and Node-2 is located in the air-gap fluid. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``R_r`` Outer radius of rotor [m]
-* ``R_2`` Inner radius of stator [m]
+* ``R_s`` Inner radius of stator [m]
 * ``u_z`` Axial airflow velocity [m/s]
 * ``A`` Surface area of rotor [m^2]
 
 The calculations in this class are based on the following paper:
 
-D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
 
 hub_conv
 ------------
-
+.. figure:: ./Images/HubConv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The rotor hub convection resistance is initialized by the following code:
-``hub_conv(Material,Node_1,Node_2,omega,A)``. The required parameters are defined as follows:
+``hub_conv(Material,Node_1,Node_2,omega,A)``.  Node-1 is located on the top surface of the cylinder and Node-2 is located in the fluid above. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``A`` Surface area of rotor [m^2]
 
 The calculations in this class are based on the following paper:
 
-D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
 
-air_gap_conv
+shaft_conv
 ------------
-
+.. figure:: ./Images/ShaftConv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 The shaft convection resistance is initialized by the following code:
-``shaft_conv(Material,Node_1,Node_2,omega,R,A,u_z)``. The required parameters are defined as follows:
+``shaft_conv(Material,Node_1,Node_2,omega,R,A,u_z)``.  Node-1 is located on the surface of the cylinder and Node-2 is located in the fluid. The required parameters are defined as follows:
 
 * ``omega`` rotational speed [rad/s]
 * ``R`` Outer radius of shaft [m]
@@ -140,13 +165,18 @@ The shaft convection resistance is initialized by the following code:
 
 The calculations in this class are based on the following paper:
 
-D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
 
 conv
 ----
 
+.. figure:: ./Images/Conv.svg
+   :alt: Trial1 
+   :align: center
+   :width: 200 
+   
 A general convection resistance is initialized by the following code:
-``conv(Material,Node_1,Node_2,h,A)``. The required parameters are defined as follows:
+``conv(Material,Node_1,Node_2,h,A)``. Node-1 is located on the surface and Node-2 is located in the fluid. The required parameters are defined as follows:
 
 * ``h`` Convection coefficient [W/m^2-K]
 * ``A`` Surface area [m^2]
@@ -213,7 +243,7 @@ The following code-block demonstrate how to generate the list of ``Resistance`` 
 Q_dot
 ~~~~~
 
-The ``Q_dot`` input is a list of the thermal sources at each node. In this problem, there are two thermal sources, one at node-1 and one at node-5. The following code-block creates a list of 0's of length ``N_nodes``, and then sets the sources at nodes 1 and 5.
+The ``Q_dot`` input is a list of the thermal sources in Watts at each node. In this problem, there are two thermal sources, one at node-1 and one at node-5. The following code-block creates a list of 0's of length ``N_nodes``, and then sets the sources at nodes 1 and 5.
 
 .. code-block:: python
 
@@ -221,14 +251,14 @@ The ``Q_dot`` input is a list of the thermal sources at each node. In this probl
     #Define Heat Sources
     ####################
     Q_dot=[0,]*N_nodes
-    Q_dot[1]=10
-    Q_dot[5]=10
+    Q_dot[1]=10 #W
+    Q_dot[5]=10 #W
 
 
 T_ref
 ~~~~~
 
-The ``T_ref`` input to the problem class expects a list of ``[[ref_node_1,ref_temp_1],[ref_node_2,ref_temp_2]..]`` where each pair represents a fixed temperature at a reference node. For this example, only one reference temperatures is used, so the ``T_ref`` object would look as follows:
+The ``T_ref`` input to the problem class expects a list of ``[[ref_node_1,ref_temp_1],[ref_node_2,ref_temp_2]..]`` where each pair represents a fixed temperature in Celsius at a reference node. For this example, only one reference temperatures is used, so the ``T_ref`` object would look as follows:
 
 .. code-block:: python
 
@@ -236,7 +266,7 @@ The ``T_ref`` input to the problem class expects a list of ``[[ref_node_1,ref_te
     #Define Reference Temps
     ######################
     ref_node=0
-    ref_temp=25
+    ref_temp=25 #C
     T_ref=[[ref_node,ref_temp],]
     
 N_nodes
@@ -245,18 +275,22 @@ N_nodes
 ``N_nodes`` is an integer input which represents the number of nodes in the system.
 
 
-Outputs from Thermal Resistance Network Analyzer
+Outputs to User
 ************************************************
 
-The ``ThermalAnalyzer`` takes in the a ``ThermalProblem`` and returns back the temperature distribution as a list of temperatures for every node defined by the resistance network. The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
+The ``ThermalAnalyzer`` returns back 
+
+* ``T`` a list of temperatures for each node defined by the resistance network.
+
+The following code demonstrates how to implement and then solve the example resistance network using the analyzer.
 
 .. code-block:: python
 
     ############################
     #Create Problem and Analzyer
     ############################
-    prob=ThermalProblem(Resistances,Q_dot,T_ref,N_nodes)
-    ana=ThermalAnalyzer()
+    prob=ThermalNetworkProblem(Resistances,Q_dot,T_ref,N_nodes)
+    ana=ThermalNetworkAnalyzer()
 
     ############################
     #Solve Problem

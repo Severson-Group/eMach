@@ -5,3 +5,4 @@ r_ro,Rotor outer radius,m
 d_sl,Sleeve Thickness,m
 l_st,Stack length,m
 l_hub,Hub thickness,m
+max_temp,Maximum allowable Rotor Temperature,C

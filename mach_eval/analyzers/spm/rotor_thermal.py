@@ -8,11 +8,44 @@ import numpy as np
 import scipy.optimize as op
 import sys
 sys.path.append("..")
-import analyzers.general_analyzers.thermal_network_analyzer as tb
+import analyzers.general.thermal_network as tb
 
 
-class SPM_RotorThemalProblem:
-    def __init__(self,mat_dict,r_sh,d_ri,r_ro,d_sl,r_si,l_st,l_hub,T_ref,u_z,losses,omega):
+class SPM_RotorThermalProblem:
+    """ Problem class for rotor thermal analyzer
+    
+    Attributes:
+        mat_dict (dict): Material Dictionary
+        r_sh (float): Shaft radius [m]
+        d_ri (float): Back iron thickness [m]
+        r_ro (float): Outer rotor radius [m]
+        d_sl (float): Sleeve Thickness [m]
+        r_si (float): Stator Inner radius [m]
+        l_st (float): Stack length [m]
+        l_hub (float): hub thickness [m]
+        T_ref (float): Air Temperature [C]
+        u_z (float): Axial air flow speed [m/s]
+        losses (dict): Loss dictionary [W]
+        omega (float): Rotational Speed [rad/s]     
+        
+        R_1 (float): Shaft radius [m]
+        R_2 (float): Back iron radius [m]
+        R_3 (float): Outer rotor Radius [m]
+        R_4 (float): Outer sleeve radius [m]
+    
+    """
+    def __init__(self,mat_dict: dict,
+                 r_sh: float,
+                 d_ri: float,
+                 r_ro: float,
+                 d_sl: float,
+                 r_si: float,
+                 l_st: float,
+                 l_hub: float,
+                 T_ref: float,
+                 u_z: float,
+                 losses: dict,
+                 omega: float):
         self.mat_dict=mat_dict
         self.r_sh=r_sh
         self.d_ri=d_ri
@@ -33,10 +66,23 @@ class SPM_RotorThemalProblem:
         self.R_4=self.R_3+self.d_sl
 
 
-class SPM_RotorThemalAnalyzer:
+class SPM_RotorThermalAnalyzer:
+    """ Analyzer for rotor thermal problem
+    
+    Attributes:
+        base_ana (tb.ThermalNetworkAnalyzer): Thermal Network Analyzer
+    
+    """
     def __init__(self):
         self.base_ana=tb.ThermalNetworkAnalyzer()
-    def analyze(self,problem):
+    def analyze(self,problem: SPM_RotorThermalProblem):
+        """ Analyzes input problem for temperature distribution
+        
+        Args:
+            problem (SPM_RotorThermalProblem): input problem
+        Returns:
+            T (List): Temperature distribuiton in rotor
+        """
         N_nodes=33
         Res= self.create_resistance_network(problem)
 
@@ -103,9 +149,7 @@ class SPM_RotorThemalAnalyzer:
         ##############
         # Air
         ##############
-        air_mat = tb.Material(air_k)
-        air_mat.set_cp(air_cp)
-        air_mat.set_mu(air_mu)
+        air_mat = tb.Material(air_k,cp=air_cp,mu=air_mu)
 
         ################################################
         #           Define Geometric Values
@@ -442,8 +486,99 @@ class SPM_RotorThemalAnalyzer:
 
 #%% Airflow Analyzer
 
+class AirflowProblem:
+    """Problem class for AirflowAnalyzer
+    
+    Attributes:
+        mat_dict (dict): Material Dictionary
+        r_sh (float): Shaft radius [m]
+        d_ri (float): Back iron thickness [m]
+        r_ro (float): Outer rotor radius [m]
+        d_sl (float): Sleeve Thickness [m]
+        r_si (float): Stator Inner radius [m]
+        l_st (float): Stack length [m]
+        l_hub (float): hub thickness [m]
+        T_ref (float): Air Temperature [C]
+        losses (dict): Loss dictionary [W]
+        omega (float): Rotational Speed [rad/s]
+        max_temp (float): Max rotor magnet temperature [K]
+        therm_prob (Problem): Thermal problem to solve
+        therm_ana (Analzyer): Analyzer to solve problem
+    
+    """
+    def __init__(
+        self,
+        r_sh: float,
+        d_ri: float,
+        r_ro: float,
+        d_sl: float,
+        r_si: float,
+        l_st: float,
+        l_hub: float,
+        T_ref: float,
+        losses: dict,
+        omega: float,
+        max_temp: float,
+        mat_dict: dict,
+    ):
+        self.r_sh = r_sh
+        self.d_ri = d_ri
+        self.r_ro = r_ro
+        self.d_sl = d_sl
+        self.r_si = r_si
+        self.l_st = l_st
+        self.l_hub = l_hub
+
+        self.losses = losses
+        self.T_ref = T_ref
+        self.omega = omega
+        self.max_temp = max_temp
+        self.mat_dict=mat_dict
+        self.therm_prob = SPM_RotorThermalProblem
+        self.therm_ana = SPM_RotorThermalAnalyzer()
+
+    def magnet_temp(self, u_z):
+        """Calculate magnet temperature from airflow rate
+        
+        Args:
+            u_z (float): Axial airflow rate [m/s]
+            
+        Returns:
+            T[5] (float): Magnet Temperature
+        
+        """
+        prob = self.therm_prob(
+            self.mat_dict,
+            self.r_sh,
+            self.d_ri,
+            self.r_ro,
+            self.d_sl,
+            self.r_si,
+            self.l_st,
+            self.l_hub,
+            self.T_ref,
+            u_z,
+            self.losses,
+            self.omega,
+        )
+        T = self.therm_ana.analyze(prob)
+        return T[5]
+
+    def cost(self, u_z):
+        """Returns airflow rate as cost function"""
+        return u_z
+
 class AirflowAnalyzer:
-    def analyze(self,problem):
+    """ Analyzer to calculate required airflow in SPM machine"""
+    def analyze(self,problem: AirflowProblem):
+        """Analyzes input problem to calculate required airflow to cool rotor
+        
+        Args:
+            problem (AirflowProblem): input problem
+        Returns:
+            results (dict): dictionary with analyzer solution 
+        """
+        
         nlc1 = op.NonlinearConstraint(problem.magnet_temp, 0, problem.max_temp)
         const = nlc1
         sol = op.minimize(
@@ -468,165 +603,9 @@ class AirflowAnalyzer:
             return results
 
 
-class AirflowProblem:
-    def __init__(
-        self,
-        r_sh,
-        d_ri,
-        r_ro,
-        d_sl,
-        r_si,
-        l_st,
-        l_hub,
-        T_ref,
-        losses,
-        omega,
-        max_temp,
-        mat_dict,
-    ):
-        self.r_sh = r_sh
-        self.d_ri = d_ri
-        self.r_ro = r_ro
-        self.d_sl = d_sl
-        self.r_si = r_si
-        self.l_st = l_st
-        self.l_hub = l_hub
-
-        self.losses = losses
-        self.T_ref = T_ref
-        self.omega = omega
-        self.max_temp = max_temp
-        self.mat_dict=mat_dict
-        self.therm_prob_def = SPM_RotorThemalProblem
-        self.therm_ana = SPM_RotorThemalAnalyzer()
-
-    def magnet_temp(self, u_z):
-        prob = self.therm_prob_def(
-            self.mat_dict,
-            self.r_sh,
-            self.d_ri,
-            self.r_ro,
-            self.d_sl,
-            self.r_si,
-            self.l_st,
-            self.l_hub,
-            self.T_ref,
-            u_z,
-            self.losses,
-            self.omega,
-        )
-        T = self.therm_ana.analyze(prob)
-        return T[5]
-
-    def cost(self, u_z):
-        return u_z
 
 
-class WindageProblem:
-    def __init__(
-        self, Omega, R_ro, stack_length, R_st, air_gap, m_dot_air, TEMPERATURE_OF_AIR=25
-    ):
-        self.Omega = Omega
-        self.R_ro = R_ro
-        self.stack_length = stack_length
-        self.R_st = R_st
-        self.air_gap = air_gap
-        self.m_dot_air = m_dot_air
-        self.TEMPERATURE_OF_AIR = TEMPERATURE_OF_AIR
 
-
-class WindageLossAnalyzer:
-    def analyze(problem):
-        # Omega, R_ro ,stack_length,R_st,air_gap,m_dot_air, TEMPERATURE_OF_AIR=25):
-
-        # %Air friction loss calculation
-        nu_0_Air = 13.3e-6  # ;  %[m^2/s] kinematic viscosity of air at 0
-        rho_0_Air = 1.29  # ;     %[kg/m^3] Air density at 0
-        Shaft = [
-            problem.stack_length,  # 1;         %End position of the sections mm (Absolut)
-            problem.R_ro,  # 1;         %Rotor Radius
-            1,  # 0;         %Shrouded (1) or free surface (0)
-            problem.air_gap,
-        ]  # 0];        %Airgap in mm
-        # Num_shaft_section = 1
-        T_Air = (
-            problem.TEMPERATURE_OF_AIR
-        )  # 20:(120-20)/((SpeedMax-SpeedMin)/SpeedStep):120         #; % Air temperature []
-
-        nu_Air = nu_0_Air * ((T_Air + 273) / (0 + 273)) ** 1.76
-        rho_Air = rho_0_Air * (0 + 273) / (T_Air + 273)
-        windage_loss_radial = 0
-
-        # Calculation of the section length ...
-        L = Shaft[0]  # in meter
-        R = Shaft[1]  # radius of air gap
-        delta = Shaft[3]  # length of air gap
-
-        # Reynolds number
-        Rey = R ** 2 * (problem.Omega) / nu_Air
-
-        if Shaft[2] == 0:  # free running cylinder
-            if Rey <= 170:
-                c_W = 8.0 / Rey
-            elif Rey > 170 and Rey < 4000:
-                c_W = 0.616 * Rey ** (-0.5)
-            else:
-                c_W = 6.3e-2 * Rey ** (-0.225)
-            windage_loss_radial = (
-                c_W * np.pi * rho_Air * problem.Omega ** 3 * R ** 5 * (1.0 + L / R)
-            )
-
-        else:  # shrouded cylinder by air gap from <Loss measurement of a 30 kW High Speed Permanent Magnet Synchronous Machine with Active Magnetic Bearings>
-            Tay = (
-                R * (problem.Omega) * (delta / nu_Air) * np.sqrt(delta / R)
-            )  # Taylor number
-            if Rey <= 170:
-                c_W = 8.0 / Rey
-            elif Rey > 170 and Tay < 41.3:
-                # c_W = 1.8 * Rey**(-1) * delta/R**(-0.25) * (R+delta)**2 / ((R+delta)**2 - R**2) # Ye gu's codes
-                c_W = (
-                    1.8 * (R / delta) ** (0.25) * (R + delta) ** 2 / (Rey * delta ** 2)
-                )  # Ashad over Slack 2019/11/21
-            else:
-                c_W = 7e-3
-            windage_loss_radial = (
-                c_W * np.pi * rho_Air * problem.Omega ** 3 * problem.R_ro ** 4 * L
-            )
-
-        # end friction loss added - 05192018.yegu
-        # the friction coefficients from <Rotor Design of a High-Speed Permanent Magnet Synchronous Machine rating 100,000 rpm at 10 kW>
-        Rer = rho_Air * (problem.R_ro) ** 2 * problem.Omega / nu_Air
-        if Rer <= 30:
-            c_f = 64 / (3 * Rer)
-        elif Rer > 30 and Rer < 3 * 10 ** 5:
-            c_f = 3.87 * Rer ** (-0.5)
-        else:
-            c_f = 0.146 * Rer ** (-0.2)
-
-        windage_loss_endFace = (
-            0.5 * c_f * rho_Air * problem.Omega ** 3 * (problem.R_ro) ** 5
-        )
-
-        # Axial air flow of 0.001 kg/sec for cooling based on B. Riemer, M. Leßmann and K. Hameyer, "Rotor design of a high-speed Permanent Magnet Synchronous Machine rating 100,000 rpm at 10kW," 2010 IEEE Energy Conversion Congress and Exposition, Atlanta, GA, 2010, pp. 3978-3985.
-        Q_flow = problem.m_dot_air / rho_Air
-        A_delta = np.pi * (problem.R_st ** 2 - problem.R_ro ** 2)
-        vm = Q_flow / A_delta
-        um = 0.48 * problem.Omega * problem.R_ro
-        windage_loss_axial = (
-            (2 / 3)
-            * np.pi
-            * rho_Air
-            * (problem.R_st ** 3 - (problem.R_ro) ** 3)
-            * vm
-            * um
-            * problem.Omega
-        )
-
-        windage_loss_total = (
-            windage_loss_radial + windage_loss_endFace + windage_loss_axial
-        )
-        return windage_loss_total
-    
     
 if __name__ == "__main__":
     # mat_dict=fea_config_dict
