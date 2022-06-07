@@ -26,7 +26,7 @@ This analyzer implements the sleeve design approach developed in Section IV-A of
 - M Johnson, K. Hanson and E. L. Severson, "Normalized Analytical Model of Stresses in a Surface Mounted Permanent Magnet Rotor," `2021 IEEE Energy Conversion Congress and Exposition (ECCE)`, 2021, pp. 3928-3935.
 
 
-User Input
+Input from User
 ************************************
 
 To create the problem object, the user must specify the following dimensions (defined in the drawings above) and the maximum operating temperature and speed: 
