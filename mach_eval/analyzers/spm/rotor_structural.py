@@ -630,7 +630,7 @@ class SPM_RotorSleeveAnalyzer:
         stress_limits: list of limits for critical stresses
     
     """
-    def __init__(self, stress_limits: List[float,float,float,float]):
+    def __init__(self, stress_limits: 'List[float,float,float,float]'):
         self.stress_limits = stress_limits
 
     def analyze(self, problem: "SPM_RotorSleeveProblem"):

@@ -289,8 +289,8 @@ The following code demonstrates how to implement and then solve the example resi
     ############################
     #Create Problem and Analzyer
     ############################
-    prob=ThermalProblem(Resistances,Q_dot,T_ref,N_nodes)
-    ana=ThermalAnalyzer()
+    prob=ThermalNetworkProblem(Resistances,Q_dot,T_ref,N_nodes)
+    ana=ThermalNetworkAnalyzer()
 
     ############################
     #Solve Problem

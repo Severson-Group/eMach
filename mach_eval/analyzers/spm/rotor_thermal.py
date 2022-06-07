@@ -8,7 +8,7 @@ import numpy as np
 import scipy.optimize as op
 import sys
 sys.path.append("..")
-import analyzers.general_analyzers.thermal_network_analyzer as tb
+import analyzers.general.thermal_network as tb
 
 
 class SPM_RotorThermalProblem:
