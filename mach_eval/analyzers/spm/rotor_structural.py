@@ -475,6 +475,16 @@ class Sigma:
             R (float): location to evaluate stress.
         """
         # Radial Stress
+        try:
+            if max(R) > self.rotComp.R_o:
+                raise ValueError("Provided radius larger than outer radius of rotor component")
+            if min(R) < self.rotComp.R_i:
+                raise ValueError("Provided radius smaller than inner radius of rotor component")
+        except TypeError:
+            if R > self.rotComp.R_o:
+                raise ValueError("Provided radius larger than outer radius of rotor component")
+            if R < self.rotComp.R_i:
+                raise ValueError("Provided radius smaller than inner radius of rotor component")
         sigma_r = (
             self.A[0]
             * (self.rotComp.C1 * self.rotComp.h + self.rotComp.C2)
@@ -498,6 +508,16 @@ class Sigma:
             R (float): location to evaluate stress.
         """
         # Tangential Stress
+        try:
+            if max(R) > self.rotComp.R_o:
+                raise ValueError("Provided radius larger than outer radius of rotor component")
+            if min(R) < self.rotComp.R_i:
+                raise ValueError("Provided radius smaller than inner radius of rotor component")
+        except TypeError:
+            if R > self.rotComp.R_o:
+                raise ValueError("Provided radius larger than outer radius of rotor component")
+            if R < self.rotComp.R_i:
+                raise ValueError("Provided radius smaller than inner radius of rotor component")
         sigma_t = (
             self.A[0]
             * (self.rotComp.C2 * self.rotComp.h + self.rotComp.C3)
