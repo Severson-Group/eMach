@@ -105,7 +105,9 @@ The ``SPM_RotorThermalAnalyzer`` returns back
 
 * ``T`` a list of temperatures for each node (see this :ref:`figure <node-loc>`) defined by the resistance network.
 
+.. code-block:: python
 
+    T=ana.analyze(prob)
 
 
 
