@@ -9,7 +9,7 @@ This analyzer determines the stress in a surface-mounted permanent magnet (SPM) 
 Model Background
 ****************
 
-The analyzer models the SPM rotor as a series of concentric cylinders, shown in the figure below. The rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor. 
+The analyzer models the SPM rotor as a series of concentric cylinders, shown in the figure below. The rotor is assumed to have four regions of varying material: a shaft, rotor back iron, magnets, and a sleeve. The sleeve is designed with an undersized fit in order to provide the compressive force on the rotor. In addition to the compressive force from the sleeve, loading due to thermal expansion is also considered.
 
 .. figure:: ./Images/RotorConfig.svg
    :alt: Trial1 
@@ -27,7 +27,7 @@ All materials except for the sleeve are assumed to be isotropic. The sleeve is m
 
 Inputs for SPM Structural Analyzer
 **********************************
-The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise.
+The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise to account for thermal expansion.
 
 
 .. _mat-dict:
