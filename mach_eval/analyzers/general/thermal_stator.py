@@ -43,6 +43,8 @@ class StatorThermalProblem:
         Q_coil: Resistive coil losses [W]
         
         h_slot: Inslot convection rate [W/m^2-K]
+        
+        T_ref: Refrence temperature
     """
 
     def __init__(
@@ -62,6 +64,7 @@ class StatorThermalProblem:
         alpha_slot: float,
         Q_coil: float,
         h_slot: float,
+        T_ref:float
     ):
         self.g_sy = g_sy
         self.g_th = g_th
@@ -79,6 +82,7 @@ class StatorThermalProblem:
         self.alpha_slot = alpha_slot
         self.Q_coil = Q_coil
         self.h_slot = h_slot
+        self.T_ref= T_ref
 
 
 class StatorThermalAnalyzer:
@@ -159,6 +163,9 @@ class StatorThermalAnalyzer:
             ) / (1 + R_coil / R_cd)
             T_sy = g_sy * M_sy + (Q_coil + 2 * Q_tooth) * R_sy  
 
+        #Add back in ref temp
+        T_coil=T_coil+problem.T_ref
+        T_sy=T_sy+problem.T_ref
         
         results = {'Coil temperature': T_coil,
                    'Stator yoke temperature': T_sy}

@@ -14,3 +14,4 @@ h,External Convection Rate,W/m^3-K
 alpha_slot,Angle of Back of Slot,rad
 Q_coil,Ohmic Losses in Coil,W
 h_slot,Direct Coil Convection Rate,W/m^3-K
+T_ref,Cooling Fluid Temperature,C 
