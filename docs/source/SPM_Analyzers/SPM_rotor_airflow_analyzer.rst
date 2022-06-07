@@ -1,12 +1,13 @@
 SPM Airflow Analyzer
 ####################
-The ``AirflowAnalyzer`` is designed to determine how much supplemental axial airflow is needed to cool the rotor to a specified ``max_temp``. The problem class for the ``AirflowAnalyzer`` contains the :doc:`Rotor Thermal Analyzer <SPM_rotor_thermal_analyzer>` which is used to calculate the magnet temperature as a function of the axial airflow. The ``AirflowAnalyzer`` solve a single objective minimization problem subject to a constraint that the magnet temperature is less than ``max_temp``.
+This analyzer is designed to determine how much supplemental axial airflow is needed to cool the rotor to a specified ``max_temp``. 
 
 Model Background
 ****************
 
 The SPM rotor is modeled using the thermal resistance network described in :doc:`SPM Rotor Thermal Analyzer <SPM_rotor_thermal_analyzer>`. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThemalAnalyzer``. In this analyzer, the axial airflow is varied to increase the convection rate on the rotor in order to improve cooling.
 
+The problem class for the ``AirflowAnalyzer`` contains the :doc:`Rotor Thermal Analyzer <SPM_rotor_thermal_analyzer>` which is used to calculate the magnet temperature as a function of the axial airflow. The ``AirflowAnalyzer`` solve a single objective minimization problem subject to a constraint that the magnet temperature is less than ``max_temp``.
 
 Inputs from User
 ************************************
@@ -61,7 +62,13 @@ The following code demonstrates how the eMach thermal analyzer for the rotor can
 Outputs to User
 ****************************************
  
-The following code demonstrates how to use the airflow analyzer to solve the airflow problem. The ``results`` object is a dictionary which contains the magnet temperature in Celsius and the required airflow needed to cool the machine in m/s. If the rotor can not be cooled by axial airflow, then the ``message`` key of the dictionary will return ``False``.
+The ``AirflowAnalyzer`` returns a results object with the following keys:
+
+* ``Message``: returns false if magnets exceed the specified maximum temperature.
+* ``Magnet Temp``: In Celsius
+* ``Required Airflow``: in m/s
+ 
+The following code demonstrates how to use the airflow analyzer to solve the airflow problem. 
 
 .. code-block:: python
 
@@ -70,11 +77,11 @@ The following code demonstrates how to use the airflow analyzer to solve the air
     results=ana.analyze(afp)
     print(results)
     
-The ``results`` object returned by the analyzer for this example are in the following form:
+The ``results`` object returned by the analyzer for this example is shown below:
 
 .. code-block:: python
 
-    {'message': True,
-     'magnet Temp': array([73.43703021]),
+    {'Message': True,
+     'Magnet Temp': array([73.43703021]),
      'Required Airflow': array([1.23618711e-08])}
 

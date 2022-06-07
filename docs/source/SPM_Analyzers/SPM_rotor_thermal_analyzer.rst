@@ -3,14 +3,13 @@
 SPM Rotor Thermal Analyzer
 ##########################
 
-
-This page describes how the thermal performance of a surface-mounted permanent magnet (SPM) rotor is evaluated using the eMach code base. This analyzer utilized the :doc:`Thermal Resistance Network Analyzer <../general_analyzers/thermal_res_net_analyzer>` to solve for the temperature distribution in the rotor.
-
+This analyzer determines the temperature distribution of a surface-mounted permanent magnet (SPM) rotor. 
 
 Model Background
 ****************
 
-The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThermalAnalyzer``.
+The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThermalAnalyzer``. This analyzer utilizes the :doc:`Thermal Resistance Network Analyzer <../general_analyzers/thermal_res_net_analyzer>` to solve for the temperature distribution in the rotor.
+
 
 
 .. figure:: ./Images/Resistance_Network.svg
@@ -102,7 +101,11 @@ The following code-block demonstrates how to create a ``SPM_RotorThermalProblem`
 
 Outputs to User
 ***********************************
-The ``SPM_RotorThermalAnalyzer``'s analyze method returns back the temperature at each node for the solution to the resistance network. (``T=ana.analyze(prob)``). The location of each node corresponds with the indexes shown in this :ref:`figure <node-loc>` from the model background section.
+The ``SPM_RotorThermalAnalyzer`` returns back 
+
+* ``T`` a list of temperatures for each node (see this :ref:`figure <node-loc>`) defined by the resistance network.
+
+
 
 
 
