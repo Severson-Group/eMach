@@ -12,6 +12,5 @@ w_ins,Width of Insulation Paper,m
 k_fe,Thermal Conductivity of Stator Iron,W/m-K
 h,External Convection Rate,W/m^3-K
 alpha_slot,Angle of Back of Slot,rad
-r_si,Inner Stator Tooth Radius,m
 Q_coil,Ohmic Losses in Coil,W
 h_slot,Direct Coil Convection Rate,W/m^3-K

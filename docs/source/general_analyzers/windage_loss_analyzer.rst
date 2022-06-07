@@ -45,10 +45,10 @@ Example code initializing the windage loss analyzer and problem:
     from matplotlib import pyplot as plt
 
     Omega=1000
-    R_ro=.01
-    axial_length=.05
-    R_st=.105
-    u_z=.01
+    R_ro=0.1
+    axial_length=0.05
+    R_st=0.105
+    u_z=0.01
     T_air=25
 
     problem=wla.WindageLossProblem(Omega,R_ro,axial_length,R_st,u_z,T_air)
