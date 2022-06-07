@@ -16,8 +16,8 @@ class ThermalNetworkProblem:
         N_nodes: Number of Nodes in system
     """
     def __init__(self,res: List['Resistance'],
-                 Q_dot: List[float],
-                 T_ref: List[List[int,float]],
+                 Q_dot: 'List[float]',
+                 T_ref: 'List[List[int,float]]',
                  N_nodes: int):
         self.res=res
         self.Q_dot=Q_dot
