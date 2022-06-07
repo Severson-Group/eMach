@@ -27,6 +27,8 @@ All materials except for the sleeve are assumed to be isotropic. The sleeve is m
 
 Inputs from User
 **********************************
+
+.. _deltaT:
 The structural analyzer problem requires a material dictionary (``mat_dict``) and dimensions of the shaft, rotor core, magnet, and sleeve as defined in the diagrams above. The structural analyzer problem also takes in ``deltaT`` which represents the rotor temperature rise to account for thermal expansion. The ``deltaT`` values should be thought of as the temperature rise from rest, so if when the rotor is not in use it rests at 20C, then the temperature rise would be relative to that temperature.
 
 
