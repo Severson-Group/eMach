@@ -38,7 +38,7 @@ To create the problem object, the user must specify the following dimensions (de
 
 The user must also create a dictionary of material properties. This class uses the same ``mat_dict`` specified in the :ref:`SPM structural analyzer <mat-dict>`.
   
-To create the analyzer, the user must specify limits on the critical stresses of the rotor magnets and sleeve material. See Table VI of the `reference paper <https://ieeexplore.ieee.org/document/9595523>`_ for additional information.
+To create the analyzer, the user must specify limits on the critical stresses of the rotor magnets and sleeve material. See Table VI of the `reference paper <https://ieeexplore.ieee.org/document/9595523>`_ for additional information. When defining these stress limits, a safety factor is often used. The safety factor is a ratio of the failure point to the allowable limit, so a safety factor of 2 would mean that the maximum allowable stress is half that of failure stress ``2=stress_failure/stress_allowed``.
 
 .. csv-table:: Critical stress limits to provide to rotor sleeve analyzer -- ``stress_limits``
    :file: inputs_sleeve_stress.csv
