@@ -2,7 +2,7 @@ General Analyzers
 =================
 
 
-This page contains links to the analyzers which have been implemented in eMach which may be used by multiple machine topologies.
+The ``mach_eval.analyzers.general`` module contains contains a set of analyzers that can be used to study multiple machine topologies. This section provides documentation for these analyzer.
 
 .. toctree::
     :caption: General Analyzers
