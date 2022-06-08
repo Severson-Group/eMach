@@ -3,7 +3,7 @@
 Thermal Resistance Network Analyzer
 #######################################
 
-This analyzer is designed to solve steady state temperature distribution problems for thermal resistance networks.
+This analyzer is designed to solve steady state temperature distribution problems for thermal resistance networks. The analyzer resides in the `mach_eval.analyzers.general.thermal_stator` module.
 
 
 Model Background
@@ -11,17 +11,31 @@ Model Background
 
 Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow.  
 
-This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes (of varying types as described below), and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system. This analyzer is also utilized by other analyzers in eMach, i.e. :doc:`SPM Rotor Thermal Analyzer <../SPM_Analyzers/SPM_rotor_airflow_analyzer>`. 
+This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes, and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system. This analyzer is also utilized by other analyzers in eMach, i.e. :doc:`SPM Rotor Thermal Analyzer <../SPM_Analyzers/SPM_rotor_airflow_analyzer>`. 
 
-In this document a simple thermal resistance network is defined to demonstrate how to use this analyzer.
+The ``thermal_stator`` module contains a set of classes for creating conduction and convection thermal resistances. These classes have been developed for geometry that is typical of electric machines, including cylinders and rectangles. The conduction resistances are implemented using standard heat flow expressions. Three specialized convection  ``air_gap_conv``, ``hub_conv``, and ``shaft_conv`` implement the models presented in this paper:
 
+* D. A. Howey, P. R. N. Childs and A. S. Holmes, "Air-Gap Convection in Rotating Electrical Machines," in `IEEE Transactions on Industrial Electronics`, vol. 59, no. 3, pp. 1367-1375, March 2012.
+
+Example Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The image below shows an example of a thermal resistance network that this analyzer can solve. 
 
 .. figure:: ./Images/ResistanceNetwork.svg
    :alt: Trial1 
    :align: center
    :width: 600 
 
-This document will utilize the model shown above as an example of how to implement a thermal resistance network in eMach. The model consists of three sections: a base, an conductive material and a insulated material. Two thermal sources are utilized, one at node-1 and one at node-5. There is assumed convection on one end of the object, with a convection coefficient of ``h``, and an assumed depth into the page of ``d``. The following code block demonstrates how these assumptions are implemented:
+The example consists of the following:
+
+* three hardware components: a "base", a thermal "conductor," and a thermal "insulator"
+* two sources of heat: Q\ :sub:`1`\ at node 1 and Q\ :sub:`5`\ at node 5
+* convection on the right side of the model with a convection coefficient of ``h``, represented by thermal resistances R\ :sub:`3,0`\ and R\ :sub:`4,0`\
+* conduction within 
+* and an assumed depth into the page of ``d``. 
+
+The code necessary to solve this example is developed in the sections below.
 
 .. code-block:: python
 
