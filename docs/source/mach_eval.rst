@@ -1,8 +1,17 @@
 mach\_eval package
 ==================
 
-Module contents
----------------
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   mach_eval.analyzers
+
+
+mach\_eval module
+----------------------------
 
 .. automodule:: mach_eval
    :members:
