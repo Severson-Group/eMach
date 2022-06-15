@@ -127,11 +127,11 @@ dealing with multiple Python projects, each of which might have different, and a
 project requires ``numpy=0.13`` whereas another requires ``numpy=1.22``, we would have to re-install the desired version of ``numpy`` 
 each time we switch between projects. Python overcomes this problem with virtual environments. By using different 
 environments for different projects, users can not only change the packages used, but can even change the very version of Python 
-employed between projects. This `link <https://realpython.com/python-virtual-environments-a-primer/>`_ provides a more detailed
+employed between projects. This `link <https://realpython.com/python-virtual-environments-a-primer/>`__ provides a more detailed
 explaination of Python virtual environments. 
 
 While virtual environments themselves are IDE agnostic, using IDEs such as Visual Studio Code or PyCharm makes it far easier to 
-leverage their potential than using others such as Spyder. This `video <https://www.youtube.com/watch?v=-nh9rCzPJ20>`_ provides a 
+leverage their potential than using others such as Spyder. This `video <https://www.youtube.com/watch?v=-nh9rCzPJ20>`__ provides a 
 great, easy to understand, step-by-step guide of using VS Code with Python virtual environments. Beginners are adviced to follow 
 this tutorial if they plan on installing ``eMach`` dependecies via approach 3. Getting the entire workflow up and running with 
 VS Code can be tricky. If you run into issues with running your scripts from a virtual environment in VS code even after following 

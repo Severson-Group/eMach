@@ -1,8 +1,8 @@
 import numpy as np
 import scipy.optimize as op
-from typing import Tuple,List
+from typing import Tuple, List
 
-#%% Base SPM Structural Analyzer
+
 class SPM_RotorStructuralProblem:
     """Problem class for SPM_RotorStructuralAnalyzer.
 
@@ -13,17 +13,18 @@ class SPM_RotorStructuralProblem:
         sl (RotorComponent): Sleeve RotorComponent object.
         deltaT (float): Temperature rise in deg C.
         omega (float): rotational speed in rad/s.
-
     """
 
-    def __init__(self,r_sh: float,
+    def __init__(
+        self,
+        r_sh: float,
         d_m: float,
         r_ro: float,
         d_sl: float,
         delta_sl: float,
         deltaT: float,
         N: float,
-        mat_dict: dict
+        mat_dict: dict,
     ) -> "SPM_RotorStructuralProblem":
         """Creates SPM_RotorStructuralProblem object from input
 
@@ -38,9 +39,8 @@ class SPM_RotorStructuralProblem:
 
         Returns:
             problem (StructuralProblem): StructuralProblem
-
         """
-        self.mat_dict=mat_dict
+        self.mat_dict = mat_dict
         R1 = r_sh
         R2 = r_ro - d_m
         R3 = r_ro
@@ -140,8 +140,8 @@ class SPM_RotorStructuralAnalyzer:
 
         Returns:
             results (['Sigma','Sigma','Sigma','Sigma']): Sigma objects
-
         """
+
         sh = problem.sh
         rc = problem.rc
         pm = problem.pm
@@ -170,8 +170,8 @@ class SPM_RotorStructuralAnalyzer:
 
         Returns:
             A (np.Array): numpy array of stress coeffiecents.
-
         """
+
         r1 = sh.R_o
         r2 = rc.R_o
         r3 = pm.R_o
@@ -267,8 +267,8 @@ class Material_Isotropic:
             ElasticMod (float): Elastic modulus.
             PoissonRatio (float): Poisson ratio.
             alpha (float): Coeffiecent of thermal expansion.
-
         """
+
         self.rho = Density  # Density of material
         self.E = ElasticMod  # Elastic modulus of material
         self.Nu = PoissonRatio  # Poisson Ratio of material
@@ -333,8 +333,8 @@ class Material_Transverse_Isotropic:
             PoissonRatio_p (float): Poisson ratio plane.
             alpha_r (float): Coeffiecent of thermal expansion radial.
             alpha_t (float): Coeffiecent of thermal expansion tangential.
-
         """
+
         self.rho = Density  # Density of material
         self.E_t = (
             ElasticMod_Thread  # Elastic modulus of material in the thread direction
@@ -403,8 +403,8 @@ class RotorComponent:
             MaterialObject (Material_Isotropic or Material_Transverse_Isotropic): Material object.
             InnerRadius (float): Inner radius.
             OuterRadius (float): Outer radius.
-
         """
+
         self.R_i = InnerRadius
         self.R_o = OuterRadius
         if isinstance(MaterialObject, Material_Transverse_Isotropic):
@@ -461,8 +461,8 @@ class Sigma:
             A (np.array): Stress Coeffiecents.
             omega (float): Rotational speed rad/s.
             deltaT (float): Temperature rise.
-
         """
+
         self.rotComp = rotorComponent
         self.A = A
         self.omega = omega
@@ -474,17 +474,26 @@ class Sigma:
         Args:
             R (float): location to evaluate stress.
         """
+
         # Radial Stress
         try:
             if max(R) > self.rotComp.R_o:
-                raise ValueError("Provided radius larger than outer radius of rotor component")
+                raise ValueError(
+                    "Provided radius larger than outer radius of rotor component"
+                )
             if min(R) < self.rotComp.R_i:
-                raise ValueError("Provided radius smaller than inner radius of rotor component")
+                raise ValueError(
+                    "Provided radius smaller than inner radius of rotor component"
+                )
         except TypeError:
             if R > self.rotComp.R_o:
-                raise ValueError("Provided radius larger than outer radius of rotor component")
+                raise ValueError(
+                    "Provided radius larger than outer radius of rotor component"
+                )
             if R < self.rotComp.R_i:
-                raise ValueError("Provided radius smaller than inner radius of rotor component")
+                raise ValueError(
+                    "Provided radius smaller than inner radius of rotor component"
+                )
         sigma_r = (
             self.A[0]
             * (self.rotComp.C1 * self.rotComp.h + self.rotComp.C2)
@@ -507,17 +516,26 @@ class Sigma:
         Args:
             R (float): location to evaluate stress.
         """
+
         # Tangential Stress
         try:
             if max(R) > self.rotComp.R_o:
-                raise ValueError("Provided radius larger than outer radius of rotor component")
+                raise ValueError(
+                    "Provided radius larger than outer radius of rotor component"
+                )
             if min(R) < self.rotComp.R_i:
-                raise ValueError("Provided radius smaller than inner radius of rotor component")
+                raise ValueError(
+                    "Provided radius smaller than inner radius of rotor component"
+                )
         except TypeError:
             if R > self.rotComp.R_o:
-                raise ValueError("Provided radius larger than outer radius of rotor component")
+                raise ValueError(
+                    "Provided radius larger than outer radius of rotor component"
+                )
             if R < self.rotComp.R_i:
-                raise ValueError("Provided radius smaller than inner radius of rotor component")
+                raise ValueError(
+                    "Provided radius smaller than inner radius of rotor component"
+                )
         sigma_t = (
             self.A[0]
             * (self.rotComp.C2 * self.rotComp.h + self.rotComp.C3)
@@ -534,10 +552,7 @@ class Sigma:
         return sigma_t
 
 
-#%% Sleeve (Design) Analyzer
-
 class SPM_RotorSleeveProblem:
-
     def __init__(
         self,
         r_sh: float,
@@ -547,7 +562,7 @@ class SPM_RotorSleeveProblem:
         mat_dict: dict,
         N: float,
         problem_class=SPM_RotorStructuralProblem,
-        analyzer_class=SPM_RotorStructuralAnalyzer
+        analyzer_class=SPM_RotorStructuralAnalyzer,
     ):
         """__init__ definition for SleeveProblem class
         
@@ -566,11 +581,12 @@ class SPM_RotorSleeveProblem:
         self.deltaT = deltaT
         self.mat_dict = mat_dict
         self.N = N
-        self.problem_class=problem_class
-        self.analyzer_class=analyzer_class
+        self.problem_class = problem_class
+        self.analyzer_class = analyzer_class
 
     def tan_sleeve(self, x):
         """Calculate sigma_t_sl_max for given sleeve design"""
+
         d_sl = x[0]
         delta_sl = x[1]
         r_ro = self.r_ro
@@ -578,8 +594,10 @@ class SPM_RotorSleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        mat_dict=self.mat_dict
-        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        mat_dict = self.mat_dict
+        problem = self.problem_class(
+            r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N, mat_dict
+        )
         analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_sl = np.linspace(r_ro, r_ro + d_sl, 50)
@@ -589,6 +607,7 @@ class SPM_RotorSleeveProblem:
 
     def rad_sleeve(self, x):
         """Calculate P_sl for given sleeve design"""
+
         d_sl = x[0]
         delta_sl = x[1]
         r_ro = self.r_ro
@@ -596,8 +615,10 @@ class SPM_RotorSleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        mat_dict=self.mat_dict
-        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        mat_dict = self.mat_dict
+        problem = self.problem_class(
+            r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N, mat_dict
+        )
         analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_sl = np.linspace(r_ro, r_ro + d_sl, 50)
@@ -607,6 +628,7 @@ class SPM_RotorSleeveProblem:
 
     def rad_magnet(self, x):
         """Calculate P_pm for given sleeve design"""
+
         d_sl = x[0]
         delta_sl = x[1]
         r_ro = self.r_ro
@@ -614,8 +636,10 @@ class SPM_RotorSleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        mat_dict=self.mat_dict
-        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        mat_dict = self.mat_dict
+        problem = self.problem_class(
+            r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N, mat_dict
+        )
         analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_pm = np.linspace(r_ro - d_m, r_ro, 50)
@@ -625,6 +649,7 @@ class SPM_RotorSleeveProblem:
 
     def tan_magnet(self, x):
         """Calculate sigma_t_pm_max for given sleeve design"""
+
         d_sl = x[0]
         delta_sl = x[1]
         r_ro = self.r_ro
@@ -632,8 +657,10 @@ class SPM_RotorSleeveProblem:
         r_sh = self.r_sh
         d_m = self.d_m
         deltaT = self.deltaT
-        mat_dict=self.mat_dict
-        problem = self.problem_class(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N,mat_dict)
+        mat_dict = self.mat_dict
+        problem = self.problem_class(
+            r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, N, mat_dict
+        )
         analyzer = self.analyzer_class()
         sigmas = analyzer.analyze(problem)
         x_pm = np.linspace(r_ro - d_m, r_ro, 50)
@@ -642,15 +669,14 @@ class SPM_RotorSleeveProblem:
         return stress
 
 
-
 class SPM_RotorSleeveAnalyzer:
     """Analyzer for designing a rotor sleeve
     
     Attributes:
         stress_limits: list of limits for critical stresses
-    
     """
-    def __init__(self, stress_limits: 'List[float,float,float,float]'):
+
+    def __init__(self, stress_limits: "List[float,float,float,float]"):
         self.stress_limits = stress_limits
 
     def analyze(self, problem: "SPM_RotorSleeveProblem"):
@@ -689,6 +715,7 @@ class SPM_RotorSleeveAnalyzer:
             return sol.x
         else:
             return False
+
     def cost(self, x):
         """returns sleeve thickness
         
@@ -697,36 +724,34 @@ class SPM_RotorSleeveAnalyzer:
             
         Returns:
             x[0]: sleeve thickness
-        """        
+        """
+
         return x[0]
+
 
 if __name__ == "__main__":
     mat_dict = {
-    'core_material_density': 7650,  # kg/m3
-    'core_youngs_modulus': 185E9,  # Pa
-    'core_poission_ratio': .3,
-    'alpha_rc' : 1.2E-5,
-
-    'magnet_material_density'    : 7450, # kg/m3
-    'magnet_youngs_modulus'      : 160E9, # Pa
-    'magnet_poission_ratio'      :.24,
-    'alpha_pm'                   :5E-6,
-
-    'sleeve_material_density'    : 1800, # kg/m3
-    'sleeve_youngs_th_direction' : 125E9,  #Pa
-    'sleeve_youngs_p_direction'  : 8.8E9,  #Pa
-    'sleeve_poission_ratio_p'    :.015,
-    'sleeve_poission_ratio_tp'   :.28,
-    'alpha_sl_t'                :-4.7E-7,
-    'alpha_sl_r'                :0.3E-6,
-
-    'sleeve_max_tan_stress': 1950E6,  # Pa
-    'sleeve_max_rad_stress': -100E6,  # Pa
-
-    'shaft_material_density': 7870,  # kg/m3
-    'shaft_youngs_modulus': 206E9,  # Pa
-    'shaft_poission_ratio': .3,  # []
-    'alpha_sh' : 1.2E-5
+        "core_material_density": 7650,  # kg/m3
+        "core_youngs_modulus": 185e9,  # Pa
+        "core_poission_ratio": 0.3,
+        "alpha_rc": 1.2e-5,
+        "magnet_material_density": 7450,  # kg/m3
+        "magnet_youngs_modulus": 160e9,  # Pa
+        "magnet_poission_ratio": 0.24,
+        "alpha_pm": 5e-6,
+        "sleeve_material_density": 1800,  # kg/m3
+        "sleeve_youngs_th_direction": 125e9,  # Pa
+        "sleeve_youngs_p_direction": 8.8e9,  # Pa
+        "sleeve_poission_ratio_p": 0.015,
+        "sleeve_poission_ratio_tp": 0.28,
+        "alpha_sl_t": -4.7e-7,
+        "alpha_sl_r": 0.3e-6,
+        "sleeve_max_tan_stress": 1950e6,  # Pa
+        "sleeve_max_rad_stress": -100e6,  # Pa
+        "shaft_material_density": 7870,  # kg/m3
+        "shaft_youngs_modulus": 206e9,  # Pa
+        "shaft_poission_ratio": 0.3,  # []
+        "alpha_sh": 1.2e-5,
     }
     stress_limits = {
         "rad_sleeve": -100e6,
@@ -741,7 +766,7 @@ if __name__ == "__main__":
     deltaT = 10
     N = 10e3
 
-    problem = SPM_RotorSleeveProblem(r_sh, d_m, r_ro, deltaT,mat_dict, N)
+    problem = SPM_RotorSleeveProblem(r_sh, d_m, r_ro, deltaT, mat_dict, N)
     ana = SPM_RotorSleeveAnalyzer(stress_limits)
 
     sleeve_dim = ana.analyze(problem)

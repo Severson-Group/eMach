@@ -1,7 +1,4 @@
 import numpy as np
-from typing import Any
-from copy import deepcopy
-
 
 
 class StatorThermalProblem:
@@ -9,41 +6,23 @@ class StatorThermalProblem:
     
     Attributes:
         g_sy: Volumetric Heating of stator yoke [W/m^3]
-        
         g_th: Volumetric Heating of stator tooth [W/m^3]
-        
         w_tooth: Width of stator tooth [m]
-        
         l_st: Stack length [m]
-        
         l_tooth: Length of stator tooth [m]
-        
         alpha_q: slot span 2pi/Q [rad]
-        
         r_si: Inner stator radius [m]
-        
         r_so: Outer stator radius [m]
-        
         r_sy: Radius of inner stator yoke [m]
-        
         k_ins: Thermal conductivity of insulation paper [W/m-K]
-        
         w_ins: Thickness of Insulation paper [m]
-        
         k_fe: Thermal conductivty of stator iron [W/m-K]
-        
         h: Convection rate on exterior of stator [W/m^2-K]
-        
         alpha_slot: Angle of back of slot on stator yoke [rad]
-        
         T_coil_max: Maximum coil temperature [K]
-        
         r_si: Inner stator radius [m]
-        
         Q_coil: Resistive coil losses [W]
-        
         h_slot: Inslot convection rate [W/m^2-K]
-        
         T_ref: Refrence temperature
     """
 
@@ -64,13 +43,13 @@ class StatorThermalProblem:
         alpha_slot: float,
         Q_coil: float,
         h_slot: float,
-        T_ref:float
+        T_ref: float,
     ):
         self.g_sy = g_sy
         self.g_th = g_th
         self.w_tooth = w_tooth
         self.l_st = l_st
-        self.l_tooth = r_sy-r_si  ####
+        self.l_tooth = r_sy - r_si  ####
         self.alpha_q = alpha_q
         self.r_so = r_so  #####
         self.r_sy = r_sy
@@ -82,28 +61,22 @@ class StatorThermalProblem:
         self.alpha_slot = alpha_slot
         self.Q_coil = Q_coil
         self.h_slot = h_slot
-        self.T_ref= T_ref
+        self.T_ref = T_ref
 
 
 class StatorThermalAnalyzer:
     """"Stator Thermal Analyzer calculates coil temperatures"""
 
-    def analyze(self,problem):
+    def analyze(self, problem):
         """calculates coil temperature from problem class.
 
         Args:
             problem (StatorThermalProblem): Problem Object
 
         Returns:
-            results : 
-                [Coil temperature,
-                 Stator Yoke temperature,
-                 Coil losses,
-                 Yoke losses,
-                 Tooth losses,
-                 valid temperature flag]
-
+            results : Dict of coil and stator yoke temperature
         """
+
         g_sy = problem.g_sy
         g_th = problem.g_th
         w_tooth = problem.w_tooth
@@ -161,15 +134,12 @@ class StatorThermalAnalyzer:
                 - M_th * g_th * R_coil
                 + Q_tooth * R_coil
             ) / (1 + R_coil / R_cd)
-            T_sy = g_sy * M_sy + (Q_coil + 2 * Q_tooth) * R_sy  
+            T_sy = g_sy * M_sy + (Q_coil + 2 * Q_tooth) * R_sy
 
-        #Add back in ref temp
-        T_coil=T_coil+problem.T_ref
-        T_sy=T_sy+problem.T_ref
-        
-        results = {'Coil temperature': T_coil,
-                   'Stator yoke temperature': T_sy}
+        # Add back in ref temp
+        T_coil = T_coil + problem.T_ref
+        T_sy = T_sy + problem.T_ref
+
+        results = {"Coil temperature": T_coil, "Stator yoke temperature": T_sy}
         return results
-
-
 

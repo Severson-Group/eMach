@@ -40,7 +40,6 @@ class MachineDesign(mo.Design):
 
     Attributes:
         machine: Holds information on machine dimensions, materials, and nameplate specs
-        
         settings: Operating conditions of machine. Can include speed, current, expected power / torque etc.
     """
 
@@ -54,8 +53,7 @@ class MachineDesigner(mo.Designer):
 
     Attributes:
         arch: Class which converts optimization free variables to a complete set of machine dimensions required to
-        fully define a machine.
-        
+            fully define a machine.
         settings_handler: Class which converts optimization free variable to machine operating conditions.
     """
 
@@ -69,7 +67,7 @@ class MachineDesigner(mo.Designer):
         Args:
             x: Tuple of design free variables. Should be defined in a particular sequence based on arch and settings_handler
         Returns:
-            A complete machine design including machine physical description and operating conditions.
+            design: A complete machine design including machine physical description and operating conditions.
         """
         machine = self.arch.create_new_design(x)
         settings = self.settings_handler.get_settings(x)
@@ -186,11 +184,11 @@ class AnalysisStep(EvaluationStep):
     """Class representing a step which involves detailed analysis.
 
     Attributes:
-        problem_definition: class or object defining the problem to be analyzed. This attribute acts as the interface between the machine design and the analyzer.
-        
+        problem_definition: class or object defining the problem to be analyzed. This attribute acts as the interface between the 
+            machine design and the analyzer.
         analyzer: class or object which evaluates any aspect of a machine design.
-        
-        post_analyzer: class or object which processes the results obtained from the analyzer and packages in a form suitable for subsequent steps.
+        post_analyzer: class or object which processes the results obtained from the analyzer and packages in a form suitable for 
+            subsequent steps.
     """
 
     def __init__(self, problem_definition, analyzer, post_analyzer):
@@ -205,7 +203,6 @@ class AnalysisStep(EvaluationStep):
             state_in: input state which is to be evaluated.
         Returns:
             results: Results obtained from the analyzer.
-            
             state_out: Output state to be used by the next step involved in the machine design evaluation.
         """
         problem = self.problem_definition.get_problem(state_in)

@@ -12,7 +12,7 @@ Using Sphinx
 
 Sphinx is a tool that makes the creation of pretty, indexed documentation easy. One of the biggest advantages of using Sphinx 
 with *MachEval* is its autodocs feature which creates documentation directly from the docstrings written within the code. A 
-detailed explaination of setting up and running Sphinx on a system is provided `here <https://www.sphinx-doc.org/en/master/tutorial/index.html>`_. 
+detailed explaination of setting up and running Sphinx on a system is provided `here <https://www.sphinx-doc.org/en/master/tutorial/index.html>`__. 
 This `tutorial <https://techwritingmatters.com/documenting-with-sphinx-tutorial-intro-overview>`_ also provides a great intro 
 to Sphinx and the reStructuredText (reST) markup language used by the tool. A general idea of the workflow involved in Sphinx 
 doc generation is provided below:
@@ -22,7 +22,7 @@ ver 1.8.5. The previous command can be modified as ``pip install Sphinx==1.8.5``
 
 2. Navigate to the module for which documentation is to be generated. Creation of a ``docs`` folder within the module is 
 recommended to segregate the documentation files from the rest of the module.  Run ``sphinx-quickstart`` command from within 
-the docs folder. You will be asked to type in responses to certain prompts. Follow the instructions provided `here <https://techwritingmatters.com/documenting-with-sphinx-tutorial-part-1-setting-up>`_. 
+the docs folder. You will be asked to type in responses to certain prompts. Follow the instructions provided `here <https://techwritingmatters.com/documenting-with-sphinx-tutorial-part-1-setting-up>`__. 
 Note that setting ``y`` for the autodoc prompt enables the automatic creation of documentation from docstrings. 
 
 3. Ensure that the expected files and folders have been created. This includes the ``Makefile``, ``Windows command file`` (if 
