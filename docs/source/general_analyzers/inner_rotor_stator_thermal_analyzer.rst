@@ -112,6 +112,7 @@ The following code-block demonstrates how the results are returned by the analyz
     print(results)
     
     {'Coil temperature': 216.31038291260649, 'Stator yoke temperature': 204.06667848224436}
+    
 The analyzer can be utilized in to examine the effect of changing stator geometry as demonstrated in the following code-block. The stator tooth length is swept over ``l_tooth_vect``, and the coil temperature is collected for each entry. The following code will produce the plot shown below, provided the rest of the inputs to the ``StatorThermalProblem`` are used from the previous section.
 
 .. code-block:: python
