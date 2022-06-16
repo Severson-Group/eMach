@@ -11,9 +11,12 @@ dependencies:
   - pygmo=2.18.0
   # documentation packages
   - sphinx=4.4.0
-  - pip
-  - pip:
-      - sphinx-rtd-theme
+  - sphinx_rtd_theme
+  
+  # to use pip packages, follow syntax below
+  # - pip
+  # - pip:
+  #    - sphinx-rtd-theme
   
 
 
