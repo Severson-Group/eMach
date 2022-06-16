@@ -1,45 +1,31 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun  2 15:24:23 2022
-
-@author: Martin Johnson
-"""
 import numpy as np
+
 
 class WindageLossProblem:
     """Problem analyzer for windage anlyzer
     Attributes:
         Omega: rotational speed [rad/s]
-        
         R_ro: outer rotor radius [m]
-        
         stack_length: stack length [m]
-        
         R_st: inner stator radius [m]
-        
         air_gap: airgap length [m]
-        
         u_z: axial air flow speed [m/s]
-        
         T_air: Air temperature        
-    
-    
     """
-    
-    def __init__(
-        self, Omega, R_ro, stack_length, R_st, u_z, T_air=25
-    ):
+
+    def __init__(self, Omega, R_ro, stack_length, R_st, u_z, T_air=25):
         self.Omega = Omega
         self.R_ro = R_ro
         self.stack_length = stack_length
         self.R_st = R_st
-        self.air_gap = R_st-R_ro
-        self.u_z=u_z
+        self.air_gap = R_st - R_ro
+        self.u_z = u_z
         self.T_air = T_air
 
 
 class WindageLossAnalyzer:
     """Windage loss analyzer"""
+
     def analyze(problem):
         """ Calculates total windage loss in machine.
         
@@ -47,9 +33,7 @@ class WindageLossAnalyzer:
             problem: problem class
             
         Returns:
-            
             windage_loss_total: Total windage loss on rotor
-        
         """
         # Omega, R_ro ,stack_length,R_st,air_gap,m_dot_air, T_air=25):
 
@@ -122,8 +106,8 @@ class WindageLossAnalyzer:
         )
 
         # Axial air flow of 0.001 kg/sec for cooling based on B. Riemer, M. Leßmann and K. Hameyer, "Rotor design of a high-speed Permanent Magnet Synchronous Machine rating 100,000 rpm at 10kW," 2010 IEEE Energy Conversion Congress and Exposition, Atlanta, GA, 2010, pp. 3978-3985.
-        #Q_flow = problem.m_dot_air / rho_Air
-        #A_delta = np.pi * (problem.R_st ** 2 - problem.R_ro ** 2)
+        # Q_flow = problem.m_dot_air / rho_Air
+        # A_delta = np.pi * (problem.R_st ** 2 - problem.R_ro ** 2)
         vm = problem.u_z
         um = 0.48 * problem.Omega * problem.R_ro
         windage_loss_axial = (
@@ -139,5 +123,5 @@ class WindageLossAnalyzer:
         windage_loss_total = (
             windage_loss_radial + windage_loss_endFace + windage_loss_axial
         )
-        return [windage_loss_radial,windage_loss_endFace,windage_loss_axial]
-    
+        return [windage_loss_radial, windage_loss_endFace, windage_loss_axial]
+
