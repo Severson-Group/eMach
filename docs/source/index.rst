@@ -36,7 +36,7 @@ to browse through the documentation links provided on the left to familiarize th
    :caption: Guidelines
 
    contribution
-   auto_docs
+   
    
 
 .. toctree::
