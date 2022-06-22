@@ -7,6 +7,7 @@ The ``mach_eval.analyzers.general`` module contains contains a set of analyzers 
 .. toctree::
     :caption: General Analyzers
     :maxdepth: 3
+    :numbered:
     
     general_analyzers/thermal_res_net_analyzer
     general_analyzers/inner_rotor_stator_thermal_analyzer
