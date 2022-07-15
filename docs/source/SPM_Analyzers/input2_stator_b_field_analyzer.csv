@@ -1,0 +1,8 @@
+Arguments,Description,Units
+MMF,Array of MMF harmonics,A-turns
+n,Array of harmonics corresponding to MMF,
+delta_e,Effective airgap,m
+r_si,Inner bore radius of stator,m
+r_rfe,Outer radius of rotor iron,m
+r,Radius at which normal B-field is evaluated ,m
+alpha_so,Stator slot opening,radians

@@ -13,12 +13,26 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
-   sodipodi:docname="OuterStatorFig.svg"
+   sodipodi:docname="OuterStatorBFieldsFig.svg"
    inkscape:export-filename="D:\MWJ DOCUMENTS\WEMPEC\Updated Folders\Thesis\Thermal\SlotGeometry.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
      id="defs2">
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1064"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#fa810e;fill-opacity:1;fill-rule:evenodd;stroke:#fa810e;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1062" />
+    </marker>
     <marker
        style="overflow:visible"
        id="Arrow1Lstart"
@@ -29,7 +43,7 @@
        inkscape:isstock="true">
       <path
          transform="scale(0.8) translate(12.5,0)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:0.57085;fill:#000000;fill-opacity:0.57085"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
          id="path2077" />
     </marker>
@@ -40,7 +54,8 @@
        refX="0"
        refY="0"
        orient="auto"
-       inkscape:stockid="Arrow1Mend">
+       inkscape:stockid="Arrow1Mend"
+       inkscape:collect="always">
       <path
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          style="fill:#000000;fill-opacity:0.7;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:0.7"
@@ -305,6 +320,20 @@
          style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
          transform="matrix(-0.4,0,0,-0.4,-4,0)" />
     </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1064-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#fa810e;fill-opacity:1;fill-rule:evenodd;stroke:#fa810e;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1062-3" />
+    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -313,11 +342,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.9999999"
-     inkscape:cx="296.08361"
-     inkscape:cy="261.14204"
+     inkscape:zoom="3.9999998"
+     inkscape:cx="148.05863"
+     inkscape:cy="269.98285"
      inkscape:document-units="mm"
-     inkscape:current-layer="g1362-3"
+     inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      showguides="false"
@@ -328,13 +357,15 @@
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:snap-smooth-nodes="false"
-     inkscape:snap-intersection-paths="true"
+     inkscape:snap-intersection-paths="false"
      inkscape:object-nodes="true"
-     inkscape:snap-nodes="false"
+     inkscape:snap-nodes="true"
      inkscape:snap-others="false"
      inkscape:snap-grids="false"
      inkscape:snap-to-guides="false"
-     inkscape:object-paths="true">
+     inkscape:object-paths="true"
+     inkscape:snap-tangential="true"
+     inkscape:snap-perpendicular="true">
     <sodipodi:guide
        position="5,5"
        orientation="-1,0"
@@ -422,7 +453,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -506,13 +537,13 @@
            id="tspan1553">rfe</tspan></tspan></text>
     <text
        id="text2315-7"
-       y="71.917625"
-       x="24.801981"
+       y="70.859291"
+       x="25.331148"
        style="font-size:4.23333px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
        xml:space="preserve"><tspan
          style="font-size:4.23333px;stroke-width:0.264583"
-         y="71.917625"
-         x="24.801981"
+         y="70.859291"
+         x="25.331148"
          id="tspan2313-3"
          sodipodi:role="line"><tspan
            style="font-style:italic"
@@ -521,7 +552,7 @@
            style="font-size:2.75167px;baseline-shift:sub;stroke-width:0.264583">si</tspan></tspan></text>
     <g
        id="g1532"
-       transform="translate(-0.04677217,0.23386085)">
+       transform="translate(1.0115612,-0.82447249)">
       <ellipse
          style="opacity:0.996;fill:#e9c6af;stroke:#000000;stroke-width:0.264999;stroke-linecap:square"
          id="path1072"
@@ -737,13 +768,13 @@
     <text
        xml:space="preserve"
        style="font-size:4.23333px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
-       x="35.30814"
-       y="85.773109"
+       x="35.261368"
+       y="85.960213"
        id="text2315-2"><tspan
          sodipodi:role="line"
          id="tspan2313-7"
-         x="35.30814"
-         y="85.773109"
+         x="35.261368"
+         y="85.960213"
          style="font-style:italic;font-size:4.23333px;stroke-width:0.264583">r</tspan></text>
     <path
        style="display:inline;opacity:0.996;fill:none;stroke:#006aff;stroke-width:0.2907;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:2.3256, 2.3256;stroke-dashoffset:0;stroke-opacity:1"
@@ -795,13 +826,13 @@
     <text
        xml:space="preserve"
        style="font-size:4.23333px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
-       x="39.731777"
-       y="73.651749"
+       x="47.41378"
+       y="78.51606"
        id="text2315-2-3"><tspan
          sodipodi:role="line"
          id="tspan2313-7-0"
-         x="39.731777"
-         y="73.651749"
+         x="47.41378"
+         y="78.51606"
          style="font-size:4.23333px;stroke-width:0.264583"><tspan
            style="font-style:italic"
            id="tspan2605">α</tspan><tspan
@@ -851,6 +882,52 @@
              sodipodi:role="line">Rotor</tspan></text>
       </g>
     </g>
+    <circle
+       id="path1044"
+       style="fill:#000000;stroke:#000000;stroke-width:0.264583"
+       cx="40.083748"
+       cy="81.710976"
+       r="0.005840675" />
+    <g
+       id="g1805"
+       transform="rotate(-7.8842009,5.6676026,94.389424)">
+      <path
+         style="fill:none;stroke:#fa810e;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1064)"
+         d="m 38.267628,77.393004 -1.792552,-3.66722"
+         id="path1054"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;stroke:#fa810e;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1064-5)"
+         d="m 38.151876,77.343396 3.639744,-1.8477"
+         id="path1054-8"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#fa810e;fill-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+       x="35.489384"
+       y="69.139183"
+       id="text2315-2-5-8"><tspan
+         sodipodi:role="line"
+         id="tspan2313-7-9-3"
+         x="35.489384"
+         y="69.139183"
+         style="font-style:italic;font-size:2.82222px;fill:#fa810e;fill-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none">B<tspan
+   style="font-style:normal;font-size:65%;baseline-shift:sub"
+   id="tspan1946">tan</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#fa810e;fill-opacity:1;stroke-width:0.264999;stroke-miterlimit:4;stroke-dasharray:none"
+       x="39.735596"
+       y="73.146965"
+       id="text2315-2-5-8-3"><tspan
+         sodipodi:role="line"
+         id="tspan2313-7-9-3-9"
+         x="39.735596"
+         y="73.146965"
+         style="font-style:italic;font-size:2.82223px;fill:#fa810e;fill-opacity:1;stroke-width:0.264999;stroke-miterlimit:4;stroke-dasharray:none">B<tspan
+   style="font-style:normal;font-size:1.83444px;baseline-shift:sub;stroke-width:0.264999"
+   id="tspan1946-0">n</tspan></tspan></text>
   </g>
   <g
      inkscape:label="Layer 2"
