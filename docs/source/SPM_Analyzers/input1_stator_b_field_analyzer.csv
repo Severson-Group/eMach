@@ -2,11 +2,11 @@ Arguments,Description,Units
 m,Number of phases,
 zq,Number of turns,
 Nc,Number of coils per phase,
-k_w,Winding factor,
+k_w,Array of winding factor,
 I_hat,Peak Coil Current,A
-n,Harmonic under consideration,
+n,Array of harmonics corresponding to winding factor,
 delta_e,Effective airgap,m
 r_si,Inner bore radius of stator,m
 r_rfe,Outer radius of rotor iron,m
-r,Radius at which radial B-field is evaluated ,m
+r,Radius at which normal B-field is evaluated ,m
 alpha_so,Stator slot opening,radians

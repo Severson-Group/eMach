@@ -12,7 +12,6 @@ The ``mach_eval.analyzers.general`` module contains contains a set of analyzers 
     general_analyzers/thermal_res_net_analyzer
     general_analyzers/inner_rotor_stator_thermal_analyzer
     general_analyzers/windage_loss_analyzer
-    general_analyzers/outer_stator_bn_field_analyzer
 
 
 

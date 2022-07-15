@@ -12,7 +12,7 @@
 import numpy as np
 
 
-class OuterStatorBnfieldProblem:
+class OuterStatorBnfieldProblem1:
     """Problem class for stator radial B field analyzer
     Attributes:
         MMF: Current linkage or Magneto-Motive Force [A-turns]
@@ -49,7 +49,27 @@ class OuterStatorBnfieldProblem:
         return mmf
 
 
-class OuterStatorBnFieldAnalyzer:
+class OuterStatorBnfieldProblem2:
+    """Problem class for stator radial B field analyzer
+    Attributes:
+        MMF: Current linkage or Magneto-Motive Force [A-turns]
+        n: Harmonic under consideration (v*p)
+        delta_e: Effective airgap [m]
+        r_si: Inner radius of the stator [m]
+        r_rfe: Outer radius of rotor iron [m]
+        alpha_so: stator slot opening [radians]
+    """
+
+    def __init__(self, MMF, n, delta_e, r_si, r_rfe, alpha_so):
+        self.MMF = MMF
+        self.n = n
+        self.delta_e = delta_e
+        self.r_si = r_si
+        self.r_rfe = r_rfe
+        self.alpha_so = alpha_so
+
+
+class OuterStatorBFieldAnalyzer:
     """Analyzer class to evaluate stator radial B field"""
 
     def analyze(self, problem=None):
