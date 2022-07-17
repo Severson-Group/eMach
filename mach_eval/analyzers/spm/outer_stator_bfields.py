@@ -112,23 +112,32 @@ class OuterStatorBField:
         self.r_rfe = r_rfe
         self.alpha_so = alpha_so
 
-    def radial(self, alpha: np.array, r):
+    def radial(self, alpha: np.array, r, harmonics=None):
         """Determines radial B field at angle(s) alpha and radius r
 
         Args:
             alpha: A numpy array holding angles at which B field is calculated.
             r: Radius at which B field is calculated. Should be of type int or float.
+            harmonics: Optional argument to get fields from select harmonics alone. Type numpy array
         Returns:
             b_radial: A numpy array of normal B fields in airgap at radius r and angle(s) alpha
         """
 
-        b_radial_h = self.radial_harmonics(r)
+        # check if harmonics passed as argument
+        if harmonics is None:
+            b_radial_h = self.radial_harmonics(r)
+            n = self.n
+        else:
+            mask = np.in1d(self.n, harmonics)  # find array ids at which harmonics exist
+            # n and b_radial_h only take harmonic values
+            n = self.n[mask]
+            b_radial_h = self.radial_harmonics(r)[mask]
 
         # get phase and magnitude of B field harmonics
         b_radial_mag = abs(b_radial_h)
         b_phase = np.angle(b_radial_h)
 
-        n = self.n.reshape(len(self.n), 1)  # reshape n for matrix multilication
+        n = n.reshape(len(n), 1)  # reshape n for matrix multilication
         alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
         # get effective theta at each harmonic based on n, alpha, and phase shift
         theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)
@@ -139,22 +148,31 @@ class OuterStatorBField:
         b_radial = np.sum(b_radial_mag.reshape(len(b_phase), 1) * cos_array, axis=0)
         return b_radial
 
-    def tan(self, alpha: np.array):
+    def tan(self, alpha: np.array, harmonics=None):
         """Determines tanglential B field at angle(s) alpha and inner bore of stator r_si
 
         Args:
             alpha: A numpy array holding angles at which B field is calculated.
+            harmonics: Optional argument to get fields from select harmonics alone. Type numpy array
         Returns:
             b_tan: A numpy array of tangential B fields
         """
 
-        b_tan_h = self.tangetial_harmonics()
+        # check if harmonics passed as argument
+        if harmonics is None:
+            b_tan_h = self.tangential_harmonics()
+            n = self.n
+        else:
+            mask = np.in1d(self.n, harmonics)  # find array ids at which harmonics exist
+            # n and b_radial_h only take harmonic values
+            n = self.n[mask]
+            b_tan_h = self.tangential_harmonics()[mask]
 
         # get phase and magnitude of B field harmonics
         b_tan_mag = abs(b_tan_h)
         b_tan_phase = np.angle(b_tan_h)
 
-        n = self.n.reshape(len(self.n), 1)  # reshape n for matrix multilication
+        n = n.reshape(len(n), 1)  # reshape n for matrix multilication
         alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
         # get effective theta at each harmonic based on n, alpha, and phase shift
         theta = n * alpha_t + b_tan_phase.reshape(len(b_tan_phase), 1)
@@ -182,7 +200,7 @@ class OuterStatorBField:
         b_radial_h = conv_b_field * k_sov * k_cu
         return b_radial_h
 
-    def tangetial_harmonics(self):
+    def tangential_harmonics(self):
         """Determines radial B field harmonics at inner bore of stator
 
         Args:
