@@ -16,7 +16,7 @@ class OuterStatorBnfieldProblem1:
     """Problem class for stator radial B field analyzer
     Attributes:
         MMF: Current linkage or Magneto-Motive Force [A-turns]
-        n: Harmonic under consideration (v*p)
+        n: Harmonic corresponding to MMF
         delta_e: Effective airgap [m]
         r_si: Inner radius of the stator [m]
         r_rfe: Outer radius of rotor iron [m]
@@ -53,7 +53,7 @@ class OuterStatorBnfieldProblem2:
     """Problem class for stator radial B field analyzer
     Attributes:
         MMF: Current linkage or Magneto-Motive Force [A-turns]
-        n: Harmonic under consideration (v*p)
+        n: Harmonic corresponding to MMF
         delta_e: Effective airgap [m]
         r_si: Inner radius of the stator [m]
         r_rfe: Outer radius of rotor iron [m]
@@ -97,7 +97,7 @@ class OuterStatorBField:
 
     Attributes:
         MMF: Current linkage or Magneto-Motive Force [A-turns]
-        n: Harmonic under consideration (v*p)
+        n: Harmonic corresponding to MMF
         delta_e: Effective airgap [m]
         r_si: Inner radius of the stator [m]
         r_rfe: Outer radius of rotor iron [m]
@@ -133,19 +133,7 @@ class OuterStatorBField:
             n = self.n[mask]
             b_radial_h = self.radial_harmonics(r)[mask]
 
-        # get phase and magnitude of B field harmonics
-        b_radial_mag = abs(b_radial_h)
-        b_phase = np.angle(b_radial_h)
-
-        n = n.reshape(len(n), 1)  # reshape n for matrix multilication
-        alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
-        # get effective theta at each harmonic based on n, alpha, and phase shift
-        theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)
-        # get cosine asuuming MMF phase is provided relative to cos function
-        cos_array = np.cos(theta)
-
-        # get effective normal B field at each alpha as a sum of all harmonics
-        b_radial = np.sum(b_radial_mag.reshape(len(b_phase), 1) * cos_array, axis=0)
+        b_radial = self.__field_from_harmonics(b_radial_h, n, alpha)
         return b_radial
 
     def tan(self, alpha: np.array, harmonics=None):
@@ -168,19 +156,7 @@ class OuterStatorBField:
             n = self.n[mask]
             b_tan_h = self.tangential_harmonics()[mask]
 
-        # get phase and magnitude of B field harmonics
-        b_tan_mag = abs(b_tan_h)
-        b_tan_phase = np.angle(b_tan_h)
-
-        n = n.reshape(len(n), 1)  # reshape n for matrix multilication
-        alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
-        # get effective theta at each harmonic based on n, alpha, and phase shift
-        theta = n * alpha_t + b_tan_phase.reshape(len(b_tan_phase), 1)
-        # get cosine asuuming MMF phase is provided relative to cos function
-        cos_array = np.cos(theta)
-
-        # get effective tangential B field at each alpha as a sum of all harmonics
-        b_tan = np.sum(b_tan_mag.reshape(len(b_tan_phase), 1) * cos_array, axis=0)
+        b_tan = self.__field_from_harmonics(b_tan_h, n, alpha)
         return b_tan
 
     def radial_harmonics(self, r):
@@ -194,8 +170,8 @@ class OuterStatorBField:
 
         mu0 = 4 * np.pi * 10**-7
         conv_b_field = self.MMF * mu0 / self.delta_e
-        k_sov = self.slot_opening_factor()
-        k_cu = self.curvature_coefficient(r)
+        k_sov = self.__slot_opening_factor()
+        k_cu = self.__curvature_coefficient(r)
         # scale field by slot opening factor and curvature coefficient
         b_radial_h = conv_b_field * k_sov * k_cu
         return b_radial_h
@@ -215,7 +191,7 @@ class OuterStatorBField:
         b_tan_h = -mu0 * A_hat
         return b_tan_h
 
-    def slot_opening_factor(self):
+    def __slot_opening_factor(self):
         """Determines reduction in normal B-field due to slot opening in stator
 
         Args:
@@ -228,7 +204,7 @@ class OuterStatorBField:
         k_sov = np.sin(self.n * self.alpha_so / 2) / (self.n * self.alpha_so / 2)
         return k_sov
 
-    def curvature_coefficient(self, r):
+    def __curvature_coefficient(self, r):
         """Determines curavture coefficient that causes field magnitude to vary across the airgap
 
         Curvature coefficient is especially important to determine in machine with large effective radial
@@ -252,3 +228,19 @@ class OuterStatorBField:
             / (1 - (self.r_rfe / self.r_si) ** (2 * self.n))
         )
         return k_cu
+    
+    def __field_from_harmonics(self, fields, n, alpha):
+        # get phase and magnitude of B field harmonics
+        b_mag = abs(fields)
+        b_phase = np.angle(fields)
+
+        n = n.reshape(len(n), 1)  # reshape n for matrix multilication
+        alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
+        # get effective theta at each harmonic based on n, alpha, and phase shift
+        theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)
+        # get cosine asuuming MMF phase is provided relative to cos function
+        cos_array = np.cos(theta)
+
+        # get effective tangential B field at each alpha as a sum of all harmonics
+        b_tan = np.sum(b_mag.reshape(len(b_mag), 1) * cos_array, axis=0)
+        return b_tan
