@@ -1,9 +1,17 @@
-from .bspm_settings import BSPM_EMAnalyzer_Settings
+import os
+import sys
+
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))
+# add the directory immediately above this file's directory to path for module import
+sys.path.append("../../..")
+
+from mach_eval.machines.bspm_settings import BSPM_EMAnalyzer_Settings
 
 
 class BSPM_Settings_Handler:
-    """ This is a wrapper class designed to contain all relevant information
-    on the operting point for obtaining eletrical performance evaluation of 
+    """This is a wrapper class designed to contain all relevant information
+    on the operting point for obtaining eletrical performance evaluation of
     bearingless permanent magnet eletric machines
     """
 

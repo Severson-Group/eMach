@@ -1,13 +1,18 @@
 import numpy as np
+import os
+import sys
+
+# change current working directory to file location
+os.chdir(os.path.dirname(__file__))
+# add the directory immediately above this file's directory to path for module import
+sys.path.append("../../..")
 
 # from .architect import Architect
-from .machines import BSPM_Machine
-from .winding_layout import WindingLayout
-
-__all__ = ["BSPMArchitectType1"]
+from mach_eval.machines import BSPM_Machine
+from mach_eval.machines.winding_layout import WindingLayout
 
 
-class BSPMArchitectType1:
+class BSPM_Architect1:
     """
     This class acts as an interface between the end user and the BSPM_Machine class.
     Each Architect class has to be tailor made based on the expected free variables
