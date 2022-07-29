@@ -4,7 +4,7 @@ import sys
 
 # change current working directory to file location
 os.chdir(os.path.dirname(__file__))
-# add the directory immediately above this file's directory to path for module import
+# add the directory 3 levels above this file's directory to path for module import
 sys.path.append("../../..")
 
 # from .architect import Architect
