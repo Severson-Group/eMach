@@ -3,9 +3,10 @@ import sys
 from copy import deepcopy
 import numpy as np
 
+# change current working directory to file location
 os.chdir(os.path.dirname(__file__))
+# add the directory 3 levels above this file's directory to path for module import
 sys.path.append("../../..")
-
 
 from mach_eval.analyzers.electromagnetic.bspm.jmag_analyzer import BSPM_EM_Analyzer
 from mach_eval.analyzers.mechanical import rotor_structural as stra
@@ -13,7 +14,7 @@ from mach_eval.analyzers.mechanical import rotor_thermal as therm
 from mach_eval.analyzers.mechanical import thermal_stator as st_therm
 from mach_eval.analyzers.mechanical import windage_loss as wl
 
-# reset to current file path
+# reset to current file path for JMAG_FEA_Configuration
 os.chdir(os.path.dirname(__file__))
 from em_fea_config import JMAG_FEA_Configuration
 
@@ -268,7 +269,7 @@ class MyWindageLossPostAnalyzer:
             * Pout
             / (
                 Pout
-                + results
+                + results[0] + results[1] + results[2]
                 + state_out.conditions.em["copper_loss"]
                 + state_out.conditions.em["rotor_iron_loss"]
                 + state_out.conditions.em["stator_iron_loss"]
@@ -318,7 +319,7 @@ if __name__ == "__main__":
         0.95,
         0,
         0.05,
-        100000,
+        150000,
         25,
         80,
     )

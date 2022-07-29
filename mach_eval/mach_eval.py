@@ -61,7 +61,7 @@ class MachineDesigner(mo.Designer):
         self.arch = arch
         self.settings_handler = settings_handler
 
-    def create_design(self, x: "tuple") -> "Design":
+    def create_design(self, x: "tuple") -> MachineDesign:
         """Creates a machine design from free variables.
 
         Args:
@@ -175,7 +175,7 @@ class State:
         conditions: additional information required for subsequent evaluation steps
     """
 
-    def __init__(self, design: "Design", conditions: "Conditions"):
+    def __init__(self, design: mo.Design, conditions: "Conditions"):
         self.design = design
         self.conditions = conditions
 
