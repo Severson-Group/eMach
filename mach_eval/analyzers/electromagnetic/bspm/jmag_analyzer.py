@@ -10,10 +10,19 @@ from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNot
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
 
-EPS = 1e-2  # unit: mm
+class BSPM_EM_Problem():
+    def __init__(self, machine, operating_point):
+        self.machine = machine
+        self.operating_point = operating_point
+        # self._validate_attr()
+        
+    # def _validate_attr(self):
+    #     if (type(self.machine) is BSPM_Machine):
+    #         pass
+    #     else:
+    #         raise TypeError    
 
-
-class BSPM_EM_Analysis():
+class BSPM_EM_Analyzer():
     def __init__(self, configuration):
         self.configuration = configuration
         self.counter = 0
@@ -260,7 +269,7 @@ class BSPM_EM_Analysis():
             model.GetSetList().GetSet(name).AddSelected(sel)
 
         # Shaft
-        add_part_to_set('ShaftSet', 0.0, 0.0, ID=id_shaft)  # 坐标没用，不知道为什么，而且都给了浮点数了
+        add_part_to_set('ShaftSet', 0.0, 0.0, ID=id_shaft)
 
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
@@ -281,7 +290,6 @@ class BSPM_EM_Analysis():
             Y = R * np.sin(THETA)
 
         # Create Set for left layer
-        # THETA = 0.75*(Angle_StatorSlotSpan)/180.*np.pi # 这里这个角度的选择，决定了悬浮绕组产生悬浮力的方向！！！！！
         THETA = np.arctan(-self.coils.PCoil[1] / self.coils.PCoil[0]) + (2 * np.pi) / self.machine_variant.Q
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
@@ -373,15 +381,9 @@ class BSPM_EM_Analysis():
         # True: no mesh or field results are needed
         study.GetStudyProperties().SetValue("OnlyTableResults", self.configuration['OnlyTableResults'])
 
-        # Linear Solver
-        if False:
-            # sometime nonlinear iteration is reported to fail and recommend to increase the accerlation rate of ICCG solver
-            study.GetStudyProperties().SetValue("IccgAccel", 1.2)
-            study.GetStudyProperties().SetValue("AutoAccel", 0)
-        else:
-            # this can be said to be super fast over ICCG solver.
-            # https://www2.jmag-international.com/support/en/pdf/JMAG-Designer_Ver.17.1_ENv3.pdf
-            study.GetStudyProperties().SetValue("DirectSolverType", 1)
+        # this can be said to be super fast over ICCG solver.
+        # https://www2.jmag-international.com/support/en/pdf/JMAG-Designer_Ver.17.1_ENv3.pdf
+        study.GetStudyProperties().SetValue("DirectSolverType", 1)
 
         if self.configuration['MultipleCPUs']:
             # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
@@ -390,29 +392,28 @@ class BSPM_EM_Analysis():
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", 2)
 
-            # two sections of different time step
-        if True:
-            number_of_revolution_1TS = self.configuration['number_of_revolution_1TS']
-            number_of_revolution_2TS = self.configuration['number_of_revolution_2TS']
-            number_of_steps_1TS = self.configuration['number_of_steps_per_rev_1TS'] * number_of_revolution_1TS
-            number_of_steps_2TS = self.configuration['number_of_steps_per_rev_2TS'] * number_of_revolution_2TS
-            DM = app.GetDataManager()
-            DM.CreatePointArray("point_array/timevsdivision", "SectionStepTable")
-            refarray = [[0 for i in range(3)] for j in range(3)]
-            refarray[0][0] = 0
-            refarray[0][1] = 1
-            refarray[0][2] = 50
-            refarray[1][0] = number_of_revolution_1TS / self.excitation_freq
-            refarray[1][1] = number_of_steps_1TS
-            refarray[1][2] = 50
-            refarray[2][0] = (number_of_revolution_1TS + number_of_revolution_2TS) / self.excitation_freq
-            refarray[2][1] = number_of_steps_2TS  # 最后的number_of_steps_2TS（32）步，必须对应半个周期，从而和后面的铁耗计算相对应。
-            refarray[2][2] = 50
-            DM.GetDataSet("SectionStepTable").SetTable(refarray)
-            number_of_total_steps = 1 + number_of_steps_1TS + number_of_steps_2TS  # don't forget to modify here!
-            study.GetStep().SetValue("Step", number_of_total_steps)
-            study.GetStep().SetValue("StepType", 3)
-            study.GetStep().SetTableProperty("Division", DM.GetDataSet("SectionStepTable"))
+        # two sections of different time step
+        number_of_revolution_1TS = self.configuration['number_of_revolution_1TS']
+        number_of_revolution_2TS = self.configuration['number_of_revolution_2TS']
+        number_of_steps_1TS = self.configuration['number_of_steps_per_rev_1TS'] * number_of_revolution_1TS
+        number_of_steps_2TS = self.configuration['number_of_steps_per_rev_2TS'] * number_of_revolution_2TS
+        DM = app.GetDataManager()
+        DM.CreatePointArray("point_array/timevsdivision", "SectionStepTable")
+        refarray = [[0 for i in range(3)] for j in range(3)]
+        refarray[0][0] = 0
+        refarray[0][1] = 1
+        refarray[0][2] = 50
+        refarray[1][0] = number_of_revolution_1TS / self.excitation_freq
+        refarray[1][1] = number_of_steps_1TS
+        refarray[1][2] = 50
+        refarray[2][0] = (number_of_revolution_1TS + number_of_revolution_2TS) / self.excitation_freq
+        refarray[2][1] = number_of_steps_2TS  #number_of_steps_2TS
+        refarray[2][2] = 50
+        DM.GetDataSet("SectionStepTable").SetTable(refarray)
+        number_of_total_steps = 1 + number_of_steps_1TS + number_of_steps_2TS  # don't forget to modify here!
+        study.GetStep().SetValue("Step", number_of_total_steps)
+        study.GetStep().SetValue("StepType", 3)
+        study.GetStep().SetTableProperty("Division", DM.GetDataSet("SectionStepTable"))
 
         # add equations
         study.GetDesignTable().AddEquation("freq")
@@ -434,6 +435,7 @@ class BSPM_EM_Analysis():
             cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
             cond.ClearParts()
             sel = cond.GetSelection()
+            EPS = 1e-2  # unit: mm
             sel.SelectPartByPosition(self.machine_variant.r_si * 1e3 + EPS, EPS, 0)
             cond.AddSelected(sel)
             # Use FFT for hysteresis to be consistent with FEMM's results and to have a FFT plot
@@ -493,7 +495,7 @@ class BSPM_EM_Analysis():
         study.GetMeshControl().SetValue("RadialDivision", self.configuration[
             'mesh_radial_division'])  # for air region near which motion occurs
         study.GetMeshControl().SetValue("CircumferentialDivision", self.configuration[
-            'mesh_circum_division'])  # 1440) # for air region near which motion occurs 这个数足够大，sliding mesh才准确。
+            'mesh_circum_division'])  # 1440) # for air region near which motion occurs 
         study.GetMeshControl().SetValue("AirRegionScale", self.configuration[
             'mesh_air_region_scale'])  # [Model Length]: Specify a value within (1.05 <= value < 1000)
         study.GetMeshControl().SetValue("MeshSize", self.configuration['mesh_size'] * 1e3)  # mm
@@ -855,7 +857,6 @@ class BSPM_EM_Analysis():
                 if self.machine_variant.layer_phases[1][index_leftlayer] != UVW:
                     print('[Warn] Potential bug in your winding layout detected.')
                     raise Exception('Bug in winding layout detected.')
-                # 右层导体的电流方向是正，那么与其串联的一个coil_pitch之处的左层导体就是负！不需要再检查l_leftlayer2了~
                 if UpDown == '+':
                     UpDown = '-'
                 else:

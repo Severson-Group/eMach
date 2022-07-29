@@ -4,7 +4,7 @@ from typing import List
 
 class ThermalNetworkProblem:
     """Problem class from Thermal Resistance Network Analyzer.
-    
+
     Attributes:
         res: List of Resistance objects
         Q_dot: List of Thermal sources at nodal locations
@@ -26,20 +26,20 @@ class ThermalNetworkProblem:
 
 
 class ThermalNetworkAnalyzer:
-    """Thermal Resistance Network Analyzer.
-    """
+    """Thermal Resistance Network Analyzer."""
 
     def analyze(self, problem: ThermalNetworkProblem):
         """Analyze imported resistance network problem
 
         Args:
             problem: ThermalNetworkProblem object to be analyzed
-                
+
         Returns:
             T: Temperature distribution at each node in system
         """
         R_inv = np.zeros([problem.N_nodes, problem.N_nodes])
         for i, r in enumerate(problem.res):
+            # print("Resistance number", i)
             N1 = r.Node1
             N2 = r.Node2
             res = r.resistance_value
@@ -67,8 +67,8 @@ class ThermalNetworkAnalyzer:
 
 
 class Material:
-    """ Class holding material parameters.
-    
+    """Class holding material parameters.
+
     Attributes:
         k: Thermal conductivity [W/m-K]
         cp: cp value of fluid []
@@ -83,8 +83,8 @@ class Material:
 
 class Resistance:
     """Base class for thermal resisance
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
         Node1: First node connected to resistance
         Node2: Second node connected to resistance
@@ -103,8 +103,8 @@ class Resistance:
 
 class plane_wall(Resistance):
     """Plane wall thermal resistance.
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
         Node1: First node connected to resistance
         Node2: Second node connected to resistance
@@ -126,8 +126,8 @@ class plane_wall(Resistance):
 
 class cylind_wall(Resistance):
     """Cylindrical wall thermal resistance.
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
         Node1: First node connected to resistance
         Node2: Second node connected to resistance
@@ -152,8 +152,8 @@ class cylind_wall(Resistance):
 
 class air_gap_conv(Resistance):
     """Air gap convection thermal resistance
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
         Node1: First node connected to resistance
         Node2: Second node connected to resistance
@@ -193,9 +193,9 @@ class air_gap_conv(Resistance):
         D_h = 2 * g
         u_theta = self.omega * self.R_r
         Re_g = (self.omega * g * self.R_r) / self.Material.mu
-        Re_theta = (self.omega * (self.R_r ** 2)) / self.Material.mu
+        Re_theta = (self.omega * (self.R_r**2)) / self.Material.mu
         Re_z = (
-            np.sqrt((self.omega * self.R_r) ** 2 + self.u_z ** 2)
+            np.sqrt((self.omega * self.R_r) ** 2 + self.u_z**2)
             * D_h
             / self.Material.mu
         )
@@ -208,15 +208,15 @@ class air_gap_conv(Resistance):
             self.Nu = 0.202 * (Ta_m ** (0.63)) * (Pr ** (0.27))
         elif Ta_m >= 100:
             if self.u_z == 0:
-                self.Nu = 0.03 * Re_z ** 0.8
+                self.Nu = 0.03 * Re_z**0.8
             else:
                 self.Nu = (
                     (
                         0.022
                         * (1 + D_h * u_theta / (np.pi * a * self.u_z) ** 2) ** 0.8714
                     )
-                    * (Re_z ** 0.8)
-                    * (Pr ** 0.5)
+                    * (Re_z**0.8)
+                    * (Pr**0.5)
                 )
         else:
             self.Nu = None
@@ -229,8 +229,8 @@ class air_gap_conv(Resistance):
 
 class hub_conv(Resistance):
     """Hub convection thermal resistance
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
         Node1: First node connected to resistance
         Node2: Second node connected to resistance
@@ -259,10 +259,10 @@ class hub_conv(Resistance):
 
 class shaft_conv(Resistance):
     """Shaft convection thermal resistance
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
-        Node1: First node connected to resistance 
+        Node1: First node connected to resistance
         Node2: Second node connected to resistance
         resistance_value: Thermal resistance [K/W]
         omega: rotational speed [rad/s]
@@ -302,7 +302,7 @@ class shaft_conv(Resistance):
 
     @property
     def Nu(self):
-        return 0.036 * self.Re ** 0.8 * self.Pr ** 0.33
+        return 0.036 * self.Re**0.8 * self.Pr**0.33
 
     @property
     def h(self):
@@ -315,8 +315,8 @@ class shaft_conv(Resistance):
 
 class conv(Resistance):
     """Air gap convection thermal resistance
-    
-    Attributes: 
+
+    Attributes:
         Material: Material object holding material properties
         Node1: First node connected to resistance
         Node2: Second node connected to resistance
@@ -337,4 +337,3 @@ class conv(Resistance):
     @property
     def resistance_value(self):
         return 1 / (self.h * self.A)
-

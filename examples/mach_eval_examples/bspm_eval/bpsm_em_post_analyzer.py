@@ -10,9 +10,7 @@ class BSPM_EM_PostAnalyzer:
         state_out = copy.deepcopy(in_state)
         machine = state_out.design.machine
 
-        ##############################################################################
-        ############################ extract useful info ###########################
-        ##############################################################################
+        ############################ extract required info ###########################
         length = results["current"].shape[0]
         i = length - results["range_fine_step"]
         results["current"] = results["current"].iloc[i:]
@@ -24,9 +22,7 @@ class BSPM_EM_PostAnalyzer:
         results["iron_loss"] = results["iron_loss"]
         results["eddy_current_loss"] = results["eddy_current_loss"].iloc[i:]
 
-        ##############################################################################
         ############################ calculating volumes ###########################
-        ##############################################################################
         # volumes = {}
         # # shaft volume
         # machine = state_out.design.machine
@@ -59,9 +55,7 @@ class BSPM_EM_PostAnalyzer:
         r_si = machine.r_si
         V_sfe = np.pi * (r_so ** 2 - r_si ** 2) * l_st - machine.Q * s_slot * l_st
 
-        ##############################################################################
         ############################ post processing #################################
-        ##############################################################################
         torque_avg, torque_ripple = process_torque_data(results["torque"])
         f_x, f_y, force_avg, Em, Ea = process_force_data(results["force"])
 
@@ -196,8 +190,6 @@ def compute_power_factor(
 
 # https://dsp.stackexchange.com/questions/11513/estimate-frequency-and-peak-value-of-a-signals-fundamental
 # define N_SAMPLE ((long int)(1.0/(0.1*TS))) // Resolution 0.1 Hz = 1 / (N_SAMPLE * TS)
-
-
 class GoertzelDataStruct(object):
     """docstring for GoertzelDataStruct"""
 
@@ -310,9 +302,7 @@ class GoertzelDataStruct(object):
 
 
 def compute_power_factor_from_half_period(
-    voltage, current, mytime, targetFreq=1e3, numPeriodicalExtension=1000
-):  # 目标频率默认是1000Hz
-
+    voltage, current, mytime, targetFreq=1e3, numPeriodicalExtension=1000):
     gs_u = GoertzelDataStruct("Goertzel Struct for Voltage\n")
     gs_i = GoertzelDataStruct("Goertzel Struct for Current\n")
 

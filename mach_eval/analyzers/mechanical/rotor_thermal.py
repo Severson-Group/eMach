@@ -5,15 +5,15 @@ import sys
 
 # change current working directory to file location
 os.chdir(os.path.dirname(__file__))
-# add the directory immediately above this file's directory to path for module import
-sys.path.append("../..")
+# add the directory file resides in for valid imports
+sys.path.append(".")
 
-import analyzers.general.thermal_network as tb
+import thermal_network as tb
 
 
 class SPM_RotorThermalProblem:
-    """ Problem class for rotor thermal analyzer
-    
+    """Problem class for rotor thermal analyzer
+
     Attributes:
         mat_dict (dict): Material Dictionary
         r_sh (float): Shaft radius [m]
@@ -26,13 +26,13 @@ class SPM_RotorThermalProblem:
         T_ref (float): Air Temperature [C]
         u_z (float): Axial air flow speed [m/s]
         losses (dict): Loss dictionary [W]
-        omega (float): Rotational Speed [rad/s]     
-        
+        omega (float): Rotational Speed [rad/s]
+
         R_1 (float): Shaft radius [m]
         R_2 (float): Back iron radius [m]
         R_3 (float): Outer rotor Radius [m]
         R_4 (float): Outer sleeve radius [m]
-    
+
     """
 
     def __init__(
@@ -71,19 +71,19 @@ class SPM_RotorThermalProblem:
 
 
 class SPM_RotorThermalAnalyzer:
-    """ Analyzer for rotor thermal problem
-    
+    """Analyzer for rotor thermal problem
+
     Attributes:
         base_ana (tb.ThermalNetworkAnalyzer): Thermal Network Analyzer
-    
+
     """
 
     def __init__(self):
         self.base_ana = tb.ThermalNetworkAnalyzer()
 
     def analyze(self, problem: SPM_RotorThermalProblem):
-        """ Analyzes input problem for temperature distribution
-        
+        """Analyzes input problem for temperature distribution
+
         Args:
             problem (SPM_RotorThermalProblem): input problem
         Returns:
@@ -251,28 +251,28 @@ class SPM_RotorThermalAnalyzer:
         # Path 8
         ##############
         Descr = "Rotor core center to Hub/RotorCore Interface"
-        A_rcHub = np.pi * (R_2 ** 2 - R_1 ** 2)
+        A_rcHub = np.pi * (R_2**2 - R_1**2)
         Resistances.append(tb.plane_wall(rc_mat, 3, 9, L_1, A_rcHub))
         Resistances[8].Descr = Descr
         ##############
         # Path 9
         ##############
         Descr = "PM center to Hub/PM Interface"
-        A_pmHub = np.pi * (R_3 ** 2 - R_2 ** 2)
+        A_pmHub = np.pi * (R_3**2 - R_2**2)
         Resistances.append(tb.plane_wall(pm_mat, 5, 10, L_1, A_pmHub))
         Resistances[9].Descr = Descr
         ##############
         # Path 10
         ##############
         Descr = "Sleeve center to Hub/Sleeve Interface"
-        A_slHub = np.pi * (R_4 ** 2 - R_3 ** 2)
+        A_slHub = np.pi * (R_4**2 - R_3**2)
         Resistances.append(tb.plane_wall(sl_mat, 7, 11, L_1, A_slHub))
         Resistances[10].Descr = Descr
         ##############
         # Path 11
         ##############
         Descr = "Shaft Center to shaft Inline with Hub center"
-        A_sh = np.pi * (R_1 ** 2)
+        A_sh = np.pi * (R_1**2)
         Resistances.append(tb.plane_wall(sh_mat, 1, 12, L_2, A_sh))
         Resistances[11].Descr = Descr
         ##############
@@ -371,28 +371,28 @@ class SPM_RotorThermalAnalyzer:
         # Path 27
         ##############
         Descr = "Rotor Core center to Hub/RotorCore Interface"
-        A_rcHub = np.pi * (R_2 ** 2 - R_1 ** 2)
+        A_rcHub = np.pi * (R_2**2 - R_1**2)
         Resistances.append(tb.plane_wall(rc_mat, 3, 21, L_1, A_rcHub))
         Resistances[27].Descr = Descr
         ##############
         # Path 28
         ##############
         Descr = "PM center to Hub/PM Interface"
-        A_pmHub = np.pi * (R_3 ** 2 - R_4 ** 2)
+        A_pmHub = np.pi * (R_3**2 - R_4**2)
         Resistances.append(tb.plane_wall(pm_mat, 5, 22, L_1, A_pmHub))
         Resistances[28].Descr = Descr
         ##############
         # Path 29
         ##############
         Descr = "Sleeve center to Hub/Sleeve Interface"
-        A_slHub = np.pi * (R_4 ** 2 - R_3 ** 2)
+        A_slHub = np.pi * (R_4**2 - R_3**2)
         Resistances.append(tb.plane_wall(sl_mat, 7, 23, L_1, A_slHub))
         Resistances[29].Descr = Descr
         ##############
         # Path 30
         ##############
         Descr = "Shaft Center to shaft Inline with Hub center"
-        A_sh = np.pi * (R_1 ** 2)
+        A_sh = np.pi * (R_1**2)
         Resistances.append(tb.plane_wall(sh_mat, 1, 24, L_2, A_sh))
         Resistances[30].Descr = Descr
         ##############
@@ -497,7 +497,7 @@ class SPM_RotorThermalAnalyzer:
 
 class AirflowProblem:
     """Problem class for AirflowAnalyzer
-    
+
     Attributes:
         mat_dict (dict): Material Dictionary
         r_sh (float): Shaft radius [m]
@@ -548,10 +548,10 @@ class AirflowProblem:
 
     def magnet_temp(self, u_z):
         """Calculate magnet temperature from airflow rate
-        
+
         Args:
             u_z (float): Axial airflow rate [m/s]
-            
+
         Returns:
             T[5] (float): Magnet Temperature
         """
@@ -579,15 +579,15 @@ class AirflowProblem:
 
 
 class AirflowAnalyzer:
-    """ Analyzer to calculate required airflow in SPM machine"""
+    """Analyzer to calculate required airflow in SPM machine"""
 
     def analyze(self, problem: AirflowProblem):
         """Analyzes input problem to calculate required airflow to cool rotor
-        
+
         Args:
             problem (AirflowProblem): input problem
         Returns:
-            results (dict): dictionary with analyzer solution 
+            results (dict): dictionary with analyzer solution
         """
 
         nlc1 = op.NonlinearConstraint(problem.magnet_temp, 0, problem.max_temp)
@@ -656,4 +656,3 @@ if __name__ == "__main__":
     ana = AirflowAnalyzer()
     sleeve_dim = ana.analyze(afp)
     print(sleeve_dim)
-

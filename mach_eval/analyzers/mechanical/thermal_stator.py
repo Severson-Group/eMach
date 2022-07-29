@@ -3,7 +3,7 @@ import numpy as np
 
 class StatorThermalProblem:
     """Problem class utilized by the stator thermal analyzer
-    
+
     Attributes:
         g_sy: Volumetric Heating of stator yoke [W/m^3]
         g_th: Volumetric Heating of stator tooth [W/m^3]
@@ -65,7 +65,7 @@ class StatorThermalProblem:
 
 
 class StatorThermalAnalyzer:
-    """"Stator Thermal Analyzer calculates coil temperatures"""
+    """ "Stator Thermal Analyzer calculates coil temperatures"""
 
     def analyze(self, problem):
         """calculates coil temperature from problem class.
@@ -97,17 +97,17 @@ class StatorThermalAnalyzer:
         # r_vect=np.linspace(r_sy,r_so,100)
 
         Q_tooth = g_th * w_tooth * l_st * l_tooth / 2
-        Q_sy = g_sy * alpha_q / 2 * (r_so ** 2 - r_sy ** 2) * l_st
+        Q_sy = g_sy * alpha_q / 2 * (r_so**2 - r_sy**2) * l_st
         zeta = np.sqrt(2 * k_ins / (w_tooth * w_ins * k_fe))
 
         M_th = w_tooth * l_st / (2 * zeta) * np.tanh(zeta * l_tooth)
         R_sy = 1 / (h * r_so * alpha_q * l_st) + np.log(r_so / r_sy) / (
             k_fe * alpha_q * l_st
         )
-        V_sy = l_st * (alpha_q / 2) * (r_so ** 2 - r_sy ** 2)
+        V_sy = l_st * (alpha_q / 2) * (r_so**2 - r_sy**2)
         M_sy = (
-            r_sy ** 2 / (2 * k_fe) * np.log(r_sy / r_so)
-            + (r_so ** 2 - r_sy ** 2) / (2 * k_fe)
+            r_sy**2 / (2 * k_fe) * np.log(r_sy / r_so)
+            + (r_so**2 - r_sy**2) / (2 * k_fe)
             + V_sy / (h * r_so * alpha_q * l_st)
         )
 
@@ -142,4 +142,3 @@ class StatorThermalAnalyzer:
 
         results = {"Coil temperature": T_coil, "Stator yoke temperature": T_sy}
         return results
-
