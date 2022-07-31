@@ -8,22 +8,19 @@ os.chdir(os.path.dirname(__file__))
 # add the directory 3 levels above this file's directory to path for module import
 sys.path.append("../../..")
 
-from mach_eval.analyzers.electromagnetic.bspm.jmag_analyzer import BSPM_EM_Analyzer
+from mach_eval.analyzers.electromagnetic.bspm import jmag_analyzer as em
 from mach_eval.analyzers.mechanical import rotor_structural as stra
 from mach_eval.analyzers.mechanical import rotor_thermal as therm
 from mach_eval.analyzers.mechanical import thermal_stator as st_therm
 from mach_eval.analyzers.mechanical import windage_loss as wl
+from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
+from length_scale_step import LengthScaleStep
+from mach_eval import AnalysisStep, MachineEvaluator
+from mach_opt import InvalidDesign
 
 # reset to current file path for JMAG_FEA_Configuration
 os.chdir(os.path.dirname(__file__))
 from em_fea_config import JMAG_FEA_Configuration
-
-from mach_eval.analyzers.electromagnetic.bspm.jmag_analyzer import BSPM_EM_Problem
-from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
-from length_scale_step import LengthScaleStep
-from mach_eval import AnalysisStep, MachineEvaluator
-
-from mach_opt import InvalidDesign
 
 
 ############################ Define Struct AnalysisStep ######################
@@ -92,12 +89,12 @@ class BSPM_EM_ProblemDefinition:
         pass
 
     def get_problem(state):
-        problem = BSPM_EM_Problem(state.design.machine, state.design.settings)
+        problem = em.BSPM_EM_Problem(state.design.machine, state.design.settings)
         return problem
 
 
 # initialize em analyzer class with FEA configuration
-em_analysis = BSPM_EM_Analyzer(JMAG_FEA_Configuration)
+em_analysis = em.BSPM_EM_Analyzer(JMAG_FEA_Configuration)
 # define AnalysysStep for EM evaluation
 em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
 
