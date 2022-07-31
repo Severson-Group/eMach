@@ -342,9 +342,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.9999998"
-     inkscape:cx="148.05863"
-     inkscape:cy="269.98285"
+     inkscape:zoom="11.313708"
+     inkscape:cx="119.82518"
+     inkscape:cy="328.61956"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -453,7 +453,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -501,12 +501,12 @@
        d="M 22.500001,64.689112 C 33.329038,70.94126 40,82.495705 40,95"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 5.029064,94.949162 39.179229,91.356269"
+       style="fill:none;stroke:#000000;stroke-width:0.220691;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 5.0450406,94.932615 39.553731,93.068363"
        id="path973"
        sodipodi:nodetypes="cc"
-       inkscape:transform-center-x="2.3106129"
-       inkscape:transform-center-y="-1.9763803" />
+       inkscape:transform-center-x="2.2895526"
+       inkscape:transform-center-y="-1.5879145" />
     <path
        sodipodi:nodetypes="cc"
        id="path973-3"
@@ -523,13 +523,13 @@
     <text
        xml:space="preserve"
        style="font-size:4.23333px;line-height:1.25;font-family:'Latin Modern Math';-inkscape-font-specification:'Latin Modern Math';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
-       x="33.349358"
-       y="90.271652"
+       x="32.925083"
+       y="90.982887"
        id="text2315"><tspan
          sodipodi:role="line"
          id="tspan2313"
-         x="33.349358"
-         y="90.271652"
+         x="32.925083"
+         y="90.982887"
          style="font-size:4.23333px;stroke-width:0.264583"><tspan
            style="font-style:italic"
            id="tspan2603">r</tspan><tspan
