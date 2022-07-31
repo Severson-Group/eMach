@@ -168,6 +168,9 @@ class OuterStatorBField:
             b_radial_h: A numpy array of normal B field harmonics at r
         """
 
+        if r < self.r_rfe or r > self.r_si:
+            raise ValueError("Radius provided not within machine airgap")
+
         mu0 = 4 * np.pi * 10**-7
         conv_b_field = self.MMF * mu0 / self.delta_e
         k_sov = self.__slot_opening_factor()
