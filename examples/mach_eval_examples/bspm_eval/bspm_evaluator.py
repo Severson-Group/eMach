@@ -8,14 +8,14 @@ os.chdir(os.path.dirname(__file__))
 # add the directory 3 levels above this file's directory to path for module import
 sys.path.append("../../..")
 
-from mach_eval.analyzers.electromagnetic.bspm import jmag_analyzer as em
+from mach_eval.analyzers.electromagnetic.bspm import jmag_2d_analyzer as em
 from mach_eval.analyzers.mechanical import rotor_structural as stra
 from mach_eval.analyzers.mechanical import rotor_thermal as therm
 from mach_eval.analyzers.mechanical import thermal_stator as st_therm
 from mach_eval.analyzers.mechanical import windage_loss as wl
 from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
 from length_scale_step import LengthScaleStep
-from mach_eval import AnalysisStep, MachineEvaluator
+from mach_eval import AnalysisStep, MachineEvaluator, ProblemDefinition
 from mach_opt import InvalidDesign
 
 # reset to current file path for JMAG_FEA_Configuration
@@ -35,7 +35,7 @@ stress_limits = {
 struct_ana = stra.SPM_RotorSleeveAnalyzer(stress_limits)
 
 
-class MySleeveProblemDef:
+class MySleeveProblemDef(ProblemDefinition):
     def get_problem(state):
         design = state.design
         material_dict = {}
@@ -47,12 +47,6 @@ class MySleeveProblemDef:
             material_dict[key] = value
         for key, value in design.machine.shaft_mat.items():
             material_dict[key] = value
-
-        material_dict["alpha_sh"] = 1.2e-5
-        material_dict["alpha_rc"] = 1.2e-5
-        material_dict["alpha_pm"] = 5e-6
-        material_dict["alpha_sl_t"] = -4.7e-7
-        material_dict["alpha_sl_r"] = 0.3e-6
 
         r_sh = design.machine.r_sh
         r_ro = design.machine.r_ro
@@ -82,7 +76,7 @@ class MyStructPostAnalyzer:
 struct_step = AnalysisStep(MySleeveProblemDef, struct_ana, MyStructPostAnalyzer)
 
 ############################ Define EMAnalysisStep ###########################
-class BSPM_EM_ProblemDefinition:
+class BSPM_EM_ProblemDefinition(ProblemDefinition):
     """Converts a State into a problem"""
 
     def __init__(self):
@@ -99,7 +93,7 @@ em_analysis = em.BSPM_EM_Analyzer(JMAG_FEA_Configuration)
 em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
 
 ###################### Define Rotor Thermal AnalysisStep #####################
-class MyAirflowProblemDef:
+class MyAirflowProblemDef(ProblemDefinition):
     def get_problem(state):
         design = state.design
         material_dict = {}
@@ -115,12 +109,6 @@ class MyAirflowProblemDef:
             material_dict[key] = value
         for key, value in design.machine.rotor_hub.items():
             material_dict[key] = value
-
-        material_dict["alpha_sh"] = 1.2e-5
-        material_dict["alpha_rc"] = 1.2e-5
-        material_dict["alpha_pm"] = 5e-6
-        material_dict["alpha_sl_t"] = -4.7e-7
-        material_dict["alpha_sl_r"] = 0.3e-6
 
         r_sh = design.machine.r_sh
         d_ri = design.machine.d_ri
@@ -169,7 +157,7 @@ rotor_thermal_step = AnalysisStep(
 )
 
 ###################### Define Stator Thermal AnalysisStep #####################
-class MyThermalProblemDefinition:
+class MyThermalProblemDefinition(ProblemDefinition):
     """Class converts input state into a problem"""
 
     def get_problem(state):
@@ -240,7 +228,7 @@ stator_therm_step = AnalysisStep(
 )
 
 ############################ Define Windage AnalysisStep #####################
-class MyWindageProblemDef:
+class MyWindageProblemDef(ProblemDefinition):
     def get_problem(state):
         design = state.design
         omega = design.settings.speed * 2 * np.pi / 60
@@ -316,7 +304,7 @@ if __name__ == "__main__":
         0.95,
         0,
         0.05,
-        150000,
+        200000,
         25,
         80,
     )

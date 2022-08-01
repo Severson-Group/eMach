@@ -14,6 +14,7 @@ Arnon5 = {
     'core_therm_conductivity'    : 28, # W/m-k
     'core_stacking_factor'       : 96, # percentage
     'core_bh_file'               : os.path.dirname(__file__) + '/Arnon5.BH',
+    'alpha_rc'                   : 1.2e-5,
     }
 
 M19Gauge29 = {
