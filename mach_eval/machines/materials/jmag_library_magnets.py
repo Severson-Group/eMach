@@ -10,4 +10,5 @@ N40H = {
     'magnet_max_temperature'     : 80, # deg C
     'magnet_max_rad_stress'      : 0, # Mpa  
     'magnet_therm_conductivity'  : 8.95, # W/m-k
+    'alpha_pm'                   : 5e-6,
     }

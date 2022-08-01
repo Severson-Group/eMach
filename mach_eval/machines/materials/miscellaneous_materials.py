@@ -10,6 +10,8 @@ CarbonFiber = {
     'sleeve_max_tan_stress'      : 1950E6, # Pa
     'sleeve_max_rad_stress'      : -100E6, # Pa
     'sleeve_therm_conductivity'  : 0.71, # W/m-k
+    'alpha_sl_r'                 : 0.3e-6,
+    'alpha_sl_t'                 : -4.7e-7
     }
 
 Steel = {
@@ -18,6 +20,7 @@ Steel = {
     'shaft_youngs_modulus'       : 206E9, #Pa
     'shaft_poission_ratio'       : .3, #[]
     'shaft_therm_conductivity'   : 51.9, # W/m-k  
+    'alpha_sh'                   : 1.2e-5
     }
 
 Copper = {
