@@ -4,7 +4,7 @@ This module holds the parent classes required for machine evaluation. The module
 manner suitable for both machine optimization and evaluation.
 """
 
-from typing import Protocol, runtime_checkable, Any, List
+from typing import Protocol, runtime_checkable, Any, List, Union
 from abc import abstractmethod, ABC
 from copy import deepcopy
 import os
@@ -92,10 +92,10 @@ class Architect(Protocol):
     @abstractmethod
     def create_new_design(self, input_arguments: Any) -> "Machine":
         """Creates a new Machine object and returns it
-        
+
         Args:
             input_arguments: Any
-        
+
         Returns:
             machine: Machine
         """
@@ -149,7 +149,7 @@ class EvaluationStep(Protocol):
     """Protocol for an evaluation step"""
 
     @abstractmethod
-    def step(self, state_in: "State") -> [Any, "State"]:
+    def step(self, state_in: "State") -> Union[Any, "State"]:
         pass
 
 
@@ -184,10 +184,10 @@ class AnalysisStep(EvaluationStep):
     """Class representing a step which involves detailed analysis.
 
     Attributes:
-        problem_definition: class or object defining the problem to be analyzed. This attribute acts as the interface between the 
+        problem_definition: class or object defining the problem to be analyzed. This attribute acts as the interface between the
             machine design and the analyzer.
         analyzer: class or object which evaluates any aspect of a machine design.
-        post_analyzer: class or object which processes the results obtained from the analyzer and packages in a form suitable for 
+        post_analyzer: class or object which processes the results obtained from the analyzer and packages in a form suitable for
             subsequent steps.
     """
 
@@ -196,7 +196,7 @@ class AnalysisStep(EvaluationStep):
         self.analyzer = analyzer
         self.post_analyzer = post_analyzer
 
-    def step(self, state_in: "State") -> [Any, "State"]:
+    def step(self, state_in: "State") -> Union[Any, "State"]:
         """Method to evaluate design using a analyzer
 
         Args:
@@ -233,7 +233,7 @@ class Analyzer(Protocol):
 
 
 class PostAnalyzer(Protocol):
-    """Protocol for a post analyzer """
+    """Protocol for a post analyzer"""
 
     @abstractmethod
     def get_next_state(self, results: Any, state_in: "State") -> "State":
