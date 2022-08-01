@@ -7,8 +7,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   mach_eval.analyzers.general
-   mach_eval.analyzers.spm
+   mach_eval.analyzers.electromagnetic
+   mach_eval.analyzers.mechanical
 
 
 mach\_eval.analyzers.analyzer module
