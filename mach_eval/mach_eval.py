@@ -10,10 +10,8 @@ from copy import deepcopy
 import os
 import sys
 
-# change current working directory to file location
-os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
-sys.path.append("..")
+sys.path.append(os.path.dirname(__file__)+"\..")
 
 import mach_opt as mo
 

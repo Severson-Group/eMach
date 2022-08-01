@@ -3,11 +3,7 @@ import scipy.optimize as op
 import os
 import sys
 
-# change current working directory to file location
-os.chdir(os.path.dirname(__file__))
-# add the directory file resides in for valid imports
-sys.path.append(".")
-
+sys.path.append(os.path.dirname(__file__))
 import thermal_network as tb
 
 
