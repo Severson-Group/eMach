@@ -9,6 +9,7 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../..")
 
 from mach_eval.analyzers.electromagnetic.bspm import jmag_2d_analyzer as em
+from mach_eval.analyzers.electromagnetic.bspm.jmag_2d_config import JMAG_2D_Config
 from mach_eval.analyzers.mechanical import rotor_structural as stra
 from mach_eval.analyzers.mechanical import rotor_thermal as therm
 from mach_eval.analyzers.mechanical import thermal_stator as st_therm
@@ -19,7 +20,7 @@ from mach_eval import AnalysisStep, MachineEvaluator, ProblemDefinition
 from mach_opt import InvalidDesign
 
 # reset to current file path for JMAG_FEA_Configuration
-os.chdir(os.path.dirname(__file__))
+# os.chdir(os.path.dirname(__file__))
 from em_fea_config import JMAG_FEA_Configuration
 
 
@@ -88,7 +89,27 @@ class BSPM_EM_ProblemDefinition(ProblemDefinition):
 
 
 # initialize em analyzer class with FEA configuration
-em_analysis = em.BSPM_EM_Analyzer(JMAG_FEA_Configuration)
+jmag_config = JMAG_2D_Config(
+    no_of_rev_1TS=3,
+    no_of_rev_2TS=0.5,
+    no_of_steps_per_rev_1TS=8,
+    no_of_steps_per_rev_2TS=64,
+    mesh_size=4e-3,
+    magnet_mesh_size=2e-3,
+    airgap_mesh_radial_div=5,
+    airgap_mesh_circum_div=720,
+    mesh_air_region_scale=1.15,
+    only_table_results=False,
+    csv_results=r"Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss",
+    del_results_after_calc=False,
+    run_folder=os.path.abspath("") + "/run_data/",
+    jmag_csv_folder=os.path.abspath("") + "/run_data/JMAG_csv/",
+    max_nonlinear_iterations=50,
+    multiple_cpus=True,
+    jmag_scheduler=False,
+    jmag_visible=False,
+)
+em_analysis = em.BSPM_EM_Analyzer(jmag_config)
 # define AnalysysStep for EM evaluation
 em_step = AnalysisStep(BSPM_EM_ProblemDefinition, em_analysis, BSPM_EM_PostAnalyzer)
 
@@ -254,7 +275,9 @@ class MyWindageLossPostAnalyzer:
             * Pout
             / (
                 Pout
-                + results[0] + results[1] + results[2]
+                + results[0]
+                + results[1]
+                + results[2]
                 + state_out.conditions.em["copper_loss"]
                 + state_out.conditions.em["rotor_iron_loss"]
                 + state_out.conditions.em["stator_iron_loss"]
