@@ -53,7 +53,7 @@ The following code block demonstrates how to initialize the stator thermal probl
 .. code-block:: python
 
     import numpy as np
-    import eMach.mach_eval.analyzers.general.thermal_stator as sta
+    import eMach.mach_eval.analyzers.mechanical.thermal_stator as sta
     from matplotlib import pyplot as plt
     
     Q= 6 #Number of Slots

@@ -41,7 +41,7 @@ Example code initializing the windage loss analyzer and problem:
 .. code-block:: python
 
     import numpy as np
-    import eMach.mach_eval.analyzers.general.windage_loss as wla
+    import eMach.mach_eval.analyzers.mechanical.windage_loss as wla
     from matplotlib import pyplot as plt
 
     Omega=1000

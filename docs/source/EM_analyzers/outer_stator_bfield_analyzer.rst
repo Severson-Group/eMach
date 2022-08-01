@@ -88,7 +88,7 @@ Example code initializing the analyzer and problem1 is shown below:
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.spm.outer_stator_bfields import (
+    from eMach.mach_eval.analyzers.electromagnetic.outer_stator_bfields import (
         OuterStatorBFieldAnalyzer,
         OuterStatorBnfieldProblem1,
     )

@@ -49,7 +49,7 @@ Example code to initialize the sleeve analyzer and problem:
    
 .. code-block:: python
 
-    import eMach.mach_eval.analyzers.spm.rotor_structural as sta
+    import eMach.mach_eval.analyzers.mechanical.rotor_structural as sta
     
     ######################################################
     # Creating the required Material Dictionary 

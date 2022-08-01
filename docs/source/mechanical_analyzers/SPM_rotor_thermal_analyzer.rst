@@ -8,7 +8,7 @@ This analyzer determines the temperature distribution of a surface-mounted perma
 Model Background
 ****************
 
-The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThermalAnalyzer``. This analyzer utilizes the :doc:`Thermal Resistance Network Analyzer <../general_analyzers/thermal_res_net_analyzer>` to solve for the temperature distribution in the rotor.
+The SPM rotor is modeled using a thermal resistance network as shown in the figure. The implementation of the resistances and nodal locations can be found in the source code of the ``create_resistance_network`` method of ``SPM_RotorThermalAnalyzer``. This analyzer utilizes the :doc:`Thermal Resistance Network Analyzer <thermal_res_net_analyzer>` to solve for the temperature distribution in the rotor.
 
 
 
@@ -69,7 +69,7 @@ The following code-block demonstrates how to create a ``SPM_RotorThermalProblem`
 .. code-block:: python
 
     import numpy as np
-    from eMach.mach_eval.analyzers.spm.rotor_thermal import SPM_RotorThermalProblem,SPM_RotorThermalAnalyzer
+    from eMach.mach_eval.analyzers.mechanical.rotor_thermal import SPM_RotorThermalProblem,SPM_RotorThermalAnalyzer
     # Example Machine Dimensions
     r_sh=5E-3 # [m]
     d_m=3E-3 # [m]
