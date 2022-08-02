@@ -11,7 +11,7 @@ Model Background
 
 Thermal resistance networks are used to reduce the temperature distribution in a system into a set of nodes and thermal resistances. This is analogous to electrical resistance systems, where instead of ``V=IR`` it is ``dT=RQ`` where ``dT`` is the temperature rise, ``R`` is the thermal resistance, and ``Q`` is the heat flow.  
 
-This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes, and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system. This analyzer is also utilized by other analyzers in eMach, i.e. :doc:`SPM Rotor Thermal Analyzer <../SPM_Analyzers/SPM_rotor_airflow_analyzer>`. 
+This analyzer has the user specify fixed reference temperatures at one or more nodes, thermal resistances between nodes, and heat input at multiple nodes. The analyzer constructs the thermal network, solves it, and returns to the user the temperature at every node in the system. This analyzer is also utilized by other analyzers in eMach, i.e. :doc:`SPM Rotor Thermal Analyzer <SPM_rotor_airflow_analyzer>`. 
 
 Example Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -170,7 +170,7 @@ Code is now provided to solve the example thermal problem provided in the **Mode
     import scipy.optimize as op
     from matplotlib import pyplot as plt
     from matplotlib.patches import Rectangle
-    from eMach.mach_eval.analyzers.general.thermal_network import *
+    from eMach.mach_eval.analyzers.mechanical.thermal_network import *
     #################
     #Define Materials
     #################

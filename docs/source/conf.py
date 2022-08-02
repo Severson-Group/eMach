@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-project = "MachEval"
+project = "eMach"
 copyright = "2021, Severson Group"
 author = "Bharat"
 
@@ -64,7 +64,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -136,7 +136,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "MachEval.tex", "MachEval Documentation", "Bharat", "manual"),
+    (master_doc, "eMach.tex", "eMach Documentation", "Bharat", "manual"),
 ]
 
 
@@ -144,7 +144,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "macheval", "MachEval Documentation", [author], 1)]
+man_pages = [(master_doc, "eMach", "eMach Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -155,10 +155,10 @@ man_pages = [(master_doc, "macheval", "MachEval Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "MachEval",
-        "MachEval Documentation",
+        "eMach",
+        "eMach Documentation",
         author,
-        "MachEval",
+        "eMach",
         "One line description of project.",
         "Miscellaneous",
     ),

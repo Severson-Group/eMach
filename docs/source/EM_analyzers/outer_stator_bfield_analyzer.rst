@@ -13,8 +13,8 @@ using the following equations:
 
 .. math::
 
-    B_{n} &= \frac{\mu_0 \hat{A} r_{si}}{p \delta}  \\
-    B_{tan} &= -\mu_0 \hat{A}
+    \hat{B}_\text{n} &= \frac{\mu_0 \hat{A} r_\text{si}}{p \delta}  \\
+    \hat{B}_\text{tan} &= -\mu_0 \hat{A}
 
 where :math:`\hat{A}` is the electric loading, :math:`r_{si}` is the inner stator bore radius, :math:`p` is the number of pole pairs of the
 winding, and :math:`\delta` is the airgap. The equation for :math:`B_{tan}` is found to model the actual stator winding tangential 
@@ -47,14 +47,15 @@ Input from User
 *********************************
 
 Users have the option to choose between 2 `problem` classes to interface with this analyzer. The first class requires the user to provide
-winding factors and other relavent parameters and handles MMF calculation behind the scenes. With the second class, users are expected to
-provide the MMF harmonics directly as an input. Both the winding factors and the MMF harmonics can be provided as complex values to
-represent magnitude and phase. The phase must be provided cosidering the following cosine function: :math:`\hat{F}_n \cos(n\alpha + \phi_n)`,
-where :math:`\hat{F}_n` is the magnitude of the MMF and :math:`\phi_n` is the phase shift at harmonic :math:`n`.  A graphical representation
-of a stator winding MMF harmonics, along with the phase shift at each harmonic is provided in the figure below for clarification. The MMF 
-input provided by the user to the analyzer to determine the fields originating from this winding should be 
-[:math:`200 \times e^{-j\pi/3}`, :math:`100 \times e^{j\pi/6}`, :math:`50 \times e^{j0}`] A-turns. The harmonics corresponding to each MMF
-component, i.e [1, 2, 5], must also be provided to the analyzer as a separate argument.
+winding factors and other relavent parameters and handles MMF calculation behind the scenes.  It is assumed that the stator winding is 
+excited with symmetric currents and that winding factors are provided considering the current space vector orientation. With the second 
+class, users are expected to provide the MMF harmonics directly as an input. Both the winding factors and the MMF harmonics can be provided 
+as complex values to represent magnitude and phase. The phase must be provided cosidering the following cosine function: 
+:math:`\hat{F}_n \cos(n\alpha + \phi_n)`, where :math:`\hat{F}_n` is the magnitude of the MMF and :math:`\phi_n` is the phase shift at 
+harmonic :math:`n`.  A graphical representation of a stator winding MMF harmonics, along with the phase shift at each harmonic is provided 
+in the figure below for clarification. The MMF input provided by the user to the analyzer to determine the fields originating from this 
+winding should be [:math:`200 \times e^{-j\pi/3}`, :math:`100 \times e^{j\pi/6}`, :math:`50 \times e^{j0}`] A-turns. The harmonics 
+corresponding to each MMF component, i.e [1, 2, 5], must also be provided to the analyzer as a separate argument.
 
 .. figure:: ./Images/MMF_harmonics.svg
    :alt: Stator_Bn 
@@ -87,7 +88,7 @@ Example code initializing the analyzer and problem1 is shown below:
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.spm.outer_stator_bfields import (
+    from eMach.mach_eval.analyzers.electromagnetic.outer_stator_bfields import (
         OuterStatorBFieldAnalyzer,
         OuterStatorBnfieldProblem1,
     )
