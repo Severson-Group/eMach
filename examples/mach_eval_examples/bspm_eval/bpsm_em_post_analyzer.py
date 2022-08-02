@@ -1,10 +1,12 @@
 import copy
 import numpy as np
+from mach_eval.post_analyzers_lib.force_2d_processing import process_force_xy_data
+from mach_eval.post_analyzers_lib.torque_processing import process_torque_data
 
 
 class BSPM_EM_PostAnalyzer:
     def copper_loss(self):
-        return 6 * ((self.current_trms / 2) ** 2 + self.current_srms ** 2) * self.R_coil
+        return 6 * ((self.current_trms / 2) ** 2 + self.current_srms**2) * self.R_coil
 
     def get_next_state(results, in_state):
         state_out = copy.deepcopy(in_state)
@@ -53,11 +55,14 @@ class BSPM_EM_PostAnalyzer:
         # # Stator volume
         r_so = machine.r_so
         r_si = machine.r_si
-        V_sfe = np.pi * (r_so ** 2 - r_si ** 2) * l_st - machine.Q * s_slot * l_st
+        V_sfe = np.pi * (r_so**2 - r_si**2) * l_st - machine.Q * s_slot * l_st
 
         ############################ post processing #################################
-        torque_avg, torque_ripple = process_torque_data(results["torque"])
-        f_x, f_y, force_avg, Em, Ea = process_force_data(results["force"])
+        torque_avg, torque_ripple = process_torque_data(results["torque"]["TorCon"])
+        f_x, f_y, force_avg, Em, Ea = process_force_xy_data(
+            force_x=results["force"][r"ForCon:1st"],
+            force_y=results["force"][r"ForCon:2nd"],
+        )
 
         post_processing = {}
         post_processing["torque_avg"] = torque_avg
@@ -103,68 +108,6 @@ class BSPM_EM_PostAnalyzer:
         return state_out
 
 
-def process_torque_data(torque_df):
-    torque = torque_df["TorCon"]
-    avg_torque = torque.mean()
-    torque_error = torque - avg_torque
-    ss_max_torque_error = max(torque_error), min(torque_error)
-    torque_ripple = abs(ss_max_torque_error[0] - ss_max_torque_error[1]) / avg_torque
-    return avg_torque, torque_ripple
-
-
-def compute_angle_error(alpha_star, alpha_actual):
-    N = alpha_star.shape[0]  # determine number of input angles
-    vectors_star = np.zeros((N, 2))
-    vectors = np.zeros((N, 2))
-    # unit vectors for desired angle
-    vectors_star[:, 0] = np.cos(np.deg2rad(alpha_star))
-    vectors_star[:, 1] = np.sin(np.deg2rad(alpha_star))
-    # unit vectors for actual angle
-    vectors[:, 0] = np.cos(np.deg2rad(alpha_actual))
-    vectors[:, 1] = np.sin(np.deg2rad(alpha_actual))
-    # determine angle between vectors in degrees (note that this is only the angle magnitude):
-    # This is just doing the cross product between all corresponding unit vectors
-    error_angle_mag = np.rad2deg(np.arccos((vectors_star * vectors).sum(axis=1)))
-    # to determine the error angle direction we can use the cross product between the vectors
-    # positive cross product means the desired vector lags the actual vector and the error angle
-    # is positive
-    sign = np.sign(np.cross(vectors_star, vectors))
-    return sign * error_angle_mag
-
-
-def process_force_data(force_df):
-    force_x = np.asarray(force_df[r"ForCon:1st"])
-    force_y = np.asarray(force_df[r"ForCon:2nd"])
-    # correct JMAG offset
-    theta_offset = -np.pi / 2
-    force = (force_x + 1j * force_y) * np.exp(1j * theta_offset)
-    force_x = np.real(force).tolist()
-    force_y = np.imag(force).tolist()
-    force_df[r"ForCon:1st"] = force_x
-    force_df[r"ForCon:2nd"] = force_y
-    # force magnitude and angle
-    force_ang = []
-    temp_force_ang = np.arctan2(force_y, force_x) / np.pi * 180  # [deg]
-    for angle in temp_force_ang:
-        force_ang.append(angle)
-    force_abs = np.sqrt(np.array(force_x) ** 2 + np.array(force_y) ** 2)
-    # average force
-    force_average_angle = sum(force_ang) / len(force_ang)
-    f_x = sum(force_x) / len(force_x)
-    f_y = sum(force_y) / len(force_y)
-    force_avg_magnitude = sum(force_abs) / len(force_abs)
-    # Error magnitude
-    force_err_abs = (force_abs - force_avg_magnitude) / force_avg_magnitude
-    Em = max(abs(force_err_abs))
-    # error angle
-    force_err_ang = compute_angle_error(
-        np.ones(len(force_ang)) * force_average_angle, np.array(force_ang)
-    )
-    Ea = max(abs(force_err_ang))
-
-    return f_x, f_y, force_avg_magnitude, Em, Ea
-
-
 def compute_vrms(voltage_df):
     phase_voltage = voltage_df["Terminal_Wt"]
     rms_voltage = np.sqrt(sum(np.square(phase_voltage)) / len(phase_voltage))
@@ -194,7 +137,8 @@ class GoertzelDataStruct(object):
     """docstring for GoertzelDataStruct"""
 
     def __init__(
-        self, id=None,
+        self,
+        id=None,
     ):
         self.id = id
         self.bool_initialized = False
@@ -302,7 +246,8 @@ class GoertzelDataStruct(object):
 
 
 def compute_power_factor_from_half_period(
-    voltage, current, mytime, targetFreq=1e3, numPeriodicalExtension=1000):
+    voltage, current, mytime, targetFreq=1e3, numPeriodicalExtension=1000
+):
     gs_u = GoertzelDataStruct("Goertzel Struct for Voltage\n")
     gs_i = GoertzelDataStruct("Goertzel Struct for Current\n")
 

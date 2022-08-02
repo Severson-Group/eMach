@@ -8,8 +8,8 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../..")
 
 # from .architect import Architect
-from mach_eval.machines import BSPM_Machine
-from mach_eval.machines.winding_layout import WindingLayout
+from mach_eval.machines.bspm import BSPM_Machine
+from mach_eval.machines.bspm.winding_layout import WindingLayout
 
 
 class BSPM_Architect1:
