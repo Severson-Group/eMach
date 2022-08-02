@@ -7,7 +7,7 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../..")
 
 from bspm_architect import BSPM_Architect1
-from mach_eval.machines.bspm_specification import BSPMMachineSpec
+from mach_eval.machines.bspm.bspm_specification import BSPMMachineSpec
 from mach_eval.machines.materials.electric_steels import Arnon5
 from mach_eval.machines.materials.jmag_library_magnets import N40H
 from mach_eval.machines.materials.miscellaneous_materials import (

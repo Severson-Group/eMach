@@ -12,19 +12,25 @@ from .electrical_analysis.Location2D import Location2D
 
 sys.path.append(os.path.dirname(__file__) + "../../../..")
 from mach_opt import InvalidDesign
+from mach_eval.machines.bspm import BSPM_Machine, BSPM_EMAnalyzer_Settings
 
 
 class BSPM_EM_Problem:
     def __init__(self, machine, operating_point):
         self.machine = machine
         self.operating_point = operating_point
-        # self._validate_attr()
+        self._validate_attr()
 
-    # def _validate_attr(self):
-    #     if (type(self.machine) is BSPM_Machine):
-    #         pass
-    #     else:
-    #         raise TypeError
+    def _validate_attr(self):
+        if type(self.machine) is BSPM_Machine:
+            pass
+        else:
+            raise TypeError("Invalid machine type")
+
+        if type(self.operating_point) is BSPM_EMAnalyzer_Settings:
+            pass
+        else:
+            raise TypeError("Invalid settings type")
 
 
 class BSPM_EM_Analyzer:

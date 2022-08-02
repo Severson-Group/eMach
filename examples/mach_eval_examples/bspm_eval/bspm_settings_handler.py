@@ -6,7 +6,7 @@ os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
 sys.path.append("../../..")
 
-from mach_eval.machines.bspm_settings import BSPM_EMAnalyzer_Settings
+from mach_eval.machines.bspm.bspm_settings import BSPM_EMAnalyzer_Settings
 
 
 class BSPM_Settings_Handler:

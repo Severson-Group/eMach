@@ -1,5 +1,8 @@
+__all__ = ["BSPM_EMAnalyzer_Settings"]
+
+
 class BSPM_EMAnalyzer_Settings:
-    """ This is a wrapper class designed to contain all relevant information
+    """This is a wrapper class designed to contain all relevant information
     on the operating point for obtaining electrical performance evaluation of
     bearingless permanent magnet electric machines
     """
@@ -65,4 +68,3 @@ class BSPM_EMAnalyzer_Settings:
     @property
     def rotor_temp_rise(self):
         return self.__rotor_temp_rise
-
