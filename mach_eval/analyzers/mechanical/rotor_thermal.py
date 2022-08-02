@@ -3,7 +3,9 @@ import scipy.optimize as op
 import os
 import sys
 
+# add the directory  this file's directory to path for module import
 sys.path.append(os.path.dirname(__file__))
+
 import thermal_network as tb
 
 

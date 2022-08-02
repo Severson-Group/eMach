@@ -1,7 +1,7 @@
 Arguments,Description,Units
 m,Number of phases,
-zq,Number of turns,
-Nc,Number of coils per phase,
+zq,Number of series turns per coil,
+Nc,Number of series coils per phase,
 k_w,Array of winding factor,
 I_hat,Peak Coil Current,A
 n,Array of harmonics corresponding to winding factor,
