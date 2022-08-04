@@ -10,10 +10,8 @@ from copy import deepcopy
 import os
 import sys
 
-# change current working directory to file location
-os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
-sys.path.append("..")
+sys.path.append(os.path.dirname(__file__)+"\..")
 
 import mach_opt as mo
 
@@ -61,7 +59,7 @@ class MachineDesigner(mo.Designer):
         self.arch = arch
         self.settings_handler = settings_handler
 
-    def create_design(self, x: "tuple") -> "Design":
+    def create_design(self, x: "tuple") -> MachineDesign:
         """Creates a machine design from free variables.
 
         Args:
@@ -175,7 +173,7 @@ class State:
         conditions: additional information required for subsequent evaluation steps
     """
 
-    def __init__(self, design: "Design", conditions: "Conditions"):
+    def __init__(self, design: mo.Design, conditions: "Conditions"):
         self.design = design
         self.conditions = conditions
 
