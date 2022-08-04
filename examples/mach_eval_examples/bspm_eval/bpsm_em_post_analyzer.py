@@ -1,7 +1,13 @@
 import copy
 import numpy as np
-from mach_eval.post_analyzers_lib.force_2d_processing import process_force_xy_data
-from mach_eval.post_analyzers_lib.torque_processing import process_torque_data
+from mach_eval.analyzers.force_2d_processing import (
+    ProcessForceDataProblem,
+    ProcessForceDataAnalyzer,
+)
+from mach_eval.analyzers.torque_processing import (
+    ProcessTorqueDataProblem,
+    ProcessTorqueDataAnalyzer,
+)
 
 
 class BSPM_EM_PostAnalyzer:
@@ -58,11 +64,15 @@ class BSPM_EM_PostAnalyzer:
         V_sfe = np.pi * (r_so**2 - r_si**2) * l_st - machine.Q * s_slot * l_st
 
         ############################ post processing #################################
-        torque_avg, torque_ripple = process_torque_data(results["torque"]["TorCon"])
-        f_x, f_y, force_avg, Em, Ea = process_force_xy_data(
-            force_x=results["force"][r"ForCon:1st"],
-            force_y=results["force"][r"ForCon:2nd"],
+        torque_prob = ProcessTorqueDataProblem(results["torque"]["TorCon"])
+        torque_avg, torque_ripple = ProcessTorqueDataAnalyzer.analyze(torque_prob)
+
+        force_prob = ProcessForceDataProblem(
+            Fx=results["force"][r"ForCon:1st"],
+            Fy=results["force"][r"ForCon:2nd"],
         )
+        force_ana = ProcessForceDataAnalyzer()
+        f_x, f_y, force_avg, Em, Ea = force_ana.analyze(force_prob)
 
         post_processing = {}
         post_processing["torque_avg"] = torque_avg
