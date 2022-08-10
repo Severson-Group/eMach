@@ -150,7 +150,7 @@ class SPM_InnerRotorPMField:
                 Bov[i] = ((Mv[i]/(muR*2))*(c3v[i]*(Rmo/Rsi)**2 -(c3v[i])*(r_fe/Rsi)**2 +\
                             (r_fe/Rsi)**2*np.log((Rmo/r_fe)**2))*muR/((muR+1)*(1-(r_fe/Rsi)**2)-\
                             (muR-1)*((Rmo/Rsi)**2-(r_fe/Rmo)**2))*(1+(Rsi/r)**2))
-        
+        # rotate based on rotor orientation
         b_rad_h = np.array(Bov) * np.exp(-theta*harmonics*p* 1j)
         return b_rad_h 
     
@@ -190,9 +190,11 @@ class SPM_InnerRotorPMField:
                 Bov[i] = (Mv[i]/(muR*2))*(c3v[i]*(Rmo/Rsi)**2 -(c3v[i])*(r_fe/Rsi)**2 +\
                             (r_fe/Rsi)**2*np.log((Rmo/r_fe)**2))*muR/((muR+1)*(1-(r_fe/Rsi)**2)-\
                             (muR-1)*((Rmo/Rsi)**2-(r_fe/Rmo)**2))*(-1+(Rsi/r)**2)
-
+        # rotate based on rotor orientation
         b_tan_h = np.array(Bov) * np.exp(-theta*harmonics*p* 1j)
-        return b_tan_h
+        # rotate again considering tan is a sine function 
+        b_tan_h = b_tan_h * np.exp(-np.pi/2*harmonics*p* 1j)
+        return b_tan_h 
 
     def __get_Mv_c3v(self, harmonics):
         v = harmonics

@@ -1,0 +1,9 @@
+Arguments,Description,Units
+alpha_p,angular length of magnet in pu,pu
+p,Number of pole pairs,
+muR,Magnet relative permeability,
+Br,Magnet remanent field,T
+r_fe,Outer radius of rotor iron,m
+dm,Magnet thickness,m
+delta,Magnetic airgap (includes sleeve if applicable),m
+mag_dir,"Direction of magnetization, should be 'parallel' or 'radial'",
