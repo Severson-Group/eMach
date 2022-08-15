@@ -1,4 +1,4 @@
-Bearingless Surface Permananet Magnet Motor JMAG 2D FEA Analyzer
+BSPM JMAG 2D FEA Analyzer
 ########################################################################
 
 This analyzer enables the 2-D transient FEA evaluation of select bearingless surface permanent magnet machine topologies with DPNV 
@@ -17,8 +17,8 @@ from within this class is provided below.
 Time Step Size 
 ------------------
 
-A key enabling factor of FEA is that it discretizes machine evaluation both in time and in space. Here, a description on the control users have
-over time step size with this analyzer is provided.
+A key enabling factor of FEA is that it discretizes machine evaluation both in time and in space. The control users have over time step size 
+with this analyzer is elaborated below.
 
 The BSPM FEA analyzer has been setup such that it has 2 distinct time steps. The underlying concept behind having 2 distinct time steps is
 to allow artificially created transient effects during FEA solver initialization to dampen out before using FEA data to evaluate the motor's 
