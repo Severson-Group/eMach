@@ -9,7 +9,7 @@ This section provides documentation for the electromagnetic analyzers supported 
     :numbered:
     
     EM_analyzers/outer_stator_bfield_analyzer
-
+    EM_analyzers/bspm_jmag2d_analyzer
 
 
 

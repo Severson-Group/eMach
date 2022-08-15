@@ -1,45 +1,57 @@
 Bearingless Surface Permananet Magnet Motor JMAG 2D FEA Analyzer
 ########################################################################
 
-This analyzer enables the 2d FEA evaluation of select bearingless surface permanent magnet (BSPM) topologies with DPNV windings in JMAG.
+This analyzer enables the 2-D transient FEA evaluation of select bearingless surface permanent magnet machine topologies with DPNV 
+windings in JMAG.
 
 Model Background
 ****************
 
-Typically, normal :math:`B_n` and tangential :math:`B_{tan}` fields created in the airgap of an electric machine are analytically determined
-using the following equations:
+Bearingless motors are electric machines capable of simultaneously creating both torque and forces. FEA tools are generally required to 
+evaluate the performance capabilities of these machines. The analyzer does everything that is required for evaluating a BPSM design from
+drawing the machine geometry to solving the magnetic vector potential matrices. The motor shaft and magnets are assumed to be conductive,
+and therefore, eddy current losses are enabled in these components. As there are several configurations that can be modifies for any FEA
+evaluation, a `JMAG_2D_Config` is provided to work alongside this analyzer. A description of the configurations users have control over
+from within this class is provided below.
 
-.. math::
+Time Step Size 
+------------------
 
-    \hat{B}_\text{n} &= \frac{\mu_0 \hat{A} r_\text{si}}{p \delta}  \\
-    \hat{B}_\text{tan} &= -\mu_0 \hat{A}
+A key enabling factor of FEA is that it discretizes machine evaluation both in time and in space. Here, a description on the control users have
+over time step size with this analyzer is provided.
 
-where :math:`\hat{A}` is the electric loading, :math:`r_{si}` is the inner stator bore radius, :math:`p` is the number of pole pairs of the
-winding, and :math:`\delta` is the airgap. The equation for :math:`B_{tan}` is found to model the actual stator winding tangential 
-fields fairly accurately, provided the iron is not saturated. The equation for :math:`B_{n}` however varies greatly from actual 
-radial fields in the airgap, especially as the airgap gets significantly large, even when the machine is operating well within the linear 
-region of the magnetic steel. This analyzer improves upon the accuracy of the stator winding radial field equation by considering stator slot 
-opening and motor airgap curvature effects. The assumed motor 2D-cross-section for this analyzer is shown below. The direction along which 
-:math:`B_n` and :math:`B_{tan}` are taken to be positive has also been indicated in the figure. The analyzer can be extended to machines with 
-permanent magnets on the rotor surface by considering an airgap of equivalent remanence.
+The BSPM FEA analyzer has been setup such that it has 2 distinct time steps. The underlying concept behind having 2 distinct time steps is
+to allow artificially created transient effects during FEA solver initialization to dampen out before using FEA data to evaluate the motor's 
+performance. Both time steps have 2 variables, number of revolutions and number of steps per revolution. Users should change these
+values based on what makes the most sense for their machine. Generally, the step size should be the same across both time steps, with the
+1st time step running for lesser number of revolutions. It is recommended that the 2nd time step should last for atleast a half 
+revolution to get reliable information on the motor's performance capabilities.
 
-.. figure:: ./Images/OuterStatorBFieldsFig.svg
-   :alt: Stator_Bn 
-   :align: center
-   :width: 500 
+Mesh Size 
+------------------
 
-The assumptions that have gone into the developement of this model are:
+Meshing is the methob by which FEA tools discretize the motor geometry. In this analyzer, we use the slide mesh feature of JMAG. In addition
+to a generic mesh size setting for the model, separate handles are provided for the magnet and airgap meshes in the `JMAG_2D_Config` class.
+It is recommended that both the airgap and magnet mesh be significantly denser than that of other components for obtaining accurate results.
+Users should balance mesh density with result accuracy to get reliable results as quickly as possible. Figures showing the mesh layout of
+an example motor design are provided below.
 
-1. Electric steel has infinite permeability.
-2. Both the rotor and stator have negligible eddy currents.
-3. The rotor is non-salient.
+.. list-table:: 
 
-This analyzer implements the model(s) provided in the following references:
+    * - .. figure:: ./Images/mesh_ex.PNG
+           :alt: Complete machine mesh
+           :width: 300 
 
-* G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International 
-  Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016
-* Z. Q. Zhu and D. Howe, “Instantaneous magnetic field distribution in brushless permanent magnet DC motors. II. Armature-reaction field,” 
-  IEEE Trans. Magn., vol. 29, no. 1
+      - .. figure:: ./Images/zoom_mesh_ex.png
+          :alt: Zoomed mesh
+          :width: 300 
+
+Other configurations
+---------------------------
+
+In addition to time step and mesh size, several other changes can be made to the BSPM JMAG analyzer. Most of these configurations are self
+explanatory and are descirbed using comments withing the `JMAG_2D_Config` class. For example: by setting the `jmag_visible` to `True` or 
+`False`, users can control whether the JMAG application will be visible while a FEA evaluation is running.
 
 Input from User
 *********************************

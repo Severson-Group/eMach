@@ -5,7 +5,7 @@ class JMAG_2D_Config:
         self.no_of_rev_2TS = kwargs["no_of_rev_2TS"]
         self.no_of_steps_per_rev_1TS = kwargs["no_of_steps_per_rev_1TS"]
         self.no_of_steps_per_rev_2TS = kwargs["no_of_steps_per_rev_2TS"]
-        # mesh attributes in m
+        # mesh attributes in meters
         self.mesh_size = kwargs["mesh_size"]
         self.magnet_mesh_size = kwargs["magnet_mesh_size"]
         self.airgap_mesh_radial_div = kwargs["airgap_mesh_radial_div"]
