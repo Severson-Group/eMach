@@ -99,8 +99,10 @@ class BFieldSPM_InnerRotor(BField):
         Returns:
             b_radial: A numpy array of normal B fields in airgap at radius r and angle(s) alpha
         """
+        if harmonics is None:
+            harmonics = self.p * np.arange(1,15,2)  # first 13 harmonics
         b_radial_h = self.radial_harmonics(r, harmonics)
-        n = harmonics * self.p
+        n = harmonics
         b_radial = self.__field_from_harmonics(b_radial_h, n, alpha)
         return b_radial
 
@@ -115,8 +117,10 @@ class BFieldSPM_InnerRotor(BField):
         Returns:
             b_tan: A numpy array of tangential B fields in airgap at radius r and angle(s) alpha
         """
+        if harmonics is None:
+            harmonics = self.p * np.arange(1,15,2)  # first 13 harmonics
         b_tan_h = self.tan_harmonics(r, harmonics)
-        n = harmonics * self.p
+        n = harmonics
         b_tan = self.__field_from_harmonics(b_tan_h, n, alpha)
         return b_tan
 
@@ -134,14 +138,14 @@ class BFieldSPM_InnerRotor(BField):
         """
         if r==None:
             r = self.Rsi    # stator inner bore
-        if harmonics==None:
+        if harmonics is None:
             harmonics = self.p * np.arange(1,15,2)  # first 13 harmonics
         r_fe = self.r_fe
         p = self.p
         muR = self.muR
         Rmo = self.Rmo # rotor outer radius
         Rsi = self.Rsi # stator inner radius
-        vp = harmonics*p
+        vp = harmonics
         # get magnetization vector
         Mv, c3v = self.__get_Mv_c3v(harmonics)
         # calculate radial b field magnitudes
@@ -153,7 +157,7 @@ class BFieldSPM_InnerRotor(BField):
         # discard even harmoincs and revise formula for vp=1
         for i in range(len(vp)):
             # even harmonics non-existent
-            if harmonics[i]/p % 2 == 0:
+            if harmonics[i]/p % 2 == 0 or harmonics[i]/p % 1 != 0:
                 Bov[i] = 0
                 continue
             # vp=1 has different field formula
@@ -162,7 +166,7 @@ class BFieldSPM_InnerRotor(BField):
                             (r_fe/Rsi)**2*np.log((Rmo/r_fe)**2))*muR/((muR+1)*(1-(r_fe/Rsi)**2)-\
                             (muR-1)*((Rmo/Rsi)**2-(r_fe/Rmo)**2))*(1+(Rsi/r)**2))
         # rotate based on rotor orientation
-        b_rad_h = np.array(Bov) * np.exp(-self.theta*harmonics*p* 1j)
+        b_rad_h = np.array(Bov) * np.exp(-self.theta*vp* 1j)
         return b_rad_h 
     
     def tan_harmonics(self, r=None, harmonics=None):
@@ -179,7 +183,7 @@ class BFieldSPM_InnerRotor(BField):
         """
         if r==None:
             r = self.Rsi    # stator inner bore
-        if harmonics==None:
+        if harmonics is None:
             harmonics = self.p * np.arange(1,15,2)  # first 13 harmonics
         r_fe = self.r_fe
         p = self.p
@@ -198,7 +202,7 @@ class BFieldSPM_InnerRotor(BField):
         # discard even harmoincs and revise formula for vp=1
         for i in range(len(vp)):
             # even harmonics non-existent
-            if harmonics[i]/p % 2 == 0:
+            if harmonics[i]/p % 2 == 0 or harmonics[i]/p % 1 != 0:
                 Bov[i] = 0
                 continue
             # vp=1 has different field formula
@@ -207,9 +211,9 @@ class BFieldSPM_InnerRotor(BField):
                             (r_fe/Rsi)**2*np.log((Rmo/r_fe)**2))*muR/((muR+1)*(1-(r_fe/Rsi)**2)-\
                             (muR-1)*((Rmo/Rsi)**2-(r_fe/Rmo)**2))*(-1+(Rsi/r)**2)
         # rotate based on rotor orientation
-        b_tan_h = np.array(Bov) * np.exp(-self.theta*harmonics*p* 1j)
+        b_tan_h = np.array(Bov) * np.exp(-self.theta*vp* 1j)
         # rotate again considering tan is a sine function 
-        b_tan_h = b_tan_h * np.exp(-np.pi/2*harmonics*p* 1j)
+        b_tan_h = b_tan_h * np.exp(-np.pi/2* 1j)
         return b_tan_h 
 
     def __get_Mv_c3v(self, harmonics):
