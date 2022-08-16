@@ -8,8 +8,8 @@ This section provides documentation for the electromagnetic analyzers supported 
     :maxdepth: 3
     :numbered:
     
-    EM_analyzers/outer_stator_bfield_analyzer
-    EM_analyzers/spm_inner_rotor_bfield_analyzer
+    EM_analyzers/bfield_outer_stator
+    EM_analyzers/bfield_spm_inner_rotor
 
 
 
