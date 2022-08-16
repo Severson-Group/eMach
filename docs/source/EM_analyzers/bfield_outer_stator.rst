@@ -1,4 +1,3 @@
-
 Outer Stator B Field Analyzer
 ##########################################
 
@@ -88,9 +87,9 @@ Example code initializing the analyzer and problem1 is shown below:
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.electromagnetic.outer_stator_bfields import (
-        OuterStatorBFieldAnalyzer,
-        OuterStatorBnfieldProblem1,
+    from eMach.mach_eval.analyzers.electromagnetic.bfield_outer_stator import (
+        BFieldOuterStatorAnalyzer,
+        BFieldOuterStatorProblem1,
     )
 
     m = 3  # number of phases
@@ -113,7 +112,7 @@ Example code initializing the analyzer and problem1 is shown below:
     alpha_so = 0.1  # stator slot opening in radians
 
     # define problem
-    stator_Bn_prob = OuterStatorBnfieldProblem1(
+    stator_Bn_prob = BFieldOuterStatorProblem1(
         m=m,
         zq=zq,
         Nc=Nc,
@@ -127,7 +126,7 @@ Example code initializing the analyzer and problem1 is shown below:
     )
 
     # define analyzer
-    stator_B_ana = OuterStatorBFieldAnalyzer()
+    stator_B_ana = BFieldOuterStatorAnalyzer()
 
 Output to User
 **********************************

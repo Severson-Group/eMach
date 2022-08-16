@@ -50,12 +50,13 @@ Example code initializing analyzer and problem is provided below:
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.electromagnetic.spm_inner_rotor_bfield import (
-        SPM_InnerRotorPMFieldProblem,
-        SPM_InnerRotorPMFieldAnalyzer,
+    from eMach.mach_eval.analyzers.electromagnetic.bfield_spm_inner_rotor import (
+        BFieldSPM_InnerRotorProblem,
+        BFieldSPM_InnerRotorAnalyzer,
     )
 
     alpha_p = 0.8
+    theta = np.pi/3
     p=2
     muR = 1.062
     Br = 1.285
@@ -65,8 +66,9 @@ Example code initializing analyzer and problem is provided below:
     mag_dir = "parallel"
     # mag_dir = "radial"
     # define problem
-    rotor_B_prob = SPM_InnerRotorPMFieldProblem(
+    rotor_B_prob = BFieldSPM_InnerRotorProblem(
         alpha_p=alpha_p,
+        theta=theta,
         p=p,
         muR=muR,
         Br=Br,
@@ -77,7 +79,7 @@ Example code initializing analyzer and problem is provided below:
     )
 
     # define analyzer
-    rotor_B_ana = SPM_InnerRotorPMFieldAnalyzer()
+    rotor_B_ana = BFieldSPM_InnerRotorAnalyzer()
 
 
 Output to User
@@ -100,9 +102,9 @@ Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{
     ax = plt.axes()
     fig1.add_axes(ax)
     # plot radial B fields
-    ax.plot(alpha * 180 / np.pi, B.radial(alpha=alpha, r=r, harmonics=np.array([1,3,5,7,9,11,13]), theta=np.pi/3))
+    ax.plot(alpha * 180 / np.pi, B.radial(alpha=alpha, r=r))
     # plot tangential B fields
-    ax.plot(alpha * 180 / np.pi, B.tan(alpha=alpha, r=r, harmonics=np.array([1,3,5,7,9,11,13]), theta=np.pi/3))
+    ax.plot(alpha * 180 / np.pi, B.tan(alpha=alpha, r=r))
 
     ax.set_xlabel(r"$\alpha$ [deg]")
     ax.set_ylabel("$B$ [T]")
@@ -110,11 +112,7 @@ Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{
     ax.legend(["$B_n$", "$B_{tan}$"])
 
     # sniff test for checking if fields are right. Printed value should be very close to 0
-    tor = B.radial(
-        alpha=alpha, r=r, harmonics=np.array([1, 3, 5, 7, 9, 11, 13]), theta=np.pi / 6
-    ) * B.tan(
-        alpha=alpha, r=r, harmonics=np.array([1, 3, 5, 7, 9, 11, 13]), theta=np.pi / 6
-    )
+    tor = B.radial(alpha=alpha, r=r) * B.tan(alpha=alpha, r=r)
     print(np.sum(tor))
 
     plt.grid(True, linewidth=0.5, color="#A9A9A9", linestyle="-.")
