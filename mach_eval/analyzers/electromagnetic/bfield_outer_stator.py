@@ -179,6 +179,7 @@ class BFieldOuterStator(BField):
         if r is None:
             r = self.r_si
         elif r < self.r_rfe or r > self.r_si:
+            print(r)
             raise ValueError("Radius provided not within machine airgap")
 
         mu0 = 4 * np.pi * 10**-7
