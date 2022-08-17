@@ -19,7 +19,7 @@ links provided on the left to familiarize themselves with the repository.
    
    getting_started/pre_reqs
    getting_started/tutorials/index
-   code_overview
+   user_guide
    
 .. toctree::
    :hidden:
