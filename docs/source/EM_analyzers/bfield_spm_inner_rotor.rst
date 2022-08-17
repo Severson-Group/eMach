@@ -83,7 +83,7 @@ Example code initializing analyzer and problem is provided below:
 
 Output to User
 **********************************
-The outer stator B field analyzer returns a `SPM_InnerRotorPMField` object. This object has methods such as `radial` and `tan` which can be 
+The outer stator B field analyzer returns a `BFieldSPM_InnerRotor` object. This object has methods such as `radial` and `tan` which can be 
 used to determine B fields across the airgap of the machine. Users must specify the desired harmonics, orientation of the rotor d-axis, and
 the radius at which the fields are to be determined to utilize the methods of `SPM_InnerRotorPMField`.
 
