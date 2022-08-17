@@ -7,9 +7,8 @@ due to arc permanent magnets.
 Model Background
 ****************
 
-The paths taken by the B fields created by permanent magnets are hard to determine, making it challenging to determine field distribution 
-across the airgap from these sources using conventional approaches such as magnetic equivalent circuits. This 
-analyzer addresses this issue by providing a direct solution to the normal and tangential fields created in the airgap of SPM machines,
+The airgap magnetic field distribution created by permanent magnets is difficult to accurately determine using conventional approaches such as magnetic equivalent circuits and airgap MMF calculations. 
+This analyzer provides more accurate calculations by implementing a direct solution to the normal and tangential fields created in the airgap of SPM machines,
 originating from the PMs. The model applies to SPMs with arc magnets that are radially or parallelly magnetized, thereby accounting for most
 SPM designs. The motor 2D-cross-section assumed by this analyzer is shown below. The direction along which :math:`B_n` and :math:`B_{tan}` are 
 taken to be positive has also been indicated in the figure. For improved accuracy with electric machines having slotted stators, Carter's 
