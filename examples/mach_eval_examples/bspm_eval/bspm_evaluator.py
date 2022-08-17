@@ -100,7 +100,8 @@ jmag_config = JMAG_2D_Config(
     airgap_mesh_circum_div=720,
     mesh_air_region_scale=1.15,
     only_table_results=False,
-    csv_results=r"Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss",
+    csv_results=(r"Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;"
+                  "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss"),
     del_results_after_calc=False,
     run_folder=os.path.abspath("") + "/run_data/",
     jmag_csv_folder=os.path.abspath("") + "/run_data/JMAG_csv/",

@@ -1,11 +1,11 @@
-BSPM JMAG 2D FEA Analyzer
+BSPM Machine
 ########################################################################
 
 This analyzer enables the 2-D transient FEA evaluation of select bearingless surface permanent magnet machine topologies with DPNV 
 windings in JMAG.
 
-Model Background
-****************
+Machine Background
+*************************
 
 Bearingless motors are electric machines capable of simultaneously creating both torque and forces. FEA tools are generally required to 
 evaluate the performance capabilities of these machines. The analyzer does everything that is required for evaluating a BPSM design from
