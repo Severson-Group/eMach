@@ -85,7 +85,7 @@ Output to User
 **********************************
 The outer stator B field analyzer returns a `BFieldSPM_InnerRotor` object. This object has methods such as `radial` and `tan` which can be 
 used to determine B fields across the airgap of the machine. Users must specify the desired harmonics, orientation of the rotor d-axis, and
-the radius at which the fields are to be determined to utilize the methods of `SPM_InnerRotorPMField`.
+the radius at which the fields are to be determined to utilize the methods of `BFieldSPM_InnerRotor`.
 
 Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{tan}` at the center of the airgap is provided below
 (continuation from previous code block):
