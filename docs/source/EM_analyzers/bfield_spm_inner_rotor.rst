@@ -36,7 +36,7 @@ This analyzer implements the model(s) provided in the following references:
 Input from User
 *********************************
 
-For this analyzer to work, users must provide the below listed information via the `SPM_InnerRotorPMFieldProblem`
+For this analyzer to work, users must provide the below listed information via the `BFieldSPM_InnerRotorProblem` class.
 
 .. csv-table:: `SPM_InnerRotorPMFieldProblem`
    :file: input_rotor_b_field.csv
