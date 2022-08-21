@@ -187,6 +187,7 @@ class BFieldOuterStator(BField):
         k_sov = self.__slot_opening_factor()
         k_cu = self.__curvature_coefficient(r)
         # scale field by slot opening factor and curvature coefficient
+        # EQUATION 9 from [2]
         b_radial_h = conv_b_field * k_sov * k_cu
         return b_radial_h
 
@@ -214,7 +215,7 @@ class BFieldOuterStator(BField):
         Returns:
             k_sov: slot opening factor
         """
-
+        # EQUATION 10 from [2]
         k_sov = np.sin(self.n * self.alpha_so / 2) / (self.n * self.alpha_so / 2)
         return k_sov
 
@@ -232,7 +233,7 @@ class BFieldOuterStator(BField):
         Returns:
             k_cu: curvature coefficient
         """
-
+        # EQUATION 11 from [2]
         k_cu = (
             self.delta_e
             * self.n

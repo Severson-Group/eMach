@@ -1,4 +1,4 @@
-Outer Stator B Field Analyzer
+B Field Outer Stator Analyzer
 ##########################################
 
 This analyzer determines the normal and tangential magnetic fields created in the airgap of an inner rotor, outer stator electric machine
@@ -7,7 +7,7 @@ due to stator winding excitation.
 Model Background
 ****************
 
-Typically, normal :math:`B_n` and tangential :math:`B_{tan}` fields created in the airgap of an electric machine are analytically determined
+Typically, normal :math:`B_\text{n}` and tangential :math:`B_\text{tan}` fields created in the airgap of an electric machine are analytically determined
 using the following equations:
 
 .. math::
@@ -16,12 +16,12 @@ using the following equations:
     \hat{B}_\text{tan} &= -\mu_0 \hat{A}
 
 where :math:`\hat{A}` is the electric loading, :math:`r_{si}` is the inner stator bore radius, :math:`p` is the number of pole pairs of the
-winding, and :math:`\delta` is the airgap. The equation for :math:`B_{tan}` is found to model the actual stator winding tangential 
+winding, and :math:`\delta` is the airgap. The equation for :math:`B_\text{tan}` is found to model the actual stator winding tangential 
 fields fairly accurately, provided the iron is not saturated. The equation for :math:`B_{n}` however varies greatly from actual 
 radial fields in the airgap, especially as the airgap gets significantly large, even when the machine is operating well within the linear 
 region of the magnetic steel. This analyzer improves upon the accuracy of the stator winding radial field equation by considering stator slot 
 opening and motor airgap curvature effects. The assumed motor 2D-cross-section for this analyzer is shown below. The direction along which 
-:math:`B_n` and :math:`B_{tan}` are taken to be positive has also been indicated in the figure. The analyzer can be extended to machines with 
+:math:`B_\text{n}` and :math:`B_\text{tan}` are taken to be positive has also been indicated in the figure. The analyzer can be extended to machines with 
 permanent magnets on the rotor surface by considering an airgap of equivalent remanence.
 
 .. figure:: ./Images/OuterStatorBFieldsFig.svg
@@ -37,10 +37,8 @@ The assumptions that have gone into the developement of this model are:
 
 This analyzer implements the model(s) provided in the following references:
 
-* G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International 
-  Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016
-* Z. Q. Zhu and D. Howe, “Instantaneous magnetic field distribution in brushless permanent magnet DC motors. II. Armature-reaction field,” 
-  IEEE Trans. Magn., vol. 29, no. 1
+* `G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016`
+* `Z. Q. Zhu and D. Howe, “Instantaneous magnetic field distribution in brushless permanent magnet DC motors. II. Armature-reaction field,” IEEE Trans. Magn., vol. 29, no. 1`
 
 Input from User
 *********************************
@@ -133,7 +131,7 @@ Output to User
 The outer stator B field analyzer returns a `OuterStatorBField` object. This object has methods such as `radial` and `tan` which can be 
 leverage to determine B fields across the airgap of the machine.
 
-Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{tan}` at the inner bore of the stator is provide below
+Example code using the analyzer to determine and plot :math:`B_\text{n}` and :math:`B_\text{tan}` at the inner bore of the stator is provide below
 (continuation from previous code block):
 
 .. code-block:: python

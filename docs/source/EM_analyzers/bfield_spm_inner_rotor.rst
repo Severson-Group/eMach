@@ -1,4 +1,4 @@
-SPM Inner Rotor Magnetic Field Analyzer
+B Field SPM Inner Rotor Analyzer
 ##########################################
 
 This analyzer determines the normal and tangential magnetic fields created in the airgap of an inner rotor, outer stator electric machine
@@ -10,7 +10,7 @@ Model Background
 The airgap magnetic field distribution created by permanent magnets is difficult to accurately determine using conventional approaches such as magnetic equivalent circuits and airgap MMF calculations. 
 This analyzer provides more accurate calculations by implementing a direct solution to the normal and tangential fields created in the airgap of SPM machines,
 originating from the PMs. The model applies to SPMs with arc magnets that are radially or parallelly magnetized, thereby accounting for most
-SPM designs. The motor 2D-cross-section assumed by this analyzer is shown below. The direction along which :math:`B_n` and :math:`B_{tan}` are 
+SPM designs. The motor 2D-cross-section assumed by this analyzer is shown below. The direction along which :math:`B_\text{n}` and :math:`B_\text{tan}` are 
 taken to be positive has also been indicated in the figure. For improved accuracy with electric machines having slotted stators, Carter's 
 coefficient can be employed. 
 
@@ -27,10 +27,8 @@ The assumptions that have gone into the developement of this model are:
 
 This analyzer implements the model(s) provided in the following references:
 
-* G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International 
-  Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016
-* Z. Q. Zhu, D. Howe, and C. C. Chan, “Improved analytical model for predicting the magnetic field distribution in brushless permanent-magnet
-  machines,” IEEE Trans. Magn., Jan. 2002, doi: 10.1109/20.990112.
+* `G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016`
+* `Z. Q. Zhu, D. Howe, and C. C. Chan, “Improved analytical model for predicting the magnetic field distribution in brushless permanent-magnet machines,” IEEE Trans. Magn., Jan. 2002, doi: 10.1109/20.990112.`
 
 
 Input from User
@@ -87,7 +85,7 @@ The outer stator B field analyzer returns a `BFieldSPM_InnerRotor` object. This 
 used to determine B fields across the airgap of the machine. Users must specify the desired harmonics, orientation of the rotor d-axis, and
 the radius at which the fields are to be determined to utilize the methods of `BFieldSPM_InnerRotor`.
 
-Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{tan}` at the center of the airgap is provided below
+Example code using the analyzer to determine and plot :math:`B_\text{n}` and :math:`B_\text{tan}` at the center of the airgap is provided below
 (continuation from previous code block):
 
 .. code-block:: python
