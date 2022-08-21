@@ -148,13 +148,14 @@ class BFieldSPM_InnerRotor(BField):
         vp = harmonics
         # get magnetization vector
         Mv, c3v = self.__get_Mv_c3v(harmonics)
-        # calculate radial b field magnitudes
+
+        # calculate radial b field magnitudes using EQUATION 15a
         Bov = (Mv*vp/(muR*(vp)**2-1))*\
                 (c3v-1+2*(r_fe/Rmo)**(vp+1)-(c3v+1)*(r_fe/Rmo)**(2*vp))*muR/\
                 ((muR+1)*(1-(r_fe/Rsi)**(2*vp))-(muR-1)*((Rmo/Rsi)**(2*vp)-(r_fe/Rmo)**(2*vp)))*\
                 ((r/Rsi)**(vp-1)*(Rmo/Rsi)**(vp+1)+(Rmo/r)**(vp+1))
 
-        # discard even harmoincs and revise formula for vp=1
+        # discard even and fractional harmonics and revise formula for vp=1
         for i in range(len(vp)):
             # even harmonics non-existent
             if harmonics[i]/p % 2 == 0 or harmonics[i]/p % 1 != 0:
@@ -193,7 +194,8 @@ class BFieldSPM_InnerRotor(BField):
         vp = harmonics
         # get magnetization vector
         Mv, c3v = self.__get_Mv_c3v(harmonics)
-        # calculate tangential b field magnitudes
+
+        # calculate radial b field magnitudes using EQUATION 15b
         Bov = (Mv*vp/(muR*(vp)**2-1))*\
             (c3v-1+2*(r_fe/Rmo)**(vp+1)-(c3v+1)*(r_fe/Rmo)**(2*vp))*muR/\
             ((muR+1)*(1-(r_fe/Rsi)**(2*vp))-(muR-1)*((Rmo/Rsi)**(2*vp)-(r_fe/Rmo)**(2*vp)))*\
@@ -223,6 +225,7 @@ class BFieldSPM_InnerRotor(BField):
         vp = harmonics
         v = vp/p
         if self.mag_dir=="parallel":
+            # EQUATION 7c and 7d
             c1v = np.sin((vp+1)*alpha_p*np.pi/(2*p))/((vp+1)*alpha_p*np.pi/(2*p))
             c2v = np.sin((vp-1)*alpha_p*np.pi/(2*p))/((vp-1)*alpha_p*np.pi/(2*p))
             for i in range(len(vp)):
@@ -231,13 +234,16 @@ class BFieldSPM_InnerRotor(BField):
                     break
             Mrv = Br*alpha_p*(c1v+c2v)
             Mtv = Br*alpha_p*(c1v-c2v)
+            # EQUATION 10b
             Mv = Mrv+vp*Mtv
             c3v = (vp-1/(vp))*Mrv/Mv + 1/(vp)
             c3v[i] = 2*Mrv[i]/Mv[i]
 
         elif self.mag_dir=="radial":
+            # EQUATION 7a and 7b
             Mrv = 2*Br*alpha_p*np.sin(v*np.pi*alpha_p/2)/(v*np.pi*alpha_p/2)
             Mtv = 0
+            # EQUATION 10b
             Mv = Mrv+vp*Mtv
             c3v = vp
         else:

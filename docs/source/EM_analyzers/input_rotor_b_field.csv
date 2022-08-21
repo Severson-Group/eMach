@@ -1,5 +1,6 @@
 Arguments,Description,Units
 alpha_p,angular length of magnet in pu,pu
+theta,rotor d-axis orientation,radians
 p,Number of pole pairs,
 muR,Magnet relative permeability,
 Br,Magnet remanent field,T
