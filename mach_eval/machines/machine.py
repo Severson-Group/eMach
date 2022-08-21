@@ -75,10 +75,6 @@ class Winding:
         return self._winding_dict["pitch"]
 
     @property
-    def Z_q(self):
-        return self._winding_dict["Z_q"]
-
-    @property
     def Kov(self):
         return self._winding_dict["Kov"]
 
@@ -89,6 +85,10 @@ class Winding:
     @property
     def coil_mat(self):
         return self._materials_dict["coil_mat"]
+
+    @property
+    def Z_q(self):
+        return self._winding_dict["Z_q"]
 
 
 class Winding_IM(MachineComponent):
