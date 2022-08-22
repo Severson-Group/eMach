@@ -26,10 +26,17 @@ links provided on the left to familiarize themselves with the repository.
    :maxdepth: 3
    :caption: Analyzers
 
-   EM_analyzers
-   mechanical_analyzers
+   EM_analyzers/index
+   mechanical_analyzers/index
    
+.. toctree::
+   :hidden:
+   :maxdepth: 3
+   :caption: Machines
 
+   EM_analyzers/index
+   mechanical_analyzers/index
+   
 .. toctree::
    :hidden:
    :maxdepth: 1

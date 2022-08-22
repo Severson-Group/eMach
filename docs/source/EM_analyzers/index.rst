@@ -1,5 +1,5 @@
 Electromagnetic Analyzers
-=================
+==================================
 
 This section provides documentation for the electromagnetic analyzers supported by eMach.
 
@@ -8,8 +8,8 @@ This section provides documentation for the electromagnetic analyzers supported 
     :maxdepth: 3
     :numbered:
     
-    EM_analyzers/outer_stator_bfield_analyzer
-    EM_analyzers/bspm_jmag2d_analyzer
+    outer_stator_bfield_analyzer
+    bspm_jmag2d_analyzer
 
 
 
