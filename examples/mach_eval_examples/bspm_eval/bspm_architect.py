@@ -86,21 +86,21 @@ class BSPM_Architect1:
             "d_ms": self.__get_d_ms(free_variables),
             "r_sh": self.__get_r_sh(free_variables),
             "l_st": self.__get_l_st(free_variables),
-            "d_sl": 0.001,
-            "delta_sl": 0,
+            "d_sl": 0.00067,
+            "delta_sl": 0.00011,
         }
 
         bspm_parameters = {
             "p": self.__design_spec["p"],
+            "ps": self.__design_spec["ps"],
             "n_m": 1,
             "Q": self.__design_spec["Q"],
-            "ps": self.__design_spec["ps"],
             "rated_speed": self.__design_spec["rated_speed"],
             "rated_power": self.__design_spec["rated_power"],
             "rated_voltage": self.__design_spec["voltage_rating"],
             "rated_current": self.__current_coil,
         }
-
+        
         bspm_materials = {
             "air_mat": self.__air,
             "rotor_iron_mat": self.__rotor_material,
@@ -113,7 +113,6 @@ class BSPM_Architect1:
         }
 
         bspm_winding = {
-            "coil_groups": self.__winding.grouping_a,
             "no_of_layers": self.__winding.no_winding_layer,
             "layer_phases": [
                 self.__winding.rightlayer_phase,
@@ -123,12 +122,12 @@ class BSPM_Architect1:
                 self.__winding.rightlayer_polarity,
                 self.__winding.leftlayer_polarity,
             ],
+            "coil_groups": self.__winding.grouping_a,
             "pitch": self.__winding.y,
             "Z_q": self.__get_zQ(free_variables),
             "Kov": self.__design_spec["Kov"],
             "Kcu": self.__design_spec["Kcu"],
         }
-
         machine_variant = BSPM_Machine(
             bspm_dimensions, bspm_parameters, bspm_materials, bspm_winding
         )

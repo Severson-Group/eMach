@@ -1,0 +1,17 @@
+Key,Description,Units
+alpha_st,Stator tooth face angular span,degrees
+d_so,See figure,m
+w_st,Stator tooth width,m
+d_st,Stator tooth depth,m
+d_sy,Stator yoke thickness,m
+alpha_m,Permanent magnet angular span,degrees
+d_m,Permanent magnet thickness,m
+d_mp,See figure,m
+d_ri,Rotor back iron thickness,m
+alpha_so,See figure,degrees
+d_sp,Stator pole thickness,m
+r_si,Stator inner bore radius,m
+alpha_ms,See figure,degrees
+d_ms,See figure,m
+r_sh,Shaft radius,m
+l_st,Stack length,m

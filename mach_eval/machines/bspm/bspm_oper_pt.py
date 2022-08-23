@@ -1,7 +1,7 @@
-__all__ = ["BSPM_EMAnalyzer_Settings"]
+__all__ = ["BSPM_Machine_Oper_Pt"]
 
 
-class BSPM_EMAnalyzer_Settings:
+class BSPM_Machine_Oper_Pt:
     """This is a wrapper class designed to contain all relevant information
     on the operating point for obtaining electrical performance evaluation of
     bearingless permanent magnet electric machines
@@ -15,7 +15,7 @@ class BSPM_EMAnalyzer_Settings:
         Iy=0.05,
         speed=150000,
         ambient_temp=25,
-        rotor_temp_rise=80,
+        rotor_temp_rise=55,
     ):
         """
         Args:

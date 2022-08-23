@@ -5,7 +5,6 @@ Mechanical Analyzers
 This page contains links to analyzers in eMach which aid in evaluating the mechanical properties of electric machines.
 
 .. toctree::
-    :caption: Mechanical Analyzers
     :maxdepth: 3
     :numbered:
     

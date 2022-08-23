@@ -12,7 +12,7 @@ from .electrical_analysis.Location2D import Location2D
 
 sys.path.append(os.path.dirname(__file__) + "../../../..")
 from mach_opt import InvalidDesign
-from mach_eval.machines.bspm import BSPM_Machine, BSPM_EMAnalyzer_Settings
+from mach_eval.machines.bspm import BSPM_Machine, BSPM_Machine_Oper_Pt
 
 
 class BSPM_EM_Problem:
@@ -27,7 +27,7 @@ class BSPM_EM_Problem:
         else:
             raise TypeError("Invalid machine type")
 
-        if type(self.operating_point) is BSPM_EMAnalyzer_Settings:
+        if type(self.operating_point) is BSPM_Machine_Oper_Pt:
             pass
         else:
             raise TypeError("Invalid settings type")
@@ -738,7 +738,7 @@ class BSPM_EM_Analyzer:
         )
         study.GetMaterial("Magnet").SetValue("EddyCurrentCalculation", 1)
         study.GetMaterial("Magnet").SetValue(
-            "Temperature", self.machine_variant.magnet_mat["magnet_max_temperature"]
+            "Temperature", self.operating_point.ambient_temp + self.operating_point.rotor_temp_rise
         )  # TEMPERATURE (There is no 75 deg C option)
 
         study.GetMaterial("Magnet").SetValue("Poles", 2 * self.machine_variant.p)
