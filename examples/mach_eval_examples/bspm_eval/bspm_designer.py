@@ -31,7 +31,7 @@ design_spec = {
     "Kcu": 0.5,  # Stator slot fill/packing factor | FEMM_Solver.py is not consistent with this setting
     "Kov": 1.8,  # Winding over length factor
     "rated_speed": 16755.16,  # rated speed in ead/s
-    "rated_power": 11e3,  # rated power in W
+    "rated_power": 5.5e3,  # rated power in W
     "voltage_rating": 240,  # line-line voltage rating
 }
 # define BSPM machine specification object

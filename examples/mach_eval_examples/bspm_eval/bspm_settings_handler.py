@@ -6,7 +6,7 @@ os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
 sys.path.append("../../..")
 
-from mach_eval.machines.bspm.bspm_settings import BSPM_EMAnalyzer_Settings
+from mach_eval.machines.bspm.bspm_oper_pt import BSPM_Machine_Oper_Pt
 
 
 class BSPM_Settings_Handler:
@@ -20,7 +20,7 @@ class BSPM_Settings_Handler:
 
     def get_settings(self, x):
         try:
-            em_op = BSPM_EMAnalyzer_Settings(
+            em_op = BSPM_Machine_Oper_Pt(
                 Id=x[11],
                 Iq=x[12],
                 Ix=x[13],
@@ -30,6 +30,6 @@ class BSPM_Settings_Handler:
                 rotor_temp_rise=x[17],
             )
         except:
-            em_op = BSPM_EMAnalyzer_Settings()
+            em_op = BSPM_Machine_Oper_Pt()
             print("WARNING: DEFAULT OPERATION POINTS USED")
         return em_op

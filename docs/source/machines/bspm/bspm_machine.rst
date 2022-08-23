@@ -1,117 +1,203 @@
 BSPM Machine
-########################################################################
+##################
 
-This analyzer enables the 2-D transient FEA evaluation of select bearingless surface permanent magnet machine topologies with DPNV 
-windings in JMAG.
+This class encapsulates the information required to fully represent a bearingless surface permanent magnet machine.
 
 Machine Background
 *************************
 
-Bearingless motors are electric machines capable of simultaneously creating both torque and forces. FEA tools are generally required to 
-evaluate the performance capabilities of these machines. The analyzer does everything that is required for evaluating a BPSM design from
-drawing the machine geometry to solving the magnetic vector potential matrices. The motor shaft and magnets are assumed to be conductive,
-and therefore, eddy current losses are enabled in these components. As there are several configurations that can be modifies for any FEA
-evaluation, a `JMAG_2D_Config` is provided to work alongside this analyzer. A description of the configurations users have control over
-from within this class is provided below.
-
-Time Step Size 
-------------------
-
-A key enabling factor of FEA is that it discretizes machine evaluation both in time and in space. The control users have over time step size 
-with this analyzer is elaborated below.
-
-The BSPM FEA analyzer has been setup such that it has 2 distinct time steps. The underlying concept behind having 2 distinct time steps is
-to allow artificially created transient effects during FEA solver initialization to dampen out before using FEA data to evaluate the motor's 
-performance. Both time steps have 2 variables, number of revolutions and number of steps per revolution. Users should change these
-values based on what makes the most sense for their machine. Generally, the step size should be the same across both time steps, with the
-1st time step running for lesser number of revolutions. It is recommended that the 2nd time step should last for atleast a half 
-revolution to get reliable information on the motor's performance capabilities.
-
-Mesh Size 
-------------------
-
-Meshing is the methob by which FEA tools discretize the motor geometry. In this analyzer, we use the slide mesh feature of JMAG. In addition
-to a generic mesh size setting for the model, separate handles are provided for the magnet and airgap meshes in the `JMAG_2D_Config` class.
-It is recommended that both the airgap and magnet mesh be significantly denser than that of other components for obtaining accurate results.
-Users should balance mesh density with result accuracy to get reliable results as quickly as possible. Figures showing the mesh layout of
-an example motor design are provided below.
-
-.. list-table:: 
-
-    * - .. figure:: ./Images/mesh_ex.PNG
-           :alt: Complete machine mesh
-           :width: 300 
-
-      - .. figure:: ./Images/zoom_mesh_ex.png
-          :alt: Zoomed mesh
-          :width: 300 
-
-Other configurations
----------------------------
-
-In addition to time step and mesh size, several other changes can be made to the BSPM JMAG analyzer. Most of these configurations are self
-explanatory and are descirbed using comments withing the `JMAG_2D_Config` class. For example: by setting the `jmag_visible` to `True` or 
-`False`, users can control whether the JMAG application will be visible while a FEA evaluation is running.
+Bearingless surface permanent magnet machines or BSPMs are bearingless machines of the :math:`p_\text{s}=p \pm 1` variant capable of creating
+both force and torque. The primary aim of this machine class is to fully represent an actual BSPM design. To do so, users are required to pass 
+in information on key geometric dimensions such as magnet thickness, machine parameters including number of torque and suspension pole pairs,
+the materials constituting the machine, and the stator winding layout and connection to an external drive. Presently, the class is designed to 
+support combined DPNV windings. 
 
 Input from User
 *********************************
 
-To use the JMAG BSPM FEA analyzer, users must pass in a `BSPM_EM_Problem` object. An instance of the `BSPM_EM_Problem` class can be created
-by passing in a `machine` and an `operating_point`. The machine must be a `BSPM_Machine` and the `operating_point` must be of type
-`BSPM_EMAnalyzer_Settings`. More information on both these classes is available here. 
+The information required to instantiate the ``BSPM_Machine`` class has been split into four dictionaries. Each dictionary has been expounded 
+upon below. Example dictionaries are provided as well to replicate the optimized BSPM design discussed in the `paper <https://ieeexplore-ieee-org.ezproxy.library.wisc.edu/document/9236181>`_ 
+cited below to provide a concrete implementation of a ``BSPM_Machine`` object. It should be noted that if the dictionaries do not include the
+required keys, the ``BSPM_Machine`` class will raise an error.
 
-Example code initializing both the analyzer and problem is shown below:
+* `A. Farhan, M. Johnson, K. Hanson and E. L. Severson, "Design of an Ultra-High Speed Bearingless Motor for Significant Rated Power," 2020 
+  IEEE Energy Conversion Congress and Exposition (ECCE), 2020, pp. 246-253, doi: 10.1109/ECCE44975.2020.9236181.`
+
+BSPM Dimensions
+------------------------
+
+The purpose of this dictionary is to fully define the geometrical dimensions of any BSPM. This information is required by nearly all analyzers,
+be it structural, thermal, or electromagnetic, to evaluate BSPM performance. The figure provided below represents a generic two pole six slot 
+BSPM design. Relevant geometric dimensions have been labelled in this figure. 
+
+.. figure:: ./images/MotorDesignParameters.svg
+   :alt: BSPM Cross-Section 
+   :align: center
+   :width: 500 
+
+Users are not required to pass in each and every dimension shown in the above figure as this will result in an over-constrained geometry. The 
+required keys for this input are provided below:
+
+.. csv-table:: `BSPM Dimensions`
+   :file: bspm_dimensions_dict.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+The dimensions dictionary corresponding to the optimized design of the paper cited above is:
 
 .. code-block:: python
 
-    import numpy as np
-    from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.electromagnetic.outer_stator_bfields import (
-        OuterStatorBFieldAnalyzer,
-        OuterStatorBnfieldProblem1,
-    )
+   bspm_dimensions = {
+      'alpha_st': 44.5, 
+      'd_so': 0.00542, 
+      'w_st': 0.00909, 
+      'd_st': 0.0169, 
+      'd_sy': 0.0135, 
+      'alpha_m': 178.78, 
+      'd_m': 0.00371, 
+      'd_mp': 0.00307, 
+      'd_ri': 0.00489, 
+      'alpha_so': 22.25, 
+      'd_sp': 0.00813, 
+      'r_si': 0.01416, 
+      'alpha_ms': 178.78, 
+      'd_ms': 0, 
+      'r_sh': 0.00281,
+      'l_st': 0.0115, 
+      'd_sl': 0.00067, 
+      'delta_sl': 0.00011
+      }
 
-    m = 3  # number of phases
-    zq = 20  # number of turns
-    Nc = 2  # number of coils per phase
-    k_w = np.array(
-        [
-            0.5 * np.exp(1j * np.pi / 3),
-            0.866 * np.exp(-1j * np.pi / 5),
-            0,
-            0.866 * np.exp(-1j * 0),
-            0.5 * np.exp(1j * np.pi / 6),
-        ]
-    )  # winding factors
-    I_hat = 30  # peak current
-    n = np.array([1, 2, 3, 4, 5])  # harmonics of interest
-    delta_e = 0.002  # airgap
-    r_si = 0.025  # inner stator bore radius
-    r_rfe = r_si - delta_e  # rotor back iron outer radius
-    alpha_so = 0.1  # stator slot opening in radians
+BSPM Parameters
+------------------------
 
-    # define problem
-    stator_Bn_prob = OuterStatorBnfieldProblem1(
-        m=m,
-        zq=zq,
-        Nc=Nc,
-        k_w=k_w,
-        I_hat=I_hat,
-        n=n,
-        delta_e=delta_e,
-        r_si=r_si,
-        r_rfe=r_rfe,
-        alpha_so=alpha_so,
-    )
+Apart from dimensions, knowledge of certain BSPM parameters, such as number of slots, number of torque and suspension pole pairs are required 
+to define a BSPM design. All such parameters are contained within this dictionary. This dictionary also includes the nameplate ratings of the 
+machine such as the rater power, rated speed etc. It is likely that users might not be aware of all parameters when they are evaluating a 
+new BSPM design (when running an optimization for example). In this case, dummy values can be passed in for the nameplate paramters and can 
+be updated later after the evaluation process is complete using the ``BSPM_Machine`` class's ``clone`` method. The required key-value pairs 
+for this input are provided below:
 
-    # define analyzer
-    stator_B_ana = OuterStatorBFieldAnalyzer()
+.. csv-table:: `BSPM Parameters`
+   :file: bspm_params_dict.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
 
-Output to User
-**********************************
-The outer stator B field analyzer returns a `OuterStatorBField` object. This object has methods such as `radial` and `tan` which can be 
-leverage to determine B fields across the airgap of the machine.
+The parameters dictionary corresponding to the optimized design of the paper cited above is:
 
-Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{tan}` at the inner bore of the stator is provide below
-(continuation from previous code block):
+.. code-block:: python
 
+   bspm_parameters = {
+      'p': 1, 
+      'ps': 2, 
+      'n_m': 1, 
+      'Q': 6, 
+      'rated_speed': 16755.16, 
+      'rated_power': 5500.0, 
+      'rated_voltage': 240, 
+      'rated_current': 10.0
+      }
+
+BSPM Materials
+------------------------
+
+This dictionary contains information on the materials making up the electric machine. This includes rotor and stator back iron material,
+retaining sleeve material etc. Presently, each value of this dictionary is another dictionary defining the key properties of the material. The
+key properties differs based on whether the material being defined is an electric steel, a permanent magnet, a retaining sleeve etc. Users
+are recommended to go through the ``materials`` folder within ``mach_eval`` to better understand the expected key-value pairs for this 
+dictionary.
+
+.. csv-table:: `BSPM Materials`
+   :file: bspm_mat_dict.csv
+   :widths: 70, 70
+   :header-rows: 1
+
+The material dictionary corresponding to the optimized design of the paper cited above is:
+
+.. code-block:: python
+
+   from eMach.mach_eval.machines.materials.electric_steels import Arnon5
+   from eMach.mach_eval.machines.materials.jmag_library_magnets import N40H
+   from eMach.mach_eval.machines.materials.miscellaneous_materials import (
+      CarbonFiber,
+      Steel,
+      Copper,
+      Hub,
+      Air,
+   )
+   bspm_materials = {
+      "air_mat": Air,
+      "rotor_iron_mat": Arnon5,
+      "stator_iron_mat": Arnon5
+      "magnet_mat": N40H,
+      "rotor_sleeve_mat": CarbonFiber,
+      "coil_mat": Copper,
+      "shaft_mat": Steel,
+      "rotor_hub": Hub,
+      }
+
+BSPM Winding
+------------------------
+
+This dictionary contains information on the combined DPNV winding layout used in the BSPM design. The ``winding_layout.py`` script file provided
+within the ``bspm`` folder defines certain popular DPNV winding layouts. The required key-value pairs for this input are provided below:
+
+.. csv-table:: `BSPM Winding`
+   :file: bspm_winding_dict.csv
+   :widths: 70, 70
+   :header-rows: 1
+
+Further elaboration is required prior to providing the winding dictionary corresponding to the design discussed above. The winding layout 
+of this machine is shown below. This is a double layer, six slot DPNV winding with a coil span of 2. The blue lines correspond to phase U, 
+red to phase V, and green to phase W coil sides. Solid and dotted lines are used to differentiate between the two winding layers. The numbers 
+indicate the slot opening each coil side belongs to. Finally, arrows are used to indicate the direction in which current flows when a +ve
+voltage is applied across the +, - terminals of each coil.
+
+.. figure:: ./images/WindingLayoutDist.PNG
+   :alt: Winding Layout
+   :align: center
+   :width: 400 
+
+The winding dictionary corresponding to the layout shown above is:
+
+.. code-block:: python
+
+   bspm_winding = {
+      "no_of_layers": 2,
+      # layer_phases is a list of lists, the number of lists = no_of_layers
+      # first list corresponds to coil sides in first layer
+      # second list corresponds to coil sides in second layer
+      # the index indicates the slot opening corresponding to the coil side
+      # string characters are used to represent the phases
+      "layer_phases": [ ['U', 'W', 'V', 'U', 'W', 'V'], 
+                        ['W', 'V', 'U', 'W', 'V', 'U'] ],
+      # layer_polarity is a list of lists, the number of lists = no_of_layers
+      # first list corresponds to coil side direction in first layer
+      # second list corresponds to coil side direction in second layer
+      # the index indicates the slot opening corresponding to the coil side
+      # + indicates coil side goes into the page, - indicates coil side comes out of page
+      "layer_polarity": [ ['+', '-', '+', '-', '+', '-'], 
+                          ['-', '+', '-', '+', '-', '+'] ],
+      # coil_groups are a unique property of DPNV windings
+      # coil group is assigned corresponding to the 1st winding layer
+      "coil_groups": ['b', 'a', 'b', 'a', 'b', 'a'],
+      "pitch": 2,
+      "Z_q": 49,
+      "Kov": 1.8,
+      "Kcu": 0.5,
+      }
+
+
+Creating a ``BSPM_Machine`` object
+*************************************
+
+Finally, the below ``Python`` code block shows how to create a ``BSPM_Machine`` object using the dictionaries shown above. A walk-through on
+evalauting the electromagnetic performance of this machine is provided :doc:`here <../../EM_analyzers/bspm_jmag2d_analyzer>`.
+
+.. code-block:: python
+
+   from eMach.mach_eval.machines.bspm import BSPM_Machine
+
+   ecce_2020_machine = BSPM_Machine(
+            bspm_dimensions, bspm_parameters, bspm_materials, bspm_winding
+        )

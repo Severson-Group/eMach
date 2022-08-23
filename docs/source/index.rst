@@ -32,10 +32,9 @@ links provided on the left to familiarize themselves with the repository.
 .. toctree::
    :hidden:
    :maxdepth: 3
-   :caption: Machines
+   :caption: Machine Designs
 
-   EM_analyzers/index
-   mechanical_analyzers/index
+   machines/bspm/index
    
 .. toctree::
    :hidden:
