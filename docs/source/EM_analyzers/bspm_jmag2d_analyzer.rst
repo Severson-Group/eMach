@@ -11,7 +11,7 @@ Bearingless motors are electric machines capable of simultaneously creating both
 evaluate the performance capabilities of these machines. The analyzer does everything that is required for evaluating a BPSM design from
 drawing the machine geometry to solving the magnetic vector potential matrices. The motor shaft and magnets are assumed to be conductive,
 and therefore, eddy current losses are enabled in these components. As there are several configurations that can be modifies for any FEA
-evaluation, a `JMAG_2D_Config` is provided to work alongside this analyzer. A description of the configurations users have control over
+evaluation, a ``JMAG_2D_Config`` is provided to work alongside this analyzer. A description of the configurations users have control over
 from within this class is provided below.
 
 Time Step Size 
@@ -31,7 +31,7 @@ Mesh Size
 ------------------
 
 Meshing is the methob by which FEA tools discretize the motor geometry. In this analyzer, we use the slide mesh feature of JMAG. In addition
-to a generic mesh size setting for the model, separate handles are provided for the magnet and airgap meshes in the `JMAG_2D_Config` class.
+to a generic mesh size setting for the model, separate handles are provided for the magnet and airgap meshes in the ``JMAG_2D_Config`` class.
 It is recommended that both the airgap and magnet mesh be significantly denser than that of other components for obtaining accurate results.
 Users should balance mesh density with result accuracy to get reliable results as quickly as possible. Figures showing the mesh layout of
 an example motor design are provided below.
@@ -50,17 +50,17 @@ Other configurations
 ---------------------------
 
 In addition to time step and mesh size, several other changes can be made to the BSPM JMAG analyzer. Most of these configurations are self
-explanatory and are descirbed using comments withing the `JMAG_2D_Config` class. For example: by setting the `jmag_visible` to `True` or 
-`False`, users can control whether the JMAG application will be visible while a FEA evaluation is running.
+explanatory and are descirbed using comments withing the ``JMAG_2D_Config`` class. For example: by setting the ``jmag_visible`` to ``True`` or 
+``False``, users can control whether the JMAG application will be visible while a FEA evaluation is running.
 
 Input from User
 *********************************
 
-To use the JMAG BSPM FEA analyzer, users must pass in a `BSPM_EM_Problem` object. An instance of the `BSPM_EM_Problem` class can be created
-by passing in a `machine` and an `operating_point`. The machine must be a `BSPM_Machine` and the `operating_point` must be of type
-`BSPM_EMAnalyzer_Settings`. More information on both these classes is available here. 
+To use the JMAG BSPM FEA analyzer, users must pass in a ``BSPM_EM_Problem`` object. An instance of the ``BSPM_EM_Problem`` class can be created
+by passing in a ``machine`` and an ``operating_point``. The machine must be a ``BSPM_Machine`` and the ``operating_point`` must be of type
+``BSPM_Machine_Oper_Pt``. More information on both these classes is available :doc:`here <../machines/bspm/index>`. 
 
-Example code initializing both the analyzer and problem is shown below:
+Example code initializing both the analyzer and problem for an example BSPM design evaluation is shown below:
 
 .. code-block:: python
 
