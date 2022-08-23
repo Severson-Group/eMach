@@ -60,58 +60,200 @@ To use the JMAG BSPM FEA analyzer, users must pass in a ``BSPM_EM_Problem`` obje
 by passing in a ``machine`` and an ``operating_point``. The machine must be a ``BSPM_Machine`` and the ``operating_point`` must be of type
 ``BSPM_Machine_Oper_Pt``. More information on both these classes is available :doc:`here <../machines/bspm/index>`. 
 
-Example code initializing both the analyzer and problem for an example BSPM design evaluation is shown below:
+Example code initializing both the analyzer and problem for the optimized BSPM design provided in this `paper <https://ieeexplore-ieee-org.ezproxy.library.wisc.edu/document/9236181>`_ 
+is shown below:
 
 .. code-block:: python
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.electromagnetic.outer_stator_bfields import (
-        OuterStatorBFieldAnalyzer,
-        OuterStatorBnfieldProblem1,
+    import os
+
+    from eMach.mach_eval.machines.materials.electric_steels import Arnon5
+    from eMach.mach_eval.machines.materials.jmag_library_magnets import N40H
+    from eMach.mach_eval.machines.materials.miscellaneous_materials import (
+        CarbonFiber,
+        Steel,
+        Copper,
+        Hub,
+        Air,
+    )
+    from eMach.mach_eval.machines.bspm import BSPM_Machine
+    from eMach.mach_eval.machines.bspm.bspm_oper_pt import BSPM_Machine_Oper_Pt
+
+    from eMach.mach_eval.analyzers.electromagnetic.bspm.jmag_2d_analyzer import (
+        BSPM_EM_Problem,
+        BSPM_EM_Analyzer,
+    )
+    from eMach.mach_eval.analyzers.electromagnetic.bspm.jmag_2d_config import JMAG_2D_Config
+
+    ################ DEFINE BSPM machine ################
+    bspm_dimensions = {
+    'alpha_st': 44.5,
+    'd_so': 0.00542,
+    'w_st': 0.00909,
+    'd_st': 0.0169,
+    'd_sy': 0.0135,
+    'alpha_m': 178.78,
+    'd_m': 0.00371,
+    'd_mp': 0.00307,
+    'd_ri': 0.00489,
+    'alpha_so': 22.25,
+    'd_sp': 0.00813,
+    'r_si': 0.01416,
+    'alpha_ms': 178.78,
+    'd_ms': 0,
+    'r_sh': 0.00281,
+    'l_st': 0.0115,
+    'd_sl': 0.00067,
+    'delta_sl': 0.00011
+    }
+
+    bspm_parameters = {
+    'p': 1,
+    'ps': 2,
+    'n_m': 1,
+    'Q': 6,
+    'rated_speed': 16755.16,
+    'rated_power': 5500.0,
+    'rated_voltage': 240,
+    'rated_current': 10.0
+    }
+
+    bspm_materials = {
+    "air_mat": Air,
+    "rotor_iron_mat": Arnon5,
+    "stator_iron_mat": Arnon5,
+    "magnet_mat": N40H,
+    "rotor_sleeve_mat": CarbonFiber,
+    "coil_mat": Copper,
+    "shaft_mat": Steel,
+    "rotor_hub": Hub,
+    }
+
+    bspm_winding = {
+    "no_of_layers": 2,
+    "layer_phases": [ ['U', 'W', 'V', 'U', 'W', 'V'],
+                        ['W', 'V', 'U', 'W', 'V', 'U'] ],
+    "layer_polarity": [ ['+', '-', '+', '-', '+', '-'],
+                        ['-', '+', '-', '+', '-', '+'] ],
+    "coil_groups": ['b', 'a', 'b', 'a', 'b', 'a'],
+    "pitch": 2,
+    "Z_q": 49,
+    "Kov": 1.8,
+    "Kcu": 0.5,
+    }
+
+    ecce_2020_machine = BSPM_Machine(
+            bspm_dimensions, bspm_parameters, bspm_materials, bspm_winding
+        )
+
+    ################ DEFINE BSPM operating point ################
+    ecce_2020_op_pt = BSPM_Machine_Oper_Pt(
+                Id=0,
+                Iq=0.975,
+                Ix=0,
+                Iy=0.025,
+                speed=160000,
+                ambient_temp=25,
+                rotor_temp_rise=55,
+                )
+
+    ########################### DEFINE BSPM EM Problem ##########################
+    bspm_em_problem = BSPM_EM_Problem(ecce_2020_machine, ecce_2020_op_pt)
+
+    ########################## DEFINE BSPM EM Analyzer ##########################
+    jmag_config = JMAG_2D_Config(
+        no_of_rev_1TS=3,
+        no_of_rev_2TS=0.5,
+        no_of_steps_per_rev_1TS=8,
+        no_of_steps_per_rev_2TS=64,
+        mesh_size=4e-3,
+        magnet_mesh_size=2e-3,
+        airgap_mesh_radial_div=5,
+        airgap_mesh_circum_div=720,
+        mesh_air_region_scale=1.15,
+        only_table_results=False,
+        csv_results=(r"Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;"
+                    "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss"),
+        del_results_after_calc=False,
+        run_folder=os.path.abspath("") + "/run_data/",
+        jmag_csv_folder=os.path.abspath("") + "/run_data/JMAG_csv/",
+        max_nonlinear_iterations=50,
+        multiple_cpus=True,
+        jmag_scheduler=False,
+        jmag_visible=False,
     )
 
-    m = 3  # number of phases
-    zq = 20  # number of turns
-    Nc = 2  # number of coils per phase
-    k_w = np.array(
-        [
-            0.5 * np.exp(1j * np.pi / 3),
-            0.866 * np.exp(-1j * np.pi / 5),
-            0,
-            0.866 * np.exp(-1j * 0),
-            0.5 * np.exp(1j * np.pi / 6),
-        ]
-    )  # winding factors
-    I_hat = 30  # peak current
-    n = np.array([1, 2, 3, 4, 5])  # harmonics of interest
-    delta_e = 0.002  # airgap
-    r_si = 0.025  # inner stator bore radius
-    r_rfe = r_si - delta_e  # rotor back iron outer radius
-    alpha_so = 0.1  # stator slot opening in radians
-
-    # define problem
-    stator_Bn_prob = OuterStatorBnfieldProblem1(
-        m=m,
-        zq=zq,
-        Nc=Nc,
-        k_w=k_w,
-        I_hat=I_hat,
-        n=n,
-        delta_e=delta_e,
-        r_si=r_si,
-        r_rfe=r_rfe,
-        alpha_so=alpha_so,
-    )
-
-    # define analyzer
-    stator_B_ana = OuterStatorBFieldAnalyzer()
+    em_analysis = BSPM_EM_Analyzer(jmag_config)
 
 Output to User
 **********************************
-The outer stator B field analyzer returns a `OuterStatorBField` object. This object has methods such as `radial` and `tan` which can be 
-leverage to determine B fields across the airgap of the machine.
+The ``BSPM_EM_Analyzer`` returns a dictionary holding the results obtained from 2D FEA analysis of the machine. The elements of this 
+dictionary and their description is provided below.
 
-Example code using the analyzer to determine and plot :math:`B_n` and :math:`B_{tan}` at the inner bore of the stator is provide below
-(continuation from previous code block):
+.. csv-table:: `BSPM_EM_Analyzer Output`
+   :file: output_jmag2d_analyzer.csv
+   :widths: 70, 70
+   :header-rows: 1
 
+Example code using the analyzer to evaluate the example BSPM design and determine torque and force performance is provided below. The results
+are observed to closely match expected performance as provided in the paper.
+
+
+.. code-block:: python
+
+    ########################## Solve design ##########################
+    results = em_analysis.analyze(bspm_em_problem)
+
+    ############################ extract required info ###########################
+    from eMach.mach_eval.analyzers.force_2d_processing import (
+        ProcessForceDataProblem,
+        ProcessForceDataAnalyzer,
+    )
+    from eMach.mach_eval.analyzers.torque_processing import (
+        ProcessTorqueDataProblem,
+        ProcessTorqueDataAnalyzer,
+    )
+
+    length = results["current"].shape[0]
+    i = length - results["range_fine_step"]
+    results["current"] = results["current"].iloc[i:]
+
+    results["torque"] = results["torque"].iloc[i:]
+    results["force"] = results["force"].iloc[i:]
+    results["voltage"] = results["voltage"].iloc[i:]
+    results["hysteresis_loss"] = results["hysteresis_loss"]
+    results["iron_loss"] = results["iron_loss"]
+    results["eddy_current_loss"] = results["eddy_current_loss"].iloc[i:]
+
+    ############################ post processing #################################
+    torque_prob = ProcessTorqueDataProblem(results["torque"]["TorCon"])
+    torque_avg, torque_ripple = ProcessTorqueDataAnalyzer.analyze(torque_prob)
+
+    print("Average torque is ", torque_avg, " Nm")
+    print(
+        "Torque density is ",
+        torque_avg
+        / (ecce_2020_machine.V_rfe + ecce_2020_machine.V_sh + ecce_2020_machine.V_rPM),
+        " Nm/m3",
+    )
+    print("Average power is ", torque_avg * 160000 * np.pi / 30, " W")
+
+    force_prob = ProcessForceDataProblem(
+        Fx=results["force"][r"ForCon:1st"],
+        Fy=results["force"][r"ForCon:2nd"],
+    )
+    force_ana = ProcessForceDataAnalyzer()
+    f_x, f_y, force_avg, Em, Ea = force_ana.analyze(force_prob)
+
+    rotor_weight = (
+        ecce_2020_machine.V_rfe * ecce_2020_machine.rotor_iron_mat["core_material_density"]
+        + ecce_2020_machine.V_sh * ecce_2020_machine.shaft_mat["shaft_material_density"]
+        + ecce_2020_machine.V_rPM * ecce_2020_machine.magnet_mat["magnet_material_density"]
+    )
+    FRW = force_avg / (rotor_weight * 9.8)
+
+    print("Average force is ", force_avg, " N")
+    print("Force per rotor weight is ", FRW, " pu")
+    print("Force error angle is ", Ea, " deg")

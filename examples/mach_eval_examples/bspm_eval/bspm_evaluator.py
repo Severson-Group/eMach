@@ -21,7 +21,6 @@ from mach_opt import InvalidDesign
 
 # reset to current file path for JMAG_FEA_Configuration
 # os.chdir(os.path.dirname(__file__))
-from em_fea_config import JMAG_FEA_Configuration
 
 
 ############################ Define Struct AnalysisStep ######################

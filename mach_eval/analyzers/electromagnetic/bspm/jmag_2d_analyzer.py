@@ -12,7 +12,6 @@ from .electrical_analysis.Location2D import Location2D
 
 sys.path.append(os.path.dirname(__file__) + "../../../..")
 from mach_opt import InvalidDesign
-from mach_eval.machines.bspm import BSPM_Machine, BSPM_Machine_Oper_Pt
 
 
 class BSPM_EM_Problem:
@@ -22,12 +21,12 @@ class BSPM_EM_Problem:
         self._validate_attr()
 
     def _validate_attr(self):
-        if type(self.machine) is BSPM_Machine:
+        if 'BSPM_Machine' in str(type(self.machine)):
             pass
         else:
             raise TypeError("Invalid machine type")
 
-        if type(self.operating_point) is BSPM_Machine_Oper_Pt:
+        if 'BSPM_Machine_Oper_Pt' in str(type(self.operating_point)):
             pass
         else:
             raise TypeError("Invalid settings type")
@@ -109,11 +108,6 @@ class BSPM_EM_Analyzer:
         fea_rated_output = self.extract_JMAG_results(
             self.config.jmag_csv_folder, self.study_name
         )
-        # dh.read_csv_results(self.study_name, self.config.jmag_csv_folder, self.config)
-
-        ####################################################
-        # 04 Update stack length for rated torque, update design param and performance accordingly
-        ####################################################
 
         return fea_rated_output
 

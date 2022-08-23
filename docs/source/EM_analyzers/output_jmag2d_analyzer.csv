@@ -1,0 +1,10 @@
+Output,Description
+current,Data frame of coil currents vs time
+voltage,Data frame of coil terminal voltage vs time
+torque,Data frame of torque vs time
+force,Data frame of force in x and y axes vs time
+iron_loss,Data frame of iron loss at different frequencies
+hysterisis_loss,Data frame of hysterisis loss at different frequencies
+eddy_current_loss,Data frame of eddy current loss vs time
+copper_loss,Analytically estimated copper loss
+range_fine_step,Elements of dataframe over second time step
