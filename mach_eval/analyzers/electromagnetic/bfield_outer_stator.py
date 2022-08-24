@@ -10,9 +10,14 @@
 ###############################################################################
 
 import numpy as np
+import os
+import sys
+
+sys.path.append(os.path.dirname(__file__))
+from bfield_protocol import BField
 
 
-class OuterStatorBnfieldProblem1:
+class BFieldOuterStatorProblem1:
     """Problem class for stator radial B field analyzer
     Attributes:
         MMF: Current linkage or Magneto-Motive Force [A-turns]
@@ -49,7 +54,7 @@ class OuterStatorBnfieldProblem1:
         return mmf
 
 
-class OuterStatorBnfieldProblem2:
+class BFieldOuterStatorProblem2:
     """Problem class for stator radial B field analyzer
     Attributes:
         MMF: Current linkage or Magneto-Motive Force [A-turns]
@@ -69,7 +74,7 @@ class OuterStatorBnfieldProblem2:
         self.alpha_so = alpha_so
 
 
-class OuterStatorBFieldAnalyzer:
+class BFieldOuterStatorAnalyzer:
     """Analyzer class to evaluate stator radial B field"""
 
     def analyze(self, problem=None):
@@ -81,7 +86,7 @@ class OuterStatorBFieldAnalyzer:
             b_field: Radial magnetic field at radius r from stator windings [T]
         """
 
-        b_field = OuterStatorBField(
+        b_field = BFieldOuterStator(
             mmf=problem.MMF,
             n=problem.n,
             delta_e=problem.delta_e,
@@ -92,7 +97,7 @@ class OuterStatorBFieldAnalyzer:
         return b_field
 
 
-class OuterStatorBField:
+class BFieldOuterStator(BField):
     """Class representing radial B field across motor airgap and tangential B field at stator inner bore
 
     Attributes:
@@ -112,7 +117,7 @@ class OuterStatorBField:
         self.r_rfe = r_rfe
         self.alpha_so = alpha_so
 
-    def radial(self, alpha: np.array, r, harmonics=None):
+    def radial(self, alpha, r=None, harmonics=None):
         """Determines radial B field at angle(s) alpha and radius r
 
         Args:
@@ -136,7 +141,7 @@ class OuterStatorBField:
         b_radial = self.__field_from_harmonics(b_radial_h, n, alpha)
         return b_radial
 
-    def tan(self, alpha: np.array, harmonics=None):
+    def tan(self, alpha, r=None, harmonics=None):
         """Determines tanglential B field at angle(s) alpha and inner bore of stator r_si
 
         Args:
@@ -145,7 +150,10 @@ class OuterStatorBField:
         Returns:
             b_tan: A numpy array of tangential B fields
         """
-
+        if r is not None:
+            print(
+                "WARNING: stator tangential fields are always calculated at stator inner bore"
+            )
         # check if harmonics passed as argument
         if harmonics is None:
             b_tan_h = self.tangential_harmonics()
@@ -159,16 +167,19 @@ class OuterStatorBField:
         b_tan = self.__field_from_harmonics(b_tan_h, n, alpha)
         return b_tan
 
-    def radial_harmonics(self, r):
+    def radial_harmonics(self, r=None):
         """Determines radial B field harmonics at radius r
 
         Args:
-            r: Radius at which B field harmonics are calculated. Should be of type int or float.
+            r: Radius at which B field harmonics are calculated. Should be of type int or float. Defaults to
+              inner bore of stator if not defined.
         Returns:
             b_radial_h: A numpy array of normal B field harmonics at r
         """
-
-        if r < self.r_rfe or r > self.r_si:
+        if r is None:
+            r = self.r_si
+        elif r < self.r_rfe or r > self.r_si:
+            print(r)
             raise ValueError("Radius provided not within machine airgap")
 
         mu0 = 4 * np.pi * 10**-7
@@ -176,6 +187,7 @@ class OuterStatorBField:
         k_sov = self.__slot_opening_factor()
         k_cu = self.__curvature_coefficient(r)
         # scale field by slot opening factor and curvature coefficient
+        # EQUATION 9 from [2]
         b_radial_h = conv_b_field * k_sov * k_cu
         return b_radial_h
 
@@ -203,7 +215,7 @@ class OuterStatorBField:
         Returns:
             k_sov: slot opening factor
         """
-
+        # EQUATION 10 from [2]
         k_sov = np.sin(self.n * self.alpha_so / 2) / (self.n * self.alpha_so / 2)
         return k_sov
 
@@ -221,7 +233,7 @@ class OuterStatorBField:
         Returns:
             k_cu: curvature coefficient
         """
-
+        # EQUATION 11 from [2]
         k_cu = (
             self.delta_e
             * self.n
@@ -231,7 +243,7 @@ class OuterStatorBField:
             / (1 - (self.r_rfe / self.r_si) ** (2 * self.n))
         )
         return k_cu
-    
+
     def __field_from_harmonics(self, fields, n, alpha):
         # get phase and magnitude of B field harmonics
         b_mag = abs(fields)
