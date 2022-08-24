@@ -39,17 +39,17 @@ Add the following import statements to the newly created ``mach_eval_tutorial.py
     from eMach import mach_eval as me
     from copy import deepcopy
 
-Step 3: Define Machine Class
+Step 3: Define ``Machine`` Class
 ------------------------------------------
 
 In this step, the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine (i.e.,  geometric, material, and nameplate information). This class can be though of as "what is on the desk." Items such as operating conditions and other information needed to perform analysis are housed in the ``Settings`` class (defined in a later step).
 
-The creation of the machine class is split into five sub-steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
+The creation of the ``Machine`` class is split into five sub-steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
 
 Step 3.1: Initialization
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into your ``mach_eval_tutorial.py`` file to create a machine class entitled ``ExampleMachineQ6p1y3``. This code is used to initialize an object of the class. It takes in a set of geometric variables and material dictionaries and saves them to local variables within the object. 
+Copy and paste the following code block into your ``mach_eval_tutorial.py`` file to create a ``Machine`` class entitled ``ExampleMachineQ6p1y3``. This code is used to initialize an object of the class. It takes in a set of geometric variables and material dictionaries and saves them to local variables within the object. 
 
 This class has been named ``ExampleMachineQ6p1y3`` to tell the user that it describes a machine with 6 stator slots, 2 rotor poles, and a coil span of 3 slots. Descriptive names like this are helpful for creating clean and understandable code.
 
@@ -78,9 +78,9 @@ Finally, note that this class is implementing the protocol `me.Machine`.
 Step 3.2: Class Constant Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into your ``ExampleMachineQ6p1y3`` class to create read-only parameters for the class. This code should be at the same indent level as the ``__init__`` function. The step illustrates adding constant parameters to the machine class.
+Copy and paste the following code block into your ``ExampleMachineQ6p1y3`` class to create read-only parameters for the class. This code should be at the same indent level as the ``__init__`` function. The step illustrates adding constant parameters to the ``Machine`` class.
 
-When creating machine classes, users may desire to create read-only, constant values for the machine. In this example, the number of slots ``Q``, pole-pairs ``p``, and the coil span ``y`` of the machine are constant. To accomplish this, the ``@property`` decorator is used to define these values to make these "read-only." By coding in literal return values (instead of variable names), these properties are constants.
+When creating ``Machine`` classes, users may desire to create read-only, constant values for the machine. In this example, the number of slots ``Q``, pole-pairs ``p``, and the coil span ``y`` of the machine are constant. To accomplish this, the ``@property`` decorator is used to define these values to make these "read-only." By coding in literal return values (instead of variable names), these properties are constants.
 
 .. code-block:: python
 
@@ -184,9 +184,9 @@ It is frequently convenient to define certain machine parameters in terms of oth
 Step 3.5: Auxiliary Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This code illustrates the use-case for auxiliary functions added to a machine class to facilitate calculation of performance properties. 
+Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This code illustrates the use-case for auxiliary functions added to a ``Machine`` class to facilitate calculation of performance properties. 
 
-There are several useful machine performance calculations which require combining information from within a machine class and information that a machine class does not contain. Auxiliary functions can be added to facilitate easy implementation of these calculations. Examples of this include electric loading ``A_hat`` and tip speed ``v_tip``, both of which depend on outside information (i.e. current and speed).
+There are several useful machine performance calculations which require combining information from within a ``Machine`` class and information that a ``Machine`` class does not contain. Auxiliary functions can be added to facilitate easy implementation of these calculations. Examples of this include electric loading ``A_hat`` and tip speed ``v_tip``, both of which depend on outside information (i.e. current and speed).
 
 .. code-block:: python
 
@@ -198,8 +198,8 @@ There are several useful machine performance calculations which require combinin
             v_tip=Omega*self.r_ro
             return v_tip
 		
-Step 4: Define Settings Class
------------------------------
+Step 4: Define ``Settings`` Class
+----------------------------------
 Copy and paste the following code block to create a settings class that can be used alongside the ``ExampleMachineQ6p1y3`` machine.
 
 ``mach_eval`` uses settings clases to hold information necessary for analyzing the machine, such as the current operating condition. In this tutorial, the settings class simply holds the rotational speed ``Omega`` and the motor phase current ``I``.
@@ -211,10 +211,10 @@ Copy and paste the following code block to create a settings class that can be u
             self.Omega=Omega
             self.I=I
 		
-Step 5: Define the Architect
------------------------------
+Step 5: Define the ``Architect``
+---------------------------------
 
-The ``Architect`` class of the ``mach_eval`` module is described in detail :ref:`here <arch-label>`. The purpose of the ``Architect`` is to convert an input tuple (which is presumably set up to compactly encode the free variables of an optimization) into a machine object (which likely requires far more information than is contained by the free variables). For this example, the input tuple is defined using the following:
+The ``Architect`` class of the ``mach_eval`` module is described in detail :ref:`here <arch-label>`. The purpose of the ``Architect`` is to convert an input tuple (which is presumably set up to compactly encode the free variables of an optimization) into a ``Machine`` object (which likely requires far more information than is contained by the free variables). For this example, the input tuple is defined using the following:
 
 * ``x[0] = r_ro`` Outer rotor radius
 * ``x[1] = d_m_norm`` Normalized magnet thickness
@@ -227,7 +227,7 @@ The ``Architect`` class of the ``mach_eval`` module is described in detail :ref:
 
 Copy the following code into the Python file to implement the example architect. 
 
-The ``create_new_design`` method demonstrates how the input tuple values are interpretted to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Notice that material dictionaries (``magnet_mat``, ``core_mat``, and ``coil_mat``) are provided to the ``ExampleMotorArchitect`` upon initialization. This is the typical programming pattern for providing information that is required to create a machine class but is not contained in the input tuple. 
+The ``create_new_design`` method demonstrates how the input tuple values are interpretted to initialize an instance of the ``ExampleMachineQ6p1y3`` class. Notice that material dictionaries (``magnet_mat``, ``core_mat``, and ``coil_mat``) are provided to the ``ExampleMotorArchitect`` upon initialization. This is the typical programming pattern for providing information that is required to create a ``Machine`` class but is not contained in the input tuple. 
 
 .. code-block:: python
 
@@ -266,8 +266,8 @@ The ``create_new_design`` method demonstrates how the input tuple values are int
                 
                 return machine
 
-Step 6: Define the SettingsHandler
------------------------------------
+Step 6: Define the ``SettingsHandler``
+---------------------------------------
 
 The ``SettingsHandler`` class of the ``mach_eval`` module is also described in detail in the :ref:`user guide <settings-handler>`. The ``SettingsHandler`` has a similar purpose to the ``Architect`` (step 5) in that it is responsible for converting the input tuple into the settings object. 
 
@@ -284,8 +284,8 @@ Copy the following code into the Python file to implement the example ``Settings
             settings = ExampleSettings(self.Omega,I)
             return settings  
 
-Step 7: Define the EvaluationSteps
-----------------------------------
+Step 7: Define the ``EvaluationStep`` s
+---------------------------------------
 
 The ``EvaluationStep`` protocol of the ``mach_eval`` module defines a function signature called ``step``. This is the base level for an evaluation in the ``mach_eval`` module and is used to define an evaluation that is performed on a design. A detailed explanation of the ``EvaluationStep`` protocol and the associated ``State`` class is provided :ref:`here <eval-step>`. 
 
@@ -396,7 +396,7 @@ Copy and paste the following material dictionaries into ``mach_eval_tutorial.py`
 Step 9: Creating MachineDesigner 
 --------------------------------
 
-The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an architect (created in step 5)  and a ``SettingsHandler`` (created in step 6). The `MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the architect and ``SettingsHandler`` to create a machine and settings object. The function returns a ``design`` object containing the machine and settings (``design.machine`` and ``design.setttings``). 
+The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The `MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
 
 Copy and paste this code into the bottom of the Python file.
 
