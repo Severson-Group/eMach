@@ -8,7 +8,7 @@ os.chdir(os.path.dirname(__file__))
 # add the directory 3 levels above this file's directory to path for module import
 sys.path.append("../../..")
 
-from mach_eval.analyzers.electromagnetic.bspm import jmag_2d_analyzer as em
+from mach_eval.analyzers.electromagnetic.bspm import jmag_2d as em
 from mach_eval.analyzers.electromagnetic.bspm.jmag_2d_config import JMAG_2D_Config
 from mach_eval.analyzers.mechanical import rotor_structural as stra
 from mach_eval.analyzers.mechanical import rotor_thermal as therm
@@ -18,9 +18,6 @@ from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
 from length_scale_step import LengthScaleStep
 from mach_eval import AnalysisStep, MachineEvaluator, ProblemDefinition
 from mach_opt import InvalidDesign
-
-# reset to current file path for JMAG_FEA_Configuration
-# os.chdir(os.path.dirname(__file__))
 
 
 ############################ Define Struct AnalysisStep ######################
