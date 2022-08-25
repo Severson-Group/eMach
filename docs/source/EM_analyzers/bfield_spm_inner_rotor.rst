@@ -27,8 +27,8 @@ The assumptions that have gone into the developement of this model are:
 
 This analyzer implements the model(s) provided in the following references:
 
-* `G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016`
-* `Z. Q. Zhu, D. Howe, and C. C. Chan, “Improved analytical model for predicting the magnetic field distribution in brushless permanent-magnet machines,” IEEE Trans. Magn., Jan. 2002, doi: 10.1109/20.990112.`
+* G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in `XXII International Conference on Electrical Machines (ICEM)`, Lausanne, Switzerland, Sep. 2016
+* Z. Q. Zhu, D. Howe, and C. C. Chan, “Improved analytical model for predicting the magnetic field distribution in brushless permanent-magnet machines,” `IEEE Trans. Magn.`, Jan. 2002, doi: 10.1109/20.990112.
 
 
 Input from User

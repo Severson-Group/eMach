@@ -103,6 +103,7 @@ jmag_config = JMAG_2D_Config(
     jmag_csv_folder=os.path.abspath("") + "/run_data/JMAG_csv/",
     max_nonlinear_iterations=50,
     multiple_cpus=True,
+    num_cpus=4,
     jmag_scheduler=False,
     jmag_visible=False,
 )

@@ -20,8 +20,8 @@ upon below. Example dictionaries are provided as well to replicate the optimized
 cited below to provide a concrete implementation of a ``BSPM_Machine`` object. It should be noted that if the dictionaries do not include the
 required keys, the ``BSPM_Machine`` class will raise an error.
 
-* `A. Farhan, M. Johnson, K. Hanson and E. L. Severson, "Design of an Ultra-High Speed Bearingless Motor for Significant Rated Power," 2020 
-  IEEE Energy Conversion Congress and Exposition (ECCE), 2020, pp. 246-253, doi: 10.1109/ECCE44975.2020.9236181.`
+* A. Farhan, M. Johnson, K. Hanson and E. L. Severson, "Design of an Ultra-High Speed Bearingless Motor for Significant Rated Power," in 
+  `IEEE Energy Conversion Congress and Exposition (ECCE)`, 2020, pp. 246-253, doi: 10.1109/ECCE44975.2020.9236181.
 
 BSPM Dimensions
 ------------------------

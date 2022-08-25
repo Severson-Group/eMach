@@ -458,7 +458,7 @@ class BSPM_EM_Analyzer:
             # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
-            study.GetStudyProperties().SetValue("MultiCPU", 4)
+            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
 
         # two sections of different time step
         number_of_revolution_1TS = self.config.no_of_rev_1TS
