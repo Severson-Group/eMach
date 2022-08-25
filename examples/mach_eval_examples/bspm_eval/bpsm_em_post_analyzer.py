@@ -1,10 +1,10 @@
 import copy
 import numpy as np
-from mach_eval.analyzers.force_2d_processing import (
+from mach_eval.analyzers.force_vector_data import (
     ProcessForceDataProblem,
     ProcessForceDataAnalyzer,
 )
-from mach_eval.analyzers.torque_processing import (
+from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataProblem,
     ProcessTorqueDataAnalyzer,
 )
