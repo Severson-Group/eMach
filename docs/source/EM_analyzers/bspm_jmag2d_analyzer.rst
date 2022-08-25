@@ -8,11 +8,11 @@ Model Background
 ****************
 
 Bearingless motors are electric machines capable of simultaneously creating both torque and forces. FEA tools are generally required to 
-evaluate the performance capabilities of these machines. The analyzer does everything that is required for evaluating a BPSM design from
-drawing the machine geometry to solving the magnetic vector potential matrices. The motor shaft and magnets are assumed to be conductive,
-and therefore, eddy current losses are enabled in these components. As there are several configurations that can be modifies for any FEA
-evaluation, a ``JMAG_2D_Config`` is provided to work alongside this analyzer. A description of the configurations users have control over
-from within this class is provided below.
+evaluate the performance capabilities of these machines. This analyzer does everything that is required for evaluating a BPSM design from
+drawing the machine geometry to solving the magnetic vector potential matrices. The code has been tested and confirmed to be compatible with 
+JMAG v19 and above. The motor shaft and magnets are assumed to be conductive, and therefore, eddy current losses are enabled in these 
+components. As there are several configurations that can be modifies for any FEA evaluation, a ``JMAG_2D_Config`` is provided to work 
+alongside this analyzer. A description of the configurations users have control over from within this class is provided below.
 
 Time Step Size 
 ------------------
@@ -58,7 +58,18 @@ Input from User
 
 To use the JMAG BSPM FEA analyzer, users must pass in a ``BSPM_EM_Problem`` object. An instance of the ``BSPM_EM_Problem`` class can be created
 by passing in a ``machine`` and an ``operating_point``. The machine must be a ``BSPM_Machine`` and the ``operating_point`` must be of type
-``BSPM_Machine_Oper_Pt``. More information on both these classes is available :doc:`here <../machines/bspm/index>`. 
+``BSPM_Machine_Oper_Pt``. More information on both these classes is available :doc:`here <../machines/bspm/index>`. The tables below provides
+the input expected by the ``BSPM_EM_Problem`` class and the input required to initialize the ``BSPM_EM_Analyzer``
+
+.. csv-table:: `BSPM_EM_Problem Input`
+   :file: input_jmag2d.csv
+   :widths: 70, 70
+   :header-rows: 1
+
+.. csv-table:: `BSPM_EM_Analyzer Initialization`
+   :file: init_jmag2d.csv
+   :widths: 70, 70
+   :header-rows: 1
 
 Example code initializing both the analyzer and problem for the optimized BSPM design provided in this `paper <https://ieeexplore-ieee-org.ezproxy.library.wisc.edu/document/9236181>`_ 
 is shown below:
@@ -181,6 +192,7 @@ is shown below:
         jmag_csv_folder=os.path.abspath("") + "/run_data/JMAG_csv/",
         max_nonlinear_iterations=50,
         multiple_cpus=True,
+        num_cpus=4,
         jmag_scheduler=False,
         jmag_visible=False,
     )
@@ -207,11 +219,11 @@ are observed to closely match expected performance as provided in the paper.
     results = em_analysis.analyze(bspm_em_problem)
 
     ############################ extract required info ###########################
-    from eMach.mach_eval.analyzers.force_2d_processing import (
+    from eMach.mach_eval.analyzers.force_vector_data import (
         ProcessForceDataProblem,
         ProcessForceDataAnalyzer,
     )
-    from eMach.mach_eval.analyzers.torque_processing import (
+    from eMach.mach_eval.analyzers.torque_data import (
         ProcessTorqueDataProblem,
         ProcessTorqueDataAnalyzer,
     )
