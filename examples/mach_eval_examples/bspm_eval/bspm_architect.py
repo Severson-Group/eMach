@@ -68,10 +68,7 @@ class BSPM_Architect1:
 
         free_variables = self.x_to_dict(x)
 
-        bspm_parameters = {
-            # free variables
-            "delta_e": free_variables["delta_e"],
-            "r_ro": free_variables["r_ro"],
+        bspm_dimensions = {
             "alpha_st": free_variables["alpha_st"],
             "d_so": free_variables["d_so"],
             "w_st": free_variables["w_st"],
@@ -88,21 +85,23 @@ class BSPM_Architect1:
             "alpha_ms": self.__get_alpha_ms(free_variables),
             "d_ms": self.__get_d_ms(free_variables),
             "r_sh": self.__get_r_sh(free_variables),
-            "r_so": self.__get_r_so(free_variables),
-            "s_slot": self.__get_s_slot(free_variables),
-            "V_r": self.__get_V_r(free_variables),
             "l_st": self.__get_l_st(free_variables),
-            "d_sl": 0.001,
-            "delta_sl": 0,
-            "delta": free_variables["delta_e"],
-            "Z_q": self.__get_zQ(free_variables),
-            # non changing variables
-            "p": self.__design_spec["p"],
-            "Q": self.__design_spec["Q"],
-            "n_m": 1,
+            "d_sl": 0.00067,
+            "delta_sl": 0.00011,
         }
 
-        bspm_material = {
+        bspm_parameters = {
+            "p": self.__design_spec["p"],
+            "ps": self.__design_spec["ps"],
+            "n_m": 1,
+            "Q": self.__design_spec["Q"],
+            "rated_speed": self.__design_spec["rated_speed"],
+            "rated_power": self.__design_spec["rated_power"],
+            "rated_voltage": self.__design_spec["voltage_rating"],
+            "rated_current": self.__current_coil,
+        }
+        
+        bspm_materials = {
             "air_mat": self.__air,
             "rotor_iron_mat": self.__rotor_material,
             "stator_iron_mat": self.__stator_material,
@@ -113,14 +112,7 @@ class BSPM_Architect1:
             "rotor_hub": self.__rotor_hub,
         }
 
-        bspm_nameplate = {
-            "ps": self.__design_spec["ps"],
-            "mech_omega": self.__design_spec["rated_speed"],
-            "mech_power": self.__design_spec["rated_power"],
-            "voltage_rating": self.__design_spec["voltage_rating"],
-            "Rated_current": self.__current_coil,
-            # winding parameters
-            "coil_groups": self.__winding.grouping_a,
+        bspm_winding = {
             "no_of_layers": self.__winding.no_winding_layer,
             "layer_phases": [
                 self.__winding.rightlayer_phase,
@@ -130,12 +122,15 @@ class BSPM_Architect1:
                 self.__winding.rightlayer_polarity,
                 self.__winding.leftlayer_polarity,
             ],
+            "coil_groups": self.__winding.grouping_a,
             "pitch": self.__winding.y,
+            "Z_q": self.__get_zQ(free_variables),
             "Kov": self.__design_spec["Kov"],
             "Kcu": self.__design_spec["Kcu"],
         }
-
-        machine_variant = BSPM_Machine(bspm_parameters, bspm_material, bspm_nameplate)
+        machine_variant = BSPM_Machine(
+            bspm_dimensions, bspm_parameters, bspm_materials, bspm_winding
+        )
         return machine_variant
 
     @property
@@ -165,14 +160,7 @@ class BSPM_Architect1:
         d_ri = free_variables["d_ri"]
         return r_ro - d_m - d_ri
 
-    def __get_r_so(self, free_variables):
-        r_si = self.__get_r_si(free_variables)
-        d_sp = self.__get_d_sp(free_variables)
-        d_st = free_variables["d_st"]
-        d_sy = free_variables["d_sy"]
-        return r_si + d_sp + d_st + d_sy
-
-    def __get_s_slot(self, free_variables):
+    def s_slot(self, free_variables):
         r_si = self.__get_r_si(free_variables)
         d_sp = self.__get_d_sp(free_variables)
         w_st = free_variables["w_st"]
@@ -182,18 +170,13 @@ class BSPM_Architect1:
         ) - w_st * d_st
 
     def __get_zQ(self, free_variables):
-        s_slot = self.__get_s_slot(free_variables)
+        s_slot = self.s_slot(free_variables)
         Kcu = self.__design_spec["Kcu"]
         zQ = round(Kcu * s_slot / (2 * self.__design_spec["wire_A"]))
         return zQ
 
     def __get_l_st(self, free_variables):
         return 0.025
-
-    def __get_V_r(self, free_variables):
-        l_st = self.__get_l_st(free_variables)
-        V_r = np.pi * free_variables["r_ro"] ** 2 * l_st
-        return V_r
 
     def __get_alpha_so(self, free_variables):
         alpha_so = free_variables["alpha_st"] / 2

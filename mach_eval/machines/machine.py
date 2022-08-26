@@ -1,15 +1,15 @@
-
 from abc import ABC, abstractmethod
 
 
 class Machine(ABC):
     """ABC for Machine objects"""
+
     @abstractmethod
     def __init__(self):
         pass
 
     @abstractmethod
-    def required_nameplate():
+    def required_parameters():
         pass
 
     @abstractmethod
@@ -23,8 +23,12 @@ class Machine(ABC):
 
 class MachineComponent(ABC):
     """Base Class for Machine Components"""
-    @abstractmethod
+
+    # @abstractmethod
     def required_parameters():
+        pass
+
+    def required_dimensions():
         pass
 
     @abstractmethod
@@ -32,93 +36,104 @@ class MachineComponent(ABC):
         pass
 
 
-class Winding(MachineComponent):
+class Winding:
     """Base Class for Machine Components"""
 
     def __init__(self):
         pass
 
     @staticmethod
-    def required_nameplate():
-        return 'no_of_layers', 'layer_phases', 'layer_polarity', 'pitch', 'Z_q', 'Kov', 'Kcu',
+    def required_winding():
+        return (
+            "no_of_layers",
+            "layer_phases",
+            "layer_polarity",
+            "pitch",
+            "Z_q",
+            "Kov",
+            "Kcu",
+        )
 
     @staticmethod
     def required_materials():
-        return 'coil_mat',
+        return ("coil_mat",)
 
     @property
     def no_of_layers(self):
-        return self._nameplate_dict['no_of_layers']
+        return self._winding_dict["no_of_layers"]
 
     @property
     def layer_phases(self):
-        return self._nameplate_dict['layer_phases']
+        return self._winding_dict["layer_phases"]
 
     @property
     def layer_polarity(self):
-        return self._nameplate_dict['layer_polarity']
+        return self._winding_dict["layer_polarity"]
 
     @property
     def pitch(self):
-        return self._nameplate_dict['pitch']
-
-    @property
-    def Z_q(self):
-        return self._machine_parameter_dict['Z_q']
+        return self._winding_dict["pitch"]
 
     @property
     def Kov(self):
-        return self._nameplate_dict['Kov']
+        return self._winding_dict["Kov"]
 
     @property
     def Kcu(self):
-        return self._nameplate_dict['Kcu']
+        return self._winding_dict["Kcu"]
 
     @property
     def coil_mat(self):
-        return self._materials_dict['coil_mat']
+        return self._materials_dict["coil_mat"]
+
+    @property
+    def Z_q(self):
+        return self._winding_dict["Z_q"]
+
 
 class Winding_IM(MachineComponent):
     """Base Class for Machine Components"""
 
     def required_parameters():
-        return ('no_of_layers', 'layer_phases', 'layer_polarity', 'pitch', \
-                'DriveW_zQ',)
+        return (
+            "no_of_layers",
+            "layer_phases",
+            "layer_polarity",
+            "pitch",
+            "DriveW_zQ",
+        )
 
     def required_materials():
-        return ('coil_mat',)
+        return ("coil_mat",)
 
     @property
     def no_of_layers(self):
-        return self._machine_parameter_dict['no_of_layers']
+        return self._machine_parameter_dict["no_of_layers"]
 
     @property
     def layer_phases(self):
-        return self._machine_parameter_dict['layer_phases']
+        return self._machine_parameter_dict["layer_phases"]
 
     @property
     def layer_polarity(self):
-        return self._machine_parameter_dict['layer_polarity']
+        return self._machine_parameter_dict["layer_polarity"]
 
     @property
     def pitch(self):
-        return self._machine_parameter_dict['pitch']
+        return self._machine_parameter_dict["pitch"]
 
     @property
     def DriveW_zQ(self):
-        return self._machine_parameter_dict['DriveW_zQ']
+        return self._machine_parameter_dict["DriveW_zQ"]
 
     @property
     def coil_mat(self):
-        return self._materials_dict['coil_mat']
-
-
-
-
+        return self._materials_dict["coil_mat"]
 
 
 class Error(Exception):
     """Base class for exceptions in this module."""
+
     pass
 
 

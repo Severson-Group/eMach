@@ -37,8 +37,8 @@ The assumptions that have gone into the developement of this model are:
 
 This analyzer implements the model(s) provided in the following references:
 
-* `G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in 2016 XXII International Conference on Electrical Machines (ICEM), Lausanne, Switzerland, Sep. 2016`
-* `Z. Q. Zhu and D. Howe, “Instantaneous magnetic field distribution in brushless permanent magnet DC motors. II. Armature-reaction field,” IEEE Trans. Magn., vol. 29, no. 1`
+* G. Bergmann and A. Binder, “Design guidelines of bearingless PMSM with two separate poly-phase windings,” in `XXII International Conference on Electrical Machines (ICEM)`, Lausanne, Switzerland, Sep. 2016`
+* Z. Q. Zhu and D. Howe, “Instantaneous magnetic field distribution in brushless permanent magnet DC motors. II. Armature-reaction field,” `IEEE Trans. Magn.`, vol. 29, no. 1
 
 Input from User
 *********************************

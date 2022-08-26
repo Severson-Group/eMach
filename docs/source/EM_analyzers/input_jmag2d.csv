@@ -1,0 +1,3 @@
+Arguments,Description
+machine,object of type BSPM_machine describing a bearingless spm machine
+operating_point,object of type BSPM_Machine_Oper_Pt describing BSPM machine operating point
