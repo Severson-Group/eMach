@@ -1,0 +1,9 @@
+Key,Description
+no_of_layers,Number of winding layers. Most electric machines are have single or double layers.
+layer_phases,List of phases corresponding to each slot
+layer_polarity,List containing coil winding direction in each slot
+pitch,Coil span
+Z_q,Number of turns in each coil
+Kov,Over winding factor for distributed windings
+Kcu,Slot fill factor
+coil_groups,Coil group information. Specific to DPNV windings
