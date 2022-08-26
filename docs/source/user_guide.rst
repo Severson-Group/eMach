@@ -128,7 +128,10 @@ demonstrating the use of the ``mach_eval`` module is provided :doc:`in this docu
 MachineDesigner
 ~~~~~~~~~~~~~~~
 
-The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` protocol from the ``mach_opt`` module. This class is responsible for converting free variables from and optimization into a ``MachineDesign`` object. The ``MachineDesign`` object has two attributes: a ``machine`` and  ``settings`` object.  The ``machine`` attribute is an object that holds all the relevant information about the machine, including geometric dimensions, material properties, nameplate values, and winding specifications. The ``settings`` object describes the operating conditions (temperatures, currents/drive settings, operating speed/torques) as well as any other required information to evaluate the design.
+The ``MachineDesigner`` class is a concrete implementation of the ``Designer`` protocol from the ``mach_opt`` module. This class is responsible for converting free variables (likely from ``mach_opt``) into a ``MachineDesign`` object. The ``MachineDesign`` object has two attributes: 
+
+- a ``machine`` object that holds all the relevant information about the machine, including geometric dimensions, material properties, nameplate values, and winding specifications. 
+- a ``settings`` object that describes the operating conditions (temperatures, currents/drive settings, operating speed/torques) as well as any other required information to evaluate the design.
 
 .. figure:: ./images/getting_started/MachineDesignerProtocols.svg
    :alt: Trial1 
