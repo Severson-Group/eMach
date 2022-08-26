@@ -6,7 +6,13 @@ User Guide
 The ``eMach`` codebase is designed to be used by ``pygmo``, an open source Python optimization library. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
 
 
-The ``eMach`` repository contains three sub-modules which interface between ``pygmo`` and each other as shown below. The ``mach_opt`` module, short for `Machine Optimization`, is defined to interface with the specified ``fitness`` function call from ``pygmo`` by converting free variables to objective values in a structured format. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. The ``mach_eval`` module is used to evaluate a machine design produced by ``mach_opt``. ``mach_eval`` is an extension of two of the primary abstract classes in the ``mach_opt`` module which provide additional structure and framework to handle more complicated design evaluations. The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages.
+The ``eMach`` repository contains three sub-modules which interface between ``pygmo`` and each other as shown below. 
+
+- The ``mach_opt`` module, short for `Machine Optimization`, is defined to interface with the specified ``fitness`` function call from ``pygmo`` by converting free variables to objective values in a structured format. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. 
+- The ``mach_eval`` module is used to evaluate a machine design either produced by ``mach_opt`` or as stand-alone machines that a user has created. ``mach_eval`` is an extension of two of the primary abstract classes in the ``mach_opt`` module which provide additional structure and framework to handle more complicated design evaluations. 
+- The ``mach_cad`` module is used for drawing machine components in CAD tools. It provides an abstraction layer between the machine geometry specification and the CAD tool so that multiple tools can equivalently render the same design.
+
+The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages.
 
 
 .. figure:: ./images/getting_started/CodeOverview.svg
