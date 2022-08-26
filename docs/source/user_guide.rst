@@ -12,7 +12,7 @@ The ``eMach`` repository contains three sub-modules which interface between ``py
 - The ``mach_eval`` module is used to evaluate a machine design either produced by ``mach_opt`` or as stand-alone machines that a user has created. ``mach_eval`` is an extension of two of the primary abstract classes in the ``mach_opt`` module which provide additional structure and framework to handle more complicated design evaluations. 
 - The ``mach_cad`` module is used for drawing machine components in CAD tools. It provides an abstraction layer between the machine geometry specification and the CAD tool so that multiple tools can equivalently render the same design. This module is intended to provide a link between ``mach_eval`` and CAD tools. However, this functionality is not yet implemented.
 
-The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages. This document describes the interactions between ``pygmo``, ``mach_opt``, and ``mach_eval``.
+The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages. 
 
 .. figure:: ./images/getting_started/CodeOverview.svg
    :alt: Trial1 
