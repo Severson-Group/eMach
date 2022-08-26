@@ -6,14 +6,13 @@ User Guide
 The ``eMach`` codebase is designed to be used by ``pygmo``, an open source Python optimization library. Documentation for the ``pygmo`` library can be found `here <https://esa.github.io/pygmo2/>`_.
 
 
-The ``eMach`` repository contains three sub-modules which interface between ``pygmo`` and each other as shown below. 
+The ``eMach`` repository contains three sub-modules which interface between ``pygmo`` and each other. 
 
 - The ``mach_opt`` module, short for `Machine Optimization`, is defined to interface with the specified ``fitness`` function call from ``pygmo`` by converting free variables to objective values in a structured format. This module is designed to extend the base functionality of ``pygmo`` to handle design optimizations using abstract classes. 
 - The ``mach_eval`` module is used to evaluate a machine design either produced by ``mach_opt`` or as stand-alone machines that a user has created. ``mach_eval`` is an extension of two of the primary abstract classes in the ``mach_opt`` module which provide additional structure and framework to handle more complicated design evaluations. 
-- The ``mach_cad`` module is used for drawing machine components in CAD tools. It provides an abstraction layer between the machine geometry specification and the CAD tool so that multiple tools can equivalently render the same design.
+- The ``mach_cad`` module is used for drawing machine components in CAD tools. It provides an abstraction layer between the machine geometry specification and the CAD tool so that multiple tools can equivalently render the same design. This module is intended to provide a link between ``mach_eval`` and CAD tools. However, this functionality is not yet implemented.
 
-The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages.
-
+The layered structure of ``eMach`` allows for the higher level modules to be used independently of the lower level packages. This document describes the interactions between ``pygmo``, ``mach_opt``, and ``mach_eval``.
 
 .. figure:: ./images/getting_started/CodeOverview.svg
    :alt: Trial1 
@@ -57,7 +56,7 @@ Additional details of each of these objects can be found in the code documentati
 Designer
 ~~~~~~~~
 
-The ``Designer`` Protocol is used to convert the free variables from the optimization algorithm, into a ``design`` object. The  ``design`` object, does not have any required function calls, and is used as a container for all the information regarding the design which is being evaluated. In order to be considered a ``Designer`` class the ``create_design`` function must be implemented using the following function signature. 
+The ``Designer`` protocol is used to convert the free variables from the optimization algorithm, into a ``design`` object. The  ``design`` object, does not have any required function calls, and is used as a container for all the information regarding the design which is to be evaluated. In order to be considered a ``Designer`` class, the ``create_design`` function must be implemented using the following function signature. 
 
 .. code-block:: python
 
@@ -87,7 +86,7 @@ The ``Evaluator`` protocol is used to define an evaluation procedure for the ``d
 DesignSpace
 ~~~~~~~~~~~
 
-The ``DesignSpace`` protocol is used to convert the results of the design evaluation back into a form which is usable by the optimization algorithm. Additionally, this is where the other information which the algorithm requires about the design evaluation is injected. The following function signatures must be implemented in order to be considered a ``DesignSpace``.
+The ``DesignSpace`` protocol is used to convert the results of the design evaluation back into a form which is usable by the optimization algorithm and provides additional functions that the ``pygmo`` algorithm requires. The following function signatures must be implemented in order to be considered a ``DesignSpace``.
 
 .. code-block:: python
 
