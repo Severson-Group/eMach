@@ -266,7 +266,7 @@ As seen in the code block above, during the ``evaluate`` method, a ``design`` ob
 EvaluationStep
 ++++++++++++++
 
-The ``EvaluationStep`` protocol, is simple class which defines, how the state information should passed and returned for the ``step`` method. Concrete implementation of this class is where evaluations of machine designs will be implemented in practice. 
+The ``EvaluationStep`` protocol defines how state information should passed and returned with the ``step`` method. This method is where the machine evaluation takes place. 
 
 .. code-block:: python
 
@@ -282,7 +282,7 @@ The ``EvaluationStep`` protocol, is simple class which defines, how the state in
 AnalysisStep
 ++++++++++++
 
-In order to facilitate the use of generalized machine analysis, a concrete implementation of the ``EvaluationStep`` protocol is provided in the form of the ``AnalysisStep``. This class is designed to handle the conversion of a user defined input ''state'' to the form required for a specific ``Analyzer``. The ``AnalysisStep`` class takes in three protocols on initialization:
+``mach_eval`` provides a recommended concrete implementation of the ``EvaluationStep`` protocol in the form of the ``AnalysisStep`` class. This class is designed to handle the conversion of a user defined input ``state`` to the form required for a specific ``Analyzer``. The ``AnalysisStep`` class takes in three protocols on initialization:
 
 ProblemDefinition
 	Converts the input ``state`` into a ``problem`` class which can be utilized by the ``Analyzer``
@@ -296,7 +296,7 @@ PostAnalyzer
    :align: center
    :width: 800 
    
-The goal of the ``AnalysisStep`` is to allow for generalized ``Analyzers`` to be developed which can be utilized by multiple machine evaluations, where the end user only needs to specify the ``ProblemDefinition`` and ``PostAnalyzer``. The design of these classes is to reduced an unknown input state object into a known form of a ``problem`` which the ``Analyzer`` can handle. The results from the analysis of the problem are then returned to the post analyzer where they are packaged back into the output state object for the next evaluation step. 
+The purpose of the ``AnalysisStep`` is to allow for generalized ``Analyzers`` to be utilized by multiple machine evaluations, where the end user only needs to specify the ``ProblemDefinition`` and ``PostAnalyzer`` classes. These later two classes serve as interfaces that convert a user-specific input state object into a general  ``problem`` that the ``Analyzer`` can handle. The results from the analysis of the problem are then returned to the post analyzer where they are packaged back into the output state object for the next evaluation step. 
 
 .. code-block:: python
 
@@ -375,16 +375,16 @@ Setting Up an Machine Optimization
 In order to begin a design optimization using ``MachEval``, the end user will need to configure or write the implementation of certain classes. 
 
 Designer
-  *	``Architect``: If one has been written for the required design it can be adapted, however custom code is often required to match the selected free variables.
+  *	``Architect``: while ``eMach`` does contain example ``Architect`` classes, oftentimes custom code will be required to match the selected free variables.
   
-  *	``SettingsHandler``: Similar to the architect, this object will need to be adjusted to match the optimization requirements.
+  *	``SettingsHandler``: Similar to the architect, this object will likely need to be adjusted to match the optimization requirements.
   
 Evaluator
-  *	``EvaluationSteps``: Custom code for simple evaluations can be written directly as EvaluationStep objects, for more complicated code, the AnalysisStep object should be used with the corresponding Analyzers. 
+  *	``EvaluationStep`` s: Custom code for simple evaluations can be written directly as ``EvaluationStep`` objects. For more complicated code, the ``AnalysisStep`` object should be used with the corresponding Analyzers. 
   
-    *	``ProblemDefinition``: For each AnalysisStep, the user will be required to write a ProblemDefinition to convert the input state to the required Problem object.
+    *	``ProblemDefinition``: For each ``AnalysisStep``, the user will be required to write a ``ProblemDefinition`` to convert the input state to the required Problem object.
 	
-    *	``PostAnalyzer``: A corresponding PostAnalyzer is required for each Analyzer used.
+    *	``PostAnalyzer``: A corresponding ``PostAnalyzer`` is required for each ``Analyzer`` used.
 	
 DesignSpace
   *	The user must implement the required methods as specified. This is where the objective functions are defined for the optimization.
