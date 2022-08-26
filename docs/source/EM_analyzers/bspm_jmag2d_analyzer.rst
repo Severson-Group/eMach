@@ -71,7 +71,7 @@ the input expected by the ``BSPM_EM_Problem`` class and the input required to in
    :widths: 70, 70
    :header-rows: 1
 
-Example code initializing both the analyzer and problem for the optimized BSPM design provided in this `paper <https://ieeexplore-ieee-org.ezproxy.library.wisc.edu/document/9236181>`_ 
+Example code initializing both the analyzer and problem for the optimized BSPM design provided in this `paper <https://doi.org/10.1109/ECCE44975.2020.9236181>`_ 
 is shown below:
 
 .. code-block:: python
@@ -92,7 +92,7 @@ is shown below:
     from eMach.mach_eval.machines.bspm import BSPM_Machine
     from eMach.mach_eval.machines.bspm.bspm_oper_pt import BSPM_Machine_Oper_Pt
 
-    from eMach.mach_eval.analyzers.electromagnetic.bspm.jmag_2d_analyzer import (
+    from eMach.mach_eval.analyzers.electromagnetic.bspm.jmag_2d import (
         BSPM_EM_Problem,
         BSPM_EM_Analyzer,
     )
