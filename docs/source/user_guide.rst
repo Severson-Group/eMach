@@ -41,7 +41,7 @@ The ``mach_opt`` module is designed to extend the `user-defined problem <https:/
 
 	
 	
-The ``DesignProblem`` class is structured such that it takes in several objects on initialization which utilize pythons protocol class introduced in `PEP 544 <https://www.python.org/dev/peps/pep-0544/>`_. These objects and their purpose are summarized as follows:
+The ``DesignProblem`` class expects to receive several objects upon initialization that comply with defined protocols. (Note: Python's protocol class capability was introduced in `PEP 544 <https://www.python.org/dev/peps/pep-0544/>`_.) These objects and their purpose are summarized as follows:
 
 Designer
 	The ``Designer`` protocol converts an input tuple into a ``design`` object.
