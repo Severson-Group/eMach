@@ -52,6 +52,7 @@ class Winding:
             "Z_q",
             "Kov",
             "Kcu",
+            "phase_current_offset"
         )
 
     @staticmethod
@@ -89,6 +90,10 @@ class Winding:
     @property
     def Z_q(self):
         return self._winding_dict["Z_q"]
+    
+    @property
+    def phase_current_offset(self):
+        return self._winding_dict["phase_current_offset"]
 
 
 class Winding_IM(MachineComponent):
