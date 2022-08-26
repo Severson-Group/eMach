@@ -16,7 +16,7 @@ Input from User
 *********************************
 
 The information required to instantiate the ``BSPM_Machine`` class has been split into four dictionaries. Each dictionary has been expounded 
-upon below. Example dictionaries are provided as well to replicate the optimized BSPM design discussed in the `paper <https://ieeexplore-ieee-org.ezproxy.library.wisc.edu/document/9236181>`_ 
+upon below. Example dictionaries are provided as well to replicate the optimized BSPM design discussed in the `paper <https://doi.org/10.1109/ECCE44975.2020.9236181>`_ 
 cited below to provide a concrete implementation of a ``BSPM_Machine`` object. It should be noted that if the dictionaries do not include the
 required keys, the ``BSPM_Machine`` class will raise an error.
 
