@@ -112,7 +112,7 @@ class BSPM_EM_Analyzer:
         return fea_rated_output
 
     def initial_excitation_bias_compensation_deg(self):
-        return 0
+        return self.machine_variant.phase_current_offset
 
     @property
     def current_trms(self):
