@@ -35,16 +35,14 @@ class BSPM_EM_Problem:
 class BSPM_EM_Analyzer:
     def __init__(self, configuration):
         self.config = configuration
-        self.counter = 0
 
-    def analyze(self, problem, counter=0):
-        self.counter = self.counter + 1
+    def analyze(self, problem):
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
-        self.project_name = "proj_%d_" % self.counter
+        self.project_name = self.machine_variant.name
 
         expected_project_file = self.config.run_folder + "%s.jproj" % self.project_name
 
