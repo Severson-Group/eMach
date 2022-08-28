@@ -95,7 +95,8 @@ The parameters dictionary corresponding to the optimized design of the paper cit
       'rated_speed': 16755.16, 
       'rated_power': 5500.0, 
       'rated_voltage': 240, 
-      'rated_current': 10.0
+      'rated_current': 10.0,
+      'name': "ECCE_2020"
       }
 
 BSPM Materials
