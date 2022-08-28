@@ -128,7 +128,8 @@ is shown below:
     'rated_speed': 16755.16,
     'rated_power': 5500.0,
     'rated_voltage': 240,
-    'rated_current': 10.0
+    'rated_current': 10.0,
+    'name': "ECCE_2020",
     }
 
     bspm_materials = {
