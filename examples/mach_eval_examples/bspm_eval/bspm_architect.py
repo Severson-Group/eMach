@@ -47,6 +47,7 @@ class BSPM_Architect1:
         self.__winding = WindingLayout(
             DPNV_or_SEPA=True, Qs=self.__design_spec["Q"], p=self.__design_spec["p"]
         )
+        self.count = 0  # design number count for naming machines in order
 
     def create_new_design(self, x):
         """
@@ -65,7 +66,7 @@ class BSPM_Architect1:
             relavant to a bearingless synchronous permanent magnet motor.
 
         """
-
+        self.count = self.count+1   # update machine ID
         free_variables = self.x_to_dict(x)
 
         bspm_dimensions = {
@@ -99,6 +100,7 @@ class BSPM_Architect1:
             "rated_power": self.__design_spec["rated_power"],
             "rated_voltage": self.__design_spec["voltage_rating"],
             "rated_current": self.__current_coil,
+            "name": "proj_" + str(self.count) + "_"
         }
         
         bspm_materials = {
@@ -127,6 +129,7 @@ class BSPM_Architect1:
             "Z_q": self.__get_zQ(free_variables),
             "Kov": self.__design_spec["Kov"],
             "Kcu": self.__design_spec["Kcu"],
+            "phase_current_offset": self.__winding.initial_excitation_bias_compensation_deg
         }
         machine_variant = BSPM_Machine(
             bspm_dimensions, bspm_parameters, bspm_materials, bspm_winding
