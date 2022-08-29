@@ -120,6 +120,7 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
             "rated_voltage",  # Vrms (line-to-line, Wye-Connect)
             "rated_current",
             "ps",
+            "name",
         )
         for cl in BSPM_Machine.__bases__:
             if issubclass(cl, MachineComponent):
@@ -195,6 +196,10 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
     @property
     def ps(self):
         return self._parameters_dict["ps"]
+    
+    @property
+    def name(self):
+        return self._parameters_dict["name"]
 
     @property
     def delta_e(self):
