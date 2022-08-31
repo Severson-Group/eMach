@@ -44,13 +44,7 @@ path = os.path.dirname(__file__)
 arch_file = path + r"\opti_arch.pkl"  # specify path where saved data will reside
 des_file = path + r"\opti_designer.pkl"
 pop_file = path + r"\latest_pop.csv"
-dh = DataHandler(
-    arch_file, des_file
-)  # initialize data handler with required file paths
-
-# archive = dh.load_from_archive()
-# for data in archive:
-#     print('The rotor outer radius is', data.x[1])
+dh = MyDataHandler(arch_file, des_file)  # initialize data handler with required file paths
 
 opt_settings = BSPMDesignSpace(3, bounds)
 design_prob = DesignProblem(designer, evaluator, opt_settings, dh)
@@ -62,5 +56,6 @@ gen_size = 10
 
 population = design_opt.load_pop(filepath=pop_file, pop_size=78)
 if population is None:
+    print("NO EXISTING POPULATION TO LOAD")
     population = design_opt.initial_pop(pop_size)
 pop = design_opt.run_optimization(population, gen_size, pop_file)
