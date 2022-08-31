@@ -76,10 +76,10 @@ class CrossSectInnerNotchedRotor(object):
                 alpha_rs = alpha_rm # alpha_rs is the variable actually being used in the following...
             else:
                 print('s=%d: This is not tested. For now it simply assumes the iron notch between poles becomes the iron notch between the segments of one pole.' % (s))
-            print('[class CrossSectInnerNotchedRotor] Rotor has no notch, i.e., there is no P2 or P3.')
-            print('alpha_rp is', alpha_rp)
-            print('alpha_rm is', alpha_rm)
-            print('alpha_rs is', alpha_rs)
+            # print('[class CrossSectInnerNotchedRotor] Rotor has no notch, i.e., there is no P2 or P3.')
+            # print('alpha_rp is', alpha_rp)
+            # print('alpha_rm is', alpha_rm)
+            # print('alpha_rs is', alpha_rs)
 
         P1 = [r_ri, 0]
 
@@ -259,7 +259,7 @@ class CrossSectInnerNotchedMagnet(object):
             Rout = r_P4+d_pm
             Rin  = r_P4
             self.mm2_magnet_area = alpha_rm/alpha_rp  *  np.pi*(Rout**2 - Rin**2) # magnet area for all the poles
-            print('Magnet area in total is %g mm^2'%(self.mm2_magnet_area))
+            # print('Magnet area in total is %g mm^2'%(self.mm2_magnet_area))
             if bool_re_evaluate:
                 return self.mm2_magnet_area
 

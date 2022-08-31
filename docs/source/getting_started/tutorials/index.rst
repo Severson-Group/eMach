@@ -12,17 +12,19 @@ to use the different functionalities of ``eMach`` and understand what is happeni
 All tutorials have been written in a manner that assumes users treat the ``eMach`` repo as a Python package and ``import`` into 
 their own custom scripts for using its functionalities.
 
-+---------------+-----------------------------------+---------------------+
-| eMach Module  | Tutorial Name                     | Goal                |
-+===============+===================================+=====================+
-| mach_cad      |                                   |                     |
-+---------------+-----------------------------------+---------------------+
-| mach_eval     | Analytical machine design tutorial|                     |
-|               +-----------------------------------+---------------------+
-|               | Analytical machine optimization   |                     |
-+---------------+-----------------------------------+---------------------+
-| mach_opt      | Rectangle optimization            |                     |
-+---------------+-----------------------------------+---------------------+
++---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
+| Module        | Tutorial Name                                                                          | Goal                                                         |
++===============+========================================================================================+==============================================================+
+| ``mach_cad``  | :doc:`Making an Electric Machine using eMach <make_electric_machine_tutorial/index>`   | Familarize with ``mach_cad`` classes and capabilities        |
++---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
+| ``mach_eval`` | :doc:`Analytical Machine Design Tutorial <analytical_machine_des_tutorial/index>`      | Familarize with ``mach_eval`` classes and protocols          |
++---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
+|               | :doc:`BSPM Evaluation Tutorial <bspm_eval_tutorial/index>`                             | Multi-physics evaluation of BSPM designs                     |
++---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
+| ``mach_opt``  | :doc:`Ractangle Optimization Tutorial <rectangle_tutorial/index>`                      | Run a basic optimization using ``mach_opt``                  |
++---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
+|               | :doc:`Analytical Machine Optimization Tutorial <analytical_machine_opt_tutorial/index>`| Use ``mach_eval`` and ``mach_opt`` together for optimization |
++---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 
 
 .. toctree::
@@ -32,4 +34,5 @@ their own custom scripts for using its functionalities.
     analytical_machine_des_tutorial/index
     analytical_machine_opt_tutorial/index
     make_electric_machine_tutorial/index
+    bspm_eval_tutorial/index
 
