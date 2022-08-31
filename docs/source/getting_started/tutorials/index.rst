@@ -24,6 +24,8 @@ their own custom scripts for using its functionalities.
 | ``mach_opt``  | :doc:`Ractangle Optimization Tutorial <rectangle_tutorial/index>`                      | Run a basic optimization using ``mach_opt``                  |
 +               +----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 |               | :doc:`Analytical Machine Optimization Tutorial <analytical_machine_opt_tutorial/index>`| Use ``mach_eval`` and ``mach_opt`` together for optimization |
++               +----------------------------------------------------------------------------------------+--------------------------------------------------------------+
+|               | :doc:`BSPM Optimization Tutorial <bspm_opti_tutorial/index>`                           | Run multi-objective, multi-physics optimization of BSPM      |
 +---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 
 
@@ -35,4 +37,5 @@ their own custom scripts for using its functionalities.
     analytical_machine_opt_tutorial/index
     make_electric_machine_tutorial/index
     bspm_eval_tutorial/index
+    bspm_opti_tutorial/index
 
