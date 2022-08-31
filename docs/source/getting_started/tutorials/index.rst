@@ -25,7 +25,7 @@ their own custom scripts for using its functionalities.
 +               +----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 |               | :doc:`Analytical Machine Optimization Tutorial <analytical_machine_opt_tutorial/index>`| Use ``mach_eval`` and ``mach_opt`` together for optimization |
 +               +----------------------------------------------------------------------------------------+--------------------------------------------------------------+
-|               | :doc:`BSPM Optimization Tutorial <bspm_opti_tutorial/index>`                           | Run multi-objective, multi-physics optimization of BSPM      |
+|               | :doc:`BSPM Optimization Tutorial <bspm_opti_tutorial/index>`                           | Run multi-objective, multi-physics BSPM optimization         |
 +---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 
 
