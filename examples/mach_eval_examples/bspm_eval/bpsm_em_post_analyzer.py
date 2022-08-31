@@ -1,5 +1,12 @@
 import copy
 import numpy as np
+import os
+import sys
+
+# add the directory 3 levels above this file's directory to path for module import
+sys.path.append(os.path.dirname(__file__)+"/../../..")
+print(os.path.dirname(__file__)+"/../../..")
+
 from mach_eval.analyzers.force_vector_data import (
     ProcessForceDataProblem,
     ProcessForceDataAnalyzer,
@@ -114,6 +121,23 @@ class BSPM_EM_PostAnalyzer:
         state_out.conditions.g_sy = post_processing["stator_iron_loss"] / V_sfe
         state_out.conditions.g_th = post_processing["stator_iron_loss"] / V_sfe
         state_out.conditions.Q_coil = post_processing["copper_loss"] / machine.Q
+
+        print("\n************************ EM RESULT ************************")
+        print("Torque = ", torque_avg, " Nm")
+        print(
+            "Torque density = ",
+            torque_avg
+            / (machine.V_rfe + machine.V_sh + machine.V_rPM),
+            " Nm/m3",
+        )
+        print("Power = ", torque_avg * 160000 * np.pi / 30, " W")
+
+        FRW = force_avg / (rotor_weight * 9.8)
+
+        print("Force = ", force_avg, " N")
+        print("Force per rotor weight = ", FRW, " pu")
+        print("Force error angle = ", Ea, " deg")
+        print("************************************************************\n")
 
         return state_out
 

@@ -35,7 +35,7 @@ class DesignOptimizationMOEAD:
     def run_optimization(self, pop, gen_size, filepath="None"):
         algo = pg.algorithm(
             pg.moead(
-                gen=2,
+                gen=1,
                 weight_generation="grid",
                 decomposition="tchebycheff",
                 neighbours=20,
@@ -128,11 +128,11 @@ class DesignProblem:
                 return objs
 
             ################ Uncomment below block of code to prevent one off errors from JMAG ###################
-            # elif type(e) is FileNotFoundError:
-            #     print('**********ERROR*************')
-            #     temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
-            #     objs = temp[0]
-            #     return objs
+            elif type(e) is FileNotFoundError:
+                print('**********ERROR*************')
+                temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
+                objs = temp[0]
+                return objs
             else:
                 raise e
 

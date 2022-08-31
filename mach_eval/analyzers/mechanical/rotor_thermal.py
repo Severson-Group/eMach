@@ -243,7 +243,7 @@ class SPM_RotorThermalAnalyzer:
         Resistances.append(
             tb.air_gap_conv(air_mat, 8, 0, omega, R_4, R_st, u_z, A_rotor_out)
         )
-        print(Resistances[7].h)
+        # print(Resistances[7].h)
         Resistances[7].Descr = Descr
         ##############
         # Path 8

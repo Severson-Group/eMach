@@ -10,7 +10,7 @@ from .electrical_analysis import (
 from .electrical_analysis import CrossSectStator as CrossSectStator
 from .electrical_analysis.Location2D import Location2D
 
-sys.path.append(os.path.dirname(__file__) + "../../../..")
+sys.path.append(os.path.dirname(__file__) + "/../../../..")
 from mach_opt import InvalidDesign
 
 
@@ -54,7 +54,6 @@ class BSPM_EM_Analyzer:
 
         toolJd = JMAG(self.config)
         app, attempts = toolJd.open(expected_project_file)
-        print("Application is", app)
         if attempts > 1:
             self.project_name = self.project_name + "attempts_%d" % (attempts)
 
@@ -409,7 +408,7 @@ class BSPM_EM_Analyzer:
         study.CreateCondition(
             "RotationMotion", "RotCon"
         )  # study.GetCondition(u"RotCon").SetXYZPoint(u"", 0, 0, 1) # megbox warning
-        print("the_speed:", self.the_speed)
+        print("Speed in RPM", self.the_speed)
         study.GetCondition("RotCon").SetValue("AngularVelocity", int(self.the_speed))
         study.GetCondition("RotCon").ClearParts()
         study.GetCondition("RotCon").AddSet(
@@ -958,7 +957,6 @@ class BSPM_EM_Analyzer:
 
             # Check if it is a distributed windg???
             if self.machine_variant.pitch == 1:
-                print("Concentrated winding!")
                 UVW = self.machine_variant.layer_phases[1][index_leftlayer]
                 UpDown = self.machine_variant.layer_polarity[1][index_leftlayer]
             else:
