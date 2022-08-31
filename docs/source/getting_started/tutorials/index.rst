@@ -18,11 +18,11 @@ their own custom scripts for using its functionalities.
 | ``mach_cad``  | :doc:`Making an Electric Machine using eMach <make_electric_machine_tutorial/index>`   | Familarize with ``mach_cad`` classes and capabilities        |
 +---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 | ``mach_eval`` | :doc:`Analytical Machine Design Tutorial <analytical_machine_des_tutorial/index>`      | Familarize with ``mach_eval`` classes and protocols          |
-+---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
++               +----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 |               | :doc:`BSPM Evaluation Tutorial <bspm_eval_tutorial/index>`                             | Multi-physics evaluation of BSPM designs                     |
 +---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 | ``mach_opt``  | :doc:`Ractangle Optimization Tutorial <rectangle_tutorial/index>`                      | Run a basic optimization using ``mach_opt``                  |
-+---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
++               +----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 |               | :doc:`Analytical Machine Optimization Tutorial <analytical_machine_opt_tutorial/index>`| Use ``mach_eval`` and ``mach_opt`` together for optimization |
 +---------------+----------------------------------------------------------------------------------------+--------------------------------------------------------------+
 
