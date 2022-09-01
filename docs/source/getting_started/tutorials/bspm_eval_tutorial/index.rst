@@ -1,21 +1,21 @@
 BSPM Evaluation Tutorial
 ===========================================
 
-* **Goal:** Leverage capabilites of ``mach_eval`` to perform a multi-physics evaluations on bearingless surface permamanent magnet machines
-* **Complexity** 4/5
-* **Estimated Time** 30 - 60 min
+* **Goal:** Leverage capabilites of ``mach_eval`` to perform multi-physics evaluations on bearingless surface permamanent magnet machines
+* **Complexity:** 4/5
+* **Estimated Time:** 30 - 60 min
 
 This tutorial demonstrates how to perform a multi-physics evaluation of a ``BSPM_Machine`` by using the ``Analyzer`` s available in ``eMach``.
 By the end of this tutorial you will be able to:
 
-* create a ``BSPM_Machine`` object
-* use ``mach_eval`` analyzers together to perform multiple performance evaluations on BSPMs
+* create a digital BSPM design
+* use ``mach_eval`` analyzers together to perform multi-physics evaluations of BSPMs
 
 
 Requirements 
 ---------------------
 
-#. All required Python packages are installed on system (see :doc:`Pre-requisites <../../pre_reqs>`)
+#. Python packages installed on system per :doc:`Pre-requisites <../../pre_reqs>`
 #. Installation of JMAG v19 or above
 #. Personal repo using ``eMach`` as submodule established (see :doc:`Rectangle Tutorial <../rectangle_tutorial/index>`)
 #. (Recommended but not required) Review of mechanical and electromagnetic analyzers provided in ``mach_eval``
@@ -25,19 +25,32 @@ Step 1: Create a BSPM Design
 ----------------------------------------------------------------------
 
 In the root folder of your repository, create a Python file named ``ecce_2020_bspm.py``. The code required to create an example BSPM design will
-reside within this file. Users can create this file by simply referring to the code snippets provided in :doc:`BSPM Machine <../../../machines/bspm/bspm_machine>`
-and :doc:`BSPM Machine Operating Point <../../../machines/bspm/bspm_oper_pt>`. Readers can also refer to the ``ecce_2020_bspm.py`` file 
-provided within ``mach_eval_examples/bspm_eval`` instead, although the structure of the ``import`` statements will be different.
+reside within this file. You can create this file by simply copying the ``ecce_2020_bspm.py`` file residing within 
+``examples/mach_eval_examples/bspm_eval`` and updating the import statements as shown below.
+
+.. code-block:: python
+
+    from eMach.mach_eval.machines.materials.electric_steels import Arnon5
+    from eMach.mach_eval.machines.materials.jmag_library_magnets import N40H
+    from eMach.mach_eval.machines.materials.miscellaneous_materials import (
+        CarbonFiber,
+        Steel,
+        Copper,
+        Hub,
+        Air,
+    )
+    from eMach.mach_eval.machines.bspm import BSPM_Machine
+    from eMach.mach_eval.machines.bspm.bspm_oper_pt import BSPM_Machine_Oper_Pt
 
 Step 2: Create BSPM Evaluator
 --------------------------------------------------------------------
 
-One of the major purposes of this tutorial is to showcase how multi-physics evaluations can be handled within ``eMach`` using the analyzers
-provided by the repository. To demonstrate this, the structural, electromagnetic, and thermal performance of the example BSPM design created 
+The main purpose of this tutorial is to showcase how multi-physics evaluations are handled by ``eMach`` using the analyzers
+provided within the repository. To demonstrate this, the structural, electromagnetic, and thermal performance of the example BSPM design created 
 in ``ecce_2020_bspm.py`` are evaluated. ``AnalysisStep`` objects are created for each analyzer to ensure proper interface to and from the 
-analyzers. All ``AnalysisStep`` s are then joined together to create an ``Evaluator``. The ``AnalysisStep`` s are organized in manner so as to 
+analyzers. The ``AnalysisStep`` s are then joined together to create an ``Evaluator``, in manner so as to 
 ensure proper transfer of information and to facilitate computational efficiency during optimization. In this particular example, the thermal
-analyzers come after the electromagnetic analyzers as thermal performance is directly tied to motor losses. The structural analyzer is placed 
+analyzers come after the electromagnetic analyzers as thermal performance is determined by motor losses. The structural analyzer is placed 
 at the very beginning as this is a quick, equation based analyzer which determines whether an appropriate sized sleeve can be placed on an 
 SPM rotor or not. Machines which are structurally unsound can be discarded prior to the computationally intensive electromagnetic 
 ``AnalysisStep``, thereby saving time. The steps involved in created a multi-physics BSPM ``Evaluator`` are discussed below. Readers can 
@@ -48,14 +61,14 @@ Step 2.1: Create Structual ``AnalysisStep``
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In this step, we define the interface between a BSPM design and the SPM rotor retaining :doc:`sleeve analyzer <../../../mechanical_analyzers/SPM_sleeve_analyzer>`. 
-The purpose of this analyzer is to determine is a retaining sleeve of sufficient strength can be applied on the SPM rotor to hold the magnets
+The purpose of this analyzer is to determine if a retaining sleeve of sufficient strength can be applied on the SPM rotor to hold the magnets
 in place at rated speed. The code snip provided below shows how this analyzer can be interfaced to a BSPM design. After the analysis is 
 completed, the design is either discarded if the analyzer was unable to find an appropriately sized sleeve, or a clone of the ``BSPM_Machine`` 
 is created having the sleeve size required for magnet retention.   
 
 .. code-block:: python
 
-	from copy import deepcopy
+    from copy import deepcopy
 
     from eMach.mach_eval.analyzers.mechanical import rotor_structural as stra
     from eMach.mach_eval import AnalysisStep, ProblemDefinition
@@ -68,8 +81,7 @@ is created having the sleeve size required for magnet retention.
         "rad_magnets": 0,
         "tan_magnets": 80e6,
     }
-    # spd = sta.SleeveProblemDef(design_variant)
-    # problem = spd.get_problem()
+
     struct_ana = stra.SPM_RotorSleeveAnalyzer(stress_limits)
 
     class MySleeveProblemDef(ProblemDefinition):
@@ -120,9 +132,28 @@ Step 2.2: Create Electromagnetic ``AnalysisStep``
 
 In this step, we define the interface between a BSPM design and the :doc:`BSPM JMAG 2D FEA Analyzer <../../../EM_analyzers/bspm_jmag2d_analyzer>`. 
 The purpose of this analyzer is to run a JMAG 2D FEA simulation of an input BPSM machine and return data relevant to the performance of
-this machine. While the input provided to this analyzer is fairly straightforward, intepreting the data returned by the analyzer can be 
-challenging. The code snip provided below shows how this analyzer can be interfaced to a BSPM design. After the analysis is 
-completed, a clone of the ``BSPM_Machine`` is created having the sleeve size required for magnet retention. 
+this machine. The input provided to this analyzer is the BSPM machine and its operating point. The analyzer returns a set of dataframes
+extracted from JMAG 2D FEA solve which can be interpreted to determine the motor losses, and torque, force performance. As ineterpreting this
+information can be challenging, readers are adviced to copy the ``bpsm_em_post_analyzer.py`` script file in ``examples/mach_eval_examples/bspm_eval`` 
+to post-process FEA results. Simply modify the import statements as shown below.
+
+.. code-block:: python
+
+    import copy
+    import numpy as np
+
+    from mach_eval.analyzers.force_vector_data import (
+        ProcessForceDataProblem,
+        ProcessForceDataAnalyzer,
+    )
+    from mach_eval.analyzers.torque_data import (
+        ProcessTorqueDataProblem,
+        ProcessTorqueDataAnalyzer,
+    )
+
+The code snip provided below shows how this analyzer can be interfaced to a BSPM design. After the analysis is completed, relevant information 
+is stored in ``State`` for future reference. Its worth noting that the losses obtained from this analysis is required by the next two thermal 
+``AnalysisStep`` s to determine the rotor and stator temperatures.
 
 .. code-block:: python
 	
@@ -177,8 +208,8 @@ Step 2.3: Create Rotor Thermal ``AnalysisStep``
 In this step, we define the interface between a BSPM design and the :doc:`SPM Airflow Analyzer <../../../mechanical_analyzers/SPM_rotor_airflow_analyzer>`. 
 The purpose of this analyzer is evaluate the airflow required (under certain bounds) to prevent the BSPM machine magnets from overheating at 
 the provided operating conditions. The code snip provided below shows how this analyzer can be interfaced to a BSPM design and the loss data
-obtained from FEA. After the analysis is completed, the design is discarded if the magnets get overheated. If the magnets are safe thermally,
-the required airflow and the corresponding magnet temperature rise are saved for future reference.
+obtained from FEA. After the analysis is completed, the design is discarded if the magnets get overheated. If the magnets are not at risk of
+de-magnetization from high temperatures, the required airflow and the corresponding magnet temperature rise are saved for future reference.
 
 .. code-block:: python
 	
@@ -258,7 +289,7 @@ Step 2.4: Create Stator Thermal ``AnalysisStep``
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In this step, we define the interface between a BSPM design and the :doc:`Stator Thermal Analyzer <../../../mechanical_analyzers/SPM_rotor_airflow_analyzer>`. 
-The purpose of this analyzer is evaluate the whether the stator winding temperature for a provided stator outer bore convection coefficient. 
+The purpose of this analyzer is evaluate the stator winding temperature for a provided stator outer bore convection coefficient. 
 The cooling rate is set at ``h = 200 W/m^2K`` for this evaluation. The code snip provided below shows how this analyzer can be interfaced to 
 a BSPM design and the loss data obtained from FEA. After the analysis is completed, the stator winding and yoke temperatures are saved for 
 future reference. Alternatively, a limit can be placed on stator winding temperature and the design can be discarded if the machine operates
@@ -412,7 +443,7 @@ analysis is completed, the overall efficiency of the motor is calculated and sav
 Step 2.6: Create the Multi-Physics ``Evaluator``
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Simply merge all the ``AnalysisStep``s in the order in which they were defined above to create the ``Evaluator``. The code provided below
+Simply merge all the ``AnalysisStep`` s in the order in which they were defined above to create the ``Evaluator``. The code provided below
 assumes each ``AnalysisStep`` was defined in a separate Python file / module. Readers are advised to name this file ``bspm_evaluator.py``.
 
 .. code-block:: python
@@ -438,9 +469,9 @@ assumes each ``AnalysisStep`` was defined in a separate Python file / module. Re
 Step 3: Evaluate BSPM Design
 --------------------------------------------------------------------
 	
-To evaluate the BSPM machine created in step 1 at the defined operating point, we need to define a ``MachineDesign`` and pass it as an 
-argument to the ``evaluate`` method of the ``bspm_evaluator`` created in the preceding step. The code below is provided in a manner such
-that the BSPM design is evaluated only when users try to run the ``bspm_evaluator.py`` file.
+To evaluate the BSPM machine created in Step 1 at the defined operating point, we need to instantiate a ``MachineDesign`` object and pass it 
+as an argument to the ``evaluate`` method of the ``bspm_evaluator`` created in the preceding step. The code below is provided in a manner 
+such that the BSPM design is evaluated only when users try to run the ``bspm_evaluator.py`` file.
 
 .. code-block:: python
 	
@@ -465,9 +496,9 @@ Upon running this script you should get the following results:
 - Stator temperature = 161.5 degC
 - Efficiency = 97.2\%
 
-.. note:: Getting the evaluator to work can be challenging as it involves the integration of multiple analyzers and ``mach_eval`` classes. 
-    Reviewing the ``examples/mach_eval_examples/bspm_eval`` folder and running the  ``bspm_evaluator.py`` script herewith can help debug
-    issues you may run into.
+.. note:: The ``examples/mach_eval_examples/bspm_eval`` folder provides working code for the tutorial discussed here. You can run the 
+    ``bspm_evaluator.py`` script herewith to evaluate the ``ecce_2020_design`` and compare the results against those obtained from your own 
+    ``Evaluator``.
 
 Conclusion
 ----------------
