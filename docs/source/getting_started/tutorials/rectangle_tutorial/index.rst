@@ -1,7 +1,7 @@
 .. _rectangle_example:
 
-Rectangle Tutorial 
-==================
+Rectangle Optimization Tutorial 
+===============================
 * **Goal:** Understand base ``mach_opt`` classes
 * **Complexity** 2/5
 * **Estimated Time** 20 min

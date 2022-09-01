@@ -195,7 +195,7 @@ is shown below:
         multiple_cpus=True,
         num_cpus=4,
         jmag_scheduler=False,
-        jmag_visible=False,
+        jmag_visible=True,
     )
 
     em_analysis = BSPM_EM_Analyzer(jmag_config)
