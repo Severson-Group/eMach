@@ -50,7 +50,7 @@ links provided on the left to familiarize themselves with the repository.
    :maxdepth: 2
    :caption: Code
 
-   modules
+   auto_docs/modules
 
 
    

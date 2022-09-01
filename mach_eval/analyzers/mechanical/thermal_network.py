@@ -62,7 +62,7 @@ class ThermalNetworkAnalyzer:
             Q_dot_aug = problem.Q_dot
             Q_dot_aug[node] = temp
         T = np.dot(np.linalg.inv(G_aug), Q_dot_aug)
-        print(T)
+        # print(T)
         return T
 
 
