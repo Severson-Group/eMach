@@ -17,11 +17,11 @@ class MyDataHandler(mo.DataHandler):
             final_state = data.full_results[-1][-1]
             Ea = final_state.conditions.em["Ea"]
             i = i+1
-            if data.objs[1]<-97.7 and Ea<1 and data.objs[2]<2:
+            if data.objs[0]<-8 and data.objs[1]<-97.7 and Ea<1 and data.objs[2]<2:
                 print("Design is ", final_state.design.machine.name)
                 print(data.objs, Ea)
         
-    def get_machine(self, name):
+    def get_design(self, name):
         archive = self.load_from_archive()
         i = 0
         for data in archive:
@@ -29,8 +29,9 @@ class MyDataHandler(mo.DataHandler):
                 continue
 
             final_state = data.full_results[-1][-1]
-            machine = final_state.design.machine
+            design = final_state.design
+            machine = design.machine
             if machine.name == name:
-                return machine
+                return design
         return None
                 

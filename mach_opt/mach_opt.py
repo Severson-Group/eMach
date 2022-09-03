@@ -224,6 +224,22 @@ class DataHandler():
 
         with open(self.designer_filepath, 'wb') as des:
             pickle.dump(designer, des, -1)
+    
+    def save_object(object, filename):
+        """ Save object to specified filename"""
+
+        with open(filename, 'wb') as obje:
+            pickle.dump(object, obje, -1)
+    
+    def load_object(filename):
+        """load object from specified filename"""
+
+        with open(filename, 'rb') as f:
+            while 1:
+                try:
+                    yield pickle.load(f)  # use generator
+                except EOFError:
+                    break
 
     def get_archive_data(self):
         archive = self.load_from_archive()
@@ -238,7 +254,6 @@ class DataHandler():
         """ Return data of Pareto optimal designs"""
         archive = self.load_from_archive()
         fitness, free_vars = self.get_archive_data()
-        
         ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(fitness)
         fronts_index = ndf[0]
         
