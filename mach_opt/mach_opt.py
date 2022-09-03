@@ -115,8 +115,7 @@ class DesignProblem:
         try:
             design = self.__designer.create_design(x)
             full_results = self.__evaluator.evaluate(design)
-            valid_constraints = self.__design_space.check_constraints(full_results)
-            objs = self.__design_space.get_objectives(valid_constraints, full_results)
+            objs = self.__design_space.get_objectives(full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
             # print('The fitness values are', objs)
             return objs

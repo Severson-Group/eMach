@@ -16,7 +16,8 @@ class BSPMDesignSpace:
         min_b, max_b = min_b.astype(float), max_b.astype(float)
         return min_b.tolist(), max_b.tolist()
 
-    def get_objectives(self, valid_constraints, full_results):
+    def get_objectives(self, full_results):
+        valid_constraints = check_constraints(full_results)
         if not valid_constraints:
             f1, f2, f3 = 9999, 9999, 9999  # bad fitness values
         else:

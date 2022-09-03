@@ -1,5 +1,3 @@
-import pickle
-import pygmo as pg
 import os
 import sys
 

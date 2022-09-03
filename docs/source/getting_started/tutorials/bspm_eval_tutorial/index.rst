@@ -292,8 +292,7 @@ In this step, we define the interface between a BSPM design and the :doc:`Stator
 The purpose of this analyzer is evaluate the stator winding temperature for a provided stator outer bore convection coefficient. 
 The cooling rate is set at ``h = 200 W/m^2K`` for this evaluation. The code snip provided below shows how this analyzer can be interfaced to 
 a BSPM design and the loss data obtained from FEA. After the analysis is completed, the stator winding and yoke temperatures are saved for 
-future reference. Alternatively, a limit can be placed on stator winding temperature and the design can be discarded if the machine operates
-above this limit.
+future reference if the coil temperature is under 300 degC.
 
 .. code-block:: python
 	
@@ -359,7 +358,7 @@ above this limit.
 
         def get_next_state(results, stateIn):
             if results["Coil temperature"] > 300 == True:
-                raise InvalidDesign("Magnet temperature beyond limits")
+                raise InvalidDesign("Coil temperature beyond limits")
             else:
                 stateOut = deepcopy(stateIn)
                 stateOut.conditions.T_coil = results["Coil temperature"]

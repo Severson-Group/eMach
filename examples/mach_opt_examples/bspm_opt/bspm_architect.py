@@ -7,7 +7,6 @@ os.chdir(os.path.dirname(__file__))
 # add the directory 3 levels above this file's directory to path for module import
 sys.path.append("../../..")
 
-# from .architect import Architect
 from mach_eval.machines.bspm import BSPM_Machine
 from mach_eval.machines.bspm.winding_layout import WindingLayout
 
@@ -17,10 +16,9 @@ class BSPM_Architect1:
     This class acts as an interface between the end user and the BSPM_Machine class.
     Each Architect class has to be tailor made based on the expected free variables
     from the optimization algorithm
-
     """
 
-    def __init__(self, specification):
+    def __init__(self, design_spec, materials):
         """
         Initializes the architecture with BSPM machine materials and design
         specifications.
@@ -35,15 +33,8 @@ class BSPM_Architect1:
         None.
 
         """
-        self.__design_spec = specification.design_spec
-        self.__rotor_material = specification.rotor_material
-        self.__stator_material = specification.stator_material
-        self.__sleeve_material = specification.sleeve_material
-        self.__coil_material = specification.coil_material
-        self.__rotor_hub = specification.rotor_hub
-        self.__air = specification.air
-        self.__magnet_material = specification.magnet_material
-        self.__shaft_material = specification.shaft_material
+        self.__design_spec = design_spec
+        self.__materials = materials
         self.__winding = WindingLayout(
             DPNV_or_SEPA=True, Qs=self.__design_spec["Q"], p=self.__design_spec["p"]
         )
@@ -105,16 +96,7 @@ class BSPM_Architect1:
             "name": "proj_" + str(self.count) + "_"
         }
         
-        bspm_materials = {
-            "air_mat": self.__air,
-            "rotor_iron_mat": self.__rotor_material,
-            "stator_iron_mat": self.__stator_material,
-            "magnet_mat": self.__magnet_material,
-            "rotor_sleeve_mat": self.__sleeve_material,
-            "coil_mat": self.__coil_material,
-            "shaft_mat": self.__shaft_material,
-            "rotor_hub": self.__rotor_hub,
-        }
+        bspm_materials = self.__materials
 
         bspm_winding = {
             "no_of_layers": self.__winding.no_winding_layer,
