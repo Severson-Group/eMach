@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from data_handler import MyDataHandler
-from data_analyzer import DataAnalyzer
+from my_plotting_functions import DataAnalyzer
 
 path = os.path.dirname(__file__)
 arch_file = path + r'/opti_arch.pkl'  # specify path where saved data will reside
@@ -18,7 +18,7 @@ eff = []
 for i in range(len(fts[:,1])):
     eff.append(fts[i,1][0])
     
-fitness_dict = {'SP': fts[:,0],
+fitness_dict = {'Cost': fts[:,0],
                 'eff': eff,
                 'WR': fts[:,2],}
 fitness_df = pd.DataFrame.from_dict(fitness_dict)

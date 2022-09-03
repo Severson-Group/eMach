@@ -25,6 +25,7 @@ Steel = {
 
 Copper = {
     'copper_material_cost'       : 73228, # $/m3
+    'copper_material_density'    : 8920,
     'copper_elec_conductivity'   : 5.7773*1e7, # S/m
     }
 

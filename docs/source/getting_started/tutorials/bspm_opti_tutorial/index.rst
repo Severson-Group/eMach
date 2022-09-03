@@ -152,9 +152,11 @@ Step 5: Run Optimization
 --------------------------------------------------------------------
 
 Finally, the multi-objective, multi-physics optimization can be run by combining the modules created up to this step. The code snippet 
-provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. To obtain
-a true Pareto optimal front, this code should be executed for multiple generations (10 or higher). If the script terminates before the Pareto 
-front is obtained, simply run the script again and the optimziation will resume from the last saved generation (based on ``latest_pop.csv``). 
+provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. The optimization
+should run for as many generations as required for converging to the Pareto Front. This can be determined by comparing the improvement performance
+of Pareto optimal designs with eash generation. When the improvement starts to plateau, it can be concluded that the Pareto front in obtained.
+If the optimization terminates before this is achieved, simply run the script again and the optimziation will resume from the last saved 
+generation (based on ``latest_pop.csv``). 
 
 .. code-block:: python
 
@@ -223,12 +225,11 @@ front is obtained, simply run the script again and the optimziation will resume 
     pop = design_opt.run_optimization(population, gen_size, pop_file)
 
 
-Step 6: Process Optimization Archive
+Step 6: Optimization Post-Processing
 --------------------------------------------------------------------
 	
-To evaluate the BSPM machine created in step 1 at the defined operating point, we need to define a ``MachineDesign`` and pass it as an 
-argument to the ``evaluate`` method of the ``bspm_evaluator`` created in the preceding step. The code below is provided in a manner such
-
+To truly leverage optimization, users must be able to effectively analyze the resulting data. This includes extracting the Pareto front,
+comparing the  
 
 Conclusion
 ----------------

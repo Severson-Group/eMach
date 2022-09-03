@@ -204,7 +204,7 @@ class DataHandler():
             objs: Fitness values corresponding to a design
         """
         # assign relevant data to OptiData class attributes
-        opti_data = mo.OptiData(x=x, design=design, full_results=full_results, objs=objs)
+        opti_data = OptiData(x=x, design=design, full_results=full_results, objs=objs)
         # write to pkl file. 'ab' indicates binary append
         with open(self.archive_filepath, 'ab') as archive:
             pickle.dump(opti_data, archive, -1)
@@ -254,7 +254,6 @@ class DataHandler():
         archive = self.get_pareto_data()
         fitness = []
         free_vars = []
-        rated_power = []
         for data in archive:
             fitness.append(data.objs)
             free_vars.append(data.x)
