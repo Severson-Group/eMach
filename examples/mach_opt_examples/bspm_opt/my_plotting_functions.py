@@ -61,7 +61,7 @@ class DataAnalyzer:
                 x = np.array(x)[z<z_filter]
                 y = np.array(y)[z<z_filter]
                 z = z[z<z_filter]
-                print('Cost, -Efficency, Ripple Sum')
+                print('-Power Density, -Efficency, Ripple Sum')
                 for a,b,c in zip(x,y,z):
                     print(a,b,c)
                 scatter_handle = ax.scatter(x, y, c=z, s=40,  edgecolor=None, alpha=0.5, cmap='viridis', marker=marker, zorder=99, vmin=0, vmax=20, label=label,markersize=20) #'viridis'    Spectral
@@ -112,11 +112,11 @@ class DataAnalyzer:
         # fig.set_size_inches(8, 4)
         plt.gcf().subplots_adjust(bottom=0.15)
         # plt.savefig(self.save_path + 'paretoPlot.eps', bbox_inches='tight', format='eps')
-        fig.savefig(self.save_path + 'paretoPlot2.png', bbox_inches='tight', dpi=300)
+        fig.savefig(self.save_path + '/paretoPlot2.png', bbox_inches='tight', dpi=300)
         
       
     def plot_x_with_bounds(self, free_var, var_label, bounds, alpha=0.5):
-        fig, axeses = plt.subplots(2, 4, sharex=True, dpi=300, figsize=(8, 4), facecolor='w', edgecolor='k')
+        fig, axeses = plt.subplots(3, 4, sharex=True, dpi=300, figsize=(8, 4), facecolor='w', edgecolor='k')
         plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.35, hspace=None)
         plt.rcParams['mathtext.fontset'] = 'stix' # 'cm'
         plt.rcParams['font.family'] = ['Times New Roman']
@@ -129,7 +129,7 @@ class DataAnalyzer:
             var_list.append(var)
 
         ax_list = []
-        for i in range(2):
+        for i in range(3):
             ax_list.extend(axeses[i].tolist())
             
         for i,y_label in enumerate(var_label):
@@ -150,8 +150,8 @@ class DataAnalyzer:
             ax.yaxis.set_major_locator(mtick.MaxNLocator(3))
             ax.set_xlim([0,len_x])
 
-        # plt.savefig(self.save_path + 'freeVar.eps', format='eps')    
-        fig.savefig(self.save_path + 'freeVar.png', dpi=300)
+        print(self.save_path)
+        plt.savefig(self.save_path + '/freeVar.png')    
         
         return
     

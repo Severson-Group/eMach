@@ -99,10 +99,10 @@ Step 3: Create BSPM Optimization Design Space
 
 Finally, before running the optimization, the number of optimization objectives, the objectives themselves, and the bounds for the ``Free 
 Variables`` must be decided upon. This information is held within the ``BSPMDesignSpace`` object. The optimization is run considering three 
-objectives. This includes minimizing cost and weighted ripple, and maximizing efficiency. More information on the optimization objectives is 
-available in this `paper <https://doi.org/10.1109/ECCE44975.2020.9236181>`_.The class is configured such that the bounds are passed in as an 
-argument during instatiation to provide users with the freedom of setting the bounds within the actual optimization script. To create the 
-``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder. The file can be used as is.
+objectives. This includes minimizing torque, force ripple, and maximizing efficiency, power density. The class is configured such that the 
+bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds within the actual optimization 
+script. To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder. The 
+file can be used as is.
 
 Step 4: Update ``mach_opt`` ``DataHandler`` (if required)
 --------------------------------------------------------------------
@@ -112,51 +112,20 @@ for post-processing and to resume optimization in case it terminates prematurely
 provided within ``mach_opt`` implements the basic functionalities for optimization data handling, including saving and loading optimization
 data using ``pickle``, extracting Pareto optimal designs etc. However, it might be desirable to add other functionalities, especially for
 selecting candidate designs for further investigation. Users can do this by inheriting the ``mach_opt`` ``DataHandler`` class and adding their
-own methods. Create a module ``my_data_handler.py`` to house this custom ``DataHandler``. The below code snippet shows the custom 
-``DataHandler`` created for this optimization.
+own methods. You can copy the ``my_data_handler.py``  file in ``examples/mach_opt_examples/bspm_opt`` to use the additional features of design
+selection, seving etc. Update the import statements as shown below:
 
 .. code-block:: python
 
     import eMach.mach_opt as mo
-
-    class MyDataHandler(mo.DataHandler):
-
-        def select_designs(self):
-            archive = self.load_from_archive()
-            i = 0
-            for data in archive:
-                if data.full_results is None:
-                    continue
-                final_state = data.full_results[-1][-1]
-                Ea = final_state.conditions.em["Ea"]
-                i = i+1
-                if data.objs[1]<-97.7 and Ea<1 and data.objs[2]<2:
-                    print("Design is ", final_state.design.machine.name)
-                    print(data.objs, Ea)
-            
-        def get_machine(self, name):
-            archive = self.load_from_archive()
-            i = 0
-            for data in archive:
-                if data.full_results is None:
-                    continue
-
-                final_state = data.full_results[-1][-1]
-                machine = final_state.design.machine
-                if machine.name == name:
-                    return machine
-            return None
-
 
 Step 5: Run Optimization
 --------------------------------------------------------------------
 
 Finally, the multi-objective, multi-physics optimization can be run by combining the modules created up to this step. The code snippet 
 provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. The optimization
-should run for as many generations as required for converging to the Pareto Front. This can be determined by comparing the improvement performance
-of Pareto optimal designs with eash generation. When the improvement starts to plateau, it can be concluded that the Pareto front in obtained.
-If the optimization terminates before this is achieved, simply run the script again and the optimziation will resume from the last saved 
-generation (based on ``latest_pop.csv``). 
+should run for as many generations as required to obtain the Pareto Front. If the optimization terminates before this is achieved due to
+unexpected errors, simply run the script again and the optimziation will resume from the last saved generation (based on ``latest_pop.csv``). 
 
 .. code-block:: python
 
@@ -229,7 +198,95 @@ Step 6: Optimization Post-Processing
 --------------------------------------------------------------------
 	
 To truly leverage optimization, users must be able to effectively analyze the resulting data. This includes extracting the Pareto front,
-comparing the  
+evaluating trends in the ``Free Variables``, selecting candidate designs etc. Copy the ``my_plotting_functions.py`` file from the 
+``examples/mach_opt_examples/bspm_opt`` folder to get the custom functions created for plotting the Pareto front and ``Free Variables`` of
+this optimization. Create a file named ``plot_script.py``. Copy paste the code provided below to plot the Pareto front. As this optimization
+has three objetives, the marker color is used to indicate the value of the third objective, weighted ripple.
+
+.. code-block:: python
+
+    import os
+
+    from data_handler import MyDataHandler
+    from my_plotting_functions import DataAnalyzer
+
+    path = os.path.dirname(__file__)
+    arch_file = path + r'/opti_arch.pkl'  # specify path where saved data will reside
+    des_file = path + r'/opti_designer.pkl'
+    dh = MyDataHandler(arch_file, des_file)  # initialize data handler with required file paths
+
+    fitness, free_vars = dh.get_pareto_fitness_freevars()
+    fts = np.asarray(fitness)
+
+    da = DataAnalyzer(path)
+    # # da.plot_fitness_tradeoff(fitness, rated_power, label=['SP [kW/kg]', '$\eta$ [%]', 'WR [1]', 'Power [kW]'],
+    # #                           axes=[0,3], filename='pd_vs_power')
+    da.plot_pareto_front(points=fitness, label=['-SP [kW/kg]', '-$\eta$ [%]', 'WR [1]'])
+
+An example Pareto plot is shown below:
+
+.. figure:: ./images/ParetoFront.svg
+   :alt: BSPM Cross-Section 
+   :align: center
+   :width: 300 
+
+To plot trends in ``Free Variables`` from the beginning to the end of the optimization, copy paste the code provided below to ``plot_script.py``. 
+The blue markers provide the value of the ``Free Variable`` corresponding to a design and the red lines indicate the bounds corresponding to 
+each free variable. The bounds should be set such that they are not run into during optiimization if possible. 
+
+.. code-block:: python
+
+    fitness, free_vars = dh.get_archive_data()
+    var_label = [
+                '$\delta_e$ [m]', 
+                "$r_ro$ [m]",
+                r'$\alpha_{st}$ [deg]', 
+                '$d_{so}$ [m]',
+                '$w_{st}$ [m]',
+                '$d_{st}$ [m]',
+                '$d_{sy}$ [m]',
+                r'$\alpha_m$ [deg]',
+                '$d_m$ [m]',
+                '$d_{mp}$ [m]',
+                '$d_{ri}$ [m]',
+                ]
+
+    bp2 = (0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 1e-3, 3e-3,)
+    # # bounds for pygmo optimization problem
+    bounds = [
+        [0.5 * bp2[0], 2 * bp2[0]],  # delta_e
+        [0.5 * bp2[1], 2 * bp2[1]],  # r_ro    this will change the tip speed
+        [0.2 * bp2[2], 1.1 * bp2[2]],  # alpha_st
+        [0.2 * bp2[3], 2 * bp2[3]],  # d_so
+        [0.2 * bp2[4], 3 * bp2[4]],  # w_st
+        [0.5 * bp2[5], 2 * bp2[5]],  # d_st
+        [0.5 * bp2[6], 2 * bp2[6]],  # d_sy
+        [0.99 * bp2[7], 1 * bp2[7]],  # alpha_m
+        [0.2 * bp2[8], 2 * bp2[8]],  # d_m
+        [0 * bp2[9], 1 * bp2[9]],  # d_mp
+        [0.3 * bp2[10], 2 * bp2[10]],  # d_ri
+    ]
+    da.plot_x_with_bounds(free_vars, var_label, bounds)
+
+An example plot of ``Free Variables`` trends is shown below:
+
+.. figure:: ./images/FreeVariables.svg
+   :alt: BSPM Cross-Section 
+   :align: center
+   :width: 500 
+
+
+Finally to select a candidate design, add ``dh.select_designs()`` line to ``plot_script.py``. You will most likely need to modify the
+design selection criteria in ``my_data_handler.py`` to get designs having the performance you want. After determining the design you wish to
+analyze in further detail, use the following code to save it to a ``Pickle`` file for future reference. Code to extract relevant information
+from the design ``Pickle`` file is also provided.
+
+.. code-block:: python
+
+    dh.select_designs()
+
+    proj_120_ = dh.get_design( 'proj_120_')
+    print("proj_120_ d_st", proj_120_.machine.d_st)
 
 Conclusion
 ----------------
