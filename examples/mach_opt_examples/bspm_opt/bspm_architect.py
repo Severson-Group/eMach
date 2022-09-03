@@ -3,9 +3,7 @@ import os
 import sys
 
 # change current working directory to file location
-os.chdir(os.path.dirname(__file__))
-# add the directory 3 levels above this file's directory to path for module import
-sys.path.append("../../..")
+sys.path.append(os.path.dirname(__file__)+"/../../..")
 
 from mach_eval.machines.bspm import BSPM_Machine
 from mach_eval.machines.bspm.winding_layout import WindingLayout

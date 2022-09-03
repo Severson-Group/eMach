@@ -2,12 +2,9 @@ import os
 import sys
 
 # change current working directory to file location
-os.chdir(os.path.dirname(__file__))
-# add the directory immediately above this file's directory to path for module import
-sys.path.append("../../..")
+sys.path.append(os.path.dirname(__file__)+"/../../..")
 
 from bspm_architect import BSPM_Architect1
-from mach_eval.machines.bspm.bspm_specification import BSPMMachineSpec
 from mach_eval.machines.materials.electric_steels import Arnon5
 from mach_eval.machines.materials.jmag_library_magnets import N40H
 from mach_eval.machines.materials.miscellaneous_materials import (

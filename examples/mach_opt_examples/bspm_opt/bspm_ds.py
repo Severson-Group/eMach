@@ -17,7 +17,7 @@ class BSPMDesignSpace:
         return min_b.tolist(), max_b.tolist()
 
     def get_objectives(self, full_results):
-        valid_constraints = check_constraints(full_results)
+        valid_constraints = self.check_constraints(full_results)
         if not valid_constraints:
             f1, f2, f3 = 9999, 9999, 9999  # bad fitness values
         else:
@@ -25,14 +25,21 @@ class BSPMDesignSpace:
             final_state = final_results[-1]
             machine = final_state.design.machine
             stator_iron = machine.stator_iron_mat
+            shaft = machine.shaft_mat
             rotor_iron = machine.rotor_iron_mat
             magnet = machine.magnet_mat
             coil = machine.coil_mat
 
-            cost_of_machine = stator_iron['core_material_cost'] * machine.V_sfe + rotor_iron['core_material_cost'] * \
-                              machine.V_rfe + magnet['magnet_material_cost'] * machine.V_rPM + \
-                              coil['copper_material_cost'] * machine.V_scu
-            f1 = cost_of_machine
+            weight = machine.V_rfe * rotor_iron['core_material_density'] + \
+                     machine.V_sh * shaft['shaft_material_density'] + \
+                     machine.V_rPM * magnet['magnet_material_density'] + \
+                     machine.V_sfe * stator_iron['core_material_density'] + \
+                     machine.V_scu * coil['copper_material_density']
+            
+            em_results = final_state.conditions.em
+            power = em_results['torque_avg'] * final_state.design.settings.speed * np.pi/30
+
+            f1 = -1 * 0.001*power/weight    # power density kW/kg
             f2 = -1 * final_state.conditions.windage['efficiency']
 
             em_results = final_state.conditions.em
