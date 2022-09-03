@@ -34,21 +34,19 @@ design_spec = {
     "rated_power": 5.5e3,  # rated power in W
     "voltage_rating": 240,  # line-line voltage rating
 }
-# define BSPM machine specification object
-machine_spec = BSPMMachineSpec(
-    design_spec=design_spec,
-    rotor_core=Arnon5,
-    stator_core=Arnon5,
-    magnet=N40H,
-    conductor=Copper,
-    shaft=Steel,
-    air=Air,
-    sleeve=CarbonFiber,
-    hub=Hub,
-)
 
+materials = {
+    "air_mat": Air,
+    "rotor_iron_mat": Arnon5,
+    "stator_iron_mat": Arnon5,
+    "magnet_mat": N40H,
+    "rotor_sleeve_mat": CarbonFiber,
+    "coil_mat": Copper,
+    "shaft_mat": Steel,
+    "rotor_hub": Hub,
+}
 # initialize BSPMArchitect with machine specification
-arch = BSPM_Architect1(machine_spec)
+arch = BSPM_Architect1(design_spec, materials)
 set_handler = BSPM_Settings_Handler()
 
 designer = MachineDesigner(arch, set_handler)
