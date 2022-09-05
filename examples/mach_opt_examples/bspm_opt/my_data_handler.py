@@ -17,7 +17,7 @@ class MyDataHandler(mo.DataHandler):
             final_state = data.full_results[-1][-1]
             Ea = final_state.conditions.em["Ea"]
             i = i+1
-            if data.objs[0]<-8 and data.objs[1]<-97.7 and Ea<1 and data.objs[2]<2:
+            if data.objs[0]<-7 and data.objs[1]<-97.0 and Ea<1 and data.objs[2]<2:
                 print("Design is ", final_state.design.machine.name)
                 print(data.objs, Ea)
         

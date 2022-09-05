@@ -11,32 +11,32 @@ from mach_opt import DesignProblem, DesignOptimizationMOEAD
 from my_data_handler import MyDataHandler
 
 # set bounds for pygmo optimization problem
-bp2 = (
-    0.00275,
-    0.01141,
-    44.51,
-    5.43e-3,
-    9.09e-3,
-    16.94e-3,
-    13.54e-3,
+dims = (
+    0.003,
+    0.012,
+    45,
+    5.5e-3,
+    9e-3,
+    17e-3,
+    13.5e-3,
     180.0,
-    3.41e-3,
+    3e-3,
     1e-3,
     3e-3,
 )
 
 bounds = [
-    [0.5 * bp2[0], 2 * bp2[0]],  # delta_e
-    [0.5 * bp2[1], 2 * bp2[1]],  # r_ro    this will change the tip speed
-    [0.2 * bp2[2], 1.1 * bp2[2]],  # alpha_st
-    [0.2 * bp2[3], 2 * bp2[3]],  # d_so
-    [0.2 * bp2[4], 3 * bp2[4]],  # w_st
-    [0.5 * bp2[5], 2 * bp2[5]],  # d_st
-    [0.5 * bp2[6], 2 * bp2[6]],  # d_sy
-    [0.99 * bp2[7], 1 * bp2[7]],  # alpha_m
-    [0.2 * bp2[8], 2 * bp2[8]],  # d_m
-    [0 * bp2[9], 1 * bp2[9]],  # d_mp
-    [0.3 * bp2[10], 2 * bp2[10]],  # d_ri
+    [0.5 * dims[0], 2 * dims[0]],  # delta_e
+    [0.5 * dims[1], 2 * dims[1]],  # r_ro    this will change the tip speed
+    [0.2 * dims[2], 1.1 * dims[2]],  # alpha_st
+    [0.2 * dims[3], 2 * dims[3]],  # d_so
+    [0.2 * dims[4], 3 * dims[4]],  # w_st
+    [0.5 * dims[5], 2 * dims[5]],  # d_st
+    [0.5 * dims[6], 2 * dims[6]],  # d_sy
+    [0.99 * dims[7], 1 * dims[7]],  # alpha_m
+    [0.2 * dims[8], 2 * dims[8]],  # d_m
+    [0 * dims[9], 1 * dims[9]],  # d_mp
+    [0.3 * dims[10], 2 * dims[10]],  # d_ri
 ]
 
 # create optimization Design Space object
