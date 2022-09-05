@@ -3,14 +3,14 @@ BSPM Optimization Tutorial
 
 * **Goal:** Leverage capabilites of ``mach_opt`` and ``mach_eval`` to perform multi-objective, multi-physics optimization of
   bearingless surface permamanent magnet machines
-* **Complexity** 4/5
-* **Estimated Time** 45 - 60 min
+* **Complexity:** 4/5
+* **Estimated Time:** 45 - 60 min
 
 This tutorial demonstrates how to perform a multi-objective, multi-physics optimization of BSPM machines using ``eMach``. By the end of this 
 tutorial you will be able to:
 
-* optmize BSPM designs for desired objectives
-* post-proccess optimization archive data to understand design space, select and share candidate designs
+* run multi-objective optimizations using ``eMach`` for a wide range of electric machines
+* post-proccess optimization data to understand design space; select and share candidate designs
 
 
 Requirements 
@@ -26,7 +26,7 @@ Background
 
 The ``mach_opt`` module of ``eMach`` provides classes to interface with the ``Python`` optimization package ``Pygmo``. This module has been 
 designed considering the optimization workflow provided below. In this tutorial, we will go over how users can develop their own classes to
-follow this workflow and leverage ``mach_opt`` for optimization.
+follow this workflow and leverage ``mach_opt`` for optimization by going through an example of multi-physics BSPM optimization using ``eMach``.
 
 .. figure:: ./images/MachOptFlowChart.svg
    :alt: ``mach_opt`` Flowchart
@@ -45,9 +45,9 @@ of 11 ``Free Variables`` are considered to optimize both the rotor and stator ge
 :math:`d_{mp}`, and :math:`d_{ri}` dimensions. Readers can refer to the :doc:`BSPM machine <../../../machines/bspm/bspm_machine>` document to 
 understand the physical dimensions corresponding to these ``Free Variables``. The output of the ``Designer`` is a BSPM ``Design`` which comprises
 of a :doc:`BSPM Machine <../../../machines/bspm/bspm_machine>` and its corresponding :doc:`operating point <../../../machines/bspm/bspm_oper_pt>`.
-The BSPM ``Designer`` has an ``Architect`` to create the ``BSPM_Machine`` from ``Free Variables``, and a ``Settings_Handler`` to creates the 
-``BSPM_Machine_Oper_Pt`` object from ``Free Variables``. As the operating point remains the in this optimization, the ``Settings_Handler`` 
-always returns the same ``BSPM_Machine_Oper_Pt`` object. 
+The BSPM ``Designer`` has an ``Architect`` to create the ``BSPM_Machine`` from ``Free Variables``, and a ``Settings_Handler`` to create the 
+``BSPM_Machine_Oper_Pt`` object. As the operating point is fixed for this optimization, the ``Settings_Handler`` always returns the same 
+``BSPM_Machine_Oper_Pt`` object. 
 
 To create the BSPM ``Designer``, copy the ``bspm_architect.py``, ``bspm_settings_handler.py``, and ``bspm_designer.py`` files from the
 ``examples/mach_opt_examples/bspm_opt`` folder to your root directory. Update the import statements found at the top of each module as shown 
@@ -92,28 +92,28 @@ Step 2: Create BSPM Design ``Evaluator``
 Simply use the multi-physics BSPM design ``Evaluator`` developed in the :doc:`BSPM Evaluation Tutorial <../bspm_eval_tutorial/index>` in this 
 step. Structural, electromagnetic, and thermal performance of BSPM designs will be analyzed using this ``Evaluator``. The coil temperature
 limit set in Step 2.4 of :doc:`BSPM Evaluation Tutorial <../bspm_eval_tutorial/index>` can be reduced from 300 degC to 150 degC to optimize 
-for a more realistic BSPM machine.
+for a more realistic BSPM design.
 
 Step 3: Create BSPM Optimization Design Space
 --------------------------------------------------------------------
 
 Finally, before running the optimization, the number of optimization objectives, the objectives themselves, and the bounds for the ``Free 
 Variables`` must be decided upon. This information is held within the ``BSPMDesignSpace`` object. The optimization is run considering three 
-objectives. This includes minimizing torque, force ripple, and maximizing efficiency, power density. The class is configured such that the 
-bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds within the actual optimization 
-script. To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder. The 
-file can be used as is.
+objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is 
+configured such that the bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds 
+within the actual optimization script. To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the 
+``examples/mach_opt_examples/bspm_opt`` folder. The file can be used as is.
 
 Step 4: Update ``mach_opt`` ``DataHandler`` (if required)
 --------------------------------------------------------------------
 
 During optimization, a huge dataset of BSPM designs and information related to their performance is created. It is important to save this data
 for post-processing and to resume optimization in case it terminates prematurely due to unforseen errors. The base ``DataHandler``
-provided within ``mach_opt`` implements the basic functionalities for optimization data handling, including saving and loading optimization
-data using ``pickle``, extracting Pareto optimal designs etc. However, it might be desirable to add other functionalities, especially for
-selecting candidate designs for further investigation. Users can do this by inheriting the ``mach_opt`` ``DataHandler`` class and adding their
-own methods. You can copy the ``my_data_handler.py``  file in ``examples/mach_opt_examples/bspm_opt`` to use the additional features of design
-selection, seving etc. Update the import statements as shown below:
+provided within ``mach_opt`` implements the basic functionalities for optimization data handling, including saving and loading data using 
+``Pickle``, extracting Pareto optimal designs etc. However, it might be desirable to add other functionalities, especially for
+selecting candidate designs for further investigation. This can be achieved by inheriting the ``mach_opt`` ``DataHandler`` class and adding 
+the methods required for candidate design selection and extraction. The ``my_data_handler.py`` file in ``examples/mach_opt_examples/bspm_opt`` 
+folder provides an example implementation of a custom ``DataHandler`` class. Update the import statements as shown below.
 
 .. code-block:: python
 
@@ -123,7 +123,9 @@ Step 5: Run Optimization
 --------------------------------------------------------------------
 
 Finally, the multi-objective, multi-physics optimization can be run by combining the modules created up to this step. The code snippet 
-provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. The optimization
+provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. An important
+consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analatyically designed
+machine as the baseline or an existing machine and applying scaling factors on its dimensions to get the bounds. The optimization
 should run for as many generations as required to obtain the Pareto Front. If the optimization terminates before this is achieved due to
 unexpected errors, simply run the script again and the optimziation will resume from the last saved generation (based on ``latest_pop.csv``). 
 
@@ -136,32 +138,32 @@ unexpected errors, simply run the script again and the optimziation will resume 
     from my_data_handler import MyDataHandler
 
     # set bounds for pygmo optimization problem
-    bp2 = (
-        0.00275,
-        0.01141,
-        44.51,
-        5.43e-3,
-        9.09e-3,
-        16.94e-3,
-        13.54e-3,
+    dims = (
+        0.003,
+        0.012,
+        45,
+        5.5e-3,
+        9e-3,
+        17e-3,
+        13.5e-3,
         180.0,
-        3.41e-3,
+        3e-3,
         1e-3,
         3e-3,
     )
 
     bounds = [
-        [0.5 * bp2[0], 2 * bp2[0]],  # delta_e
-        [0.5 * bp2[1], 2 * bp2[1]],  # r_ro    this will change the tip speed
-        [0.2 * bp2[2], 1.1 * bp2[2]],  # alpha_st
-        [0.2 * bp2[3], 2 * bp2[3]],  # d_so
-        [0.2 * bp2[4], 3 * bp2[4]],  # w_st
-        [0.5 * bp2[5], 2 * bp2[5]],  # d_st
-        [0.5 * bp2[6], 2 * bp2[6]],  # d_sy
-        [0.5 * bp2[7], 1 * bp2[7]],  # alpha_m
-        [0.2 * bp2[8], 2 * bp2[8]],  # d_m
-        [0 * bp2[9], 1 * bp2[9]],  # d_mp
-        [0.3 * bp2[10], 2 * bp2[10]],  # d_ri
+        [0.5 * dims[0], 2 * dims[0]],  # delta_e
+        [0.5 * dims[1], 2 * dims[1]],  # r_ro    this will change the tip speed
+        [0.2 * dims[2], 1.1 * dims[2]],  # alpha_st
+        [0.2 * dims[3], 2 * dims[3]],  # d_so
+        [0.2 * dims[4], 3 * dims[4]],  # w_st
+        [0.5 * dims[5], 2 * dims[5]],  # d_st
+        [0.5 * dims[6], 2 * dims[6]],  # d_sy
+        [0.99 * dims[7], 1 * dims[7]],  # alpha_m
+        [0.2 * dims[8], 2 * dims[8]],  # d_m
+        [0 * dims[9], 1 * dims[9]],  # d_mp
+        [0.3 * dims[10], 2 * dims[10]],  # d_ri
     ]
 
     # create optimization Design Space object
@@ -194,6 +196,7 @@ unexpected errors, simply run the script again and the optimziation will resume 
     pop = design_opt.run_optimization(population, gen_size, pop_file)
 
 
+
 Step 6: Optimization Post-Processing
 --------------------------------------------------------------------
 	
@@ -216,17 +219,14 @@ has three objetives, the marker color is used to indicate the value of the third
     dh = MyDataHandler(arch_file, des_file)  # initialize data handler with required file paths
 
     fitness, free_vars = dh.get_pareto_fitness_freevars()
-    fts = np.asarray(fitness)
 
     da = DataAnalyzer(path)
-    # # da.plot_fitness_tradeoff(fitness, rated_power, label=['SP [kW/kg]', '$\eta$ [%]', 'WR [1]', 'Power [kW]'],
-    # #                           axes=[0,3], filename='pd_vs_power')
     da.plot_pareto_front(points=fitness, label=['-SP [kW/kg]', '-$\eta$ [%]', 'WR [1]'])
 
-An example Pareto plot is shown below:
+An example Pareto plot obtained from running the optimization script from step 5 is shown below:
 
 .. figure:: ./images/ParetoFront.svg
-   :alt: BSPM Cross-Section 
+   :alt: Optimization Pareto Front
    :align: center
    :width: 300 
 
@@ -251,46 +251,71 @@ each free variable. The bounds should be set such that they are not run into dur
                 '$d_{ri}$ [m]',
                 ]
 
-    bp2 = (0.00275, 0.01141, 44.51, 5.43e-3, 9.09e-3, 16.94e-3, 13.54e-3, 180.0, 3.41e-3, 1e-3, 3e-3,)
+    dims = (0.003, 0.012, 45, 5.5e-3, 9e-3, 17e-3, 13.5e-3, 180.0, 3e-3, 1e-3, 3e-3)
     # # bounds for pygmo optimization problem
     bounds = [
-        [0.5 * bp2[0], 2 * bp2[0]],  # delta_e
-        [0.5 * bp2[1], 2 * bp2[1]],  # r_ro    this will change the tip speed
-        [0.2 * bp2[2], 1.1 * bp2[2]],  # alpha_st
-        [0.2 * bp2[3], 2 * bp2[3]],  # d_so
-        [0.2 * bp2[4], 3 * bp2[4]],  # w_st
-        [0.5 * bp2[5], 2 * bp2[5]],  # d_st
-        [0.5 * bp2[6], 2 * bp2[6]],  # d_sy
-        [0.99 * bp2[7], 1 * bp2[7]],  # alpha_m
-        [0.2 * bp2[8], 2 * bp2[8]],  # d_m
-        [0 * bp2[9], 1 * bp2[9]],  # d_mp
-        [0.3 * bp2[10], 2 * bp2[10]],  # d_ri
+        [0.5 * dims[0], 2 * dims[0]],  # delta_e
+        [0.5 * dims[1], 2 * dims[1]],  # r_ro    this will change the tip speed
+        [0.2 * dims[2], 1.1 * dims[2]],  # alpha_st
+        [0.2 * dims[3], 2 * dims[3]],  # d_so
+        [0.2 * dims[4], 3 * dims[4]],  # w_st
+        [0.5 * dims[5], 2 * dims[5]],  # d_st
+        [0.5 * dims[6], 2 * dims[6]],  # d_sy
+        [0.99 * dims[7], 1 * dims[7]],  # alpha_m
+        [0.2 * dims[8], 2 * dims[8]],  # d_m
+        [0 * dims[9], 1 * dims[9]],  # d_mp
+        [0.3 * dims[10], 2 * dims[10]],  # d_ri
     ]
+
     da.plot_x_with_bounds(free_vars, var_label, bounds)
 
-An example plot of ``Free Variables`` trends is shown below:
+The plots showing trends in ``Free Variables`` from this optimization archive is shown below:
 
 .. figure:: ./images/FreeVariables.svg
-   :alt: BSPM Cross-Section 
+   :alt: Optimization Free Variables
    :align: center
-   :width: 500 
+   :width: 700 
 
 
-Finally to select a candidate design, add ``dh.select_designs()`` line to ``plot_script.py``. You will most likely need to modify the
-design selection criteria in ``my_data_handler.py`` to get designs having the performance you want. After determining the design you wish to
+Finally to select a candidate design, add ``dh.select_designs()`` line to ``plot_script.py``. You will need to modify the
+design selection criteria in ``my_data_handler.py`` to get designs having the performance you desire. After determining the design you wish to
 analyze in further detail, use the following code to save it to a ``Pickle`` file for future reference. Code to extract relevant information
-from the design ``Pickle`` file is also provided.
+from the ``Pickle`` file is also provided. A cross-section of the selected machine design from the Pareto front is also provided below. This 
+machine has a power density of 7 kW/kg, efficiency of 97.6 \%, and a weighted ripple of just 1.2 pu. The pickle file for this design is 
+available in the ``examples/mach_opt_examples/bspm_opt`` folder as ``proj_1207_.pkl``.
+
+.. note:: You can validate the performance of this design by loading the ``Pickle`` file and passing the extracted design into the BSPM 
+    ``Evaluator``.
 
 .. code-block:: python
 
+    # check designs which meet required specs
     dh.select_designs()
 
-    proj_120_ = dh.get_design( 'proj_120_')
-    print("proj_120_ d_st", proj_120_.machine.d_st)
+    # proj_1207_ selected based on performance
+    proj_name = 'proj_1207_'
+    # load proj_1207_ design from archive
+    proj_1207_ = dh.get_design( proj_name)
+    print(proj_name, "d_st =", proj_1207_.machine.d_st)
+
+    # save proj_1207_ to pickle file
+    object_filename = path + "/" + proj_name + r'.pkl'
+    dh.save_object(proj_1207_, object_filename)
+
+    # read proj_1207_ design from pickle file
+    proj_read = dh.load_object(object_filename)
+    print("From pickle file, d_st =", proj_read.machine.d_st)
+
+
+.. figure:: ./images/proj_1207_.PNG
+   :alt: Candidate Design Cross-Section 
+   :align: center
+   :width: 400 
 
 Conclusion
 ----------------
 
-Congratulations! You have successfully used ``eMach`` to create a digital BSPM design and a multi-physics BSPM evaluator as well! You can now
-attempt evaluating other BSPM designs using this evaluator and see what results you end up with.
+Congratulations! You have successfully used ``eMach`` to run a multi-physics, multi-objective optimization! You can now
+attempt optimizating BSPM machines for different objectives and compare the resulting designs from those obtained with this
+optimization.
 

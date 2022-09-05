@@ -70,7 +70,7 @@ class DataAnalyzer:
     
        
             # ax.set_xlim(-11,-2)
-            # ax.set_ylim(-94,-98)
+            # ax.set_ylim(-95,-99)
             
             if up_to_rank_no is None:
                 pass
@@ -112,7 +112,7 @@ class DataAnalyzer:
         # fig.set_size_inches(8, 4)
         plt.gcf().subplots_adjust(bottom=0.15)
         # plt.savefig(self.save_path + 'paretoPlot.eps', bbox_inches='tight', format='eps')
-        fig.savefig(self.save_path + '/paretoPlot2.png', bbox_inches='tight', dpi=300)
+        fig.savefig(self.save_path + '/paretoPlot.svg', bbox_inches='tight', dpi=300)
         
       
     def plot_x_with_bounds(self, free_var, var_label, bounds, alpha=0.5):
@@ -149,9 +149,8 @@ class DataAnalyzer:
             ax.set_ylabel(y_label, **font)
             ax.yaxis.set_major_locator(mtick.MaxNLocator(3))
             ax.set_xlim([0,len_x])
-
-        print(self.save_path)
-        plt.savefig(self.save_path + '/freeVar.png')    
+            
+        plt.savefig(self.save_path + '/freeVar.svg')    
         
         return
     

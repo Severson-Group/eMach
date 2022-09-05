@@ -225,21 +225,22 @@ class DataHandler():
         with open(self.designer_filepath, 'wb') as des:
             pickle.dump(designer, des, -1)
     
-    def save_object(object, filename):
+    def save_object(self, obj, filename):
         """ Save object to specified filename"""
 
-        with open(filename, 'wb') as obje:
-            pickle.dump(object, obje, -1)
+        with open(filename, 'wb') as fn:
+            pickle.dump(obj, fn, -1)
     
-    def load_object(filename):
+    def load_object(self, filename):
         """load object from specified filename"""
 
         with open(filename, 'rb') as f:
             while 1:
                 try:
-                    yield pickle.load(f)  # use generator
+                    obj = pickle.load(f)  # use generator
                 except EOFError:
                     break
+            return obj
 
     def get_archive_data(self):
         archive = self.load_from_archive()
