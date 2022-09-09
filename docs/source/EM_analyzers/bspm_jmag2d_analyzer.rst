@@ -154,6 +154,7 @@ is shown below:
     "Z_q": 49,
     "Kov": 1.8,
     "Kcu": 0.5,
+    "phase_current_offset": 0 
     }
 
     ecce_2020_machine = BSPM_Machine(
