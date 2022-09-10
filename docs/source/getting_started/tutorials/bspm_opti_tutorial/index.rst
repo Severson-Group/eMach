@@ -88,18 +88,18 @@ Step 2: Create BSPM Design ``Evaluator``
 
 Simply use the multi-physics BSPM design ``Evaluator`` developed in the :doc:`BSPM Evaluation Tutorial <../bspm_eval_tutorial/index>` in this 
 step. Structural, electromagnetic, and thermal performance of BSPM designs will be analyzed using this ``Evaluator``. The coil temperature
-limit set in Step 2.4 of :doc:`BSPM Evaluation Tutorial <../bspm_eval_tutorial/index>` can be reduced from 300 degC to 150 degC to optimize 
-for a more realistic BSPM design.
+limit set in Step 2.4 of :doc:`BSPM Evaluation Tutorial <../bspm_eval_tutorial/index>` can be reduced from :math:`300^\circ \, \rm C` to :math:`150^\circ \, \rm C` to optimize for a more realistic BSPM design.
 
 Step 3: Create BSPM Optimization Design Space
 --------------------------------------------------------------------
 
 Finally, before running the optimization, the number of optimization objectives, the objectives themselves, and the bounds for the ``Free 
-Variables`` must be decided upon. This information is held within the ``BSPMDesignSpace`` object. The optimization is run considering three 
-objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is 
-configured such that the bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds 
-within the actual optimization script. To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the 
-``examples/mach_opt_examples/bspm_opt`` folder. The file can be used as is.
+Variables`` must be decided upon. This information is held within the ``BSPMDesignSpace`` object. 
+
+The optimization is run considering three objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is configured such that the bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds 
+within the actual optimization script. 
+
+To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder. The file can be used as-is.
 
 Step 4: Update ``mach_opt`` ``DataHandler`` (if required)
 --------------------------------------------------------------------
