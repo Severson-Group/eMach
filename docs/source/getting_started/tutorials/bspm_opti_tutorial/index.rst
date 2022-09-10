@@ -105,12 +105,13 @@ Step 4: Update ``mach_opt`` ``DataHandler`` (if required)
 --------------------------------------------------------------------
 
 During optimization, a huge dataset of BSPM designs and information related to their performance is created. It is important to save this data
-for post-processing and to resume optimization in case it terminates prematurely due to unforseen errors. The base ``DataHandler``
-provided within ``mach_opt`` implements the basic functionalities for optimization data handling, including saving and loading data using 
-``Pickle``, extracting Pareto optimal designs etc. However, it might be desirable to add other functionalities, especially for
+as the optimization runs so that one can resume the optimization in case it terminates prematurely due to unforseen errors. This data is also useful for post-processing after an optimization is complete. 
+
+The base ``DataHandler`` provided within ``mach_opt`` implements the basic functionalities for optimization data handling, including saving and loading data using ``Pickle`` and extracting Pareto optimal designs. Depending on the optimization, one may need to add additional functionality, especially for
 selecting candidate designs for further investigation. This can be achieved by inheriting the ``mach_opt`` ``DataHandler`` class and adding 
-the methods required for candidate design selection and extraction. The ``my_data_handler.py`` file in ``examples/mach_opt_examples/bspm_opt`` 
-folder provides an example implementation of a custom ``DataHandler`` class. Update the import statements as shown below.
+the methods required for candidate design selection and extraction. 
+
+The ``my_data_handler.py`` file in ``examples/mach_opt_examples/bspm_opt`` folder provides an example implementation of a custom ``DataHandler`` class. Copy this file to your working directory and update the import statement as shown below.
 
 .. code-block:: python
 
