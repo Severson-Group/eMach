@@ -120,9 +120,11 @@ The ``my_data_handler.py`` file in ``examples/mach_opt_examples/bspm_opt`` folde
 Step 5: Run Optimization
 --------------------------------------------------------------------
 
-Finally, the multi-objective, multi-physics optimization can be run by combining the modules created up to this step. The code snippet 
-provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. An important
-consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analatyically designed
+Finally, the multi-objective, multi-physics optimization can be run by combining the modules created up to this step. 
+
+The code snippet provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. 
+
+An important consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analatyically designed
 machine as the baseline or an existing machine and applying scaling factors on its dimensions to get the bounds. The optimization
 should run for as many generations as required to obtain the Pareto Front. If the optimization terminates before this is achieved due to
 unexpected errors, simply run the script again and the optimziation will resume from the last saved generation (based on ``latest_pop.csv``). 
@@ -198,11 +200,12 @@ unexpected errors, simply run the script again and the optimziation will resume 
 Step 6: Optimization Post-Processing
 --------------------------------------------------------------------
 	
-To truly leverage optimization, users must be able to effectively analyze the resulting data. This includes extracting the Pareto front,
-evaluating trends in the ``Free Variables``, selecting candidate designs etc. Copy the ``my_plotting_functions.py`` file from the 
-``examples/mach_opt_examples/bspm_opt`` folder to get the custom functions created for plotting the Pareto front and ``Free Variables`` of
-this optimization. Create a file named ``plot_script.py``. Copy paste the code provided below to plot the Pareto front. As this optimization
-has three objetives, the marker color is used to indicate the value of the third objective, weighted ripple.
+To fully leverage optimization, users must be able to effectively analyze the resulting data. This includes extracting the Pareto front,
+evaluating trends in the ``Free Variables``, and selecting candidate designs. 
+
+Copy the ``my_plotting_functions.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder to get the custom functions created for plotting the Pareto front and ``Free Variables`` of this optimization. 
+
+Create a file named ``plot_script.py``. Copy paste the code provided below to plot the Pareto front. As this optimization has three objetives, the marker color is used to indicate the value of the third objective, weighted ripple.
 
 .. code-block:: python
 
@@ -267,7 +270,7 @@ each free variable. The bounds should be set such that they are not run into dur
 
     da.plot_x_with_bounds(free_vars, var_label, bounds)
 
-The plots showing trends in ``Free Variables`` from this optimization archive is shown below:
+The plots showing trends in ``Free Variables`` from this optimization archive are shown below:
 
 .. figure:: ./images/FreeVariables.svg
    :alt: Optimization Free Variables
@@ -276,11 +279,9 @@ The plots showing trends in ``Free Variables`` from this optimization archive is
 
 
 Finally to select a candidate design, add ``dh.select_designs()`` line to ``plot_script.py``. You will need to modify the
-design selection criteria in ``my_data_handler.py`` to get designs having the performance you desire. After determining the design you wish to
-analyze in further detail, use the following code to save it to a ``Pickle`` file for future reference. Code to extract relevant information
-from the ``Pickle`` file is also provided. A cross-section of the selected machine design from the Pareto front is also provided below. This 
-machine has a power density of 7 kW/kg, efficiency of 97.6 \%, and a weighted ripple of just 1.2 pu. The pickle file for this design is 
-available in the ``examples/mach_opt_examples/bspm_opt`` folder as ``proj_1207_.pkl``.
+design selection criteria in ``my_data_handler.py`` to get designs having the performance you desire. 
+
+After determining the design you wish to analyze in further detail, use the following code to save it to a ``Pickle`` file for future reference. Code to extract relevant information from the ``Pickle`` file is also provided. A cross-section of the selected machine design from the Pareto front is also provided below. This machine has a power density of 7 kW/kg, efficiency of 97.6 \%, and a weighted ripple of just 1.2 pu. The pickle file for this design is available in the ``examples/mach_opt_examples/bspm_opt`` folder as ``proj_1207_.pkl``.
 
 .. note:: You can validate the performance of this design by loading the ``Pickle`` file and passing the extracted design into the BSPM 
     ``Evaluator``.
