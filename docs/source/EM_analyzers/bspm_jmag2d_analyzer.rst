@@ -42,7 +42,7 @@ an example motor design are provided below.
            :alt: Complete machine mesh
            :width: 300 
 
-      - .. figure:: ./Images/zoom_mesh_ex.png
+      - .. figure:: ./Images/zoom_mesh_ex.PNG
           :alt: Zoomed mesh
           :width: 300 
 
