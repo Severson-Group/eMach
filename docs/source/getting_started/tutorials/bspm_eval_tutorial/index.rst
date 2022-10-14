@@ -30,6 +30,8 @@ reside within this file. You can create this file by simply copying the ``ecce_2
 
 .. code-block:: python
 
+    import os
+    import sys
     from eMach.mach_eval.machines.materials.electric_steels import Arnon5
     from eMach.mach_eval.machines.materials.jmag_library_magnets import N40H
     from eMach.mach_eval.machines.materials.miscellaneous_materials import (
