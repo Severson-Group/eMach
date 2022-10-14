@@ -161,7 +161,7 @@ is stored in ``State`` for future reference. Its worth noting that the losses ob
 	
     from eMach.mach_eval.analyzers.electromagnetic.bspm import jmag_2d as em
     from eMach.mach_eval.analyzers.electromagnetic.bspm.jmag_2d_config import JMAG_2D_Config
-    from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
+    from eMach.examples.mach_eval_examples.bspm_eval.bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
     from eMach.mach_eval import AnalysisStep, ProblemDefinition
 
 
