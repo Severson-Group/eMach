@@ -481,7 +481,7 @@ such that the BSPM design is evaluated only when users try to run the ``bspm_eva
         from mach_eval import MachineDesign
 
         ecce_2020_design = MachineDesign(ecce_2020_machine, ecce_2020_op_pt)
-        results = evaluator.evaluate(ecce_2020_design)
+        results = bspm_evaluator.evaluate(ecce_2020_design)
 
 Upon running this script you should get the following results:
 
