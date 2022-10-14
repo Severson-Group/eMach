@@ -450,11 +450,11 @@ assumes each ``AnalysisStep`` was defined in a separate Python file / module. Re
 .. code-block:: python
 
     from mach_eval import MachineEvaluator
-    from structural_step import struct_step
-    from electromagnetic_step import em_step
-    from rotor_thermal_step import rotor_therm_step
-    from stator_thermal_step import stator_therm_step
-    from windage_loss_step import windage_step
+    from examples.mach_eval_examples.bspm_eval.structural_step import struct_step
+    from examples.mach_eval_examples.bspm_eval.electromagnetic_step import em_step
+    from examples.mach_eval_examples.bspm_eval.rotor_thermal_step import rotor_therm_step
+    from examples.mach_eval_examples.bspm_eval.stator_thermal_step import stator_therm_step
+    from examples.mach_eval_examples.bspm_eval.windage_loss_step import windage_step
 
     ############################ Create Evaluator ########################
     bspm_evaluator = MachineEvaluator(
