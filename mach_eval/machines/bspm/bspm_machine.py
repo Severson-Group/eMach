@@ -160,9 +160,9 @@ class BSPM_Machine(Machine, PM_Rotor_Sleeved, Stator, DPNVWinding):
                 for key, value in updated_values.items():
                     cloned_machine._dimensions_dict[key] = value
 
-            if dict_to_update == "parameter_dict":
+            if dict_to_update == "parameters_dict":
                 for key, value in updated_values.items():
-                    cloned_machine._parameter_dict[key] = value
+                    cloned_machine._parameters_dict[key] = value
 
             if dict_to_update == "materials_dict":
                 for key, value in updated_values.items():
