@@ -165,7 +165,7 @@ class FEMMDesigner(
             for n in range(0, len(bdata)):
                 femm.mi_addbhpoint(mat_name, bdata[n], hdata[n])
 
-    def set_comp_prop(
+    def set_block_prop(
         self,
         inner_coord=(0,0),        
         material_name='<None>',
@@ -176,11 +176,11 @@ class FEMMDesigner(
         group_no=0,     
         turns=0,
         ):
-        """This method adds a block label and sets component properties:
-        material name, automesh, meshsize (if no automesh), circuit name,
+        """This method selects a block label with coordinates (inner_coord[0], inner_coord[1])
+        and a material name 'material_name', and sets component properties:
+        automesh, meshsize (if no automesh), circuit name,
         magnet direction, group number, and number of turns.        
         """
-        femm.mi_addblocklabel(inner_coord[0], inner_coord[1])
         femm.mi_selectlabel(inner_coord[0], inner_coord[1])
         femm.mi_setblockprop(material_name, automesh, meshsize_if_no_automesh,
             incircuit, magdir, group_no, turns)
@@ -299,12 +299,17 @@ class FEMMDesigner(
     def prepare_section(self, cs_token: "CrossSectToken") -> TokenMake:
         """ Not needed for FEMM.
         """
-        return 1
+        return cs_token
 
     def extrude(self, name, material: str, depth: float, token=None) -> any:
-        """ Not implemented in FEMM. 
+        """ Assign material to a component. 
         Axial length has to be specified using "probdef" method.
         """
+        inner_coord = token[0].inner_coord
+        femm.mi_addblocklabel(inner_coord[0], inner_coord[1])
+        femm.mi_selectlabel(inner_coord[0], inner_coord[1])
+        femm.mi_setblockprop(material.name, True, 0, 0, 0, 0, 0)
+        femm.mi_clearselected()
 
         return 1
 
@@ -312,6 +317,7 @@ class FEMMDesigner(
         """ Not implemented in FEMM. 
         Axisymmetric problem has to be specified using "probdef" method.
         """
+        
         return 1
 
     def select(self):

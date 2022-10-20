@@ -9,10 +9,10 @@ sys.path.append("../..")
 import mach_cad.tools.jmag as JMAG
 from mach_cad.tools.femm import FEMM
 import mach_cad.model_obj as mo
-import femm
+import numpy as np
+from mach_eval.machines.materials.electric_steels import M19Gauge29
 
-electric_steel_mat = mo.MaterialGeneric(name="10JNEX900", color=r"#808080")
-
+# rotor dimensions
 rotor_dimensions = {
     'r_ri': 3,
     'd_ri': 4,
@@ -38,16 +38,21 @@ rotor1 = mo.CrossSectInnerRotorRoundSlots(
 comp1 = mo.Component(
     name="RotorCore",
     cross_sections=[rotor1],
-    material=electric_steel_mat,
+    material=mo.MaterialGeneric(name=M19Gauge29["core_material"]),
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(1)),
 )
+
 
 # create an instance of the FEMM class
 toolFEMM = FEMM.FEMMDesigner()
 toolFEMM.newdocument(hide_window=1, problem_type=0)
 toolFEMM.probdef()
+# Add a new material and its BH curve to the FEMM project
+hdata, bdata = np.loadtxt(M19Gauge29['core_bh_file'], unpack=True, usecols=(0, 1))
+toolFEMM.add_new_material(mat_name=M19Gauge29["core_material"],hdata=hdata,bdata=bdata)
 rotor_tool = comp1.make(toolFEMM, toolFEMM)
 toolFEMM.save_as("inner_rotor_round_slots.fem")
+
 
 # create an instance of the JMAG class
 toolJMAG = JMAG.JmagDesigner()
