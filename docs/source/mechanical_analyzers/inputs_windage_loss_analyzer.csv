@@ -1,0 +1,7 @@
+Variable/key_value name,Description,Units
+        Omega,Rotational Speed,rad/s
+        R_ro,Outer rotor radius ,m
+        axial_length,Axial length,m
+        R_st,Inner Stator Radius,m
+        u_z,Axial airflow speed ,m/s
+T_air,Air temperature,C

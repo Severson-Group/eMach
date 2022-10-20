@@ -494,30 +494,6 @@ class DesignSpace:
         return self._bounds
 
 
-class Objective:
-    """Class defines objectives of cubiod optimization"""
-
-    def get_objectives(self, results: "List[mo.State,float,mo.State]"):
-        """ Calculates objectives from evaluation results
-        
-
-        Args:
-            results (List): Results from MachineEvaluator
-
-        Returns:
-            Tuple: objectives tuple 
-        """
-        final_state = results[-1][-1]
-        P_loss = final_state.stateConditions.P_loss
-        C = final_state.stateConditions.C
-        T_r = final_state.stateConditions.T_r
-        P_rated = final_state.design.settings.P_rated
-
-        Eff = (P_rated - P_loss) / P_rated
-        results = (-Eff, C, T_r)  # TODO define objectives
-        return results
-
-
 class DataHandler:
     """Parent class for all data handlers"""
 

@@ -10,9 +10,11 @@ __all__ = []
 __all__ += ["JmagDesigner"]
 
 
-class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase):
+class JmagDesigner(
+    abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.MakerRevolveBase
+):
     def __init__(self):
-        self.jd_instance = DispatchEx('designerstarter.InstanceManager')
+        self.jd_instance = DispatchEx("designerstarter.InstanceManager")
         self.jd = None  # JMAG-Designer Application object
         self.geometry_editor = None  # The Geometry Editor object
         self.doc = None  # The document object in Geometry Editor
@@ -31,7 +33,13 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
     # def __del__(self):
     #     self.jd.Quit()
 
-    def open(self, comp_filepath, length_unit='DimMeter', angle_unit='DimDegree', study_type='Transient'):
+    def open(
+        self,
+        comp_filepath,
+        length_unit="DimMeter",
+        angle_unit="DimDegree",
+        study_type="Transient",
+    ):
         """Open an existing JMAG file or a create new one if file does not exist.
 
         Launches the JMAG application by opening an already created file if or by creating a new file. Assigns JMAG
@@ -57,15 +65,15 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         file_found = 0
         # convert relative paths to absolute paths
         if not os.path.isabs(comp_filepath):
-            comp_filepath = os.path.abspath('.') + "\\" + comp_filepath
+            comp_filepath = os.path.abspath(".") + "\\" + comp_filepath
 
         # parse out path and extension of file
         file_name_path, file_extension = os.path.splitext(comp_filepath)
         file_contents = file_name_path.split("\\")
 
         # check if extension is of right type
-        if file_extension != '.jproj':
-            raise TypeError('Incorrect file extension')
+        if file_extension != ".jproj":
+            raise TypeError("Incorrect file extension")
         # extract folder where file resides or is meant to reside
         file_path = ""
         for i in range(len(file_contents) - 1):
@@ -93,14 +101,22 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
                     os.mkdir(file_path)
                     self.filepath = comp_filepath
                 except FileNotFoundError:
-                    raise FileNotFoundError("Path was not found and could not be created")
+                    raise FileNotFoundError(
+                        "Path was not found and could not be created"
+                    )
 
             self.jd.NewProject(self.filepath)  # create a new JMAG project
-            self.save_as(self.filepath)  # JMAG requires project to be saved before creating geometry
+            self.save_as(
+                self.filepath
+            )  # JMAG requires project to be saved before creating geometry
 
         self.view = self.jd.View()
-        self.jd.GetCurrentModel().RestoreCadLink(True)  # Restores the link to a CAD system to draw stuff
-        self.geometry_editor = self.jd.CreateGeometryEditor(True)  # creates new geometry or edits the geometry.
+        self.jd.GetCurrentModel().RestoreCadLink(
+            True
+        )  # Restores the link to a CAD system to draw stuff
+        self.geometry_editor = self.jd.CreateGeometryEditor(
+            True
+        )  # creates new geometry or edits the geometry.
         self.doc = self.geometry_editor.GetDocument()
         self.assembly = self.doc.GetAssembly()
         return file_found
@@ -110,7 +126,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         if type(self.filepath) is str:
             self.jd.SaveAs(self.filepath)
         else:
-            raise AttributeError('Unable to save file. Use the save_as() function')
+            raise AttributeError("Unable to save file. Use the save_as() function")
 
     def save_as(self, filepath):
         """Save JMAG designer file at defined path"""
@@ -129,7 +145,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         else:
             self.jd.Hide()
 
-    def draw_line(self, startxy: 'Location2D', endxy: 'Location2D') -> 'TokenDraw':
+    def draw_line(self, startxy: "Location2D", endxy: "Location2D") -> "TokenDraw":
         """Draw a line in JMAG Geometry Editor.
 
         Args:
@@ -150,7 +166,9 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         line = self.sketch.CreateLine(start_x, start_y, end_x, end_y)
         return TokenDraw(line, 0)
 
-    def draw_arc(self, centerxy: 'Location2D', startxy: 'Location2D', endxy: 'Location2D') -> 'TokenDraw':
+    def draw_arc(
+        self, centerxy: "Location2D", startxy: "Location2D", endxy: "Location2D"
+    ) -> "TokenDraw":
         """Draw an arc in JMAG Geometry Editor.
 
         Args:
@@ -176,25 +194,33 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
     def create_sketch(self):
         """Create and open a new sketch in JMAG geometry editor"""
         # create sketch in XY plane
-        ref1 = self.assembly.GetItem('XY Plane')  # Obtains an item displayed in the [Model Manager] tree.
-        ref2 = self.doc.CreateReferenceFromItem(ref1)   # Creates JMAG ReferenceObject from JMAG ItemObject.
-        sketch = self.assembly.CreateSketch(ref2)  # Creates a 2D sketch under the assembly.
+        ref1 = self.assembly.GetItem(
+            "XY Plane"
+        )  # Obtains an item displayed in the [Model Manager] tree.
+        ref2 = self.doc.CreateReferenceFromItem(
+            ref1
+        )  # Creates JMAG ReferenceObject from JMAG ItemObject.
+        sketch = self.assembly.CreateSketch(
+            ref2
+        )  # Creates a 2D sketch under the assembly.
 
         # set name for sketch
-        sketch_name = 'sketch_drawing'
-        sketch.SetProperty('Name', sketch_name)
-        sketch.OpenSketch()    # Starts editing a sketch
+        sketch_name = "sketch_drawing"
+        sketch.SetProperty("Name", sketch_name)
+        sketch.OpenSketch()  # Starts editing a sketch
 
         return sketch
 
     def create_part(self):
         """Create a new part in JMAG geometry editor"""
 
-        sketch_name = 'sketch_drawing'
+        sketch_name = "sketch_drawing"
         self.sketch.OpenSketch()  # Start editing sketch
         ref1 = self.assembly.GetItem(sketch_name)
         ref2 = self.doc.CreateReferenceFromItem(ref1)
-        self.assembly.MoveToPart(ref2)  # Moves a 2D sketch that is under [assembly] under a new part.
+        self.assembly.MoveToPart(
+            ref2
+        )  # Moves a 2D sketch that is under [assembly] under a new part.
         part = self.assembly.GetItem(sketch_name)
         self.sketch.CloseSketch()
 
@@ -216,14 +242,16 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
     def select(self):
         pass
 
-    def prepare_section(self, cs_token: 'CrossSectToken') -> TokenMake:
+    def prepare_section(self, cs_token: "CrossSectToken") -> TokenMake:
         """ Creates JMAG geometry region using lines and arcs.
         """
         # self.validate_attr(cs_token, 'CrossSectToken')
         self.geometry_editor.View().Xy()
         self.doc.GetSelection().Clear()
         for i in range(len(cs_token.token)):
-            self.doc.GetSelection().Add(self.sketch.GetItem(cs_token.token[i].draw_token.GetName()))
+            self.doc.GetSelection().Add(
+                self.sketch.GetItem(cs_token.token[i].draw_token.GetName())
+            )
 
         id = self.sketch.NumItems()
         self.sketch.CreateRegions()
@@ -236,13 +264,15 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         innerCoord1 = eval(self.default_length)(innerCoord1)
         innerCoord2 = eval(self.default_length)(innerCoord2)
 
-        self.geometry_editor.View().SelectAtCoordinateDlg(innerCoord1, innerCoord2, 0, visItem, itemType)
+        self.geometry_editor.View().SelectAtCoordinateDlg(
+            innerCoord1, innerCoord2, 0, visItem, itemType
+        )
         region = self.doc.GetSelection().Item(0)
         regionName = region.GetName()
 
-        regionList = ['Region']
+        regionList = ["Region"]
         for idx in range(1, id2 - id):
-            regionList.append('Region.' + str(idx + 1))
+            regionList.append("Region." + str(idx + 1))
 
         for idx in range((id2 - id)):
             if regionList[idx] != regionName:
@@ -262,7 +292,7 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         if num_studies == 0:
             study = model.CreateStudy(study_type, study_name)
         else:
-            for i in range(num_studies-2):
+            for i in range(num_studies - 2):
                 model.DeleteStudy(i)
             study = self.jd.GetCurrentStudy()
             study.SetName(study_name)
@@ -287,57 +317,28 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         ref1 = self.sketch
 
         extrude_part = self.part.CreateExtrudeSolid(ref1, depth)
-        self.part.SetProperty('Name', name)
+        self.part.SetProperty("Name", name)
+        self.part.SetProperty("Color", material.color)
 
-        sketch_name = name + '_sketch'
-        self.sketch.SetProperty('Name', sketch_name)
+        sketch_name = name + "_sketch"
+        self.sketch.SetProperty("Name", sketch_name)
 
         self.part = None
         self.sketch = None
         self.doc.SaveModel(True)
-        model_name = name + '_model'
+        model_name = name + "_model"
         self.model = self.create_model(model_name)
 
-        study_name = name + '_study'
+        study_name = name + "_study"
         self.study = self.create_study(study_name, self.study_type, self.model)
 
         self.set_default_length_unit(self.default_length)
         self.set_default_angle_unit(self.default_angle)
 
-        self.study.SetMaterialByName(name, material)
+        self.study.SetMaterialByName(name, material.name)
         return extrude_part
 
-    def set_default_length_unit(self, user_unit):
-        """Set the default length unit in JMAG. Only DimMeter supported.
-
-        Args:
-            user_unit: String representing the unit the user wishes to set as default.
-
-        Raises:
-            TypeError: Incorrect dimension passed
-        """
-        if user_unit == 'DimMeter':
-            self.default_length = user_unit
-            self.model.SetUnitCollection('SI_units')
-        else:
-            raise Exception('Unsupported length unit')
-
-    def set_default_angle_unit(self, user_unit):
-        """Set the default angular unit in JMAG. Only DimDegree supported.
-
-        Args:
-            user_unit: String representing the unit the user wishes to set as default.
-
-        Raises:
-            TypeError: Incorrect dimension passed
-        """
-        if user_unit == 'DimDegree':
-            self.default_angle = user_unit
-            self.model.SetUnitCollection('SI_units')
-        else:
-            raise Exception('Unsupported angle unit')
-
-    def revolve(self, name, material: str, center: 'Location2D', axis: 'Location2D', angle: float) -> any:
+    def revolve(self, name, material: str, center, axis, angle: float,) -> any:
         """ Revolves cross-section along an arc
 
         Args:
@@ -357,28 +358,59 @@ class JmagDesigner(abc.ToolBase, abc.DrawerBase, abc.MakerExtrudeBase, abc.Maker
         self.part = self.create_part()
         ref1 = self.sketch
         revolve_part = self.part.CreateRevolveSolid(ref1)
-        self.part.GetItem('Revolve').setProperty('SpecificRatio', 1)
-        self.part.GetItem('Revolve').setProperty('AxisType', '1')
-        self.part.GetItem('Revolve').setProperty('AxisPosX', center[0])
-        self.part.GetItem('Revolve').setProperty('AxisPosY', center[1])
-        self.part.GetItem('Revolve').setProperty('AxisVecX', axis[0])
-        self.part.GetItem('Revolve').setProperty('AxisVecY', axis[1])
-        self.part.GetItem('Revolve').setProperty('AxisVecZ', 0)
-        self.part.GetItem('Revolve').setProperty('Angle', angle)
-        self.part.SetProperty('Name', name)
-        sketch_name = name + '_sketch'
-        self.sketch.SetProperty('Name', sketch_name)
+        self.part.GetItem("Revolve").setProperty("SpecificRatio", 1)
+        self.part.GetItem("Revolve").setProperty("AxisType", "1")
+        self.part.GetItem("Revolve").setProperty("AxisPosX", center[0])
+        self.part.GetItem("Revolve").setProperty("AxisPosY", center[1])
+        self.part.GetItem("Revolve").setProperty("AxisVecX", axis[0])
+        self.part.GetItem("Revolve").setProperty("AxisVecY", axis[1])
+        self.part.GetItem("Revolve").setProperty("AxisVecZ", 0)
+        self.part.GetItem("Revolve").setProperty("Angle", angle)
+        self.part.SetProperty("Name", name)
+        sketch_name = name + "_sketch"
+        self.sketch.SetProperty("Name", sketch_name)
 
         self.part = None
         self.doc.SaveModel(True)
-        model_name = name + '_model'
+        model_name = name + "_model"
         self.model = self.create_model(model_name)
 
-        study_name = name + '_study'
+        study_name = name + "_study"
         self.study = self.create_study(study_name, self.study_type, self.model)
 
         self.set_default_length_unit(self.default_length)
         self.set_default_angle_unit(self.default_angle)
 
-        self.study.SetMaterialByName(name, material)
+        self.study.SetMaterialByName(name, material.name)
         return revolve_part
+
+    def set_default_length_unit(self, user_unit):
+        """Set the default length unit in JMAG. Only DimMeter supported.
+
+        Args:
+            user_unit: String representing the unit the user wishes to set as default.
+
+        Raises:
+            TypeError: Incorrect dimension passed
+        """
+        if user_unit == "DimMeter":
+            self.default_length = user_unit
+            self.model.SetUnitCollection("SI_units")
+        else:
+            raise Exception("Unsupported length unit")
+
+    def set_default_angle_unit(self, user_unit):
+        """Set the default angular unit in JMAG. Only DimDegree supported.
+
+        Args:
+            user_unit: String representing the unit the user wishes to set as default.
+
+        Raises:
+            TypeError: Incorrect dimension passed
+        """
+        if user_unit == "DimDegree":
+            self.default_angle = user_unit
+            self.model.SetUnitCollection("SI_units")
+        else:
+            raise Exception("Unsupported angle unit")
+

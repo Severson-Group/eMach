@@ -1,0 +1,9 @@
+Variable/key_value name,Description,Units
+shaft_therm_conductivity,Shaft Thermal Conductivity,W/m-k
+core_therm_conductivity,Rotor Core Thermal Conductivity,W/m-k
+magnet_therm_conductivity,Magnet Thermal Conductivity,W/m-k
+sleeve_therm_conductivity,Sleeve Thermal Conductivity,W/m-k
+rotor_hub_therm_conductivity,Rotor Hub Thermal Conductivity,W/m-k
+air_therm_conductivity,Air Thermal Conductivity,W/m-k
+air_viscosity,Viscosity of Air,m^2/s
+air_cp,Specific Heat Capacity  of Air,kJ/kg

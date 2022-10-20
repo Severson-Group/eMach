@@ -1,0 +1,2 @@
+Arguments,Description
+config,"object of type JMAG_2D_Config describing time step, mesh setting etc."

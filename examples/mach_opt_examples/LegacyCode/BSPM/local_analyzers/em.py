@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import sys
 sys.path.append("../..")
-print(os.getcwd)
 
 from mach_opt import InvalidDesign
 from .electrical_analysis import CrossSectInnerNotchedRotor as CrossSectInnerNotchedRotor
@@ -238,7 +237,7 @@ class BSPM_EM_Analysis():
         # id_sleeve = part_ID_list[int(2 + self.machine_variant.p * 2)]
         id_statorCore = part_ID_list[int(2 + self.machine_variant.p * 2) + 1]
         partIDRange_Coil = part_ID_list[
-                           int(2 + self.machine_variant.p * 2) + 2: int(2 + self.machine_variant.p * 2) + 2 + int(
+                           int(1 + self.machine_variant.p * 2) + 2: int(2 + self.machine_variant.p * 2) + 2 + int(
                                self.machine_variant.Q * 2)]
 
         # model.SuppressPart(id_sleeve, 1)
@@ -633,6 +632,10 @@ class BSPM_EM_Analysis():
         study.GetMaterial("NotchedRotor").SetValue("LaminationFactor",
                                                    self.machine_variant.stator_iron_mat['core_stacking_factor'])
 
+        study.SetMaterialByName("Shaft", self.machine_variant.shaft_mat['shaft_material'])
+        study.GetMaterial("Shaft").SetValue("Laminated", 0)
+        study.GetMaterial("Shaft").SetValue("EddyCurrentCalculation", 1)
+    
         study.SetMaterialByName("Coils", "Copper")
         study.GetMaterial("Coils").SetValue("UserConductivityType", 1)
 
@@ -846,8 +849,8 @@ class BSPM_EM_Analysis():
             # Check if it is a distributed windg???
             if self.machine_variant.pitch == 1:
                 print('Concentrated winding!')
-                UVW = self.winding_layout.l_leftlayer1[index_leftlayer]
-                UpDown = self.winding_layout.l_leftlayer2[index_leftlayer]
+                UVW = self.machine_variant.layer_phases[1][index_leftlayer]
+                UpDown = self.machine_variant.layer_polarity[1][index_leftlayer]
             else:
                 if self.machine_variant.layer_phases[1][index_leftlayer] != UVW:
                     print('[Warn] Potential bug in your winding layout detected.')
