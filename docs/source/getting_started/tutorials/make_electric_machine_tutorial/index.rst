@@ -28,8 +28,8 @@ written in this file. At the top of ``draw_spm.py`` add the following import sta
 
 .. code-block:: python
 
-    from eMach import mach_cad.tools.jmag as jd
-    from eMach import mach_cad.model_obj as mo
+    from eMach.mach_cad.tools import jmag as jd
+    from eMach.mach_cad import model_obj as mo
 
 These imports give the user access to capabilites offered by ``mach_cad``, in particular the JMAG-Python interface tool and the 
 ``model_obj`` classes which contain the smarts to draw different types of geometries commonly found in electric machines using 
