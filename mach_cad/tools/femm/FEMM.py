@@ -17,8 +17,7 @@ class FEMMDesigner(
     # FEMM Encapsulation.
     def __init__(self):
         """ FEMM init."""
-        """Go to file:///C:/Users/anvar/anvar_eMach/pyfemm-manual.pdf
-        for more details of femm methods."""
+        """Go to https://www.femm.info/wiki/pyFEMM for more details of femm methods."""
 
     def newdocument(
         self,
@@ -167,7 +166,8 @@ class FEMMDesigner(
 
     def set_block_prop(
         self,
-        inner_coord=(0,0),        
+        new_block=0,
+        inner_coord=[0,0],        
         material_name='<None>',
         automesh=True,
         meshsize_if_no_automesh=0,
@@ -181,6 +181,9 @@ class FEMMDesigner(
         automesh, meshsize (if no automesh), circuit name,
         magnet direction, group number, and number of turns.        
         """
+        if new_block == 1:
+            femm.mi_addblocklabel(inner_coord[0], inner_coord[1])
+
         femm.mi_selectlabel(inner_coord[0], inner_coord[1])
         femm.mi_setblockprop(material_name, automesh, meshsize_if_no_automesh,
             incircuit, magdir, group_no, turns)
@@ -252,8 +255,7 @@ class FEMMDesigner(
     def blockintegral(self, groupID, type):
         """Calculate a block integral for the selected blocks.
         Used to calculate forces, torque, etc.
-        See file:///C:/Users/anvar/anvar_eMach/pyfemm-manual.pdf
-        for different integral types (specified by 'type').
+        See https://www.femm.info/wiki/pyFEMM for different integral types (specified by 'type').
         type: 18 - Fx, 19 - Fy, 22 - torque
         """
         femm.mo_groupselectblock(groupID)
@@ -264,8 +266,7 @@ class FEMMDesigner(
     def get_pointvalues(self, xy):
         """ Get the values associated with the point at (xy[0],xy[1]).
         Used to extract field components, etc.
-        Refer to file:///C:/Users/anvar/anvar_eMach/pyfemm-manual.pdf
-        to see the values that are returned.
+        Refer to https://www.femm.info/wiki/pyFEMM to see the values that are returned.
         """
         results = femm.mo_getpointvalues(xy[0], xy[1])
         return results
@@ -290,8 +291,7 @@ class FEMMDesigner(
 
     def get_element(self, n):   
         """Returns the properties for the n-th element.
-        Refer to file:///C:/Users/anvar/anvar_eMach/pyfemm-manual.pdf
-        to see the properties that are returned.
+        Refer to https://www.femm.info/wiki/pyFEMM to see the properties that are returned.
         """
         element_properties = femm.mo_getelement(n)
         return element_properties
