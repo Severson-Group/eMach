@@ -23,6 +23,8 @@ rotor_dimensions = {
     'w_so': 0.5,
 }
 
+Qr = 12
+
 # create cross-section 
 rotor1 = mo.CrossSectInnerRotorDropSlots(
     name="RotorCore",
@@ -33,10 +35,19 @@ rotor1 = mo.CrossSectInnerRotorDropSlots(
     dim_r_rb2=mo.DimMillimeter(rotor_dimensions["r_rb2"]),
     dim_d_so=mo.DimMillimeter(rotor_dimensions["d_so"]),
     dim_w_so=mo.DimMillimeter(rotor_dimensions["w_so"]),
-    Qr=12,
+    Qr=Qr,
     location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
     theta=mo.DimDegree(0),
 )
+
+bar1 = []
+for i in range(0,Qr):
+    bar1.append(mo.CrossSectInnerRotorDropSlotsBar(
+    name="Bar1",
+    rotor_core=rotor1,
+    location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],theta=mo.DimRadian(2 * np.pi / Qr * i)),
+    theta=mo.DimDegree(0),
+    ))
 
 # create component
 comp1 = mo.Component(
@@ -46,15 +57,28 @@ comp1 = mo.Component(
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(1)),
 )
 
+comp2 = []
+for i in range(0,Qr):
+    comp2.append(mo.Component(
+    name="Bar1",
+    cross_sections=[bar1[i]],
+    material=mo.MaterialGeneric(name="Copper", color=r"#4d4b4f"),
+    make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(1)),
+    ))
+
 
 # create an instance of the FEMM class
 toolFEMM = FEMM.FEMMDesigner()
 toolFEMM.newdocument(hide_window=1, problem_type=0)
 toolFEMM.probdef()
+toolFEMM.add_material("Copper")
 # Add a new material and its BH curve to the FEMM project
 hdata, bdata = np.loadtxt(M19Gauge29['core_bh_file'], unpack=True, usecols=(0, 1))
 toolFEMM.add_new_material(mat_name=M19Gauge29["core_material"],hdata=hdata,bdata=bdata)
 rotor_tool = comp1.make(toolFEMM, toolFEMM)
+bar_tool = []
+for i in range(0,Qr):
+    bar_tool.append(comp2[i].make(toolFEMM, toolFEMM))
 toolFEMM.save_as("inner_rotor_drop_slots.fem")
 
 
@@ -64,4 +88,7 @@ file = r"inner_rotor_drop_slots.jproj"
 toolJMAG.open(comp_filepath=file, study_type="Transient")
 toolJMAG.set_visibility(True)
 rotor_tool = comp1.make(toolJMAG, toolJMAG)
+bar_tool = []
+for i in range(0,Qr):
+    bar_tool.append(comp2[i].make(toolJMAG, toolJMAG))
 toolJMAG.save()
