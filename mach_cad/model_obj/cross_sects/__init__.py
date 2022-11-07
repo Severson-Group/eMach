@@ -35,4 +35,3 @@ __all__ += flux_barrier_rotor.__all__
 __all__ += inner_reluctance_rotor.__all__
 __all__ += inner_rotor_round_slots.__all__
 __all__ += inner_rotor_drop_slots.__all__
-

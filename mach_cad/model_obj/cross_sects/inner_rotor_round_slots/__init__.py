@@ -6,7 +6,7 @@ from ...dimensions.dim_linear import DimLinear
 
 from ..cross_sect_base import CrossSectBase, CrossSectToken
 
-__all__ = ['CrossSectInnerRotorRoundSlots']
+__all__ = ['CrossSectInnerRotorRoundSlots', 'CrossSectInnerRotorRoundSlotsBar']
 
 
 class CrossSectInnerRotorRoundSlots(CrossSectBase):
@@ -163,3 +163,82 @@ class CrossSectInnerRotorRoundSlots(CrossSectBase):
             pass
         else:
             raise TypeError("Qr not of type int")
+
+
+
+class CrossSectInnerRotorRoundSlotsBar(CrossSectBase):
+
+    def __init__(self, **kwargs: any) -> None:
+        '''
+        Intialization function for RoundBar class. This function takes in
+        arguments and saves the information passed to private variable to make
+        them read-only
+        Parameters
+        ----------
+        **kwargs : any
+            DESCRIPTION. Keyword arguments provided to the initialization funcntion.
+            The following argument names have to be included in order for the code
+            to execute: name, dim_t, dim_r_o, location. 
+            
+        Returns
+        -------
+        None
+        '''
+        self._create_attr(kwargs)
+
+        super()._validate_attr()
+        self._validate_attr()
+
+    @property
+    def rotor_core(self):
+        return self._rotor_core
+
+    def draw(self, drawer):
+
+        r_ri = self.rotor_core.dim_r_ri
+        d_ri = self.rotor_core.dim_d_ri
+        r_rb = self.rotor_core.dim_r_rb
+        d_so = self.rotor_core.dim_d_so
+        w_so = self.rotor_core.dim_w_so
+        Qr = self.rotor_core.Qr
+
+        alpha_u = DimRadian(2 * np.pi / Qr)
+        r_b = r_ri + d_ri + r_rb
+
+        x1 = r_b + r_rb
+        y1 = DimMillimeter(0)
+
+        x2 = r_b - r_rb
+        y2 = DimMillimeter(0)
+
+        center_rotor_bar = [r_b, DimMillimeter(0)]
+
+        x_arr = [x1, x2, center_rotor_bar[0]]
+        y_arr = [y1, y2, center_rotor_bar[1]]
+
+        arc1 = []
+        arc2 = []
+
+        # transpose list
+        coords = [x_arr, y_arr]
+        coords = list(zip(*coords))
+        coords = [list(sublist) for sublist in coords]
+
+        p = self.location.transform_coords(coords, 0)
+
+        arc1.append(drawer.draw_arc(p[2], p[0], p[1]))
+        arc1.append(drawer.draw_arc(p[2], p[1], p[0]))
+
+        inner_coord = self.location.transform_coords([center_rotor_bar])
+        segments = [arc1, arc2]
+        segs = [x for segment in segments for x in segment]
+        cs_token = CrossSectToken(inner_coord[0], segs)
+
+        return cs_token
+
+    def _validate_attr(self):
+
+        if isinstance(self.rotor_core, CrossSectInnerRotorRoundSlots):
+            pass
+        else:
+            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlots")
