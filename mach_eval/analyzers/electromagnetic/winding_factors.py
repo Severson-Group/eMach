@@ -35,10 +35,10 @@ class WindingFactorsAnalyzer:
             kw_final: complex winding factor array
         """
         
-        harmonics = problem.harmonics
+        harmonics_list = problem.harmonics_list
         winding_layout = problem.winding_layout
         alpha_1 = problem.alpha_1
-        kw_final = self.calculations(harmonics,winding_layout,alpha_1)
+        kw_final = self.calculations(harmonics_list,winding_layout,alpha_1)
         
         return kw_final
     
