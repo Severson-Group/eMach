@@ -44,7 +44,7 @@ class WindingFactorsAnalyzer:
     
     
     
-    def calculations(self,harmonics,winding_layout,alpha_1):
+    def calculations(self,harmonics_list,winding_layout,alpha_1):
         """Determines winding factors given harmonics requested, winding
             layout, and alpha_1
             
