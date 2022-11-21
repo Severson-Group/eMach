@@ -61,8 +61,6 @@ class WindingFactorsAnalyzer:
             k_w: winding factor array for each winding layout
         """        
         
-        n = np.arange(1,harmonics+1)
-        
         if len(winding_layout[:,0]) == 1:
             layer = winding_layout[0][:,None]
             alpha_c = 2*np.pi/len(layer)
