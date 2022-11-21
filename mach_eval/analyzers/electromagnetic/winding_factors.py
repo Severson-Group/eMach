@@ -29,9 +29,7 @@ class WindingFactorsAnalyzer:
         """Determines winding factors using calculations function
         
         Args:
-            harmonics: harmonics array definied in problem
-            winding_layout: winding layout defined in problem
-            alpha_1: angle of slot 1 defined in problem
+            Problem class contains all args used in analyze function
             
         Returns:
             kw_final: complex winding factor array
