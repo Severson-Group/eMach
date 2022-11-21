@@ -3,18 +3,18 @@ import numpy as np
 class WindingFactorsProblem:
     """Problem class for winding factor analyzer
     Attributes:
-        harmonics: number of harmonics to be included in calculations []
+        harmonics_list: list of harmonics to be included in calculations []
         winding_layout: array of winding layers beginning with top layer
                         and ending with bottom layer, length will be number 
-                        of teeth and height will be number of layers, "+" 
+                        of teeth and height will be number of layers, "+1" 
                         for conductor into page, 0 for no present conductors, 
-                        and "-" for conductor out of page [turns]
-        alpha_1: angle of first slot from +x axis [rad]
+                        and "-1" for conductor out of page [turns]
+        alpha_1: angle of first slot counterclockwise from +x axis [rad]
     """
     
-    def __init__(self, harmonics, winding_layout, alpha_1):
+    def __init__(self, harmonics_list, winding_layout, alpha_1):
         
-        self.harmonics = harmonics
+        self.harmonics_list = harmonics_list
         self.winding_layout = winding_layout
         self.alpha_1 = alpha_1
         
