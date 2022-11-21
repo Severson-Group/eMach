@@ -66,14 +66,14 @@ class WindingFactorsAnalyzer:
             alpha_c = 2*np.pi/len(layer)
             filled_slots = np.count_nonzero(layer)
             slot = np.arange(1,len(layer)+1)[:,None]
-            k_w = layer*np.exp(1j*n*((slot-1)*alpha_c+alpha_1))
+            k_w = layer*np.exp(1j*harmonics_list*((slot-1)*alpha_c+alpha_1))
         elif len(winding_layout[:,0]) == 2:
             top_layer = winding_layout[0][:,None]
             bottom_layer = winding_layout[1][:,None]
             alpha_u = 2*np.pi/len(top_layer)
             filled_slots = np.count_nonzero(top_layer) + np.count_nonzero(bottom_layer)
             slot = np.arange(1,len(layer)+1)[:,None]
-            k_w = top_layer*np.exp(1j*n*(slot-1)*alpha_u)+bottom_layer*np.exp(1j*n*(slot-1)*alpha_u)
+            k_w = top_layer*np.exp(1j*harmonics_list*(slot-1)*alpha_u)+bottom_layer*np.exp(1j*harmonics_list*(slot-1)*alpha_u)
         else:
             raise Exception("Error: Winding layer must be 1 or 2!")
             
