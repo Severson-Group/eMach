@@ -16,3 +16,12 @@ bfield\_spm\_inner\_rotor Module
    :members:
    :undoc-members:
    :show-inheritance:
+
+   winding\_factors Module
+----------------------------------------------------
+
+.. automodule:: mach_eval.analyzers.electromagnetic.winding_factors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   
