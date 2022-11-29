@@ -12,8 +12,8 @@ in a phase winding over the algebraic sum, or mathematically using the following
 
 .. math::
 
-    \bar{k}_\text{w,n} &= \frac{1}{N} \Sigma \bar{k}_\text{p,i,v} \\
-    \bar{k}_\text{p,i} &= e**(j n \alpha_\text{u})
+    \bar{k}_\text{w,v} &= \frac{1}{N} \Sigma_\text{i=1}^N \bar{k}_\text{pi,v} \\
+    \bar{k}_\text{pi} &= e^{j n \alpha_\text{u}}
 
 where :math:`N` is the total number of slots filled, :math::`\bar{k}_\text{p,i,v}` is the winding factor of each slot, :math::`n` is the harmonic index, 
 and :math::`\alpha_\text{u}` is the angle at which each of the slots resides in radians. The equation for :math::`\bar{k}_\text{w,n}` is found to model 
