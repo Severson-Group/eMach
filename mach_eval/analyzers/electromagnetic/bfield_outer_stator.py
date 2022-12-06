@@ -36,7 +36,7 @@ class BFieldOuterStatorProblem1:
         self.r_rfe = r_rfe
         self.alpha_so = alpha_so
 
-    def mmf(self, m, zq, N, n, k_w, I_hat):
+    def mmf(self, m, zq, Nc, n, k_w, I_hat):
         """Determines electric loading of winding
 
         Args:
@@ -50,7 +50,8 @@ class BFieldOuterStatorProblem1:
         Returns:
             mmf: Current linkage or Magneto-Motive Force
         """
-        mmf = m / np.pi * zq * N * k_w * I_hat / n
+        
+        mmf = 2 / np.pi * zq * Nc * k_w * I_hat / n
         return mmf
 
 
