@@ -12,16 +12,14 @@ in a phase winding over the algebraic sum, or mathematically using the following
 
 .. math::
 
-    \bar{k}_\text{w,v} &= \frac{1}{N} \Sigma_\text{i=1}^N \bar{k}_\text{pi,v} \\
-    \bar{k}_\text{pi} &= e^{j n \alpha_\text{u}}
+    \bar{k}_\text{w,n} &= \frac{1}{N} \Sigma_\text{i=1}^N \bar{k}_\text{i,n} \\
 
-where :math:`N` is the total number of slots filled, :math:`\bar{k}_\text{p,i,v}` is the winding factor of each slot, :math:`n` is the harmonic index, 
-and :math:`\alpha_\text{u}` is the angle at which each of the slots resides in radians. The equation for :math:`\bar{k}_\text{w,n}` is found to model 
-the relationship between the geometric and algebraic sums as mentioned previously. The equation for :math:`\bar{k}_\text{p,i}` is found to model each individual
-winding factor for each coil side at each slot. The winding factor for each :math:`n` should be calculated separately, as geometries within the calculations 
-change with each value of :math:`n`. The sum of each of these calculations will result in a table of winding factors, all of which must be considered when 
-choosing a design winding layout. This analyzer adds the ability to calculate a winding factor based only on a stator geometry and layout. The addition of this 
-analyzer eliminates the need for hand calculations for winding factors within the bfield_outer_stator analyzer.
+where :math:`N` is the total number of slots filled, :math:`\bar{k}_\text{i,n}` is the winding factor of each slot, and :math:`n` is the harmonic index. The 
+equation for :math:`\bar{k}_\text{w,n}` is found to model the relationship between the geometric and algebraic sums as mentioned previously. The winding factor 
+for each :math:`n` should be calculated separately, as geometries within the calculations change with each value of :math:`n`. The sum of each of these 
+calculations will result in a table of winding factors, all of which must be considered when choosing a design winding layout. This analyzer adds the ability 
+to calculate a winding factor based only on a stator geometry and layout. The addition of this analyzer eliminates the need for hand calculations for winding 
+factors within the bfield_outer_stator analyzer.
 
 For example, given the layouts in the figure below, winding factors can be calculated for each of the stator geometries.
 
@@ -30,7 +28,8 @@ For example, given the layouts in the figure below, winding factors can be calcu
    :align: center
    :width: 500 
 
-The assumptions made going into the development of this model are:
+For this stator, the winding factor would be calculated using Phase U (blue) at slots 3-6 (-, out of page) and 9-12 (+, into page). The assumptions made going 
+into the development of this model are:
 
 1. Ideal slot fill factors
 2. Ideal skew factors
