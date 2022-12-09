@@ -105,7 +105,7 @@ In order to plot the current linkage and find the magnetic field of the inner bo
 Stator Analyzer by adding some code and making some alterations. 
 
 The definitions of the "harmonics of interest" and "winding factors" (variables "k_w" and "n") can be changed and defined below. Note that for plotting the current
-linkage, all of the harmonics should be considered. While in reality that is not possible, in practice a number on the scale of :math:`$10^3` should be used:
+linkage, all of the harmonics should be considered. While in reality that is not possible, in practice a number on the scale of :math:`10^3` should be used:
 
 .. code-block:: python
 
@@ -125,11 +125,48 @@ linkage, all of the harmonics should be considered. While in reality that is not
 
 This block is redefining the harmonics of interset, providing the winding layout and :math:`\alpha_\text{1}`, and actually calculating the winding factors instead
 of having them directly provided. From here, the B Field Outer Stator Analyzer code should be entered as existing. After it is written, the following code should 
-be implemented to plot the current linkage:
+be implemented to redefine the problem and plot the current linkage:
 
 .. code-block:: python
 
-    mmf_comp = stator_Bn_prob.mmf(zq, Nc, n, k_w, I_hat) * np.cos(n * alpha + np.pi/2)
+    m = 3  # number of phases
+    zq = 20  # number of turns
+    Nc = 2  # number of coils per phase
+    I_hat = 30  # peak current
+    delta_e = 0.002  # airgap
+    r_si = 0.025  # inner stator bore radius
+    r_rfe = r_si - delta_e  # rotor back iron outer radius
+    alpha_so = 0.1  # stator slot opening in radians
+
+    from matplotlib import pyplot as plt
+    from eMach.mach_eval.analyzers.electromagnetic.bfield_outer_stator import (
+        BFieldOuterStatorAnalyzer,
+        BFieldOuterStatorProblem1,
+    )
+
+    # define problem
+    stator_Bn_prob = BFieldOuterStatorProblem1(
+        m = m,
+        zq = zq,
+        Nc = Nc,
+        k_w = k_w,
+        I_hat = I_hat,
+        n = n,
+        delta_e = delta_e,
+        r_si = r_si,
+        r_rfe = r_rfe,
+        alpha_so = alpha_so,
+    )
+
+    # define analyzer
+    stator_B_ana = BFieldOuterStatorAnalyzer()
+
+    B = stator_B_ana.analyze(stator_Bn_prob)
+    r = r_si  # radius at which Bn field is required
+    # angles at which B field is required
+    alpha = np.arange(0, 2 * np.pi, 2 * np.pi / 360)[:,None]
+
+    mmf_comp = stator_Bn_prob.mmf(m, zq, Nc, n, k_w, I_hat) * np.cos(n * alpha + np.pi/2)
     B_total_radial = np.sum(mmf_comp,axis=1)
 
     linkage = B_total_radial*delta_e/(4*np.pi*10**(-7)) # <-- ADDED
