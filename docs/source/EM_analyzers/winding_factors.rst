@@ -24,7 +24,7 @@ factors within the bfield_outer_stator analyzer.
 For example, given the layouts in the figure below, winding factors can be calculated for each of the stator geometries.
 
 .. figure:: ./Images/Stator_Diagram.svg
-   :alt: Winding_Layouts
+   :alt: Stator Diagram
    :align: center
    :width: 500 
 
