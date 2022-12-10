@@ -12,14 +12,13 @@ in a phase winding over the algebraic sum, or mathematically using the following
 
 .. math::
 
-    \bar{k}_\text{w,n} &= \frac{1}{N} \Sigma_\text{i=1}^N \bar{k}_\text{i,n} \\
+    \bar{k}_\text{w,n} &= \frac{\text{geometric sum}}{\text{algebraic sum}} &= \frac{1}{N} \Sigma_\text{i=1}^N e^{-jn\alpha_i} \\
 
-where :math:`N` is the total number of slots filled, :math:`\bar{k}_\text{i,n}` is the winding factor of each slot, and :math:`n` is the harmonic index. The 
-equation for :math:`\bar{k}_\text{w,n}` is found to model the relationship between the geometric and algebraic sums as mentioned previously. The winding factor 
-for each :math:`n` should be calculated separately, as geometries within the calculations change with each value of :math:`n`. The sum of each of these 
-calculations will result in a table of winding factors, all of which must be considered when choosing a design winding layout. This analyzer adds the ability 
-to calculate a winding factor based only on a stator geometry and layout. The addition of this analyzer eliminates the need for hand calculations for winding 
-factors within the bfield_outer_stator analyzer.
+where :math:`N` is the total number of coil sides, :math:`e^{-jn\alpha_i}` is the geometric representation of the winding factor of each slot, :math:`n` 
+is the harmonic index, and :math:`i` is the slot number of the stator. The winding factor for each :math:`n` should be calculated separately. The sum of each 
+of these calculations will result in a table of winding factors, all of which must be considered when choosing a design winding layout. This analyzer adds the 
+ability to calculate a winding factor based only on a stator geometry and layout. The addition of this analyzer eliminates the need for hand calculations for 
+winding factors within the bfield_outer_stator analyzer.
 
 For example, given the layouts in the figure below, winding factors can be calculated for each of the stator geometries.
 
@@ -28,8 +27,25 @@ For example, given the layouts in the figure below, winding factors can be calcu
    :align: center
    :width: 500 
 
-For this stator, the winding factor would be calculated using Phase U (blue) at slots 3-6 (-, out of page) and 9-12 (+, into page). The assumptions made going 
-into the development of this model are:
+For this stator, the winding factor would be calculated using Phase U (blue) at slots 3-6 (-, out of page) and 9-12 (+, into page). The equation used for this 
+calculation would look like the following:
+
+.. math::
+
+    \bar{k}_\text{w,n} &= \frac{\text{geometric sum}}{\text{algebraic sum}} &= \frac{1}{N} \Sigma_\text{i=1}^N e^{-jn\alpha_i} \\
+
+.. math::
+    \bar{k}_\text{w,1} &= \frac{-e^{-j1\alpha_3} - e^{-j1\alpha_4} - e^{-j1\alpha_5} + e^{-j1\alpha_6} + e^{-j1\alpha_9} + e^{-j1\alpha_10} 
+    + e^{-j1\alpha_11} + e^{-j1\alpha_12}}{8} \\
+
+.. math::
+    \bar{k}_\text{w,1} &= \frac{-e^{-j\frac{5\pi}{12}} - e^{-j\frac{7\pi}{12}} - e^{-j\frac{9\pi}{12}} + e^{-j\frac{11\pi}{12}} + e^{-j\frac{17\pi}{12}} 
+    + e^{-j\frac{19\pi}{12}} + e^{-j\frac{21\pi}{12}} + e^{-j\frac{23\pi}{12}}}{8} \\
+
+.. math::
+    \bar{k}_\text{w,1} = -0.808 - j0.217
+
+The assumptions made going into the development of this model are:
 
 1. Ideal slot fill factors
 2. Ideal skew factors
@@ -93,10 +109,12 @@ Example code using the analyzer to determine the winding factors for each harmon
 
     k_w = kw_ana.analyze(kw_prob)
 
-.. figure:: ./Images/Winding_Factors.svg
-   :alt: Winding_Factors 
-   :align: center
-   :width: 500
+The following complex winding factors should result from this stator for harmonics n = 1-5:
+
+.. csv-table:: `WindingFactors`
+   :file: output_winding_factors_analyzer.csv
+   :widths: 30, 30, 30
+   :header-rows: 1
 
 Application to B Field Outer Stator Analyzer
 ********************************************
@@ -122,6 +140,9 @@ linkage, all of the harmonics should be considered. While in reality that is not
     kw_ana = WindingFactorsAnalyzer()
 
     k_w = kw_ana.analyze(kw_prob)
+
+    kw_mag = abs(k_w)
+    kw_ang = np.angle(k_w)
 
 This block is redefining the harmonics of interset, providing the winding layout and :math:`\alpha_\text{1}`, and actually calculating the winding factors instead
 of having them directly provided. From here, the B Field Outer Stator Analyzer code should be entered as existing. After it is written, the following code should 
@@ -166,7 +187,7 @@ be implemented to redefine the problem and plot the current linkage:
     # angles at which B field is required
     alpha = np.arange(0, 2 * np.pi, 2 * np.pi / 360)[:,None]
 
-    mmf_comp = stator_Bn_prob.mmf(m, zq, Nc, n, k_w, I_hat) * np.cos(n * alpha + np.pi/2)
+    mmf_comp = stator_Bn_prob.mmf(m, zq, Nc, n, kw_mag, I_hat) * np.cos(n * alpha + kw_ang + np.pi/2)
     B_total_radial = np.sum(mmf_comp,axis=1)
 
     linkage = B_total_radial*delta_e/(4*np.pi*10**(-7)) # <-- ADDED
@@ -186,7 +207,7 @@ This code is taking the MMF function from the B Field Outer Stator Analyzer and 
 this is then used to calculate the radial and tangential components of the B Field. The applied code should return the following plot for the current linkage of the 
 stator and winding layout depicted above:
 
-.. figure:: ./Images/Current_Linkage_Plot.svg
+.. figure:: ./Images/Current_Linkage_Plot.png
    :alt: Current_Linkage 
    :align: center
    :width: 500
