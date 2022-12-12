@@ -228,6 +228,24 @@ toolFEMM.save_as("example_induction_motor.fem")
 ###################### Draw the motor in JMAG ######################
 toolJMAG = JMAG.JmagDesigner()
 file = r"example_induction_motor.jproj"
+attempts = 1
+if os.path.exists(file):
+    print(
+        "JMAG project exists already, I will not delete it but create a new one with a different name instead."
+    )
+    # os.remove(expected_project_file_path)
+    attempts = 2
+    temp_path = file[
+        : -len(".jproj")
+    ] + "_attempts_%d.jproj" % (attempts)
+    while os.path.exists(temp_path):
+        attempts += 1
+        temp_path = file[
+            : -len(".jproj")
+        ] + "_attempts_%d.jproj" % (attempts)
+
+    file = temp_path
+
 toolJMAG.open(comp_filepath=file, study_type="Transient")
 toolJMAG.set_visibility(True)
 
