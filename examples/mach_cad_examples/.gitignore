@@ -1,0 +1,6 @@
+# JMAG/FEMM files
+*.jproj
+*.jmdl
+*.jfiles
+*.fem
+*.ans
