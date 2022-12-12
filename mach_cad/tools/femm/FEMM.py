@@ -199,6 +199,9 @@ class FEMMDesigner(
         femm.mi_setgroup(groupID)
         femm.mi_clearselected
 
+    def smartmesh(self, state):
+        femm.mi_smartmesh(state)
+
     def create_boundary_condition(
         self,
         number_of_shells=10, # should be between 1 and 10
@@ -208,7 +211,14 @@ class FEMMDesigner(
         ):
         femm.mi_makeABC(number_of_shells, radius, centerxy[0], centerxy[1], bc)
 
+    def add_circuit(self, circuitname='Circuit', current=0, series_or_parallel=1):
+        """Create circuit
+        series_or_parallel: 0 parallel, 1 - series
+        """
+        femm.mi_addcircprop(circuitname, current, series_or_parallel) 
+
     def set_current(self, circuitname, current):
+        current = str(np.real(current)) + '+I*' + str(np.imag(current))
         femm.mi_setcurrent(circuitname, current)
 
     def move_rotate(self, groupID, centerxy, angle):
