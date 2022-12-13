@@ -123,9 +123,9 @@ class BIM_Transient_2TSS_Analyzer:
         
         # Create transient study with two time step sections
         toolJmag = self.add_transient_2tss_study(toolJmag)
-        # self.create_custom_material(
-        #     toolJmag.jd, self.machine_variant.stator_iron_mat["core_material"]
-        # )
+        self.create_custom_material(
+            toolJmag.jd, self.machine_variant.stator_iron_mat["core_material"]
+        )
         toolJmag.jd.SetCurrentStudy(self.study_name)
         toolJmag.study = toolJmag.jd.GetCurrentStudy()
 
@@ -165,10 +165,6 @@ class BIM_Transient_2TSS_Analyzer:
         drive_freq = speed_in_elec_ang + self.slip_freq
         return drive_freq
 
-    # @property
-    # def drive_freq(self):
-    #     return self.operating_point.drive_freq
-
     @property
     def speed(self):
         return self.operating_point.speed
@@ -199,40 +195,6 @@ class BIM_Transient_2TSS_Analyzer:
         return self.operating_point.phi_s_0
 
     @property
-    def R_end_ring(self):
-        if self.config.non_zero_end_ring_res == True:
-            R_end_ring = self.machine_variant.R_end_ring
-        else:
-            R_end_ring = 0
-
-        return R_end_ring
-
-    @property
-    def l_coil(self):
-        l_coil = self.machine_variant.l_coil
-        return l_coil
-
-    @property
-    def R_coil(self):
-        R_coil = self.machine_variant.R_coil
-        return R_coil
-
-    @property
-    def l_coil_end_wdg(self):
-        l_coil_end_wdg = self.machine_variant.l_coil_end_wdg
-        return l_coil_end_wdg
-
-    # @property
-    # def R_coil(self):
-    #     R_coil = self.machine_variant.R_coil
-    #     return R_coil
-
-    @property
-    def R_coil_end_wdg(self):
-        R_coil_end_wdg = self.machine_variant.R_coil_end_wdg
-        return R_coil_end_wdg
-
-    @property
     def z_C(self):
         if len(self.machine_variant.layer_phases) == 1:
             z_C = self.machine_variant.Q / (2 * self.machine_variant.no_of_phases)
@@ -240,6 +202,101 @@ class BIM_Transient_2TSS_Analyzer:
             z_C = self.machine_variant.Q / (self.machine_variant.no_of_phases)
 
         return z_C
+
+    @property
+    def l_end_ring(self):
+        alpha_u = 2 * np.pi / self.machine_variant.Qr
+
+        w_rt = 2 * (
+            self.machine_variant.R_bar_center * np.sin(0.5 * alpha_u) - 
+            self.machine_variant.r_rb
+            )
+        slot_pitch_pps = np.pi * (
+            2 * self.machine_variant.r_ro - self.machine_variant.d_rso) / self.machine_variant.Qr
+        y_rotor = self.machine_variant.Qr / (2 * self.machine_variant.p)
+        
+        l_end_ring = (
+            np.pi * 0.5 * (slot_pitch_pps + w_rt) + 
+            slot_pitch_pps * self.machine_variant.Kov_rotor * (y_rotor - 1)
+        )
+        return l_end_ring
+
+    @property
+    def R_end_ring(self):
+        area = np.pi * self.machine_variant.r_rb ** 2
+        rho = 1 / self.machine_variant.rotor_bar_mat["bar_conductivity"]
+
+        R = rho * self.l_end_ring / area * 1000
+
+        if self.config.non_zero_end_ring_res == True:
+            R_end_ring = R
+        else:
+            R_end_ring = 0
+
+        return R_end_ring
+
+    @property
+    def R_bar_w_end_ring(self):
+        area = np.pi * self.machine_variant.r_rb ** 2
+        rho = 1 / self.machine_variant.rotor_bar_mat["bar_conductivity"]
+
+        R_bar_w_end_ring = rho * (self.l_end_ring + self.machine_variant.l_st) / area * 1000
+        return R_bar_w_end_ring
+
+    @property
+    def R_bar(self):
+        R_bar = self.R_bar_w_end_ring - self.R_end_ring
+        return R_bar
+
+    @property
+    def V_r_cage(self):
+        area = np.pi * self.machine_variant.r_rb ** 2
+        V_r_cage = area * (self.machine_variant.l_st + self.l_end_ring) * self.Qr
+        return V_r_cage
+
+
+
+# Make analyzer
+    @property
+    def l_coil_end_wdg(self):
+        tau_u = (2 * np.pi / self.machine_variant.Q) * (
+            self.machine_variant.r_si
+            + self.machine_variant.d_sp
+            + self.machine_variant.d_st / 2
+        )
+        l_ew = np.pi * 0.5 * (
+            tau_u + self.machine_variant.w_st
+        ) / 2 + tau_u * self.machine_variant.Kov * (self.machine_variant.pitch - 1)
+        l_coil_end_wdg = 2 * l_ew  # length of end winding of one coil
+        return l_coil_end_wdg
+
+    @property
+    def l_coil(self):
+        l_coil = 2 * self.machine_variant.l_st + self.l_coil_end_wdg # length of one coil
+        return l_coil
+
+
+    @property
+    def R_coil(self):
+        a_wire = (self.machine_variant.s_slot * self.machine_variant.Kcu) / (
+            2 * self.machine_variant.Z_q
+        )
+        return (self.l_coil * self.machine_variant.Z_q * self.z_C) / (
+            self.machine_variant.coil_mat["copper_elec_conductivity"] * a_wire
+        ) * 1000
+
+    @property
+    def R_coil_end_wdg(self):
+        a_wire = (self.machine_variant.s_slot * self.machine_variant.Kcu) / (
+            2 * self.machine_variant.Z_q
+        )
+        return (self.l_coil_end_wdg * self.machine_variant.Z_q * self.z_C) / (
+            self.machine_variant.coil_mat["copper_elec_conductivity"] * a_wire
+        ) * 1000
+
+
+
+
 
     @property
     def stator_calc_ohmic_loss(self):
@@ -261,6 +318,11 @@ class BIM_Transient_2TSS_Analyzer:
     def stator_calc_ohmic_loss_along_stack(self):
         stator_calc_ohmic_loss_along_stack = self.stator_calc_ohmic_loss - self.stator_calc_ohmic_loss_end_wdg
         return stator_calc_ohmic_loss_along_stack
+
+
+
+
+
 
 
 
@@ -802,14 +864,10 @@ class BIM_Transient_2TSS_Analyzer:
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
 
         # two sections of different time step
-        number_of_revolution_1TS = self.config.no_of_rev_1TS
-        number_of_revolution_2TS = self.config.no_of_rev_2TS
-        number_of_steps_1TS = (
-            self.config.no_of_steps_per_rev_1TS * number_of_revolution_1TS
-        )
-        number_of_steps_2TS = (
-            self.config.no_of_steps_per_rev_2TS * number_of_revolution_2TS
-        )
+        no_of_rev_1st_TSS = self.config.no_of_rev_1st_TSS
+        no_of_rev_2nd_TSS = self.config.no_of_rev_2nd_TSS
+        no_of_steps_1st_TSS = self.config.no_of_steps_1st_TSS
+        no_of_steps_2nd_TSS = self.config.no_of_steps_2nd_TSS
 
         DM = app.GetDataManager()
         DM.CreatePointArray("point_array/timevsdivision", "SectionStepTable")
@@ -817,15 +875,15 @@ class BIM_Transient_2TSS_Analyzer:
         refarray[0][0] = 0
         refarray[0][1] = 1
         refarray[0][2] = 50
-        refarray[1][0] = number_of_revolution_1TS / (self.drive_freq * self.slip)
-        refarray[1][1] = number_of_steps_1TS
+        refarray[1][0] = no_of_rev_1st_TSS / (self.drive_freq * self.slip)
+        refarray[1][1] = no_of_steps_1st_TSS
         refarray[1][2] = 50
-        refarray[2][0] = refarray[1][0] + number_of_revolution_2TS / self.drive_freq
-        refarray[2][1] = number_of_steps_2TS  # number_of_steps_2TS
+        refarray[2][0] = refarray[1][0] + no_of_rev_2nd_TSS / self.drive_freq
+        refarray[2][1] = no_of_steps_2nd_TSS
         refarray[2][2] = 50
         DM.GetDataSet("SectionStepTable").SetTable(refarray)
         number_of_total_steps = (
-            1 + number_of_steps_1TS + number_of_steps_2TS
+            1 + no_of_steps_1st_TSS + no_of_steps_2nd_TSS
         )  # don't forget to modify here!
         study.GetStep().SetValue("Step", number_of_total_steps)
         study.GetStep().SetValue("StepType", 3)
@@ -875,8 +933,8 @@ class BIM_Transient_2TSS_Analyzer:
             # Specify the reference steps yourself because you don't really know what JMAG is doing behind you
             cond.SetValue(
                 "StartReferenceStep",
-                number_of_total_steps + 1 - number_of_steps_2TS * 0.5,
-            )  # 1/4 period = number_of_steps_2TS*0.5
+                number_of_total_steps + 1 - no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25,
+            )  # 1/4 period in no of steps = no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25
             cond.SetValue("EndReferenceStep", number_of_total_steps)
             cond.SetValue("UseStartReferenceStep", 1)
             cond.SetValue("UseEndReferenceStep", 1)
@@ -915,8 +973,8 @@ class BIM_Transient_2TSS_Analyzer:
             # Specify the reference steps yourself because you don't really know what JMAG is doing behind you
             cond.SetValue(
                 "StartReferenceStep",
-                number_of_total_steps + 1 - number_of_steps_2TS * 0.5,
-            )  # 1/4 period = number_of_steps_2TS*0.5
+                number_of_total_steps + 1 - no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25,
+            )  # 1/4 period in no of steps = no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25
             cond.SetValue("EndReferenceStep", number_of_total_steps)
             cond.SetValue("UseStartReferenceStep", 1)
             cond.SetValue("UseEndReferenceStep", 1)
@@ -1394,8 +1452,6 @@ class BIM_Transient_2TSS_Analyzer:
         eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=7)
         ohmic_df = pd.read_csv(ohmic_loss_path, skiprows=7)
 
-        range_2TS = int(self.config.no_of_steps_per_rev_2TS * self.config.no_of_rev_2TS)
-
         curr_df = curr_df.set_index("Time(s)")
         volt_df = volt_df.set_index("Time(s)")
         tor_df = tor_df.set_index("Time(s)")
@@ -1417,9 +1473,7 @@ class BIM_Transient_2TSS_Analyzer:
             "stator_calc_ohmic_loss": [self.stator_calc_ohmic_loss, 
                         self.stator_calc_ohmic_loss_along_stack,
                         self.stator_calc_ohmic_loss_end_wdg],
-            "range_fine_step": range_2TS,
-            "conductor_names": self.conductor_names,
-            "non_zero_end_ring_res": self.config.non_zero_end_ring_res
+            "bim_transient_2tss_analyzer": self,
         }
 
         return fea_data

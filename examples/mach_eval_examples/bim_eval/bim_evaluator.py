@@ -12,7 +12,7 @@ from transient_2tss_step import transient_2tss_step
 ############################ Create Evaluator ########################
 bim_evaluator = MachineEvaluator(
     [
-        time_harmonic_step,
+        # time_harmonic_step,
         transient_2tss_step
     ]
 )

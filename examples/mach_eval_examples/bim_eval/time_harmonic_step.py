@@ -24,7 +24,7 @@ class BIM_Time_Harmonic_ProblemDefinition(ProblemDefinition):
 # os.path.abspath('')
 # initialize em analyzer class with FEA configuration
 configuration = BIM_Time_Harmonic_Analyzer_Config(
-    run_folder=os.path.dirname(__file__) + '/run_data/femm_files',
+    run_folder=os.path.dirname(__file__) + '/run_data/femm_files/',
     fraction = 1,
     freq_start = 1,
     freq_end = 5,

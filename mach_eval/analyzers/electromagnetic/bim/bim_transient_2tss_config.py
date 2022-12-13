@@ -1,10 +1,10 @@
 class BIM_Transient_2TSS_Config:
     def __init__(self, **kwargs) -> None:
-        # attributes for rev and steps per rev
-        self.no_of_rev_1TS = kwargs["no_of_rev_1TS"] # number of revolutions for 1st time step
-        self.no_of_rev_2TS = kwargs["no_of_rev_2TS"] # number of revolutions for 2nd time step
-        self.no_of_steps_per_rev_1TS = kwargs["no_of_steps_per_rev_1TS"] # number steps per rev for 1st time step
-        self.no_of_steps_per_rev_2TS = kwargs["no_of_steps_per_rev_2TS"] # number steps per rev for 2nd time step
+        # attributes for the number of rev and steps
+        self.no_of_rev_1st_TSS = kwargs["no_of_rev_1st_TSS"] # number of revolutions for 1st time step (at slip frequency)
+        self.no_of_rev_1st_TSS = kwargs["no_of_rev_1st_TSS"] # number of revolutions for 2nd time step (at drive frequency)
+        self.no_of_steps_1st_TSS = kwargs["no_of_steps_1st_TSS"] # number steps for 1st time step section
+        self.no_of_steps_2nd_TSS = kwargs["no_of_steps_2nd_TSS"] # number steps for 2nd time step section
 
         self.mesh_size = kwargs["mesh_size"] # generic mesh size for overall model [mm]
         self.mesh_size_rotor = kwargs["mesh_size_rotor"] # mesh size for rotor [mm]

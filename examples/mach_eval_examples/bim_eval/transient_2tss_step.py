@@ -31,10 +31,10 @@ class BIM_Transient_2TSS_ProblemDefinition(ProblemDefinition):
 
 # initialize em analyzer class with FEA configuration
 configuration = BIM_Transient_2TSS_Config(
-    no_of_rev_1TS=0.5,
-    no_of_rev_2TS=0.5,
-    no_of_steps_per_rev_1TS=64,
-    no_of_steps_per_rev_2TS=64,
+    no_of_rev_1st_TSS = 0.5,
+    no_of_rev_2nd_TSS = 0.5,
+    no_of_steps_1st_TSS=32,
+    no_of_steps_2nd_TSS=32,
 
     mesh_size=4, # mm
     mesh_size_rotor=1.8, # mm
@@ -46,7 +46,7 @@ configuration = BIM_Transient_2TSS_Config(
     csv_results=("Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;"
                   "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss"),
     del_results_after_calc=False,
-    run_folder=os.path.dirname(__file__) + "/run_data/jmag_files",
+    run_folder=os.path.dirname(__file__) + "/run_data/jmag_files/",
     jmag_csv_folder=os.path.dirname(__file__) + "/run_data/jmag_files/jmag_csv/",
 
     max_nonlinear_iterations=50,
