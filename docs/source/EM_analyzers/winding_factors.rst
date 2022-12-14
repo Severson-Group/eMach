@@ -155,7 +155,7 @@ be implemented to redefine the problem and plot the current linkage:
     Nc = 2  # number of coils per phase
     I_hat = 30  # peak current
     delta_e = 0.002  # airgap
-    r_si = 0.025  # inner stator bore radius
+    r_si = 0.100  # inner stator bore radius
     r_rfe = r_si - delta_e  # rotor back iron outer radius
     alpha_so = 0.1  # stator slot opening in radians
 
@@ -191,9 +191,9 @@ be implemented to redefine the problem and plot the current linkage:
     B_total_radial = np.sum(mmf_comp,axis=1)
 
     linkage = B_total_radial*delta_e/(4*np.pi*10**(-7)) # <-- ADDED
-    fig2 = plt.figure()
+    fig1 = plt.figure()
     ax = plt.axes()
-    fig2.add_axes(ax)
+    fig1.add_axes(ax)
     # plot current linkage
     ax.plot(alpha, linkage)
 
@@ -209,5 +209,36 @@ stator and winding layout depicted above:
 
 .. figure:: ./Images/Current_Linkage_Plot.png
    :alt: Current_Linkage 
+   :align: center
+   :width: 500
+
+After plotting the current linkage, we can then use the data to plot the radial and tangential components of the magnetic field in the air gap. The B Field Outer Stator
+Analyzer does this using the following code:
+
+.. code-block:: python
+
+    fig2 = plt.figure()
+    ax = plt.axes()
+    fig2.add_axes(ax)
+    # plot radial B fields
+    ax.plot(alpha*180/np.pi, B.radial(alpha=alpha, r=r))
+    # plot tangential B fields
+    ax.plot(alpha*180/np.pi, B.tan(alpha=alpha))
+
+    # sniff test for checking if fields are right. Below value should be very close to 0
+    tor = B.radial(alpha=alpha, r=r) * B.tan(alpha=alpha)
+    #print(np.sum(tor))
+
+    ax.set_xlabel(r"$\alpha$ [deg]")
+    ax.set_ylabel("$B$ [T]")
+    ax.set_title("$B_n$ and $B_{tan}$ across airgap")
+    plt.legend(["$B_n$", "$B_{tan}$"], fontsize=8)
+    plt.grid(True, linewidth=0.5, color="#A9A9A9", linestyle="-.")
+    plt.show()
+
+This code will result in the following plots for the magnetic field in the air gap:
+
+.. figure:: ./Images/B_Field_Plot.png
+   :alt: B_FIeld
    :align: center
    :width: 500
