@@ -92,7 +92,7 @@ Example code initializing the analyzer and problem1 for the stator and winding l
         )
 
     n = np.array([1,2,3,4,5])
-    winding_layout = np.array([[-1,-1,0,0,0,0,1,1,0,0,0,0],[0,0,0,0,1,1,0,0,0,0,-1,-1]])
+    winding_layout = np.array([[1,1,0,0,0,0,-1,-1,0,0,0,0],[0,0,0,0,-1,-1,0,0,0,0,1,1]])
     alpha_1 = 0
     kw_prob = WindingFactorsProblem(n,winding_layout,alpha_1)
 
@@ -133,7 +133,7 @@ linkage, all of the harmonics should be considered. While in reality that is not
     )
 
     n = np.arange(1,1000)
-    winding_layout = np.array([[-1,-1,0,0,0,0,1,1,0,0,0,0],[0,0,0,0,1,1,0,0,0,0,-1,-1]])
+    winding_layout = np.array([[1,1,0,0,0,0,-1,-1,0,0,0,0],[0,0,0,0,-1,-1,0,0,0,0,1,1]])
     alpha_1 = np.pi/12
     kw_prob = WindingFactorsProblem(n,winding_layout,alpha_1)
 
@@ -187,10 +187,7 @@ be implemented to redefine the problem and plot the current linkage:
     # angles at which B field is required
     alpha = np.arange(0, 2 * np.pi, 2 * np.pi / 360)[:,None]
 
-    mmf_comp = stator_Bn_prob.mmf(m, zq, Nc, n, kw_mag, I_hat) * np.cos(n * alpha + kw_ang + np.pi/2)
-    B_total_radial = np.sum(mmf_comp,axis=1)
-
-    linkage = B_total_radial*delta_e/(4*np.pi*10**(-7)) # <-- ADDED
+    linkage = B.radial(alpha=alpha, r=r)*delta_e/(4*np.pi*10**(-7))
     fig1 = plt.figure()
     ax = plt.axes()
     fig1.add_axes(ax)
