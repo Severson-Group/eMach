@@ -139,10 +139,7 @@ class BFieldOuterStator(BField):
             n = self.n[mask]
             b_radial_h = self.radial_harmonics(r)[mask]
 
-        r_si = self.r_si
-        delta = self.delta_e
-        orientation = 'radial'
-        b_radial = self.__field_from_harmonics(b_radial_h, n, alpha, r_si, delta, orientation)
+        b_radial = self.__field_from_harmonics(b_radial_h, n, alpha)
         return b_radial
 
     def tan(self, alpha, r=None, harmonics=None):
@@ -168,10 +165,7 @@ class BFieldOuterStator(BField):
             n = self.n[mask]
             b_tan_h = self.tangential_harmonics()[mask]
 
-        r_si = self.r_si
-        delta = self.delta_e
-        orientation = 'tangential'
-        b_tan = self.__field_from_harmonics(b_tan_h, n, alpha, r_si, delta, orientation)
+        b_tan = self.__field_from_harmonics(b_tan_h, n, alpha)
         return b_tan
 
     def radial_harmonics(self, r=None):
@@ -251,7 +245,7 @@ class BFieldOuterStator(BField):
         )
         return k_cu
 
-    def __field_from_harmonics(self, fields, n, alpha, r, delta, orientation):
+    def __field_from_harmonics(self, fields, n, alpha):
         # get phase and magnitude of B field harmonics
         b_mag = abs(fields)
         b_phase = np.angle(fields)
