@@ -258,19 +258,11 @@ class BFieldOuterStator(BField):
 
         n = n.reshape(len(n), 1)  # reshape n for matrix multilication
         alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
-        
-        if orientation == 'radial':
-            # get effective theta at each harmonic based on n, alpha, and phase shift
-            theta = n * alpha_t + b_phase.reshape(len(b_phase), 1) - np.pi/2
-        elif orientation == 'tangential':
-            # get effective theta at each harmonic based on n, alpha, and phase shift
-            theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)   
-        else:
-            raise ValueError("Orientation must be 'tangential' or 'radial'")
-             
+        # get effective theta at each harmonic based on n, alpha, and phase shift
+        theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)
         # get cosine asuuming MMF phase is provided relative to cos function
-        cos_array = np.cos(theta)   
+        cos_array = np.cos(theta)
+
         # get effective tangential B field at each alpha as a sum of all harmonics
         b_tan = np.sum(b_mag.reshape(len(b_mag), 1) * cos_array, axis=0)
-        
         return b_tan
