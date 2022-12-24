@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.dirname(__file__)+"/../../..")
 print(os.path.dirname(__file__)+"/../../..")
 
-from mach_eval.machines.materials.electric_steels import (M19Gauge29, Arnon5)
+from mach_eval.machines.materials.electric_steels import (Arnon5)
 from mach_eval.machines.materials.jmag_library_magnets import N40H
 from mach_eval.machines.materials.miscellaneous_materials import (
     CarbonFiber,
@@ -16,6 +16,7 @@ from mach_eval.machines.materials.miscellaneous_materials import (
 )
 from mach_eval.machines.bim.bim_machine import BIM_Machine
 from mach_eval.machines.bim.bim_oper_pt import BIM_Machine_Oper_Pt
+import numpy as np
 
 bim_dimensions = {
     'alpha_st': 11,
@@ -46,7 +47,7 @@ bim_parameters = {
     'rated_speed': 29250,
     'rated_power': 3584,
     'rated_voltage': 48,
-    'rated_current': 8.93,  
+    'rated_current': 10.07 / np.sqrt(2),  
 }
 
 Aluminum = {
@@ -58,20 +59,20 @@ Copper = {
     'coil_material'              : 'Copper',
     'copper_elec_conductivity': 5.7773*1e7
 }
-# M19Gauge29 = {
-#     'core_material'              : 'M19Gauge29',
-#     'core_material_density'      : 7650, # kg/m3
-#     'core_youngs_modulus'        : 185E9, # Pa
-#     'core_poission_ratio'        : .3,
-#     'core_material_cost'         : 17087, # $/m3
-#     'core_ironloss_a'            : 2,
-#     'core_ironloss_b'            : 1,
-#     'core_ironloss_Kh'           : 143, # W/m3
-#     'core_ironloss_Ke'           : 0.53, # W/m3
-#     'core_therm_conductivity'    : 25, # W/m-k
-#     'core_stacking_factor'       : 96, # percentage
-#     'core_bh_file'               : os.path.dirname(__file__) + '/M-19-Steel-BH-Curve-afterJMAGsmooth.BH',
-#     }
+M19Gauge29 = {
+    'core_material'              : 'M19Gauge29',
+    'core_material_density'      : 7650, # kg/m3
+    'core_youngs_modulus'        : 185E9, # Pa
+    'core_poission_ratio'        : .3,
+    'core_material_cost'         : 17087, # $/m3
+    'core_ironloss_a'            : 2,
+    'core_ironloss_b'            : 1,
+    'core_ironloss_Kh'           : 143, # W/m3
+    'core_ironloss_Ke'           : 0.53, # W/m3
+    'core_therm_conductivity'    : 25, # W/m-k
+    'core_stacking_factor'       : 96, # percentage
+    'core_bh_file'               : os.path.dirname(__file__) + '/M-19-Steel-BH-Curve-afterJMAGsmooth.BH',
+    }
 
 bim_materials = {
     "air_mat": Air,
@@ -82,34 +83,14 @@ bim_materials = {
     "shaft_mat": Steel,
 }
 
-# DPNV:
-    # "layer_phases": [ ['U', 'U', 'U', 'W', 'W', 'W', 'W', 'V', 'V', 'V', 'V', 'U', 'U', 'U', 'U', 'W', 'W',
-    #                                'W', 'W', 'V', 'V', 'V', 'V', 'U'],
-    #                     ['W', 'W', 'W', 'W', 'V', 'V', 'V', 'V', 'U', 'U', 'U', 'U', 'W', 'W', 'W', 'W', 'V',
-    #                                  'V', 'V', 'V', 'U', 'U', 'U', 'U'] ],
-    # "layer_polarity": [ ['+', '+', '+', '-', '-', '-', '-', '+', '+', '+', '+', '-', '-', '-', '-', '+', '+',
-    #                               '+', '+', '-', '-', '-', '-', '+'],
-    #                     ['-', '-', '-', '-', '+', '+', '+', '+', '-', '-', '-', '-', '+', '+', '+', '+', '-',
-    #                                 '-', '-', '-', '+', '+', '+', '+'] ],
-
 bim_winding = {
     "no_of_phases": 6,
     "no_of_layers": 2,
     "name_phases": ['Ph1', 'Ph2', 'Ph3', 'Ph4', 'Ph5', 'Ph6'],
-    # layer_phases is a list of lists, the number of lists = no_of_layers
-    # first list corresponds to coil sides in first layer
-    # second list corresponds to coil sides in second layer
-    # the index indicates the slot opening corresponding to the coil side
-    # string characters are used to represent the phases
     "layer_phases": [ ['Ph1', 'Ph1', 'Ph2', 'Ph2', 'Ph2', 'Ph2', 'Ph3', 'Ph3', 'Ph3', 'Ph3', 'Ph4', 'Ph4', 'Ph4', 'Ph4', 'Ph5', 'Ph5',
                                    'Ph5', 'Ph5', 'Ph6', 'Ph6', 'Ph6', 'Ph6', 'Ph1', 'Ph1'],
                         ['Ph5', 'Ph5', 'Ph5', 'Ph6', 'Ph6', 'Ph6', 'Ph6', 'Ph1', 'Ph1', 'Ph1', 'Ph1', 'Ph2', 'Ph2', 'Ph2', 'Ph2', 'Ph3', 'Ph3', 'Ph3',
                                      'Ph3', 'Ph4', 'Ph4', 'Ph4', 'Ph4', 'Ph5'] ],
-    # layer_polarity is a list of lists, the number of lists = no_of_layers
-    # first list corresponds to coil side direction in first layer
-    # second list corresponds to coil side direction in second layer
-    # the index indicates the slot opening corresponding to the coil side
-    # + indicates coil side goes into the page, - indicates coil side comes out of page
     "layer_polarity": [ ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+',
                                   '+', '+', '+', '+', '+', '+', '+'],
                         ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',
@@ -137,9 +118,9 @@ example_machine = BIM_Machine(
 ################ DEFINE BIM operating point ################
 machine_op_pt = BIM_Machine_Oper_Pt(
     speed=29250,
-    # slip_freq=12.5,
-    It_hat = 8.93,
-    Is_hat = 1.14,
+    slip_freq=12.5,
+    It_ratio=0.8868,
+    Is_ratio=1-0.8868,
     phi_t_0 = 0,
     phi_s_0 = 0,
     ambient_temp=25,

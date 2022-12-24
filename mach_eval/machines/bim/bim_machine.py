@@ -190,6 +190,10 @@ class BIM_Machine(Machine, IM_Rotor_Round_Slots, Stator, MPWinding):
         return self._parameters_dict["rated_speed"]
 
     @property
+    def omega_m(self):
+        return self.rated_speed / 60 * 2 * np.pi
+
+    @property
     def voltage_rating(self):
         return self._parameters_dict["rated_voltage"]
 

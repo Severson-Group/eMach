@@ -11,8 +11,8 @@ class BIM_Machine_Oper_Pt:
         self,
         speed=150000,
         slip_freq=1,
-        It_hat=0,
-        Is_hat = 0,
+        It_ratio = 0.975,
+        Is_ratio = 0.025,
         phi_t_0 = 0,
         phi_s_0 = 0,
         ambient_temp=25,
@@ -33,8 +33,8 @@ class BIM_Machine_Oper_Pt:
 
         self.__speed = speed
         self.__slip_freq = slip_freq
-        self.__It_hat = It_hat
-        self.__Is_hat = Is_hat
+        self.__It_ratio = It_ratio
+        self.__Is_ratio = Is_ratio
         self.__phi_t_0 = phi_t_0
         self.__phi_s_0 = phi_s_0
         self.__ambient_temp = ambient_temp
@@ -49,12 +49,12 @@ class BIM_Machine_Oper_Pt:
         return self.__slip_freq
 
     @property
-    def It_hat(self):
-        return self.__It_hat
+    def It_ratio(self):
+        return self.__It_ratio
 
     @property
-    def Is_hat(self):
-        return self.__Is_hat
+    def Is_ratio(self):
+        return self.__Is_ratio
 
     @property
     def phi_t_0(self):

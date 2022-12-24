@@ -46,7 +46,7 @@ bim_parameters = {
     'rated_speed': 8645,
     'rated_power': 50e3,
     'rated_voltage': 480,
-    'rated_current': 10.0,  
+    'rated_current': 127.89733 / 2,  
 }
 
 Aluminum = {
@@ -67,34 +67,14 @@ bim_materials = {
     "shaft_mat": Steel,
 }
 
-# DPNV:
-    # "layer_phases": [ ['U', 'U', 'U', 'W', 'W', 'W', 'W', 'V', 'V', 'V', 'V', 'U', 'U', 'U', 'U', 'W', 'W',
-    #                                'W', 'W', 'V', 'V', 'V', 'V', 'U'],
-    #                     ['W', 'W', 'W', 'W', 'V', 'V', 'V', 'V', 'U', 'U', 'U', 'U', 'W', 'W', 'W', 'W', 'V',
-    #                                  'V', 'V', 'V', 'U', 'U', 'U', 'U'] ],
-    # "layer_polarity": [ ['+', '+', '+', '-', '-', '-', '-', '+', '+', '+', '+', '-', '-', '-', '-', '+', '+',
-    #                               '+', '+', '-', '-', '-', '-', '+'],
-    #                     ['-', '-', '-', '-', '+', '+', '+', '+', '-', '-', '-', '-', '+', '+', '+', '+', '-',
-    #                                 '-', '-', '-', '+', '+', '+', '+'] ],
-
 bim_winding = {
     "no_of_phases": 6,
     "no_of_layers": 2,
     "name_phases": ['Ph1', 'Ph2', 'Ph3', 'Ph4', 'Ph5', 'Ph6'],
-    # layer_phases is a list of lists, the number of lists = no_of_layers
-    # first list corresponds to coil sides in first layer
-    # second list corresponds to coil sides in second layer
-    # the index indicates the slot opening corresponding to the coil side
-    # string characters are used to represent the phases
     "layer_phases": [ ['Ph1', 'Ph1', 'Ph1', 'Ph2', 'Ph2', 'Ph2', 'Ph2', 'Ph3', 'Ph3', 'Ph3', 'Ph3', 'Ph4', 'Ph4', 'Ph4', 'Ph4', 'Ph5', 'Ph5',
                                    'Ph5', 'Ph5', 'Ph6', 'Ph6', 'Ph6', 'Ph6', 'Ph1'],
                         ['Ph5', 'Ph5', 'Ph5', 'Ph5', 'Ph6', 'Ph6', 'Ph6', 'Ph6', 'Ph1', 'Ph1', 'Ph1', 'Ph1', 'Ph2', 'Ph2', 'Ph2', 'Ph2', 'Ph3',
                                      'Ph3', 'Ph3', 'Ph3', 'Ph4', 'Ph4', 'Ph4', 'Ph4'] ],
-    # layer_polarity is a list of lists, the number of lists = no_of_layers
-    # first list corresponds to coil side direction in first layer
-    # second list corresponds to coil side direction in second layer
-    # the index indicates the slot opening corresponding to the coil side
-    # + indicates coil side goes into the page, - indicates coil side comes out of page
     "layer_polarity": [ ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+',
                                   '+', '+', '+', '+', '+', '+', '+'],
                         ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',
@@ -125,8 +105,8 @@ example_machine = BIM_Machine(
 machine_op_pt = BIM_Machine_Oper_Pt(
     drive_freq=500,
     # slip_freq=1,
-    It_hat = 127.89733 * 0.975 / 2, # specified if Id and Iq are not known
-    Is_hat = 127.89733 * 0.025 / 2, # specified if Id and Iq are not known
+    It_hat = 0.975,
+    Is_hat = 0.025,
     ambient_temp=25,
     rotor_temp_rise=55,
 )
