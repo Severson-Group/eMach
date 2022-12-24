@@ -5,10 +5,21 @@ import sys
 sys.path.append(os.path.dirname(__file__)+"/../../..")
 
 from bim_designer import designer, bim_parameters
-from examples.mach_eval_examples.bim_eval.bim_evaluator import bim_evaluator
 from bim_ds import BIMDesignSpace
 from mach_opt import DesignProblem, DesignOptimizationMOEAD
-from eMach.examples.mach_opt_examples.bim_opt.my_data_handler import MyDataHandler
+from examples.mach_opt_examples.bim_opt.my_data_handler import MyDataHandler
+# from examples.mach_eval_examples.bim_eval.bim_evaluator import bim_evaluator
+from mach_eval import MachineEvaluator
+from examples.mach_eval_examples.bim_eval.time_harmonic_step import time_harmonic_step
+from examples.mach_eval_examples.bim_eval.transient_2tss_step import transient_2tss_step
+
+
+bim_evaluator = MachineEvaluator(
+    [
+        time_harmonic_step,
+        transient_2tss_step
+    ]
+)
 
 # set bounds for pygmo optimization problem
 dims = (
@@ -53,7 +64,7 @@ design_prob = DesignProblem(designer, bim_evaluator, opt_settings, dh)
 design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
-pop_size = 5 # 78
+pop_size = 3 # 78
 gen_size = 3 #100
 
 # load latest population

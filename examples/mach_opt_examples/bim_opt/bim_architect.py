@@ -5,7 +5,7 @@ import sys
 # change current working directory to file location
 sys.path.append(os.path.dirname(__file__)+"/../../..")
 
-from mach_eval.machines.bim import bim_machine as BIM_Machine
+from mach_eval.machines.bim.bim_machine import BIM_Machine
 from mach_eval.machines.bspm.winding_layout import WindingLayout
 
 
@@ -71,7 +71,8 @@ class BIM_Architect:
             "alpha_so": self.__get_alpha_so(free_variables),
             "r_si": self.__get_r_si(free_variables),        
             "d_sp": self.__get_d_sp(free_variables),
-            "r_ri": 7.515,
+            "r_ri": self.__get_r_ri(),
+            "r_sh": self.__get_r_ri(),
             "d_ri": self.__get_d_ri(free_variables),
             "l_st": 1, #self.__get_l_st(free_variables),
         }
@@ -84,14 +85,14 @@ class BIM_Architect:
             "n_m": self.__bim_parameters["n_m"],
             "rated_speed": self.__bim_parameters["rated_speed"],
             "rated_power": self.__bim_parameters["rated_power"],
-            "rated_voltage": self.__bim_parameters["voltage_rating"],
+            "rated_voltage": self.__bim_parameters["rated_voltage"],
             "rated_current": self.__current_coil,
             "name": "proj_" + str(self.count) + "_"
         }
         
         # bim_winding = self.__bim_winding
         bim_winding = {
-            "no_of_phases": self.__bim_winding["no_of_layers"],
+            "no_of_phases": self.__bim_winding["no_of_phases"],
             "no_of_layers": self.__bim_winding["no_of_layers"],
             "name_phases": self.__bim_winding["name_phases"],
             "layer_phases": self.__bim_winding["layer_phases"],
@@ -126,7 +127,7 @@ class BIM_Architect:
     def r_ro(self):
         v = self.__bim_parameters['rated_speed_m_s']
         omega_m = self.__bim_parameters['rated_speed'] / 60 * 2 * np.pi
-        r_ro = v / omega_m
+        r_ro = v / omega_m * 1000
         return r_ro
 
     def __get_alpha_so(self, free_variables):
@@ -140,16 +141,16 @@ class BIM_Architect:
         d_so = free_variables["d_so"]
         return 1.5 * d_so
 
-    # def __get_r_ri(self, free_variables):
-    #     r_ri = 0
-    #     return r_ri
+    def __get_r_ri(self):
+        r_ri = 7.515
+        return r_ri
 
     def __get_d_ri(self, free_variables):
         r_ro = self.r_ro
         w_so = free_variables["w_so"]
         r_rb = free_variables["r_rb"]
         d_rso = free_variables["d_rso"]
-        r_ri = free_variables["r_ri"]
+        r_ri = self.__get_r_ri()
 
         d_ri = (
             np.sqrt(r_ro ** 2 - (w_so / 2) ** 2) - 
@@ -175,7 +176,7 @@ class BIM_Architect:
 
     def __get_zQ(self, free_variables):
         s_slot = self.s_slot(free_variables)
-        Kcu = self.__bim_parameters["Kcu"]
+        Kcu = self.__bim_winding["Kcu"]
         zQ = round(Kcu * s_slot * 1e-6 / (2 * self.__bim_parameters["wire_area"]))
         if zQ < 1:
             zQ = 1
