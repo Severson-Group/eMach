@@ -44,9 +44,11 @@ class BIM_Time_Harmonic_Analyzer:
     def analyze(self, problem):
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
-        id_rotor_iron = 100
-        id_rotor_bars = 101
-        id_stator_slots = 102
+        id_rotor_iron = self.config.id_rotor_iron
+        id_rotor_bars = self.config.id_rotor_bars
+        id_stator_slots = self.config.id_stator_slots
+        id_stator_iron = self.config.id_stator_iron
+
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
@@ -55,6 +57,12 @@ class BIM_Time_Harmonic_Analyzer:
 
         if not os.path.isdir(self.config.run_folder):
             os.makedirs(self.config.run_folder)
+
+        for suffix in ['.ans', '.csv', '.fem']:
+            fname = self.config.run_folder + 'femm_found' + suffix
+            if os.path.exists(fname):
+                os.remove(fname)
+
 
         toolFEMM = FEMM.FEMMDesigner()
         toolFEMM.newdocument(hide_window=1, problem_type=0)
@@ -82,23 +90,29 @@ class BIM_Time_Harmonic_Analyzer:
             new_block=1,
             inner_coord=[0, 0],
             material_name='Air',
+            automesh=self.config.automesh,
+            meshsize_if_no_automesh=self.config.mesh_size_other_regions
             )
         toolFEMM.set_block_prop(
             new_block=1,
             inner_coord=[self.machine_variant.R_airgap, 0],
             material_name='Air',
+            automesh=self.config.automesh,
+            meshsize_if_no_automesh=self.config.mesh_size_airgap
             )
         toolFEMM.set_block_prop(
             new_block=1,
             inner_coord=[self.machine_variant.r_so * 1.2, 0],
             material_name='Air',
+            automesh=self.config.automesh,
+            meshsize_if_no_automesh=self.config.mesh_size_other_regions
             )
 
         # Create boundary condition
         toolFEMM.create_boundary_condition(number_of_shells=7, 
             radius=self.machine_variant.r_so * 1.5, centerxy=(0,0), bc=1)
 
-        # Create stator circuits
+        # Create stator circuits, add mesh sizes
         m = self.machine_variant.no_of_phases
         for i in range(0, m):
             toolFEMM.add_circuit(circuitname=self.machine_variant.name_phases[i])
@@ -109,6 +123,9 @@ class BIM_Time_Harmonic_Analyzer:
                 incircuit=self.machine_variant.layer_phases[0][i],
                 turns=-float(self.machine_variant.layer_polarity[0][i]+
                 str(self.machine_variant.Z_q)),
+                group_no=id_stator_slots,
+                automesh=self.config.automesh,
+                meshsize_if_no_automesh=self.config.mesh_size_copper
                 )
         for i in range(0, self.machine_variant.Q):
             toolFEMM.set_block_prop(
@@ -117,18 +134,30 @@ class BIM_Time_Harmonic_Analyzer:
                 incircuit=self.machine_variant.layer_phases[1][i],
                 turns=-float(self.machine_variant.layer_polarity[1][i]+
                 str(self.machine_variant.Z_q)),
-                group_no=id_stator_slots
+                group_no=id_stator_slots,
+                automesh=self.config.automesh,
+                meshsize_if_no_automesh=self.config.mesh_size_copper
                 )
+
+        toolFEMM.set_block_prop(
+            inner_coord=self.stator_tool.cs_token[0].inner_coord,
+            material_name=self.comp_stator_core.material.name,
+            group_no = id_stator_iron,
+            automesh=self.config.automesh,
+            meshsize_if_no_automesh=self.config.mesh_size_steel
+            )
 
         # Add block id-s to rotor iron and rotor bars
         toolFEMM.set_block_prop(
             inner_coord=self.rotor_tool.cs_token[0].inner_coord,
             material_name=self.comp_rotor_core.material.name,
-            group_no = id_rotor_iron
+            group_no = id_rotor_iron,
+            automesh=self.config.automesh,
+            meshsize_if_no_automesh=self.config.mesh_size_steel
             )
                 
         for i in range(0, self.machine_variant.no_of_phases_rotor):
-            toolFEMM.add_circuit(circuitname=self.machine_variant.name_phases_rotor[i])
+            toolFEMM.add_circuit(circuitname=self.machine_variant.name_phases_rotor[i], series_or_parallel=0)
         for i in range(0, self.machine_variant.Qr):
             toolFEMM.set_block_prop(
                 inner_coord=self.rotor_bar_tool[i].cs_token[0].inner_coord,
@@ -136,14 +165,17 @@ class BIM_Time_Harmonic_Analyzer:
                 incircuit=self.machine_variant.layer_phases_rotor[0][i],
                 turns=-float(self.machine_variant.layer_polarity_rotor[0][i]+
                 str(self.machine_variant.Z_q_rotor)),
-                group_no=id_rotor_bars
+                group_no=id_rotor_bars,
+                automesh=self.config.automesh,
+                meshsize_if_no_automesh=self.config.mesh_size_aluminum
                 )
 
         # Start the analysis
-        It_hat = self.operating_point.It_hat
+        It_hat = self.operating_point.It_ratio * self.machine_variant.rated_current * np.sqrt(2)
+        p = self.machine_variant.p
         for i in range(0, m):
             toolFEMM.set_current(circuitname=self.machine_variant.name_phases[i],
-                        current=It_hat*(np.cos(i * 2 * np.pi / m) + 1j * np.sin(i * 2 * np.pi / m)))
+                        current=It_hat*(np.cos(i * p * 2 * np.pi / m) - 1j * np.sin(i * p * 2 * np.pi / m)))
         toolFEMM.smartmesh(state=0)
 
         print('Run greedy_search_for_breakdown_slip...')
@@ -162,16 +194,20 @@ class BIM_Time_Harmonic_Analyzer:
             [sys.executable, os.path.dirname(os.path.abspath(__file__)) + '/bim_time_harmonic_analyzer_extra_files/parasolve_greedy_search_manager.py',
             self.dir_femm_temp, self.expected_project_file, str(self.machine_variant.l_st),
             str(self.config.freq_start), str(self.config.freq_end), str(self.config.no_of_freqs),
-            str(self.config.max_freq_error)], bufsize=-1
+            str(self.config.max_freq_error), str(self.config.id_rotor_iron), str(self.config.id_rotor_bars) ], bufsize=-1
             )
 
-        slip_freq_breakdown_torque, breakdown_torque, breakdown_force = self.wait_greedy_search(femm_tic, id_rotor_bars, id_stator_slots)
+        if self.config.get_results_in_t2tss_analyzer == True: # if we want to run BIM_Transient_2TSS_Analyzer in parallel
+            slip_freq_breakdown_torque = None
+            breakdown_torque = None
+        else: # if we want to run the subsequent analyzer of the evaluator in sequence or if there are no subsequent analyzers to run
+            slip_freq_breakdown_torque, breakdown_torque = self.wait_greedy_search(femm_tic, id_rotor_bars, id_stator_slots)
 
         # Output
         bim_tha_results = {
             "slip_freq_breakdown_torque": slip_freq_breakdown_torque,
             "breakdown_torque": breakdown_torque,
-            "breakdown_force": breakdown_force,
+            "configuration": self.config,
         }
 
         return bim_tha_results
@@ -500,7 +536,7 @@ class BIM_Time_Harmonic_Analyzer:
         toc = clock_time()
         logger = logging.getLogger(__name__)
         logger.debug('Time spent on femm frequency search is %g s.', toc - tic)
-        return freq, torque, None
+        return freq, torque
 
     def femm_integrate_4_current(self, fname, fraction, id_rotor_bars, id_stator_slots, dir_output=None, returnData=False):
         '''Make sure femm is opened

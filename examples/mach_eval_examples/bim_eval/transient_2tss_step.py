@@ -19,21 +19,25 @@ class BIM_Transient_2TSS_ProblemDefinition(ProblemDefinition):
         pass
 
     def get_problem(state):
-        # state.conditions.time_harmonic_results["slip_freq_breakdown_torque"] = 12.5
-        if state.design.settings.slip_freq == None:
+        if hasattr(state.conditions, 'slip_freq'):
             slip_freq = state.conditions.slip_freq
         else:
             slip_freq = state.design.settings.slip_freq
+        if hasattr(state.conditions, 'tha_config'):
+            tha_config = state.conditions.tha_config
+        else:
+            slip_freq = state.design.settings.slip_freq
+            tha_config = None
 
         problem = bim_tran_2tss.BIM_Transient_2TSS_Problem(
-            state.design.machine, state.design.settings, slip_freq)
+            state.design.machine, state.design.settings, slip_freq, tha_config)
         return problem
 
 # initialize em analyzer class with FEA configuration
 configuration = BIM_Transient_2TSS_Config(
     no_of_rev_1st_TSS = 0.5,
     no_of_rev_2nd_TSS = 0.5,
-    no_of_steps_1st_TSS=32,
+    no_of_steps_1st_TSS=24,
     no_of_steps_2nd_TSS=32,
 
     mesh_size=4, # mm
@@ -54,7 +58,9 @@ configuration = BIM_Transient_2TSS_Config(
     num_cpus=4,
     jmag_scheduler=False,
     jmag_visible=True,
-    non_zero_end_ring_res = True,
+    non_zero_end_ring_res = False,
+    wait_tha_results = True,
+    scale_axial_length = True,
 )
 
 

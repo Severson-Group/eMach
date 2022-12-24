@@ -2,8 +2,6 @@ import os
 import numpy as np
 import pandas as pd
 import sys
-import femm
-import subprocess
 from time import sleep
 from time import time as clock_time
 import logging
@@ -11,20 +9,24 @@ import operator
 import win32com.client
 
 sys.path.append(os.path.dirname(__file__) + "/../../../..")
-from mach_cad.model_obj.cross_sects import (
-    CrossSectInnerRotorStator, CrossSectInnerRotorRoundSlots
-)
 import mach_cad.model_obj as mo
 import mach_cad.tools.jmag as JMAG
 
 from mach_opt import InvalidDesign
 
+from mach_eval.analyzers.electromagnetic.resistance_stator_phase_wdg import(
+    StatorWindingResistanceProblem, StatorWindingResistanceAnalyzer
+)
+
+from mach_eval.analyzers.electromagnetic.bim.bim_time_harmonic_analyzer import BIM_Time_Harmonic_Analyzer
+from mach_eval.analyzers.electromagnetic.bim.bim_time_harmonic_analyzer_config import BIM_Time_Harmonic_Analyzer_Config
 
 class BIM_Transient_2TSS_Problem:
-    def __init__(self, machine, operating_point, breakdown_slip_freq=None):
+    def __init__(self, machine, operating_point, breakdown_slip_freq=None, tha_config=None):
         self.machine = machine
         self.operating_point = operating_point
         self.breakdown_slip_freq = breakdown_slip_freq
+        self.tha_config = tha_config
         self._validate_attr()
 
     def _validate_attr(self):
@@ -47,6 +49,7 @@ class BIM_Transient_2TSS_Analyzer:
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
         self.breakdown_slip_freq = problem.breakdown_slip_freq
+        self.tha_config = problem.tha_config
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
@@ -120,7 +123,7 @@ class BIM_Transient_2TSS_Analyzer:
         valid_design = self.pre_process(toolJmag.model)
         if not valid_design:
             raise InvalidDesign
-        
+
         # Create transient study with two time step sections
         toolJmag = self.add_transient_2tss_study(toolJmag)
         self.create_custom_material(
@@ -131,11 +134,26 @@ class BIM_Transient_2TSS_Analyzer:
 
         # Mesh study
         self.mesh_study(toolJmag.jd, toolJmag.model, toolJmag.study)
+        
+        # Wait for the results from time-harmonic analyzer (if neceessary)
+        if self.config.wait_tha_results == True:
+            tha_object = BIM_Time_Harmonic_Analyzer(self.tha_config)
+            tha_object.machine_variant = self.machine_variant
+            tha_object.project_name = tha_object.machine_variant.name
+            self.breakdown_slip_freq, self.breakdown_torque = tha_object.wait_greedy_search(
+                clock_time(), self.tha_config.id_rotor_bars, self.tha_config.id_stator_slots)
+            # Update current excitation and time-step settings based on a new slip 
+        else:
+            self.breakdown_torque = None
 
         # Set slip
         toolJmag.study.GetDesignTable().GetEquation("slip").SetExpression("%g"%(self.slip))
+        toolJmag.study.GetDesignTable().GetEquation("freq").SetExpression(
+                "%g" % self.drive_freq)
 
-        # toolJmag.jd = win32com.client.Dispatch("designer.Application")
+        self.set_currents_standard_excitation(self.It_hat, self.Is_hat, 
+                self.drive_freq, self.phi_t_0, self.phi_s_0, toolJmag.jd, toolJmag.study)
+        self.add_time_step_settings(toolJmag.jd, toolJmag.study)
         self.run_study(toolJmag.jd, toolJmag.study, clock_time())
 
         toolJmag.save()
@@ -180,11 +198,13 @@ class BIM_Transient_2TSS_Analyzer:
 
     @property
     def It_hat(self):
-        return self.operating_point.It_hat
+        It_hat = self.operating_point.It_ratio * self.machine_variant.rated_current * np.sqrt(2)
+        return It_hat
 
     @property
     def Is_hat(self):
-        return self.operating_point.Is_hat
+        Is_hat = self.operating_point.Is_ratio * self.machine_variant.rated_current * np.sqrt(2)
+        return Is_hat
 
     @property
     def phi_t_0(self):
@@ -251,79 +271,41 @@ class BIM_Transient_2TSS_Analyzer:
     @property
     def V_r_cage(self):
         area = np.pi * self.machine_variant.r_rb ** 2
-        V_r_cage = area * (self.machine_variant.l_st + self.l_end_ring) * self.Qr
+        V_r_cage = area * (self.machine_variant.l_st + self.l_end_ring) * self.machine_variant.Qr
         return V_r_cage
 
-
-
-# Make analyzer
     @property
-    def l_coil_end_wdg(self):
-        tau_u = (2 * np.pi / self.machine_variant.Q) * (
-            self.machine_variant.r_si
-            + self.machine_variant.d_sp
-            + self.machine_variant.d_st / 2
+    def stator_resistance(self):
+        res_prob = StatorWindingResistanceProblem(
+            r_si=self.machine_variant.r_si/1000,
+            d_sp=self.machine_variant.d_sp/1000,
+            d_st=self.machine_variant.d_st/1000,
+            w_st=self.machine_variant.w_st/1000,
+            l_st=self.machine_variant.l_st/1000,
+            Q=self.machine_variant.Q,
+            y=self.machine_variant.pitch,
+            z_Q=self.machine_variant.Z_q,
+            z_C=self.z_C,
+            Kcu=self.machine_variant.Kcu,
+            Kov=self.machine_variant.Kov,
+            sigma_cond=self.machine_variant.coil_mat["copper_elec_conductivity"],
+            slot_area=self.machine_variant.s_slot*1e-6,
         )
-        l_ew = np.pi * 0.5 * (
-            tau_u + self.machine_variant.w_st
-        ) / 2 + tau_u * self.machine_variant.Kov * (self.machine_variant.pitch - 1)
-        l_coil_end_wdg = 2 * l_ew  # length of end winding of one coil
-        return l_coil_end_wdg
+        res_analyzer = StatorWindingResistanceAnalyzer()
+        stator_resistance = res_analyzer.analyze(res_prob)
+        return stator_resistance
 
     @property
-    def l_coil(self):
-        l_coil = 2 * self.machine_variant.l_st + self.l_coil_end_wdg # length of one coil
-        return l_coil
-
+    def R_wdg(self):
+        return self.stator_resistance[0]
 
     @property
-    def R_coil(self):
-        a_wire = (self.machine_variant.s_slot * self.machine_variant.Kcu) / (
-            2 * self.machine_variant.Z_q
-        )
-        return (self.l_coil * self.machine_variant.Z_q * self.z_C) / (
-            self.machine_variant.coil_mat["copper_elec_conductivity"] * a_wire
-        ) * 1000
+    def R_wdg_coil_ends(self):
+        return self.stator_resistance[1]
 
     @property
-    def R_coil_end_wdg(self):
-        a_wire = (self.machine_variant.s_slot * self.machine_variant.Kcu) / (
-            2 * self.machine_variant.Z_q
-        )
-        return (self.l_coil_end_wdg * self.machine_variant.Z_q * self.z_C) / (
-            self.machine_variant.coil_mat["copper_elec_conductivity"] * a_wire
-        ) * 1000
-
-
-
-
-
-    @property
-    def stator_calc_ohmic_loss(self):
-        R_ph = self.R_coil * self.z_C
-        m = self.machine_variant.no_of_phases
-        stator_calc_ohmic_loss = R_ph * m / 2 * (self.operating_point.It_hat ** 2 + self.operating_point.Is_hat**2)
-
-        return stator_calc_ohmic_loss
-
-    @property
-    def stator_calc_ohmic_loss_end_wdg(self):
-        R_ph = self.R_coil_end_wdg * self.z_C
-        m = self.machine_variant.no_of_phases
-        stator_calc_ohmic_loss_end_wdg = R_ph * m / 2 * (self.operating_point.It_hat ** 2 + self.operating_point.Is_hat**2)
-
-        return stator_calc_ohmic_loss_end_wdg
-
-    @property
-    def stator_calc_ohmic_loss_along_stack(self):
-        stator_calc_ohmic_loss_along_stack = self.stator_calc_ohmic_loss - self.stator_calc_ohmic_loss_end_wdg
-        return stator_calc_ohmic_loss_along_stack
-
-
-
-
-
-
+    def R_wdg_coil_sides(self):
+        return self.stator_resistance[2]
 
 
     def draw_machine(self, tool):
@@ -807,7 +789,7 @@ class BIM_Transient_2TSS_Analyzer:
         # Study properties
         study.GetStudyProperties().SetValue("ApproximateTransientAnalysis", 1) # psuedo steady state freq is for PWM drive to use
         study.GetStudyProperties().SetValue("SpecifySlip", 1)
-        study.GetStudyProperties().SetValue("Slip", self.slip)
+        study.GetStudyProperties().SetValue("Slip", 0)
         study.GetStudyProperties().SetValue("OutputSteadyResultAs1stStep", 0)
         study.GetStudyProperties().SetValue("ConversionType", 0)
         study.GetStudyProperties().SetValue(
@@ -844,8 +826,8 @@ class BIM_Transient_2TSS_Analyzer:
 
         # Conditions - FEM Coils & Conductors (i.e. stator/rotor winding)
         self.add_circuit(app, model, study, bool_3PhaseCurrentSource=False)
-        self.set_currents_standard_excitation(self.It_hat, self.Is_hat, 
-            self.drive_freq, self.phi_t_0, self.phi_s_0, app, study)
+        # self.set_currents_standard_excitation(self.It_hat, self.Is_hat, 
+        #     self.drive_freq, self.phi_t_0, self.phi_s_0, app, study)
 
         # True: no mesh or field results are needed
         study.GetStudyProperties().SetValue(
@@ -864,44 +846,27 @@ class BIM_Transient_2TSS_Analyzer:
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
 
         # two sections of different time step
+        # self.add_time_step_settings(app, study)
         no_of_rev_1st_TSS = self.config.no_of_rev_1st_TSS
         no_of_rev_2nd_TSS = self.config.no_of_rev_2nd_TSS
         no_of_steps_1st_TSS = self.config.no_of_steps_1st_TSS
         no_of_steps_2nd_TSS = self.config.no_of_steps_2nd_TSS
-
-        DM = app.GetDataManager()
-        DM.CreatePointArray("point_array/timevsdivision", "SectionStepTable")
-        refarray = [[0 for i in range(3)] for j in range(3)]
-        refarray[0][0] = 0
-        refarray[0][1] = 1
-        refarray[0][2] = 50
-        refarray[1][0] = no_of_rev_1st_TSS / (self.drive_freq * self.slip)
-        refarray[1][1] = no_of_steps_1st_TSS
-        refarray[1][2] = 50
-        refarray[2][0] = refarray[1][0] + no_of_rev_2nd_TSS / self.drive_freq
-        refarray[2][1] = no_of_steps_2nd_TSS
-        refarray[2][2] = 50
-        DM.GetDataSet("SectionStepTable").SetTable(refarray)
         number_of_total_steps = (
             1 + no_of_steps_1st_TSS + no_of_steps_2nd_TSS
-        )  # don't forget to modify here!
-        study.GetStep().SetValue("Step", number_of_total_steps)
-        study.GetStep().SetValue("StepType", 3)
-        study.GetStep().SetTableProperty("Division", DM.GetDataSet("SectionStepTable"))
-
+        )
         # add equations
         study.GetDesignTable().AddEquation("freq")
         study.GetDesignTable().AddEquation("slip")
         study.GetDesignTable().AddEquation("speed")
         study.GetDesignTable().GetEquation("freq").SetType(0)
-        study.GetDesignTable().GetEquation("freq").SetExpression(
-            "%g" % self.drive_freq
-        )
+        # study.GetDesignTable().GetEquation("freq").SetExpression(
+        #     "%g" % self.drive_freq
+        # )
         study.GetDesignTable().GetEquation("freq").SetDescription(
             "Excitation Frequency"
         )
         study.GetDesignTable().GetEquation("slip").SetType(0)
-        study.GetDesignTable().GetEquation("slip").SetExpression("%g"%(self.slip))
+        # study.GetDesignTable().GetEquation("slip").SetExpression("%g"%(self.slip))
         study.GetDesignTable().GetEquation("slip").SetDescription("Slip [1]")
         study.GetDesignTable().GetEquation("speed").SetType(1)
         study.GetDesignTable().GetEquation("speed").SetExpression("freq * (1 - slip) * %d"%(60/(self.machine_variant.p)))
@@ -1167,7 +1132,7 @@ class BIM_Transient_2TSS_Analyzer:
         app.ShowCircuitGrid(True)
         study.CreateCircuit()
 
-        add_mp_circuit(study, self.machine_variant.Z_q, Rs=self.R_coil)
+        add_mp_circuit(study, self.machine_variant.Z_q, Rs=self.R_wdg)
         # set_currents(ampT=self.It_hat, ampS=self.Is_hat, freq=self.drive_freq)
 
         for phase_name in self.machine_variant.name_phases:
@@ -1267,6 +1232,32 @@ class BIM_Transient_2TSS_Analyzer:
             func.AddFunction(f1)
             func.AddFunction(f2)
             study.GetCircuit().GetComponent(self.cs_name[i]).SetFunction(func)
+
+    def add_time_step_settings(self, app, study):
+        no_of_rev_1st_TSS = self.config.no_of_rev_1st_TSS
+        no_of_rev_2nd_TSS = self.config.no_of_rev_2nd_TSS
+        no_of_steps_1st_TSS = self.config.no_of_steps_1st_TSS
+        no_of_steps_2nd_TSS = self.config.no_of_steps_2nd_TSS
+
+        DM = app.GetDataManager()
+        DM.CreatePointArray("point_array/timevsdivision", "SectionStepTable")
+        refarray = [[0 for i in range(3)] for j in range(3)]
+        refarray[0][0] = 0
+        refarray[0][1] = 1
+        refarray[0][2] = 50
+        refarray[1][0] = no_of_rev_1st_TSS / (self.drive_freq * self.slip)
+        refarray[1][1] = no_of_steps_1st_TSS
+        refarray[1][2] = 50
+        refarray[2][0] = refarray[1][0] + no_of_rev_2nd_TSS / self.drive_freq
+        refarray[2][1] = no_of_steps_2nd_TSS
+        refarray[2][2] = 50
+        DM.GetDataSet("SectionStepTable").SetTable(refarray)
+        number_of_total_steps = (
+            1 + no_of_steps_1st_TSS + no_of_steps_2nd_TSS
+        )  # don't forget to modify here!
+        study.GetStep().SetValue("Step", number_of_total_steps)
+        study.GetStep().SetValue("StepType", 3)
+        study.GetStep().SetTableProperty("Division", DM.GetDataSet("SectionStepTable"))
 
 
     def mesh_study(self, app, model, study):
@@ -1470,10 +1461,14 @@ class BIM_Transient_2TSS_Analyzer:
             "hysteresis_loss": hyst_df,
             "eddy_current_loss": eddy_df,
             "ohmic_loss": ohmic_df,
-            "stator_calc_ohmic_loss": [self.stator_calc_ohmic_loss, 
-                        self.stator_calc_ohmic_loss_along_stack,
-                        self.stator_calc_ohmic_loss_end_wdg],
-            "bim_transient_2tss_analyzer": self,
+            "analyzer_configurations": self.config,
+            "slip_freq": self.slip_freq,
+            "drive_freq": self.drive_freq,
+            "V_r_cage": self.V_r_cage,
+            "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
+            "rotor_cage_resistances": [self.R_bar, self.R_end_ring],
+            "conductor_names": self.conductor_names,
+            "breakdown_torque_from_tha": self.breakdown_torque,
         }
 
         return fea_data

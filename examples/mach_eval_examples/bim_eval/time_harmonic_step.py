@@ -30,6 +30,17 @@ configuration = BIM_Time_Harmonic_Analyzer_Config(
     freq_end = 5,
     no_of_freqs = 5,
     max_freq_error = 0.255,
+    get_results_in_t2tss_analyzer = True,
+    id_rotor_iron = 100,
+    id_rotor_bars = 101,
+    id_stator_slots = 102,
+    id_stator_iron = 103,
+    automesh = False,
+    mesh_size_aluminum = 2 * 6,
+    mesh_size_steel = 2 * 6,
+    mesh_size_airgap = 2 * 0.75,
+    mesh_size_copper = 2 * 10,
+    mesh_size_other_regions = 20
 )
 
 bim_time_harmonic_analysis = bim_tha.BIM_Time_Harmonic_Analyzer(configuration)
@@ -39,7 +50,8 @@ class BIM_Time_Harmonic_PostAnalyzer:
         state_out = copy.deepcopy(state_in)
         # state_out.design.settings.slip_freq = results["slip_freq_breakdown_torque"]
         state_out.conditions.slip_freq = results["slip_freq_breakdown_torque"]
-        state_out.conditions.breakdown_torque = results["breakdown_torque"]        
+        state_out.conditions.breakdown_torque = results["breakdown_torque"]      
+        state_out.conditions.tha_config = results["configuration"]
         return state_out
 
 time_harmonic_step = AnalysisStep(BIM_Time_Harmonic_ProblemDefinition, bim_time_harmonic_analysis, BIM_Time_Harmonic_PostAnalyzer)

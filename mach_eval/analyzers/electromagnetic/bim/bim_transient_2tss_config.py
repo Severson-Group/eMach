@@ -2,7 +2,7 @@ class BIM_Transient_2TSS_Config:
     def __init__(self, **kwargs) -> None:
         # attributes for the number of rev and steps
         self.no_of_rev_1st_TSS = kwargs["no_of_rev_1st_TSS"] # number of revolutions for 1st time step (at slip frequency)
-        self.no_of_rev_1st_TSS = kwargs["no_of_rev_1st_TSS"] # number of revolutions for 2nd time step (at drive frequency)
+        self.no_of_rev_2nd_TSS = kwargs["no_of_rev_2nd_TSS"] # number of revolutions for 2nd time step (at drive frequency)
         self.no_of_steps_1st_TSS = kwargs["no_of_steps_1st_TSS"] # number steps for 1st time step section
         self.no_of_steps_2nd_TSS = kwargs["no_of_steps_2nd_TSS"] # number steps for 2nd time step section
 
@@ -27,3 +27,5 @@ class BIM_Transient_2TSS_Config:
         self.jmag_scheduler = kwargs["jmag_scheduler"] # True if it is desired to schedule jobs instead of solving immediately
         self.jmag_visible = kwargs["jmag_visible"] # JMAG application visible if true
         self.non_zero_end_ring_res = kwargs["non_zero_end_ring_res"] # False: zero R_end_ring, True: non-zero R_end_ring
+        self.wait_tha_results = kwargs["wait_tha_results"] # True: extract time harmonic analyzer results in this analyzer
+        self.scale_axial_length = kwargs["scale_axial_length"] # True: scale axial length to get the required rated torque

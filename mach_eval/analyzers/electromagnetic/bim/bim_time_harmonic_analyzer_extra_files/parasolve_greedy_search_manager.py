@@ -47,6 +47,8 @@ freq_begin = float(sys.argv[4])
 freq_end = float(sys.argv[5])
 no_of_freqs = int(sys.argv[6])
 VAREPSILON = float(sys.argv[7]) # difference between 1st and 2nd max torque slip frequencies
+id_rotor_iron = int(sys.argv[8])
+id_rotor_bars = int(sys.argv[9])
 
 femm.openfemm(True)
 femm.opendocument(expected_project_file)
@@ -74,7 +76,7 @@ while True:
 
         proc = subprocess.Popen(
             [sys.executable, os.path.dirname(os.path.abspath(__file__)) + '/parasolve_greedy_search.py',
-            str(id_solver), '"'+dir_femm_temp+'"'], bufsize=-1
+            str(id_solver), '"'+dir_femm_temp+'"', str(id_rotor_iron), str(id_rotor_bars)], bufsize=-1
             )
         procs.append(proc)
 

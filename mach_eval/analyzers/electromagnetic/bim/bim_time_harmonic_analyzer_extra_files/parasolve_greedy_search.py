@@ -8,9 +8,6 @@ from time import time
 # from numpy import exp, pi # sqrt
 # from numpy import savetxt, c_
 
-id_rotor_iron = 100
-id_rotor_bars = 101
-
 def get_slipfreq_torque():
     # call this after mi_analyze
     femm.mi_loadsolution()
@@ -29,12 +26,15 @@ def get_slipfreq_torque():
 
 id_solver = int(sys.argv[1])
 dir_femm_temp = sys.argv[2]
+id_rotor_iron = int(sys.argv[3])
+id_rotor_bars = int(sys.argv[4])
 print('ParaSolve', id_solver, end=' ')
 
 
 femm.openfemm(True) # bHide
 # this is essential to reduce elements counts from >50000 to ~20000.
-femm.callfemm_noeval('smartmesh(0)')
+# femm.callfemm_noeval('smartmesh(0)')
+# femm.smartmesh(0)
 print('smartmesh is off')
 
 tic = time()
