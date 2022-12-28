@@ -1,0 +1,3 @@
+Output,Description,Units
+torque_avg,Average torque,same as input
+torque_ripple,Torque ripple,
