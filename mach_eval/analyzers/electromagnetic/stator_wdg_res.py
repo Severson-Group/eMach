@@ -14,7 +14,7 @@ class StatorWindingResistanceProblem:
         z_Q: number of turns per coil
         z_C: number of coils per phase
         Kcu: slot fill factor
-        Kov: factor due to increased length of coil from end winding overlap
+        Kov: winding overlength factor
         sigma_cond: conductor conductivity [Siemens/m]
         slot_area: stator slot area [m^2]
 
