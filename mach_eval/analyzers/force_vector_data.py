@@ -34,7 +34,7 @@ class ProcessForceDataAnalyzer:
         # Average force and angle
         Fx_avg = sum(Fx) / len(Fx)
         Fy_avg = sum(Fy) / len(Fy)
-        F_abs_avg = sum(F_abs) / len(F_abs)
+        F_abs_avg = np.sqrt(Fx_avg ** 2 + Fy_avg ** 2) # sum(F_abs) / len(F_abs)
         F_ang_avg = np.arctan2(Fy_avg, Fx_avg) / np.pi * 180 # [deg]
 
         # Error magnitude and angle

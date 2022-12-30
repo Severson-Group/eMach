@@ -1,2 +1,2 @@
 Arguments,Description,Units
-torque,An array of torque values,"any (Nm, kNm, etc.)"
+torque,Array of torque values,"Any (Nm, kNm, etc.)"
