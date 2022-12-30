@@ -51,11 +51,12 @@ Note that, typically, torque array comes directly from FEA analysis results.
     theta = np.linspace(0, 2*np.pi,100)
     torque = 2 + 0.5 * np.sin(2 * theta)
 
-    # define problem
-    torque_prob = ProcessTorqueDataProblem(torque)
+    # define problem and analyzer
+    torque_problem = ProcessTorqueDataProblem(torque)
+    torque_analyzer = ProcessTorqueDataAnalyzer()
 
-    # analyze the problem
-    torque_avg, torque_ripple = ProcessTorqueDataAnalyzer.analyze(torque_prob)
+    # analyze problem
+    torque_avg, torque_ripple = torque_analyzer.analyze(torque_problem)
 
     # plot torque vs. rotor position and its average
     fig1 = plt.figure()
@@ -63,10 +64,11 @@ Note that, typically, torque array comes directly from FEA analysis results.
     fig1.add_axes(ax)
     ax.plot(theta * 180 / np.pi, torque)
     ax.plot(theta * 180 / np.pi, torque_avg * np.ones(len(torque)))
-    ax.set_xlabel("Rotor angle [deg]")
+    ax.set_xlabel("Rotor angular position [deg]")
     ax.set_ylabel("Torque [Nm]")
     ax.set_xbound(0, 360)
     ax.set_ybound(0, 3)
+    ax.set_xticks(np.linspace(0, 360, 7))
     ax.legend(['Torque vs. rotor position','Average torque'])
     plt.show()
 

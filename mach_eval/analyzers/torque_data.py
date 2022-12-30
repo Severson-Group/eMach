@@ -9,7 +9,7 @@ class ProcessTorqueDataProblem:
 
 
 class ProcessTorqueDataAnalyzer:
-    def analyze(problem: ProcessTorqueDataProblem):
+    def analyze(self, problem: ProcessTorqueDataProblem):
         """Calcuates average torque and torque ripple
 
         Args:

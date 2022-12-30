@@ -11,6 +11,7 @@ This section provides documentation for the electromagnetic analyzers supported 
     bfield_spm_inner_rotor
     bspm_jmag2d_analyzer
     torque_data
+    force_vector_data
 
 
 
