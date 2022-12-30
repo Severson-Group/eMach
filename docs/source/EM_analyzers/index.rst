@@ -10,6 +10,7 @@ This section provides documentation for the electromagnetic analyzers supported 
     bfield_outer_stator
     bfield_spm_inner_rotor
     bspm_jmag2d_analyzer
+    stator_wdg_res
 
 
 
