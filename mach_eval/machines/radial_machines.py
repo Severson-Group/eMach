@@ -577,7 +577,7 @@ class Rotor_Iron_Round_Slots(MachineComponent):
     @property
     def r_ro(self):
         alpha_u = 2 * np.pi / self.Qr
-        r1 = self.r_ri + self.d_ri + self.r_rb + np.sqrt(self.r_rb ** 2 - (self.w_so / 2) ** 2) + self.d_so
+        r1 = self.r_ri + self.d_ri + self.r_rb + np.sqrt(self.r_rb ** 2 - (self.w_so / 2) ** 2) + self.d_rso
         r2 = self.w_so / 2
         r_ro = np.sqrt(r1 ** 2 + r2 ** 2)
         return r_ro
@@ -668,6 +668,175 @@ class IM_Rotor_Round_Slots(Rotor_Iron_Round_Slots, Rotor_Iron_Round_Slots_Bar, S
         return self._winding_dict["Kov_rotor"]
 
 
+class Rotor_Iron_Round_Slots_Double_Cage(MachineComponent):
+    @staticmethod
+    def required_dimensions():
+        return (
+            "r_ri",  # Rotor inner radius
+            "d_ri",  # Rotor back iron length
+            "d_rb",  # Distance between bars
+            "r_rb",  # Rotor bar radius
+            "d_rso",  # Rotor tooth height
+            "w_so",  # Rotor slot opening
+        )
+
+    @staticmethod
+    def required_parameters():
+        return ("Qr",)
+
+    @staticmethod
+    def required_materials():
+        return ("rotor_iron_mat",)
+
+    @property
+    def r_ri(self):
+        return self._dimensions_dict["r_ri"]
+
+    @property
+    def d_ri(self):
+        return self._dimensions_dict["d_ri"]
+
+    @property
+    def d_rb(self):
+        return self._dimensions_dict["d_rb"]
+
+    @property
+    def r_rb(self):
+        return self._dimensions_dict["r_rb"]
+
+    @property
+    def d_rso(self):
+        return self._dimensions_dict["d_rso"]
+
+    @property
+    def w_so(self):
+        return self._dimensions_dict["w_so"]
+
+    @property
+    def Qr(self):
+        return self._parameters_dict["Qr"]
+
+    @property
+    def rotor_iron_mat(self):
+        return self._materials_dict["rotor_iron_mat"]
+
+    @property
+    def r_ro(self):
+        alpha_u = 2 * np.pi / self.Qr
+        r1 = (
+            self.r_ri + self.d_ri + 2 * self.r_rb + self.d_rb + self.r_rb + 
+            np.sqrt(self.r_rb ** 2 - (self.w_so / 2) ** 2) + self.d_rso
+        )
+        r2 = self.w_so / 2
+        r_ro = np.sqrt(r1 ** 2 + r2 ** 2)
+        return r_ro
+
+    @property
+    def V_rfe(self):
+        V_rfe = self.l_st * (
+            np.pi * (self.r_ro ** 2 - self.r_ri ** 2) - 
+            self.Qr * (2 * np.pi * self.r_rb ** 2 + self.w_so * self.d_rso)
+        )
+        return V_rfe
+
+
+class Rotor_Iron_Round_Slots_Double_Cage_Bar1(MachineComponent):
+    @staticmethod
+    def required_dimensions():
+        return (
+            "r_rb", # Rotor bar radius
+        )
+
+    @staticmethod
+    def required_materials():
+        return ("rotor_bar_mat",)
+
+    @property
+    def r_rb(self):
+        return self._machine_parameter_dict["r_rb"]
+
+    @property
+    def rotor_bar_mat(self):
+        return self._materials_dict["rotor_bar_mat"]
+
+class Rotor_Iron_Round_Slots_Double_Cage_Bar2(MachineComponent):
+    @staticmethod
+    def required_dimensions():
+        return (
+            "r_rb", # Rotor bar radius
+        )
+
+    @staticmethod
+    def required_materials():
+        return ("rotor_bar_mat",)
+
+    @property
+    def r_rb(self):
+        return self._machine_parameter_dict["r_rb"]
+
+    @property
+    def rotor_bar_mat(self):
+        return self._materials_dict["rotor_bar_mat"]
+
+
+class IM_Rotor_Round_Slots_Double_Cage(
+    Rotor_Iron_Round_Slots_Double_Cage, Rotor_Iron_Round_Slots_Double_Cage_Bar1,
+    Rotor_Iron_Round_Slots_Double_Cage_Bar2, Shaft, MachineComponent
+    ):
+    @staticmethod
+    def required_dimensions():
+        req_dims = ()
+        for cl in IM_Rotor_Round_Slots.__bases__:
+            if cl.required_dimensions() is not None:
+                req_dims = req_dims + cl.required_dimensions()
+        return req_dims
+
+    @staticmethod
+    def required_materials():
+        req_mat = tuple()
+        for cl in IM_Rotor_Round_Slots.__bases__:
+            if cl.required_materials() is not None:
+                req_mat = req_mat + cl.required_materials()
+        return req_mat
+
+    @staticmethod
+    def required_winding():
+        return (
+            "no_of_phases_rotor",
+            "no_of_layers_rotor",
+            "layer_phases_rotor",
+            "layer_polarity_rotor",
+            "Z_q_rotor",
+            "Kov_rotor"
+        )
+
+    @property
+    def name_phases_rotor(self):
+        return self._winding_dict["name_phases_rotor"]
+
+    @property
+    def no_of_phases_rotor(self):
+        return self._winding_dict["no_of_phases_rotor"]
+
+    @property
+    def no_of_layers_rotor(self):
+        return self._winding_dict["no_of_layers_rotor"]
+
+    @property
+    def layer_phases_rotor(self):
+        return self._winding_dict["layer_phases_rotor"]
+
+    @property
+    def layer_polarity_rotor(self):
+        return self._winding_dict["layer_polarity_rotor"]
+
+    @property
+    def Z_q_rotor(self):
+        return self._winding_dict["Z_q_rotor"]
+
+    @property
+    def Kov_rotor(self):
+        return self._winding_dict["Kov_rotor"]
 
 
 class MPWinding(Winding):

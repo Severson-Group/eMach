@@ -64,7 +64,7 @@ design_prob = DesignProblem(designer, bim_evaluator, opt_settings, dh)
 design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
-pop_size = 6 # 78
+pop_size = 4 # 78
 gen_size = 3 #100
 
 # load latest population

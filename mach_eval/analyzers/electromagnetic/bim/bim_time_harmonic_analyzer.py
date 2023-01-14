@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import sys
 import femm
-import subprocess
 from time import sleep
 from time import time as clock_time
 import logging
@@ -26,7 +25,7 @@ class BIM_Time_Harmonic_Problem:
         self._validate_attr()
 
     def _validate_attr(self):
-        if 'BIM_Machine' in str(type(self.machine)):
+        if 'BIM_Machine' or 'BIM_Double_Cage_Machine' in str(type(self.machine)):
             pass
         else:
             raise TypeError("Invalid machine type")
@@ -55,6 +54,28 @@ class BIM_Time_Harmonic_Analyzer:
         self.project_name = self.machine_variant.name
         self.expected_project_file = self.config.run_folder + "%s.fem" % self.project_name
 
+        attempts = 1
+        if os.path.exists(self.expected_project_file):
+            print(
+                "FEMM project exists already, I will not delete it but create a new one with a different name instead."
+            )
+            # os.remove(expected_project_file_path)
+            attempts = 2
+            temp_path = self.expected_project_file[
+                : -len(".fem")
+            ] + "_attempts_%d.fem" % (attempts)
+            while os.path.exists(temp_path):
+                attempts += 1
+                temp_path = self.expected_project_file[
+                    : -len(".fem")
+                ] + "_attempts_%d.fem" % (attempts)
+
+            self.expected_project_file = temp_path
+
+        if attempts > 1:
+            self.project_name = self.project_name + "_attempts_%d" % (attempts)
+
+
         if not os.path.isdir(self.config.run_folder):
             os.makedirs(self.config.run_folder)
 
@@ -66,9 +87,9 @@ class BIM_Time_Harmonic_Analyzer:
 
         toolFEMM = FEMM.FEMMDesigner()
         toolFEMM.newdocument(hide_window=1, problem_type=0)
-        toolFEMM.probdef(freq=1, depth = self.machine_variant.l_st, acsolver = 1)
+        toolFEMM.probdef(freq=1, depth=self.machine_variant.l_st, acsolver=1)
         ################################################################
-        # 02 Run ElectroMagnetic analysis
+        # 02 Run Electromagnetic analysis
         ################################################################
         # Add materials from the library
         toolFEMM.add_material("Air")
@@ -83,14 +104,16 @@ class BIM_Time_Harmonic_Analyzer:
                                     hdata=hdata,bdata=bdata)
 
         # Draw the model
-        draw_success = self.draw_machine(toolFEMM)      
-
+        if self.config.double_cage == True:
+            draw_success = self.draw_machine_double_cage(toolFEMM)
+        else:
+            draw_success = self.draw_machine(toolFEMM)
+        
         # Set air regions
         toolFEMM.set_block_prop(
             new_block=1,
             inner_coord=[0, 0],
-            material_name='Air',
-            automesh=self.config.automesh,
+            material_name='<No Mesh>',
             meshsize_if_no_automesh=self.config.mesh_size_other_regions
             )
         toolFEMM.set_block_prop(
@@ -100,17 +123,103 @@ class BIM_Time_Harmonic_Analyzer:
             automesh=self.config.automesh,
             meshsize_if_no_automesh=self.config.mesh_size_airgap
             )
-        toolFEMM.set_block_prop(
-            new_block=1,
-            inner_coord=[self.machine_variant.r_so * 1.2, 0],
-            material_name='Air',
-            automesh=self.config.automesh,
-            meshsize_if_no_automesh=self.config.mesh_size_other_regions
-            )
+        # toolFEMM.set_block_prop(
+        #     new_block=1,
+        #     inner_coord=[self.machine_variant.r_so * 1.1, 0],
+        #     material_name='Air',
+        #     automesh=self.config.automesh,
+        #     meshsize_if_no_automesh=self.config.mesh_size_other_regions
+        #     )
 
         # Create boundary condition
-        toolFEMM.create_boundary_condition(number_of_shells=7, 
-            radius=self.machine_variant.r_so * 1.5, centerxy=(0,0), bc=1)
+        # toolFEMM.create_boundary_condition(number_of_shells=7, 
+        #     radius=self.machine_variant.r_so * 1.2, centerxy=(0,0), bc=1)
+
+        # Redraw the outer part of the stator (needed for creating boundary conditions)
+        for i in range(0, self.machine_variant.Q):
+            alpha_u = 2 * np.pi / self.machine_variant.Q
+            alpha_i = alpha_u * i
+            x_arc = self.machine_variant.r_so * np.cos(alpha_i)
+            y_arc = self.machine_variant.r_so * np.sin(alpha_i)
+            femm.mi_selectarcsegment(x_arc, y_arc)
+            x_node = self.machine_variant.r_so * np.cos(alpha_i + alpha_u / 2)
+            y_node = self.machine_variant.r_so * np.sin(alpha_i + alpha_u / 2)
+            femm.mi_selectnode(x_node, y_node)
+        femm.mi_deleteselected()
+        toolFEMM.draw_arc([0, 0], [+self.machine_variant.r_so, 0], [-self.machine_variant.r_so, 0])
+        toolFEMM.draw_arc([0, 0], [-self.machine_variant.r_so, 0], [+self.machine_variant.r_so, 0])
+        
+        femm.mi_addboundprop('BC:A=0', 0,0,0, 0,0,0,0,0,0,0,0)
+        
+        femm.mi_selectarcsegment(0, -self.machine_variant.r_so)
+        femm.mi_setarcsegmentprop(20, "BC:A=0", False, 10) # maxseg = 20 deg (only this is found effective)
+        femm.mi_clearselected()
+
+        femm.mi_selectarcsegment(0, self.machine_variant.r_so)
+        femm.mi_setarcsegmentprop(20, "BC:A=0", False, 10)
+        femm.mi_clearselected()
+
+        femm.mi_selectarcsegment(0, -self.machine_variant.r_sh)
+        femm.mi_setarcsegmentprop(20, "BC:A=0", False, 100)
+        femm.mi_clearselected()
+        femm.mi_selectarcsegment(0, self.machine_variant.r_sh)
+        femm.mi_setarcsegmentprop(20, "BC:A=0", False, 100)
+        femm.mi_clearselected()
+
+        # Reduce the number of arc segments of bars to reduce the number of mesh elements
+        if self.config.double_cage == False:
+            x_arc_0 = self.machine_variant.R_bar_center
+            y_arc_0 = self.machine_variant.r_rb
+            alpha_u = 2 * np.pi / self.machine_variant.Qr
+            for i in range(0, self.machine_variant.Qr):
+                alpha_i = alpha_u * i
+                x_arc_1 = x_arc_0 * np.cos(alpha_i) - y_arc_0 * np.sin(alpha_i)
+                y_arc_1 = x_arc_0 * np.sin(alpha_i) + y_arc_0 * np.cos(alpha_i)
+
+                x_arc_2 = x_arc_0 * np.cos(alpha_i) - -y_arc_0 * np.sin(alpha_i)
+                y_arc_2 = x_arc_0 * np.sin(alpha_i) + -y_arc_0 * np.cos(alpha_i)
+
+                femm.mi_selectarcsegment(x_arc_1, y_arc_1)
+                femm.mi_setarcsegmentprop(8, "<None>", False, 0)
+                femm.mi_clearselected()
+                femm.mi_selectarcsegment(x_arc_2, y_arc_2)
+                femm.mi_setarcsegmentprop(8, "<None>", False, 0)
+                femm.mi_clearselected()
+        else:
+            x_arc_0 = self.machine_variant.R_bar1_center
+            y_arc_0 = self.machine_variant.r_rb
+            alpha_u = 2 * np.pi / self.machine_variant.Qr
+            for i in range(0, self.machine_variant.Qr):
+                alpha_i = alpha_u * i
+                x_arc_1 = x_arc_0 * np.cos(alpha_i) - y_arc_0 * np.sin(alpha_i)
+                y_arc_1 = x_arc_0 * np.sin(alpha_i) + y_arc_0 * np.cos(alpha_i)
+
+                x_arc_2 = x_arc_0 * np.cos(alpha_i) - -y_arc_0 * np.sin(alpha_i)
+                y_arc_2 = x_arc_0 * np.sin(alpha_i) + -y_arc_0 * np.cos(alpha_i)
+
+                femm.mi_selectarcsegment(x_arc_1, y_arc_1)
+                femm.mi_setarcsegmentprop(8, "<None>", False, 0)
+                femm.mi_clearselected()
+                femm.mi_selectarcsegment(x_arc_2, y_arc_2)
+                femm.mi_setarcsegmentprop(8, "<None>", False, 0)
+                femm.mi_clearselected()
+
+            x_arc_0 = self.machine_variant.R_bar2_center
+            for i in range(0, self.machine_variant.Qr):
+                alpha_i = alpha_u * i
+                x_arc_1 = x_arc_0 * np.cos(alpha_i) - y_arc_0 * np.sin(alpha_i)
+                y_arc_1 = x_arc_0 * np.sin(alpha_i) + y_arc_0 * np.cos(alpha_i)
+
+                x_arc_2 = x_arc_0 * np.cos(alpha_i) - -y_arc_0 * np.sin(alpha_i)
+                y_arc_2 = x_arc_0 * np.sin(alpha_i) + -y_arc_0 * np.cos(alpha_i)
+
+                femm.mi_selectarcsegment(x_arc_1, y_arc_1)
+                femm.mi_setarcsegmentprop(8, "<None>", False, 0)
+                femm.mi_clearselected()
+                femm.mi_selectarcsegment(x_arc_2, y_arc_2)
+                femm.mi_setarcsegmentprop(8, "<None>", False, 0)
+                femm.mi_clearselected()
+
 
         # Create stator circuits, add mesh sizes
         m = self.machine_variant.no_of_phases
@@ -155,20 +264,46 @@ class BIM_Time_Harmonic_Analyzer:
             automesh=self.config.automesh,
             meshsize_if_no_automesh=self.config.mesh_size_steel
             )
-                
-        for i in range(0, self.machine_variant.no_of_phases_rotor):
-            toolFEMM.add_circuit(circuitname=self.machine_variant.name_phases_rotor[i], series_or_parallel=0)
-        for i in range(0, self.machine_variant.Qr):
-            toolFEMM.set_block_prop(
-                inner_coord=self.rotor_bar_tool[i].cs_token[0].inner_coord,
-                material_name=self.comp_rotor_bar[i].material.name,
-                incircuit=self.machine_variant.layer_phases_rotor[0][i],
-                turns=-float(self.machine_variant.layer_polarity_rotor[0][i]+
-                str(self.machine_variant.Z_q_rotor)),
-                group_no=id_rotor_bars,
-                automesh=self.config.automesh,
-                meshsize_if_no_automesh=self.config.mesh_size_aluminum
-                )
+
+        
+        if self.config.double_cage == False:
+            for i in range(0, self.machine_variant.no_of_phases_rotor):
+                toolFEMM.add_circuit(circuitname=self.machine_variant.name_phases_rotor[i], series_or_parallel=0)
+            for i in range(0, self.machine_variant.Qr):
+                toolFEMM.set_block_prop(
+                    inner_coord=self.rotor_bar_tool[i].cs_token[0].inner_coord,
+                    material_name=self.comp_rotor_bar[i].material.name,
+                    incircuit=self.machine_variant.layer_phases_rotor[0][i],
+                    turns=-float(self.machine_variant.layer_polarity_rotor[0][i]+
+                    str(self.machine_variant.Z_q_rotor)),
+                    group_no=id_rotor_bars,
+                    automesh=self.config.automesh,
+                    meshsize_if_no_automesh=self.config.mesh_size_aluminum
+                    )
+        else:
+            for i in range(0, self.machine_variant.no_of_phases_rotor):
+                toolFEMM.add_circuit(circuitname=self.machine_variant.name_phases_rotor[i], series_or_parallel=0)
+            for i in range(0, self.machine_variant.Qr):
+                toolFEMM.set_block_prop(
+                    inner_coord=self.rotor_bar_tool1[i].cs_token[0].inner_coord,
+                    material_name=self.comp_rotor_bar1[i].material.name,
+                    incircuit=self.machine_variant.layer_phases_rotor[0][i],
+                    turns=-float(self.machine_variant.layer_polarity_rotor[0][i]+
+                    str(self.machine_variant.Z_q_rotor)),
+                    group_no=id_rotor_bars,
+                    automesh=self.config.automesh,
+                    meshsize_if_no_automesh=self.config.mesh_size_aluminum
+                    )
+                toolFEMM.set_block_prop(
+                    inner_coord=self.rotor_bar_tool2[i].cs_token[0].inner_coord,
+                    material_name=self.comp_rotor_bar2[i].material.name,
+                    incircuit=self.machine_variant.layer_phases_rotor[1][i],
+                    turns=-float(self.machine_variant.layer_polarity_rotor[1][i]+
+                    str(self.machine_variant.Z_q_rotor)),
+                    group_no=id_rotor_bars,
+                    automesh=self.config.automesh,
+                    meshsize_if_no_automesh=self.config.mesh_size_aluminum
+                    )
 
         # Start the analysis
         It_hat = self.operating_point.It_ratio * self.machine_variant.rated_current * np.sqrt(2)
@@ -190,6 +325,7 @@ class BIM_Time_Harmonic_Analyzer:
         # self.find_breakdown_slip_torque(toolFEMM)
 
         print(os.path.dirname(os.path.abspath(__file__)) + '/bim_time_harmonic_analyzer_extra_files/parasolve_greedy_search_manager.py')
+        import subprocess
         proc = subprocess.Popen(
             [sys.executable, os.path.dirname(os.path.abspath(__file__)) + '/bim_time_harmonic_analyzer_extra_files/parasolve_greedy_search_manager.py',
             self.dir_femm_temp, self.expected_project_file, str(self.machine_variant.l_st),
@@ -333,168 +469,149 @@ class BIM_Time_Harmonic_Analyzer:
 
         return True
 
+    def draw_machine_double_cage(self, tool):
+        ####################################################
+        # Adding parts objects
+        ####################################################
+        self.stator_core = mo.CrossSectInnerRotorStator(
+            name="StatorCore",
+            dim_alpha_st=mo.DimDegree(self.machine_variant.alpha_st),
+            dim_alpha_so=mo.DimDegree(self.machine_variant.alpha_so),
+            dim_r_si=mo.DimMillimeter(self.machine_variant.r_si),
+            dim_d_so=mo.DimMillimeter(self.machine_variant.d_so),
+            dim_d_sp=mo.DimMillimeter(self.machine_variant.d_sp),
+            dim_d_st=mo.DimMillimeter(self.machine_variant.d_st),
+            dim_d_sy=mo.DimMillimeter(self.machine_variant.d_sy),
+            dim_w_st=mo.DimMillimeter(self.machine_variant.w_st),
+            dim_r_st=mo.DimMillimeter(0),
+            dim_r_sf=mo.DimMillimeter(0),
+            dim_r_sb=mo.DimMillimeter(0),
+            Q=self.machine_variant.Q,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+            theta=mo.DimRadian(0)),
+            )
 
+        self.winding_layer1 = []
+        for i in range (0, self.machine_variant.Q):
+            self.winding_layer1.append(mo.CrossSectInnerRotorStatorRightSlot(
+                name="WindingLayer1",
+                stator_core=self.stator_core,
+                location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+                theta=mo.DimRadian(2 * np.pi / self.machine_variant.Q * i)),
+                ))
 
+        self.winding_layer2 = []
+        for i in range (0, self.machine_variant.Q):
+            self.winding_layer2.append(mo.CrossSectInnerRotorStatorLeftSlot(
+                name="WindingLayer2",
+                stator_core=self.stator_core,
+                location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+                theta=mo.DimRadian(2 * np.pi / self.machine_variant.Q * i)),
+                ))
 
+        self.rotor_core = mo.CrossSectInnerRotorRoundSlotsDoubleCage(
+            name="RotorCore",
+            dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
+            dim_d_ri=mo.DimMillimeter(self.machine_variant.d_ri),
+            dim_d_rb=mo.DimMillimeter(self.machine_variant.d_rb),
+            dim_r_rb=mo.DimMillimeter(self.machine_variant.r_rb),
+            dim_d_so=mo.DimMillimeter(self.machine_variant.d_rso),
+            dim_w_so=mo.DimMillimeter(self.machine_variant.w_so),
+            Qr=self.machine_variant.Qr,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
+            )
 
-    # def find_breakdown_slip_torque(self, toolFEMM):
-    #     number_of_instances = self.config.number_of_instances
-    #     dir_femm_temp = self.config.run_folder
-    #     expected_project_file = self.expected_project_file
-    #     stack_length = self.machine_variant.l_st
-    #     VAREPSILON = self.config.max_freq_dif_error # difference between 1st and 2nd max torque slip frequencies
-        
-    #     femm.openfemm(True)
-    #     femm.opendocument(expected_project_file)
+        self.rotor_bar1 = []
+        for i in range(0,self.machine_variant.Qr):
+            self.rotor_bar1.append(mo.CrossSectInnerRotorRoundSlotsDoubleCageBar1(
+                name="Bar1",
+                rotor_core=self.rotor_core,
+                location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+                theta=mo.DimRadian(2 * np.pi / self.machine_variant.Qr * i)),
+                ))
 
-    #     # here, the only variable for an individual is frequency, so pop = list of frequencies
-    #     freq_begin = 1. # hz
-    #     freq_end   = freq_begin + number_of_instances - 1. # 5 Hz
+        self.rotor_bar2 = []
+        for i in range(0,self.machine_variant.Qr):
+            self.rotor_bar2.append(mo.CrossSectInnerRotorRoundSlotsDoubleCageBar2(
+                name="Bar2",
+                rotor_core=self.rotor_core,
+                location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+                theta=mo.DimRadian(2 * np.pi / self.machine_variant.Qr * i)),
+                ))
 
-    #     list_torque    = []
-    #     list_slipfreq  = []
-    #     list_solver_id = [] 
-    #     list_done_id   = []
-    #     count_loop = 0
+        self.comp_stator_core = mo.Component(
+            name="StatorCore",
+            cross_sections=[self.stator_core],
+            material=mo.MaterialGeneric(name=self.machine_variant.stator_iron_mat["core_material"]),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
 
-    #     while True:
-    #         # freq_step can be negative!
-    #         freq_step  = (freq_end - freq_begin) / (number_of_instances-1)
+        self.comp_winding_layer1 = []
+        for i in range(0,self.machine_variant.Q):
+            self.comp_winding_layer1.append(mo.Component(
+                name="WindingLayer1",
+                cross_sections=[self.winding_layer1[i]],
+                material=mo.MaterialGeneric(name=self.machine_variant.coil_mat["coil_material"]),
+                make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+                dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            ))
 
-    #         count_done = len(list_done_id)
-    #         if count_done % 5 == 0:
-    #             list_solver_id = list(range(0, count_done+number_of_instances, 1))
+        self.comp_winding_layer2 = []
+        for i in range(0,self.machine_variant.Q):
+            self.comp_winding_layer2.append(mo.Component(
+                name="WindingLayer2",
+                cross_sections=[self.winding_layer2[i]],
+                material=mo.MaterialGeneric(name=self.machine_variant.coil_mat["coil_material"]),
+                make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+                dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            ))
 
-    #         # parasolve
-    #         procs = []
-    #         print('list_solver_id=', list_solver_id)
-    #         print('list_solver_id[-number_of_instances:]=', list_solver_id[-number_of_instances:])
-    #         for i, id_solver in enumerate(list_solver_id[-number_of_instances:]):
-    #             toolFEMM.probdef(freq=freq_begin + i*freq_step, depth=stack_length, minangle=18, acsolver=1)
-    #             toolFEMM.save_as(dir_femm_temp+'femm_temp_%d.fem'%(id_solver))
+        self.comp_rotor_core = mo.Component(
+            name="RotorCore",
+            cross_sections=[self.rotor_core],
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["core_material"]),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
 
-    #             proc = subprocess.Popen([sys.executable, os.path.dirname(os.path.abspath(__file__)) + '/parasolve_greedy_search.py',
-    #                              str(id_solver), '"'+dir_femm_temp+'"'], bufsize=-1)
-    #             procs.append(proc)
+        self.comp_rotor_bar1 = []
+        for i in range(0,self.machine_variant.Qr):
+            self.comp_rotor_bar1.append(mo.Component(
+                name="Bar1",
+                cross_sections=[self.rotor_bar1[i]],
+                material=mo.MaterialGeneric(name=self.machine_variant.rotor_bar_mat["rotor_bar_material"]),
+                make_solid=mo.MakeExtrude(location=mo.Location3D(),
+                dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            ))
 
-    #         count_sec = 0
-    #         while True:
-    #             sleep(1)
-    #             count_sec += 1
-    #             if count_sec > 120: # two min 
-    #                 raise Exception('It is highly likely that exception occurs during the solving of FEMM.')
-        
-    #             print('\nbegin waiting for eddy current solver...')
-    #             for id_solver in list_solver_id[-number_of_instances:]:
+        self.comp_rotor_bar2 = []
+        for i in range(0,self.machine_variant.Qr):
+            self.comp_rotor_bar2.append(mo.Component(
+                name="Bar2",
+                cross_sections=[self.rotor_bar2[i]],
+                material=mo.MaterialGeneric(name=self.machine_variant.rotor_bar_mat["rotor_bar_material"]),
+                make_solid=mo.MakeExtrude(location=mo.Location3D(),
+                dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            ))
 
-    #                 if id_solver in list_done_id:
-    #                     continue
+        self.stator_tool = self.comp_stator_core.make(tool, tool)
+        self.winding_tool1 = []
+        for i in range(0,self.machine_variant.Q):
+            self.winding_tool1.append(self.comp_winding_layer1[i].make(tool, tool))
+        self.winding_tool2 = []
+        for i in range(0,self.machine_variant.Q):
+            self.winding_tool2.append(self.comp_winding_layer2[i].make(tool, tool))
+        self.rotor_tool = self.comp_rotor_core.make(tool, tool)
+        self.rotor_bar_tool1 = []
+        for i in range(0,self.machine_variant.Qr):
+            self.rotor_bar_tool1.append(self.comp_rotor_bar1[i].make(tool, tool))
+        self.rotor_bar_tool2 = []
+        for i in range(0,self.machine_variant.Qr):
+            self.rotor_bar_tool2.append(self.comp_rotor_bar2[i].make(tool, tool))
 
-    #                 fname = dir_femm_temp + "femm_temp_%d.txt"%(id_solver)
-    #                 # print fname
-    #                 if os.path.exists(fname):
-    #                     with open(fname, 'r') as f:
-    #                         data = f.readlines()
-    #                         # if data == []:
-    #                         #     sleep(0.1)
-    #                         #     data = f.readlines()
-    #                         #     if data == []:
-    #                         #         raise Exception('What takes you so long to write two float numbers?')
-    #                         list_slipfreq.append( float(data[0][:-1]) )
-    #                         list_torque.append(   float(data[1][:-1]) )
-    #                     list_done_id.append(id_solver)
+        return True
 
-    #             if len(list_done_id) >= number_of_instances:
-    #                 break
-
-    #         print('slip freq [Hz]:', list_slipfreq)
-    #         print('torque [Nm]:', list_torque)
-
-    #         # find the max
-    #         list_torque_copy = list_torque[::]
-    #         index_1st, breakdown_torque_1st = max(enumerate(list_torque_copy), key=operator.itemgetter(1))
-    #         breakdown_slipfreq_1st = list_slipfreq[index_1st]
-    #         print('The max is #%d'%index_1st, breakdown_torque_1st, 'Nm')
-
-    #         # find the 2nd max
-    #         list_torque_copy[index_1st] = -999999
-    #         index_2nd, breakdown_torque_2nd = max(enumerate(list_torque_copy), key=operator.itemgetter(1))
-    #         breakdown_slipfreq_2nd = list_slipfreq[index_2nd]
-    #         print('2nd max is #%d'%index_2nd, breakdown_torque_2nd, 'Nm')
-
-    #         print('Max slip freq error=', 0.5*(breakdown_slipfreq_1st - breakdown_slipfreq_2nd), 'Hz', ', 2*EPS=%g'%(VAREPSILON))
-
-    #         # find the two slip freq close enough then break.5
-    #         if abs(breakdown_slipfreq_1st - breakdown_slipfreq_2nd) < VAREPSILON: # Hz
-    #             the_index = list_solver_id[index_1st]
-    #             print('Found it.', breakdown_slipfreq_1st, 'Hz', breakdown_torque_1st, 'Nm', 'The index is', the_index)
-    #             self.remove_files(list_solver_id, dir_femm_temp, suffix='.fem', id_solver_femm_found=the_index)
-    #             self.remove_files(list_solver_id, dir_femm_temp, suffix='.ans', id_solver_femm_found=the_index)
-
-
-
-    #             with open(dir_femm_temp + 'femm_found.csv', 'w') as f:
-    #                 f.write('%g\n%g\n'%(breakdown_slipfreq_1st, breakdown_torque_1st)) #, Qs_stator_slot_area, Qr_rotor_slot_area))
-    #             break
-
-    #         else:
-    #             print('Not yet.')
-    #             count_loop += 1
-    #             if count_loop > 100:
-    #                 os.system('pause')
-
-    #             # not found yet, try new frequencies.
-    #             if breakdown_slipfreq_1st > breakdown_slipfreq_2nd:
-    #                 if breakdown_slipfreq_1st == list_slipfreq[-1]:
-    #                     freq_begin = breakdown_slipfreq_1st + 1.
-    #                     freq_end   = freq_begin + number_of_instances - 1.
-    #                 else:
-    #                     freq_begin = breakdown_slipfreq_1st
-    #                     freq_end   = breakdown_slipfreq_2nd
-
-    #             elif breakdown_slipfreq_1st < breakdown_slipfreq_2nd:
-    #                 freq_begin = breakdown_slipfreq_1st
-    #                 freq_end   = breakdown_slipfreq_2nd
-
-    #                 # freq_step can be negative!
-    #                 freq_step  = (freq_end - freq_begin) / (2 + number_of_instances-1)
-    #                 freq_begin += freq_step
-    #                 freq_end   -= freq_step
-    #             print('try: freq_begin=%g, freq_end=%g.' % (freq_begin, freq_end))
-
-    #     self.remove_files(list_solver_id, dir_femm_temp, suffix='.txt')
-    #     if self.config.remove_files:
-    #         os.remove(dir_femm_temp + "femm_temp.fem")
-
-    #     toolFEMM.mi_close()
-    #     toolFEMM.closefemm()
-
-
-    # def remove_files(self, list_solver_id, dir_femm_temp, suffix, id_solver_femm_found=None):
-    #     bool_remove_files = self.config.remove_files
-
-    #     print('Rename femm file for index', id_solver_femm_found, 'with suffix of', suffix, 'Others will be deleted.')
-    #     for id_solver in list_solver_id:
-    #         fname = dir_femm_temp + "femm_temp_%d"%(id_solver) + suffix
-
-    #         if id_solver == id_solver_femm_found:
-    #             found_file_name = dir_femm_temp + "femm_found" + suffix
-
-    #             if os.path.exists(found_file_name):
-    #                 os.remove(found_file_name) # remove already existing file (due to interrupted run)
-
-    #             if not os.path.exists(fname):
-    #                 raise Exception('FEMM file %s does not exist for id_solver=%d'%(fname, id_solver))
-
-    #             os.rename(fname, found_file_name)
-    #             if bool_remove_files:
-    #                 continue
-    #             else:
-    #                 break
-
-    #         # what if we don't remove temp file??? 2019/7/8
-    #         if bool_remove_files:
-    #             os.remove(fname)
 
     def wait_greedy_search(self, tic, id_rotor_bars, id_stator_slots):
         while True:
@@ -549,17 +666,42 @@ class BIM_Time_Harmonic_Analyzer:
         # physical amount of Cage
         im = self.machine_variant
         vals_results_rotor_current = []
-        R = im.R_bar_center  # Since 5/23/2019
-        angle_per_slot = 2 * np.pi / im.Qr
-        THETA_BAR = np.pi - angle_per_slot
-        for i in range(im.Qr):
-            THETA_BAR += angle_per_slot
-            THETA = THETA_BAR
-            X = R * np.cos(THETA)
-            Y = R * np.sin(THETA)
-            femm.mo_selectblock(X, Y)  # or you can select circuit rA rB ...
-            vals_results_rotor_current.append(femm.mo_blockintegral(7))  # integrate for current
-            femm.mo_clearblock()
+
+        if self.config.double_cage == False:
+            R = im.R_bar_center  # Since 5/23/2019
+            angle_per_slot = 2 * np.pi / im.Qr
+            THETA_BAR = 0
+            for i in range(im.Qr):
+                THETA = THETA_BAR
+                X = R * np.cos(THETA)
+                Y = R * np.sin(THETA)
+                femm.mo_selectblock(X, Y)  # or you can select circuit rA rB ...
+                vals_results_rotor_current.append(femm.mo_blockintegral(7))  # integrate for current
+                femm.mo_clearblock()
+                THETA_BAR += angle_per_slot
+        else:
+            R = im.R_bar1_center
+            angle_per_slot = 2 * np.pi / im.Qr
+            THETA_BAR = 0
+            for i in range(im.Qr):
+                THETA = THETA_BAR
+                X = R * np.cos(THETA)
+                Y = R * np.sin(THETA)
+                femm.mo_selectblock(X, Y)  # or you can select circuit rA rB ...
+                vals_results_rotor_current.append(femm.mo_blockintegral(7))  # integrate for current
+                femm.mo_clearblock()
+                THETA_BAR += angle_per_slot
+            R = im.R_bar2_center
+            angle_per_slot = 2 * np.pi / im.Qr
+            THETA_BAR = 0
+            for i in range(im.Qr):
+                THETA = THETA_BAR
+                X = R * np.cos(THETA)
+                Y = R * np.sin(THETA)
+                femm.mo_selectblock(X, Y)  # or you can select circuit rA rB ...
+                vals_results_rotor_current.append(femm.mo_blockintegral(7))  # integrate for current
+                femm.mo_clearblock()
+                THETA_BAR += angle_per_slot
 
         ################################################################
         # Also collect slot area information for loss evaluation in JMAG optimization
@@ -572,7 +714,10 @@ class BIM_Time_Harmonic_Analyzer:
 
         # get rotor slot area for copper loss calculation
         femm.mo_groupselectblock(id_rotor_bars)
-        rotor_slot_area = femm.mo_blockintegral(5) / (im.Qr / fraction)
+        if self.config.double_cage == False:
+            rotor_slot_area = femm.mo_blockintegral(5) / (im.Qr / fraction)
+        else:
+            rotor_slot_area = femm.mo_blockintegral(5) / (2 * im.Qr / fraction)
         femm.mo_clearblock()
 
         femm.mo_close()

@@ -16,6 +16,7 @@ from .flux_barrier_rotor import*
 from .inner_reluctance_rotor import*
 from .inner_rotor_round_slots import *
 from .inner_rotor_drop_slots import *
+from .inner_rotor_round_slots_double_cage import *
 
 __all__ = []
 __all__ += hollow_cylinder.__all__
@@ -35,3 +36,4 @@ __all__ += flux_barrier_rotor.__all__
 __all__ += inner_reluctance_rotor.__all__
 __all__ += inner_rotor_round_slots.__all__
 __all__ += inner_rotor_drop_slots.__all__
+__all__ += inner_rotor_round_slots_double_cage.__all__

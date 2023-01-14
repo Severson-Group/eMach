@@ -2,24 +2,15 @@ import os
 import numpy as np
 import pandas as pd
 import sys
-from time import sleep
 from time import time as clock_time
-import logging
-import operator
-import win32com.client
 
 sys.path.append(os.path.dirname(__file__) + "/../../../..")
 import mach_cad.model_obj as mo
-import mach_cad.tools.jmag as JMAG
-
 from mach_opt import InvalidDesign
-
-from mach_eval.analyzers.electromagnetic.resistance_stator_phase_wdg import(
+from mach_eval.analyzers.electromagnetic.stator_wdg_res import(
     StatorWindingResistanceProblem, StatorWindingResistanceAnalyzer
 )
-
 from mach_eval.analyzers.electromagnetic.bim.bim_time_harmonic_analyzer import BIM_Time_Harmonic_Analyzer
-from mach_eval.analyzers.electromagnetic.bim.bim_time_harmonic_analyzer_config import BIM_Time_Harmonic_Analyzer_Config
 
 class BIM_Transient_2TSS_Problem:
     def __init__(self, machine, operating_point, breakdown_slip_freq=None, tha_config=None):
@@ -30,7 +21,7 @@ class BIM_Transient_2TSS_Problem:
         self._validate_attr()
 
     def _validate_attr(self):
-        if 'BIM_Machine' in str(type(self.machine)):
+        if 'BIM_Machine' or 'BIM_Double_Cage_Machine' in str(type(self.machine)):
             pass
         else:
             raise TypeError("Invalid machine type")
@@ -81,14 +72,13 @@ class BIM_Transient_2TSS_Analyzer:
         if attempts > 1:
             self.project_name = self.project_name + "_attempts_%d" % (attempts)
 
+        import mach_cad.tools.jmag as JMAG
         toolJmag = JMAG.JmagDesigner()
-        # toolJmag.defaultUnit = "Millimeter"
-        # toolJmag.default_length = "Millimeter"
 
         toolJmag.study_type = "Transient2D"
+        toolJmag.visible = self.config.jmag_visible
         toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter")
         toolJmag.save()
-        # toolJmag.open(comp_filepath="example_machine_attempts_2.jproj")
 
         self.study_name = self.project_name + "_Tran_2TSS_BIM"
         self.design_results_folder = (
@@ -98,29 +88,30 @@ class BIM_Transient_2TSS_Analyzer:
             os.makedirs(self.design_results_folder)
 
         ################################################################
-        # 02 Run ElectroMagnetic analysis
+        # 02 Run Electromagnetic analysis
         ################################################################
         # Draw cross_section
-        draw_success = self.draw_machine(toolJmag)
+        if self.config.double_cage == True:
+            draw_success = self.draw_machine_double_cage(toolJmag)
+        else:
+            draw_success = self.draw_machine(toolJmag)
+    
         if not draw_success:
             raise InvalidDesign
+
         toolJmag.doc.SaveModel(False)
         toolJmag.model = toolJmag.jd.GetCurrentModel()
-        # app = win32com.client.Dispatch("designer.Application")
-        # if self.config.jmag_visible == True:
-        #     app.Show()
-        # else:
-        #     app.Hide()
-        
-        # app.Quit()
-        # self.app = app  # means that the JMAG Designer is turned ON now.
 
         # Pre-processing
         toolJmag.model.SetName(self.project_name)
         toolJmag.model.SetDescription(self.show(self.project_name, toString=True))
         
-        # model.SetDescription(self.show(self.project_name, toString=True))
-        valid_design = self.pre_process(toolJmag.model)
+
+        if self.config.double_cage == True:
+            valid_design = self.pre_process_double_cage(toolJmag.model)
+        else:
+            valid_design = self.pre_process(toolJmag.model)
+
         if not valid_design:
             raise InvalidDesign
 
@@ -142,9 +133,14 @@ class BIM_Transient_2TSS_Analyzer:
             tha_object.project_name = tha_object.machine_variant.name
             self.breakdown_slip_freq, self.breakdown_torque = tha_object.wait_greedy_search(
                 clock_time(), self.tha_config.id_rotor_bars, self.tha_config.id_stator_slots)
-            # Update current excitation and time-step settings based on a new slip 
+            self.rotor_current_tha = tha_object.vals_results_rotor_current
+            self.rotor_slot_area_tha = tha_object.rotor_slot_area
+            self.stator_slot_area_tha = tha_object.stator_slot_area
         else:
             self.breakdown_torque = None
+            self.rotor_current_tha = None
+            self.rotor_slot_area_tha = None
+            self.stator_slot_area_tha = None
 
         # Set slip
         toolJmag.study.GetDesignTable().GetEquation("slip").SetExpression("%g"%(self.slip))
@@ -227,10 +223,17 @@ class BIM_Transient_2TSS_Analyzer:
     def l_end_ring(self):
         alpha_u = 2 * np.pi / self.machine_variant.Qr
 
-        w_rt = 2 * (
-            self.machine_variant.R_bar_center * np.sin(0.5 * alpha_u) - 
-            self.machine_variant.r_rb
-            )
+        if self.config.double_cage == False:
+            w_rt = 2 * (
+                self.machine_variant.R_bar_center * np.sin(0.5 * alpha_u) - 
+                self.machine_variant.r_rb
+                )
+        else:
+            w_rt = 2 * (
+                self.machine_variant.R_bar1_center * np.sin(0.5 * alpha_u) - 
+                self.machine_variant.r_rb
+                )
+        
         slot_pitch_pps = np.pi * (
             2 * self.machine_variant.r_ro - self.machine_variant.d_rso) / self.machine_variant.Qr
         y_rotor = self.machine_variant.Qr / (2 * self.machine_variant.p)
@@ -246,12 +249,7 @@ class BIM_Transient_2TSS_Analyzer:
         area = np.pi * self.machine_variant.r_rb ** 2
         rho = 1 / self.machine_variant.rotor_bar_mat["bar_conductivity"]
 
-        R = rho * self.l_end_ring / area * 1000
-
-        if self.config.non_zero_end_ring_res == True:
-            R_end_ring = R
-        else:
-            R_end_ring = 0
+        R_end_ring = rho * self.l_end_ring / area * 1000
 
         return R_end_ring
 
@@ -337,30 +335,12 @@ class BIM_Transient_2TSS_Analyzer:
             theta=mo.DimRadian(0)),
             )
 
-        # self.winding_layer1 = []
-        # for i in range (0, self.machine_variant.Q):
-        #     self.winding_layer1.append(mo.CrossSectInnerRotorStatorRightSlot(
-        #         name="WindingLayer1",
-        #         stator_core=self.stator_core,
-        #         location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-        #         theta=mo.DimRadian(2 * np.pi / self.machine_variant.Q * i)),
-        #         ))
-
         self.winding_layer2 = mo.CrossSectInnerRotorStatorLeftSlot(
             name="WindingLayer2",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
             theta=mo.DimRadian(0)),
             )
-
-        # self.winding_layer2 = []
-        # for i in range (0, 1):
-        #     self.winding_layer2.append(mo.CrossSectInnerRotorStatorLeftSlot(
-        #         name="WindingLayer2",
-        #         stator_core=self.stator_core,
-        #         location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-        #         theta=mo.DimRadian(2 * np.pi / self.machine_variant.Q * i)),
-        #         ))
 
         self.rotor_core = mo.CrossSectInnerRotorRoundSlotsPartial(
             name="RotorCore",
@@ -387,15 +367,6 @@ class BIM_Transient_2TSS_Analyzer:
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
             )
 
-        # self.rotor_bar = []
-        # for i in range(0, 1):
-        #     self.rotor_bar.append(mo.CrossSectInnerRotorRoundSlotsBar(
-        #         name="Bar",
-        #         rotor_core=self.rotor_core,
-        #         location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-        #         theta=mo.DimRadian(2 * np.pi / self.machine_variant.Qr * i)),
-        #         ))
-
 
         self.comp_stator_core = mo.Component(
             name="StatorCore",
@@ -405,16 +376,6 @@ class BIM_Transient_2TSS_Analyzer:
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
 
-        # self.comp_winding_layer1 = []
-        # for i in range(0, 1):
-        #     self.comp_winding_layer1.append(mo.Component(
-        #         name="WindingLayer1",
-        #         cross_sections=[self.winding_layer1[i]],
-        #         material=mo.MaterialGeneric(name=self.machine_variant.coil_mat["coil_material"]),
-        #         make_solid=mo.MakeExtrude(location=mo.Location3D(), 
-        #         dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-        #     ))
-
         self.comp_winding_layer1 = mo.Component(
             name="WindingLayer1",
             cross_sections=[self.winding_layer1],
@@ -422,18 +383,6 @@ class BIM_Transient_2TSS_Analyzer:
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
             dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
-
-
-        # self.comp_winding_layer2 = []
-        # for i in range(0, 1):
-        #     self.comp_winding_layer2.append(mo.Component(
-        #         name="WindingLayer2",
-        #         cross_sections=[self.winding_layer2[i]],
-        #         material=mo.MaterialGeneric(name=self.machine_variant.coil_mat["coil_material"]),
-        #         make_solid=mo.MakeExtrude(location=mo.Location3D(), 
-        #         dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-        #     ))
-
 
         self.comp_winding_layer2 = mo.Component(
             name="WindingLayer2",
@@ -451,16 +400,6 @@ class BIM_Transient_2TSS_Analyzer:
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
 
-        # self.comp_rotor_bar = []
-        # for i in range(0, 1):
-        #     self.comp_rotor_bar.append(mo.Component(
-        #         name="Bar",
-        #         cross_sections=[self.rotor_bar[i]],
-        #         material=mo.MaterialGeneric(name=self.machine_variant.rotor_bar_mat["rotor_bar_material"]),
-        #         make_solid=mo.MakeExtrude(location=mo.Location3D(),
-        #         dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-        #     ))
-
         self.comp_rotor_bar = mo.Component(
             name="RotorBar",
             cross_sections=[self.rotor_bar],
@@ -477,7 +416,6 @@ class BIM_Transient_2TSS_Analyzer:
         tool.sketch.SetProperty("Color", r"#808080")
         self.cs_stator = self.stator_core.draw(tool)
         self.stator_tool = tool.prepare_section(self.cs_stator, self.machine_variant.Q)
-        # self.stator_tool = self.prepare_section([cs_stator.token], tool)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.winding_layer1.name)
@@ -509,35 +447,175 @@ class BIM_Transient_2TSS_Analyzer:
         self.cs_shaft = self.shaft.draw(tool)
         self.shaft_tool = tool.prepare_section(self.cs_shaft)
 
+        return True
 
-        # tool.iRotateCopy = self.machine_variant.Q
-        # self.stator_tool = self.comp_stator_core.make(tool, tool)
 
-        # tool.iRotateCopy = self.machine_variant.Q
-        # self.winding_tool1 = self.comp_winding_layer1.make(tool, tool)
+    def draw_machine_double_cage(self, tool):
+        ####################################################
+        # Adding parts objects
+        ####################################################
+        self.stator_core = mo.CrossSectInnerRotorStatorPartial(
+            name="StatorCore",
+            dim_alpha_st=mo.DimDegree(self.machine_variant.alpha_st),
+            dim_alpha_so=mo.DimDegree(self.machine_variant.alpha_so),
+            dim_r_si=mo.DimMillimeter(self.machine_variant.r_si),
+            dim_d_so=mo.DimMillimeter(self.machine_variant.d_so),
+            dim_d_sp=mo.DimMillimeter(self.machine_variant.d_sp),
+            dim_d_st=mo.DimMillimeter(self.machine_variant.d_st),
+            dim_d_sy=mo.DimMillimeter(self.machine_variant.d_sy),
+            dim_w_st=mo.DimMillimeter(self.machine_variant.w_st),
+            dim_r_st=mo.DimMillimeter(0),
+            dim_r_sf=mo.DimMillimeter(0),
+            dim_r_sb=mo.DimMillimeter(0),
+            Q=self.machine_variant.Q,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+            theta=mo.DimRadian(0)),
+            )
 
-        # tool.iRotateCopy = self.machine_variant.Q
-        # self.winding_tool2 = self.comp_winding_layer2.make(tool, tool)
+        self.winding_layer1 = mo.CrossSectInnerRotorStatorRightSlot(
+            name="WindingLayer1",
+            stator_core=self.stator_core,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+            theta=mo.DimRadian(0)),
+            )
+
+        self.winding_layer2 = mo.CrossSectInnerRotorStatorLeftSlot(
+            name="WindingLayer2",
+            stator_core=self.stator_core,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+            theta=mo.DimRadian(0)),
+            )
+
+        self.rotor_core = mo.CrossSectInnerRotorRoundSlotsDoubleCagePartial(
+            name="RotorCore",
+            dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
+            dim_d_ri=mo.DimMillimeter(self.machine_variant.d_ri),
+            dim_d_rb=mo.DimMillimeter(self.machine_variant.d_rb),
+            dim_r_rb=mo.DimMillimeter(self.machine_variant.r_rb),
+            dim_d_so=mo.DimMillimeter(self.machine_variant.d_rso),
+            dim_w_so=mo.DimMillimeter(self.machine_variant.w_so),
+            Qr=self.machine_variant.Qr,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
+            )
+
+        self.rotor_bar1 = mo.CrossSectInnerRotorRoundSlotsDoubleCageBar1(
+            name="RotorBar1",
+            rotor_core=self.rotor_core,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+            theta=mo.DimRadian(0)),
+            )
+
+        self.rotor_bar2 = mo.CrossSectInnerRotorRoundSlotsDoubleCageBar2(
+            name="RotorBar2",
+            rotor_core=self.rotor_core,
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
+            theta=mo.DimRadian(0)),
+            )
+
+        self.shaft = mo.CrossSectHollowCylinder(
+            name="Shaft",
+            dim_t=mo.DimMillimeter(self.machine_variant.r_ri),
+            dim_r_o=mo.DimMillimeter(self.machine_variant.r_ri),
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
+            )
+
+
+        self.comp_stator_core = mo.Component(
+            name="StatorCore",
+            cross_sections=[self.stator_core],
+            material=mo.MaterialGeneric(name=self.machine_variant.stator_iron_mat["core_material"], color=r"#808080"),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
+
+        self.comp_winding_layer1 = mo.Component(
+            name="WindingLayer1",
+            cross_sections=[self.winding_layer1],
+            material=mo.MaterialGeneric(name=self.machine_variant.coil_mat["coil_material"]),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+            dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
+
+        self.comp_winding_layer2 = mo.Component(
+            name="WindingLayer2",
+            cross_sections=[self.winding_layer2],
+            material=mo.MaterialGeneric(name=self.machine_variant.coil_mat["coil_material"]),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+            dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
+
+        self.comp_rotor_core = mo.Component(
+            name="RotorCore",
+            cross_sections=[self.rotor_core],
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["core_material"], color=r"#808080"),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
+                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
+
+        self.comp_rotor_bar1 = mo.Component(
+            name="RotorBar1",
+            cross_sections=[self.rotor_bar1],
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_bar_mat["rotor_bar_material"], color=r"#C89E9B"),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(),
+            dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
+
+        self.comp_rotor_bar2 = mo.Component(
+            name="RotorBar2",
+            cross_sections=[self.rotor_bar2],
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_bar_mat["rotor_bar_material"], color=r"#C89E9B"),
+            make_solid=mo.MakeExtrude(location=mo.Location3D(),
+            dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
+            )
+
+
+        tool.bMirror = False
+
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.stator_core.name)
+        tool.sketch.SetProperty("Color", r"#808080")
+        self.cs_stator = self.stator_core.draw(tool)
+        self.stator_tool = tool.prepare_section(self.cs_stator, self.machine_variant.Q)
+
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.winding_layer1.name)
+        tool.sketch.SetProperty("Color", r"#B87333")
+        self.cs_winding_layer1 = self.winding_layer1.draw(tool)
+        self.winding_tool1 = tool.prepare_section(self.cs_winding_layer1, self.machine_variant.Q)
+
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.winding_layer2.name)
+        tool.sketch.SetProperty("Color", r"#B87333")
+        self.cs_winding_layer2 = self.winding_layer2.draw(tool)
+        self.winding_tool2 = tool.prepare_section(self.cs_winding_layer2, self.machine_variant.Q)
+
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.rotor_core.name)
+        tool.sketch.SetProperty("Color", r"#808080")
+        self.cs_rotor_core = self.rotor_core.draw(tool)
+        self.rotor_tool = tool.prepare_section(self.cs_rotor_core, self.machine_variant.Qr)
+
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.rotor_bar1.name)
+        tool.sketch.SetProperty("Color", r"#C89E9B")
+        self.cs_rotor_bar1 = self.rotor_bar1.draw(tool)
+        self.rotor_bar_tool1 = tool.prepare_section(self.cs_rotor_bar1, self.machine_variant.Qr)
+
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.rotor_bar2.name)
+        tool.sketch.SetProperty("Color", r"#C89E9B")
+        self.cs_rotor_bar2 = self.rotor_bar2.draw(tool)
+        self.rotor_bar_tool2 = tool.prepare_section(self.cs_rotor_bar2, self.machine_variant.Qr)
+
         
-        # tool.iRotateCopy = self.machine_variant.Qr
-        # self.rotor_tool = self.comp_rotor_core.make(tool, tool)
-
-        # tool.iRotateCopy = self.machine_variant.Qr
-        # self.rotor_bar_tool = self.comp_rotor_bar.make(tool, tool)
-
-
-        # self.winding_tool1 = []
-        # for i in range(0,self.machine_variant.Q):
-        #     self.winding_tool1.append(self.comp_winding_layer1[i].make(tool, tool))
-        # self.winding_tool2 = []
-        # for i in range(0,self.machine_variant.Q):
-        #     self.winding_tool2.append(self.comp_winding_layer2[i].make(tool, tool))
-
-        # self.rotor_bar_tool = []
-        # for i in range(0,self.machine_variant.Qr):
-        #     self.rotor_bar_tool.append(self.comp_rotor_bar[i].make(tool, tool))
+        tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.shaft.name)
+        tool.sketch.SetProperty("Color", r"#71797E")
+        self.cs_shaft = self.shaft.draw(tool)
+        self.shaft_tool = tool.prepare_section(self.cs_shaft)
 
         return True
+
 
     def show(self, name, toString=False):
         attrs = list(vars(self).items())
@@ -690,6 +768,150 @@ class BIM_Transient_2TSS_Analyzer:
         return True
 
 
+    def pre_process_double_cage(self, model):
+        # pre-process : you can select part by coordinate!
+        """Group"""
+
+        def group(name, id_list):
+            model.GetGroupList().CreateGroup(name)
+            for the_id in id_list:
+                model.GetGroupList().AddPartToGroup(name, the_id)
+                # model.GetGroupList().AddPartToGroup(name, name) #<- this also works
+
+        part_ID_list = model.GetPartIDs()
+
+        if len(part_ID_list) != int(
+            1 + 1 + self.machine_variant.Q * 2 + self.machine_variant.Qr * 2 + 1
+        ):
+            print("Parts are missing in this machine")
+            return False
+
+        self.id_statorCore = id_statorCore = part_ID_list[0]
+        partIDRange_Coil = part_ID_list[1 : int(2 * self.machine_variant.Q + 1)]
+        self.id_rotorCore = id_rotorCore = part_ID_list[int(2 * self.machine_variant.Q + 1)]
+        partIDRange_Bar = part_ID_list[int(2 * self.machine_variant.Q + 2) 
+            : int(2 * self.machine_variant.Q + 2 + 2 * self.machine_variant.Qr)]
+        id_shaft = part_ID_list[-1]
+
+        # model.SuppressPart(id_sleeve, 1)
+
+        group("Cage", partIDRange_Bar)
+        group("Coils", partIDRange_Coil)
+
+        """ Add Part to Set for later references """
+
+        def add_part_to_set(name, x, y, ID=None):
+            model.GetSetList().CreatePartSet(name)
+            model.GetSetList().GetSet(name).SetMatcherType("Selection")
+            model.GetSetList().GetSet(name).ClearParts()
+            sel = model.GetSetList().GetSet(name).GetSelection()
+            if ID is None:
+                # print x,y
+                sel.SelectPartByPosition(x, y, 0)  # z=0 for 2D
+            else:
+                sel.SelectPart(ID)
+            model.GetSetList().GetSet(name).AddSelected(sel)
+
+        # Shaft
+        add_part_to_set("ShaftSet", 0.0, 0.0, ID=id_shaft)
+
+        # Create Set for right layer
+        Angle_StatorSlotSpan = 360 / self.machine_variant.Q
+        # R = self.r_si + self.d_sp + self.d_st *0.5 # this is not generally working (JMAG selects stator core instead.)
+        # THETA = 0.25*(Angle_StatorSlotSpan)/180.*np.pi
+        R = np.sqrt(self.cs_winding_layer1.inner_coord[0] ** 2 + self.cs_winding_layer1.inner_coord[1] ** 2)
+        THETA = np.arctan(self.cs_winding_layer1.inner_coord[1] / self.cs_winding_layer1.inner_coord[0])
+        X = R * np.cos(THETA)
+        Y = R * np.sin(THETA)
+        count = 0
+        for UVW, UpDown in zip(
+            self.machine_variant.layer_phases[0], self.machine_variant.layer_polarity[0]
+        ):
+            count += 1
+            add_part_to_set("coil_right_%s%s %d" % (UVW, UpDown, count), X, Y)
+
+            # print(X, Y, THETA)
+            THETA += Angle_StatorSlotSpan / 180.0 * np.pi
+            X = R * np.cos(THETA)
+            Y = R * np.sin(THETA)
+
+        # Create Set for left layer
+        THETA = np.arctan(self.cs_winding_layer2.inner_coord[1] / self.cs_winding_layer2.inner_coord[0])
+        X = R * np.cos(THETA)
+        Y = R * np.sin(THETA)
+        count = 0
+        for UVW, UpDown in zip(
+            self.machine_variant.layer_phases[1], self.machine_variant.layer_polarity[1]
+        ):
+            count += 1
+            add_part_to_set("coil_left_%s%s %d" % (UVW, UpDown, count), X, Y)
+
+            THETA += Angle_StatorSlotSpan / 180.0 * np.pi
+            X = R * np.cos(THETA)
+            Y = R * np.sin(THETA)
+
+        # Create Set for Bar Layer 1
+        Angle_RotorSlotSpan = 360 / self.machine_variant.Qr
+        R = self.machine_variant.R_bar1_center
+        THETA = 0.001  # initial position
+        X = R * np.cos(THETA)
+        Y = R * np.sin(THETA)
+        list_xy_bars = []
+        count = 0
+        for ind in range(int(self.machine_variant.Qr)):
+            count += 1
+            add_part_to_set("bar1_%d" % count, X, Y)
+            list_xy_bars.append([X, Y])
+
+            THETA += Angle_RotorSlotSpan / 180.0 * np.pi
+            X = R * np.cos(THETA)
+            Y = R * np.sin(THETA)
+
+        # Create Set for Bar Layer 2
+        R = self.machine_variant.R_bar2_center
+        THETA = 0.001  # initial position
+        X = R * np.cos(THETA)
+        Y = R * np.sin(THETA)
+        count = 0
+        for ind in range(int(self.machine_variant.Qr)):
+            count += 1
+            add_part_to_set("bar2_%d" % count, X, Y)
+            list_xy_bars.append([X, Y])
+
+            THETA += Angle_RotorSlotSpan / 180.0 * np.pi
+            X = R * np.cos(THETA)
+            Y = R * np.sin(THETA)
+
+        self.list_xy_bars = list_xy_bars
+
+
+        # Create Set for Motion Region
+        def part_list_set(name, list_xy, list_part_id=None, prefix=None):
+            model.GetSetList().CreatePartSet(name)
+            model.GetSetList().GetSet(name).SetMatcherType("Selection")
+            model.GetSetList().GetSet(name).ClearParts()
+            sel = model.GetSetList().GetSet(name).GetSelection()
+            for xy in list_xy:
+                sel.SelectPartByPosition(xy[0], xy[1], 0)  # z=0 for 2D
+            if list_part_id is not None:
+                for ID in list_part_id:
+                    sel.SelectPart(ID)
+            model.GetSetList().GetSet(name).AddSelected(sel)
+
+        part_list_set(
+            "Motion_Region", list_xy_bars, list_part_id=[id_rotorCore, partIDRange_Bar, id_shaft]
+        )
+
+        # Create Set for Cage
+        part_list_set("CageSet", list_xy_bars)
+        # model.GetSetList().CreatePartSet("CageSet")
+        # model.GetSetList().GetSet("CageSet").SetMatcherType("MatchNames")
+        # model.GetSetList().GetSet("CageSet").SetParameter("style", "prefix")
+        # model.GetSetList().GetSet("CageSet").SetParameter("text", "Cage")
+        # model.GetSetList().GetSet("CageSet").Rebuild()
+
+        return True
+
 
 
     def create_custom_material(self, app, steel_name):
@@ -769,10 +991,7 @@ class BIM_Transient_2TSS_Analyzer:
 
     def add_transient_2tss_study(
         self, toolJmag
-    ):      # app, model, dir_csv_output_folder, study_name
-        # model.CreateStudy("Transient2D", study_name)
-        # app.SetCurrentStudy(study_name)
-        # study = model.GetStudy(study_name)
+    ):      
 
         dir_csv_output_folder = self.config.jmag_csv_folder
         study_name = self.study_name
@@ -781,10 +1000,6 @@ class BIM_Transient_2TSS_Analyzer:
         study = toolJmag.create_study(self.study_name, "Transient2D", model)
         app = toolJmag.jd
         app.SetCurrentStudy(self.study_name)
-
-        # model.CreateStudy("Transient2D", self.study_name)
-        # app.SetCurrentStudy(self.study_name)
-        # study = model.GetStudy(self.study_name)
 
         # Study properties
         study.GetStudyProperties().SetValue("ApproximateTransientAnalysis", 1) # psuedo steady state freq is for PWM drive to use
@@ -826,8 +1041,6 @@ class BIM_Transient_2TSS_Analyzer:
 
         # Conditions - FEM Coils & Conductors (i.e. stator/rotor winding)
         self.add_circuit(app, model, study, bool_3PhaseCurrentSource=False)
-        # self.set_currents_standard_excitation(self.It_hat, self.Is_hat, 
-        #     self.drive_freq, self.phi_t_0, self.phi_s_0, app, study)
 
         # True: no mesh or field results are needed
         study.GetStudyProperties().SetValue(
@@ -1067,9 +1280,6 @@ class BIM_Transient_2TSS_Analyzer:
                 subcondition = condition.GetSubCondition("Conductor Set %d"%(natural_ind))
                 subcondition.ClearParts()
 
-
-
-
                 # sel_group0 = subcondition.GetSelectionByGroup(0)
                 # sel_group0.SelectFaceByPosition(self.list_xy_bars[ind][0], self.list_xy_bars[ind][1], 0)
                 # subcondition.AddSelectedByGroup(sel_group0, 0)
@@ -1107,7 +1317,7 @@ class BIM_Transient_2TSS_Analyzer:
                         place_conductor(X, Y - vertical_length * count, string_conductor)
                         study.GetCondition("conductor_%d"%(index_layer_phase + 1)).SetLink(string_conductor)
                         if count2 < conductors_per_phase:
-                            if self.R_end_ring == 0:
+                            if self.config.non_zero_end_ring_res == False:
                                 study.GetCircuit().CreateWire(X - 2, Y - vertical_length * count, X - 2, Y - vertical_length * count - vertical_length)
                                 study.GetCircuit().CreateWire(X + 2, Y - vertical_length * count, X + 2, Y - vertical_length * count - vertical_length)
                             else:
@@ -1127,6 +1337,184 @@ class BIM_Transient_2TSS_Analyzer:
             self.conductor_names = conductor_names
             study.GetCircuit().CreateInstance("Ground", X - 4, Y - 2)
             study.GetCircuit().CreateWire(X - 4, Y, X - 2, Y)
+
+
+        def add_rotor_circuit_double_cage(study):
+            # Condition - Conductor (i.e. rotor winding)
+            for ind in range(int(self.machine_variant.Qr)):
+                natural_ind = ind + 1
+
+                study.CreateCondition("FEMConductor", "conductor1_%d"%(natural_ind))
+                condition = study.GetCondition("conductor1_%d"%(natural_ind))
+
+                condition.GetSubCondition("untitled").SetName("Conductor 1 Set %d"%(natural_ind))
+                subcondition = condition.GetSubCondition("Conductor 1 Set %d"%(natural_ind))
+                subcondition.ClearParts()
+                subcondition.AddSet(model.GetSetList().GetSet("bar1_%d" % (natural_ind)), 0)
+
+            for ind in range(int(self.machine_variant.Qr)):
+                natural_ind = ind + 1
+
+                study.CreateCondition("FEMConductor", "conductor2_%d"%(natural_ind))
+                condition = study.GetCondition("conductor2_%d"%(natural_ind))
+
+                condition.GetSubCondition("untitled").SetName("Conductor 2 Set %d"%(natural_ind))
+                subcondition = condition.GetSubCondition("Conductor 2 Set %d"%(natural_ind))
+                subcondition.ClearParts()
+                subcondition.AddSet(model.GetSetList().GetSet("bar2_%d" % (natural_ind)), 0)
+
+            # Condition - Conductor - Grouping
+            study.CreateCondition("GroupFEMConductor", "conductor_group")
+            for ind in range(int(self.machine_variant.Qr)):
+                natural_ind = ind + 1
+                study.GetCondition("conductor_group").AddSubCondition("conductor1_%d"%(natural_ind), ind)
+            for ind in range(int(self.machine_variant.Qr)):
+                natural_ind = ind + 1
+                study.GetCondition("conductor_group").AddSubCondition("conductor2_%d"%(natural_ind), ind)
+
+            # Link Conductors to Circuit
+            def place_conductor(x, y, name, rotation=0):
+                study.GetCircuit().CreateComponent("FEMConductor", name)
+                study.GetCircuit().CreateInstance(name, x, y)
+                study.GetCircuit().GetInstance(name, 0).RotateTo(rotation)
+            def place_resistor(x, y, name, R_end_ring, rotation=0):
+                study.GetCircuit().CreateComponent("Resistor", name)
+                study.GetCircuit().CreateInstance(name, x, y)
+                study.GetCircuit().GetComponent(name).SetValue("Resistance", R_end_ring)
+                study.GetCircuit().GetInstance(name, 0).RotateTo(rotation)
+
+        
+            # for index_phase, phase in enumerate(self.machine_variant.name_phases_rotor):
+            #     count2 = 1
+            #     for index_layer_phase, layer_phase in enumerate(self.machine_variant.layer_phases_rotor[0]):
+            #         if phase == layer_phase and self.machine_variant.layer_polarity_rotor[0][index_layer_phase] == '+':
+            #             string_conductor1 = "conductor1_" + layer_phase + "_" + str(index_layer_phase + 1)
+            #             index_2nd_layer = index_layer_phase + 1 + self.machine_variant.yr
+            #             string_conductor2 = "conductor2_" + layer_phase + "_" + str(index_2nd_layer)
+            #             conductor_names.append(string_conductor1)
+            #             place_conductor(X + 8 * index_layer_phase, Y - vertical_length * count, string_conductor1, rotation=0)
+            #             study.GetCondition("conductor1_%d"%(index_layer_phase + 1)).SetLink(string_conductor1)
+            #             place_conductor(X + 4, Y - vertical_length * count, string_conductor2, rotation=180)
+            #             study.GetCondition("conductor2_%d"%(index_layer_phase + 1)).SetLink(string_conductor2)
+                        
+            #             count += 1
+
+            #         if phase == layer_phase and self.machine_variant.layer_polarity_rotor[0][index_layer_phase] == '-':
+            #             string_conductor1 = "conductor1_" + layer_phase + "_" + str(index_layer_phase + 1)
+            #             index_2nd_layer = index_layer_phase + 1 + self.machine_variant.yr
+            #             string_conductor2 = "conductor2_" + layer_phase + "_" + str(index_2nd_layer)
+            #             conductor_names.append(string_conductor1)
+            #             place_conductor(X, Y - vertical_length * count, string_conductor1, rotation=0)
+            #             study.GetCondition("conductor1_%d"%(index_layer_phase + 1)).SetLink(string_conductor1)
+            #             place_conductor(X + 4, Y - vertical_length * count, string_conductor2, rotation=180)
+            #             study.GetCondition("conductor2_%d"%(index_layer_phase + 1)).SetLink(string_conductor2)    
+
+            # conductor_names = ["conductor_Ph1_1"]
+            ver_length = 6
+            if self.machine_variant.Qr == 6:
+                X = - 40
+                Y = 100
+                # Phase 1
+                place_conductor(X, Y, "conductor1_PhR1_1")
+                study.GetCondition("conductor1_1").SetLink("conductor1_PhR1_1")
+                place_conductor(X + 8, Y, "conductor2_PhR1_3", rotation=180)
+                study.GetCondition("conductor2_3").SetLink("conductor2_PhR1_3")
+                
+                place_conductor(X, Y - ver_length, "conductor1_PhR1_4")
+                study.GetCondition("conductor1_4").SetLink("conductor1_PhR1_4")
+                place_conductor(X + 8, Y - ver_length, "conductor2_PhR1_6", rotation=180)
+                study.GetCondition("conductor2_6").SetLink("conductor2_PhR1_6")
+
+                if self.config.non_zero_end_ring_res == False:
+                    study.GetCircuit().CreateWire(X + 2, Y, X + 6, Y)
+                    study.GetCircuit().CreateWire(X + 2, Y - ver_length, X + 6, Y - ver_length)
+                    study.GetCircuit().CreateWire(X - 2, Y, X - 2, Y - ver_length)
+                    study.GetCircuit().CreateWire(X + 10, Y, X + 10, Y - ver_length)
+                else:
+                    place_resistor(X + 4, Y, "R_PhR1_1", self.R_end_ring)
+                    place_resistor(X + 4, Y - ver_length, "R_PhR1_2", self.R_end_ring)
+
+                    study.GetCircuit().CreateWire(X - 2, Y, X - 2, Y - 1)
+                    place_resistor(X - 2, Y - ver_length / 2, "R_PhR1_3", self.R_end_ring, rotation=90)
+                    study.GetCircuit().CreateWire(X - 2, Y - 5, X - 2, Y - ver_length)
+
+                    study.GetCircuit().CreateWire(X + 10, Y, X + 10, Y - 1)
+                    place_resistor(X + 10, Y - ver_length / 2, "R_PhR1_4", self.R_end_ring, rotation=90)
+                    study.GetCircuit().CreateWire(X + 10, Y - 5, X + 10, Y - ver_length)
+
+                # Phase 2
+                Y = Y - 2 * ver_length
+                place_conductor(X, Y, "conductor1_PhR2_3")
+                study.GetCondition("conductor1_3").SetLink("conductor1_PhR2_3")
+                place_conductor(X + 8, Y, "conductor2_PhR2_5", rotation=180)
+                study.GetCondition("conductor2_5").SetLink("conductor2_PhR2_5")
+                
+                place_conductor(X, Y - ver_length, "conductor1_PhR2_6")
+                study.GetCondition("conductor1_6").SetLink("conductor1_PhR2_6")
+                place_conductor(X + 8, Y - ver_length, "conductor2_PhR2_2", rotation=180)
+                study.GetCondition("conductor2_2").SetLink("conductor2_PhR2_2")
+
+                if self.config.non_zero_end_ring_res == False:
+                    study.GetCircuit().CreateWire(X + 2, Y, X + 6, Y)
+                    study.GetCircuit().CreateWire(X + 2, Y - ver_length, X + 6, Y - ver_length)
+                    study.GetCircuit().CreateWire(X - 2, Y, X - 2, Y - ver_length)
+                    study.GetCircuit().CreateWire(X + 10, Y, X + 10, Y - ver_length)
+                else:
+                    place_resistor(X + 4, Y, "R_PhR2_1", self.R_end_ring)
+                    place_resistor(X + 4, Y - ver_length, "R_PhR2_2", self.R_end_ring)
+                    
+                    study.GetCircuit().CreateWire(X - 2, Y, X - 2, Y - 1)
+                    place_resistor(X - 2, Y - ver_length / 2, "R_PhR2_3", self.R_end_ring, rotation=90)
+                    study.GetCircuit().CreateWire(X - 2, Y - 5, X - 2, Y - ver_length)
+
+                    study.GetCircuit().CreateWire(X + 10, Y, X + 10, Y - 1)
+                    place_resistor(X + 10, Y - ver_length / 2, "R_PhR2_4", self.R_end_ring, rotation=90)
+                    study.GetCircuit().CreateWire(X + 10, Y - 5, X + 10, Y - ver_length)
+
+                # Phase 3
+                Y = Y - 2 * ver_length
+                place_conductor(X, Y, "conductor1_PhR3_5")
+                study.GetCondition("conductor1_5").SetLink("conductor1_PhR3_5")
+                place_conductor(X + 8, Y, "conductor2_PhR3_1", rotation=180)
+                study.GetCondition("conductor2_1").SetLink("conductor2_PhR3_1")
+                
+                place_conductor(X, Y - ver_length, "conductor1_PhR3_2")
+                study.GetCondition("conductor1_2").SetLink("conductor1_PhR3_2")
+                place_conductor(X + 8, Y - ver_length, "conductor2_PhR3_4", rotation=180)
+                study.GetCondition("conductor2_4").SetLink("conductor2_PhR3_4")
+
+                if self.config.non_zero_end_ring_res == False:
+                    study.GetCircuit().CreateWire(X + 2, Y, X + 6, Y)
+                    study.GetCircuit().CreateWire(X + 2, Y - ver_length, X + 6, Y - ver_length)
+                    study.GetCircuit().CreateWire(X - 2, Y, X - 2, Y - ver_length)
+                    study.GetCircuit().CreateWire(X + 10, Y, X + 10, Y - ver_length)
+                else:
+                    place_resistor(X + 4, Y, "R_PhR3_1", self.R_end_ring)
+                    place_resistor(X + 4, Y - ver_length, "R_PhR3_2", self.R_end_ring)
+                    
+                    study.GetCircuit().CreateWire(X - 2, Y, X - 2, Y - 1)
+                    place_resistor(X - 2, Y - ver_length / 2, "R_PhR3_3", self.R_end_ring, rotation=90)
+                    study.GetCircuit().CreateWire(X - 2, Y - 5, X - 2, Y - ver_length)
+
+                    study.GetCircuit().CreateWire(X + 10, Y, X + 10, Y - 1)
+                    place_resistor(X + 10, Y - ver_length / 2, "R_PhR3_4", self.R_end_ring, rotation=90)
+                    study.GetCircuit().CreateWire(X + 10, Y - 5, X + 10, Y - ver_length)
+
+                # Connecting phases on one side
+                X = - 40
+                Y = 100
+                study.GetCircuit().CreateWire(X - 2, Y - ver_length, X - 2, Y - 2 * ver_length)
+                study.GetCircuit().CreateWire(X - 2, Y - 3 * ver_length, X - 2, Y - 4 * ver_length)
+                study.GetCircuit().CreateInstance("Ground", X - 4, Y - 2)
+                study.GetCircuit().CreateWire(X - 4, Y, X - 2, Y)
+
+            conductor_names = [
+                "conductor1_PhR1_1", "conductor2_PhR1_3", "conductor1_PhR1_4", "conductor2_PhR1_6",
+                "conductor1_PhR2_3", "conductor2_PhR2_5", "conductor1_PhR2_6", "conductor2_PhR2_2",
+                "conductor1_PhR3_5", "conductor2_PhR3_1", "conductor1_PhR3_2", "conductor2_PhR3_4"
+                ]
+            self.conductor_names = conductor_names
+
 
 
         app.ShowCircuitGrid(True)
@@ -1216,7 +1604,10 @@ class BIM_Transient_2TSS_Analyzer:
                 condition = study.GetCondition(phase_name)
                 condition.RemoveSubCondition("delete")
 
-        add_rotor_circuit(study)
+        if self.config.double_cage == True:
+            add_rotor_circuit_double_cage(study)
+        else:
+            add_rotor_circuit(study)
 
 
     def set_currents_standard_excitation(self, ampT, ampS, freq, phi_t_0, phi_s_0, app, study):
@@ -1461,7 +1852,10 @@ class BIM_Transient_2TSS_Analyzer:
             "hysteresis_loss": hyst_df,
             "eddy_current_loss": eddy_df,
             "ohmic_loss": ohmic_df,
-            "analyzer_configurations": self.config,
+            "no_of_steps_2nd_TSS": self.config.no_of_steps_2nd_TSS,
+            "no_of_rev_2nd_TSS": self.config.no_of_rev_2nd_TSS,
+            "scale_axial_length": self.config.scale_axial_length,
+            "non_zero_end_ring_res": self.config.non_zero_end_ring_res,            
             "slip_freq": self.slip_freq,
             "drive_freq": self.drive_freq,
             "V_r_cage": self.V_r_cage,
@@ -1469,6 +1863,9 @@ class BIM_Transient_2TSS_Analyzer:
             "rotor_cage_resistances": [self.R_bar, self.R_end_ring],
             "conductor_names": self.conductor_names,
             "breakdown_torque_from_tha": self.breakdown_torque,
+            "rotor_current_tha": self.rotor_current_tha,
+            "rotor_slot_area_tha": self.rotor_slot_area_tha,
+            "stator_slot_area_tha": self.stator_slot_area_tha,
         }
 
         return fea_data
