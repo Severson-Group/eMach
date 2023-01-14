@@ -40,7 +40,8 @@ configuration = BIM_Time_Harmonic_Analyzer_Config(
     mesh_size_steel = 2 * 6,
     mesh_size_airgap = 2 * 0.75,
     mesh_size_copper = 2 * 10,
-    mesh_size_other_regions = 20
+    mesh_size_other_regions = 20,
+    double_cage = False
 )
 
 bim_time_harmonic_analysis = bim_tha.BIM_Time_Harmonic_Analyzer(configuration)

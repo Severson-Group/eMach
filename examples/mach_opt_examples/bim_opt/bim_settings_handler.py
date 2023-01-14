@@ -20,7 +20,7 @@ class BIM_Settings_Handler:
 
     def get_settings(self, x):
         em_op = BIM_Machine_Oper_Pt(
-            speed=150000,
+            speed=30000,
             slip_freq=1,
             It_ratio=0.975,
             Is_ratio=0.025,

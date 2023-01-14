@@ -29,3 +29,4 @@ class BIM_Transient_2TSS_Config:
         self.non_zero_end_ring_res = kwargs["non_zero_end_ring_res"] # False: zero R_end_ring, True: non-zero R_end_ring
         self.wait_tha_results = kwargs["wait_tha_results"] # True: extract time harmonic analyzer results in this analyzer
         self.scale_axial_length = kwargs["scale_axial_length"] # True: scale axial length to get the required rated torque
+        self.double_cage = kwargs["double_cage"]

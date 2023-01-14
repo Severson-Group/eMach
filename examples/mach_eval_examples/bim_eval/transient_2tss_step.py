@@ -37,7 +37,7 @@ class BIM_Transient_2TSS_ProblemDefinition(ProblemDefinition):
 configuration = BIM_Transient_2TSS_Config(
     no_of_rev_1st_TSS = 0.5,
     no_of_rev_2nd_TSS = 0.5,
-    no_of_steps_1st_TSS=24,
+    no_of_steps_1st_TSS=32,
     no_of_steps_2nd_TSS=32,
 
     mesh_size=4, # mm
@@ -57,10 +57,11 @@ configuration = BIM_Transient_2TSS_Config(
     multiple_cpus=True,
     num_cpus=4,
     jmag_scheduler=False,
-    jmag_visible=True,
+    jmag_visible=False,
     non_zero_end_ring_res = False,
     wait_tha_results = True,
     scale_axial_length = True,
+    double_cage = False,
 )
 
 

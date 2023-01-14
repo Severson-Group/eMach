@@ -76,11 +76,11 @@ while True:
 
         proc = subprocess.Popen(
             [sys.executable, os.path.dirname(os.path.abspath(__file__)) + '/parasolve_greedy_search.py',
-            str(id_solver), '"'+dir_femm_temp+'"', str(id_rotor_iron), str(id_rotor_bars)], bufsize=-1
+            str(id_solver), '"'+dir_femm_temp+'"', str(id_rotor_iron), str(id_rotor_bars)], bufsize=-1,
             )
         procs.append(proc)
 
-    # This wait is working if you run this scrirpt from sublime text
+    # This wait is working if you run this script from sublime text
     for proc in procs:
         proc.wait() 
 

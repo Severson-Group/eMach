@@ -39,26 +39,26 @@ class FEMMDesigner(
 
     def save_as(self, filepath):
         """Save document."""
-        print(filepath)
-        attempts = 1
-        if os.path.exists(filepath):
-            print(
-                "FEMM file exists already, I will not delete it but create a new one with a different name instead."
-            )
-            attempts = 2
-            temp_path = filepath[
-                : -len(".fem")
-            ] + "_attempts_%d.fem" % (attempts)
-            while os.path.exists(temp_path):
-                attempts += 1
-                temp_path = filepath[
-                    : -len(".fem")
-                ] + "_attempts_%d.fem" % (attempts)
+        # print(filepath)
+        # attempts = 1
+        # if os.path.exists(filepath):
+        #     print(
+        #         "FEMM file exists already, I will not delete it but create a new one with a different name instead."
+        #     )
+        #     attempts = 2
+        #     temp_path = filepath[
+        #         : -len(".fem")
+        #     ] + "_attempts_%d.fem" % (attempts)
+        #     while os.path.exists(temp_path):
+        #         attempts += 1
+        #         temp_path = filepath[
+        #             : -len(".fem")
+        #         ] + "_attempts_%d.fem" % (attempts)
 
-            filepath = temp_path
+        #     filepath = temp_path
 
         femm.mi_saveas(filepath)
-        return attempts
+        # return attempts
 
     def close(self):
         """Close femm"""

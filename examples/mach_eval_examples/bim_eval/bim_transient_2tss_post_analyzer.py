@@ -28,9 +28,8 @@ class BIM_Transient_2TSS_PostAnalyzer:
         op_pt = state_out.design.settings
 
         ############################ Extract required info ###########################
-        config = results["analyzer_configurations"]
-        no_of_steps_2nd_TSS = config.no_of_steps_2nd_TSS
-        no_of_rev_2nd_TSS = config.no_of_rev_2nd_TSS
+        no_of_steps_2nd_TSS = results["no_of_steps_2nd_TSS"]
+        no_of_rev_2nd_TSS = results["no_of_rev_2nd_TSS"]
         number_of_total_steps = results["current"].shape[0]
         i1 = number_of_total_steps - no_of_steps_2nd_TSS # index where 2nd time step section begins
         i2 = - int(no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25) # index where last quarter period of 2nd time step section begins
@@ -56,7 +55,7 @@ class BIM_Transient_2TSS_PostAnalyzer:
         rotor_mass = (
             machine.V_rfe * 1e-9 * machine.rotor_iron_mat["core_material_density"]
             + machine.V_shaft * 1e-9 * machine.shaft_mat["shaft_material_density"]
-            + results["V_r_cage"] * 1e-9 * machine.rotor_bar_mat["bar_material_density"]
+            + 0 * results["V_r_cage"] * 1e-9 * machine.rotor_bar_mat["bar_material_density"]
         )
         rotor_volume = machine.V_rotor * 1e-9
             # motor mass:
@@ -69,7 +68,8 @@ class BIM_Transient_2TSS_PostAnalyzer:
         
         # Torque
         torque_prob = ProcessTorqueDataProblem(results["torque"]["TorCon"])
-        torque_avg, torque_ripple = ProcessTorqueDataAnalyzer.analyze(torque_prob)
+        torque_analyzer = ProcessTorqueDataAnalyzer()
+        torque_avg, torque_ripple = torque_analyzer.analyze(torque_prob)
         TRW = torque_avg / rotor_mass
         TRV = torque_avg / rotor_volume
 
@@ -113,13 +113,13 @@ class BIM_Transient_2TSS_PostAnalyzer:
         R_end_ring = results["rotor_cage_resistances"][1]
         P1, P2, P3 = calculate_rotor_cage_ohmic_losses(
             machine, currents, results["conductor_names"], 
-            config.non_zero_end_ring_res, R_end_ring, R_bar)
+            results["non_zero_end_ring_res"], R_end_ring, R_bar)
         rotor_calc_ohmic_loss = P1
         rotor_calc_ohmic_loss_along_stack = P2
         rotor_calc_ohmic_loss_end_rings = P3
 
         # Scaling
-        if config.scale_axial_length == True:
+        if results["scale_axial_length"] == True:
             expected_torque = machine.mech_power / omega_m
             scale_ratio = expected_torque / torque_avg
             l_st = l_st * scale_ratio
@@ -128,7 +128,8 @@ class BIM_Transient_2TSS_PostAnalyzer:
             rotor_volume = scale_ratio * rotor_volume
 
             torque_avg = scale_ratio * torque_avg
-            results["breakdown_torque_from_tha"] = scale_ratio * results["breakdown_torque_from_tha"]
+            if results["breakdown_torque_from_tha"] is not None:
+                results["breakdown_torque_from_tha"] = scale_ratio * results["breakdown_torque_from_tha"]
             Fx_avg = scale_ratio * Fx_avg
             Fy_avg = scale_ratio * Fy_avg
             F_abs_avg = scale_ratio * F_abs_avg

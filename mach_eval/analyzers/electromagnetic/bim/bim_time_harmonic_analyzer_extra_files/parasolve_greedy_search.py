@@ -31,7 +31,7 @@ id_rotor_bars = int(sys.argv[4])
 print('ParaSolve', id_solver, end=' ')
 
 
-femm.openfemm(True) # bHide
+femm.openfemm(1) # bHide
 # this is essential to reduce elements counts from >50000 to ~20000.
 # femm.callfemm_noeval('smartmesh(0)')
 # femm.smartmesh(0)

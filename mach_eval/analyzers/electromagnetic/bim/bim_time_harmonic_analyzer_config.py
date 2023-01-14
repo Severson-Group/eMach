@@ -18,3 +18,4 @@ class BIM_Time_Harmonic_Analyzer_Config:
         self.mesh_size_airgap = kwargs["mesh_size_airgap"]
         self.mesh_size_copper = kwargs["mesh_size_copper"]
         self.mesh_size_other_regions = kwargs["mesh_size_other_regions"]
+        self.double_cage = kwargs["double_cage"]

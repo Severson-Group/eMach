@@ -69,7 +69,7 @@ class BIM_Architect:
             "w_so": free_variables["w_so"],
             # dependant variables
             "alpha_so": self.__get_alpha_so(free_variables),
-            "r_si": self.__get_r_si(free_variables),        
+            "r_si": self.__get_r_si(free_variables),
             "d_sp": self.__get_d_sp(free_variables),
             "r_ri": self.__get_r_ri(),
             "r_sh": self.__get_r_ri(),
@@ -87,7 +87,7 @@ class BIM_Architect:
             "rated_power": self.__bim_parameters["rated_power"],
             "rated_voltage": self.__bim_parameters["rated_voltage"],
             "rated_current": self.__current_coil,
-            "name": "proj_" + str(self.count) + "_"
+            "name": "proj_" + str(self.count)
         }
         
         # bim_winding = self.__bim_winding
