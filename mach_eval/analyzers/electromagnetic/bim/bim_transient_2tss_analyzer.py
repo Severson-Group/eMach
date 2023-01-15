@@ -75,9 +75,8 @@ class BIM_Transient_2TSS_Analyzer:
         import mach_cad.tools.jmag as JMAG
         toolJmag = JMAG.JmagDesigner()
 
-        toolJmag.study_type = "Transient2D"
         toolJmag.visible = self.config.jmag_visible
-        toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter")
+        toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="Transient2D")
         toolJmag.save()
 
         self.study_name = self.project_name + "_Tran_2TSS_BIM"
@@ -100,33 +99,34 @@ class BIM_Transient_2TSS_Analyzer:
             raise InvalidDesign
 
         toolJmag.doc.SaveModel(False)
-        toolJmag.model = toolJmag.jd.GetCurrentModel()
+        app = toolJmag.jd
+        model = app.GetCurrentModel()
 
         # Pre-processing
-        toolJmag.model.SetName(self.project_name)
-        toolJmag.model.SetDescription(self.show(self.project_name, toString=True))
+        model.SetName(self.project_name)
+        model.SetDescription(self.show(self.project_name, toString=True))
         
 
         if self.config.double_cage == True:
-            valid_design = self.pre_process_double_cage(toolJmag.model)
+            valid_design = self.pre_process_double_cage(model)
         else:
-            valid_design = self.pre_process(toolJmag.model)
+            valid_design = self.pre_process(model)
 
         if not valid_design:
             raise InvalidDesign
 
         # Create transient study with two time step sections
-        toolJmag = self.add_transient_2tss_study(toolJmag)
+        # model = toolJmag.create_model(self.study_name)
+        study = self.add_transient_2tss_study(app, model, self.config.jmag_csv_folder, self.study_name)
         self.create_custom_material(
-            toolJmag.jd, self.machine_variant.stator_iron_mat["core_material"]
+            app, self.machine_variant.stator_iron_mat["core_material"]
         )
-        toolJmag.jd.SetCurrentStudy(self.study_name)
-        toolJmag.study = toolJmag.jd.GetCurrentStudy()
+        app.SetCurrentStudy(self.study_name)
 
         # Mesh study
-        self.mesh_study(toolJmag.jd, toolJmag.model, toolJmag.study)
+        self.mesh_study(app, model, study)
         
-        # Wait for the results from time-harmonic analyzer (if neceessary)
+        # Wait for the results from time-harmonic analyzer (has to be defined by user)
         if self.config.wait_tha_results == True:
             tha_object = BIM_Time_Harmonic_Analyzer(self.tha_config)
             tha_object.machine_variant = self.machine_variant
@@ -143,17 +143,17 @@ class BIM_Transient_2TSS_Analyzer:
             self.stator_slot_area_tha = None
 
         # Set slip
-        toolJmag.study.GetDesignTable().GetEquation("slip").SetExpression("%g"%(self.slip))
-        toolJmag.study.GetDesignTable().GetEquation("freq").SetExpression(
+        study.GetDesignTable().GetEquation("slip").SetExpression("%g"%(self.slip))
+        study.GetDesignTable().GetEquation("freq").SetExpression(
                 "%g" % self.drive_freq)
 
         self.set_currents_standard_excitation(self.It_hat, self.Is_hat, 
-                self.drive_freq, self.phi_t_0, self.phi_s_0, toolJmag.jd, toolJmag.study)
-        self.add_time_step_settings(toolJmag.jd, toolJmag.study)
-        self.run_study(toolJmag.jd, toolJmag.study, clock_time())
+                self.drive_freq, self.phi_t_0, self.phi_s_0, app, study)
+        self.add_time_step_settings(app, study)
+        self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        toolJmag.jd.Quit()
+        app.Quit()
         ####################################################
         # 03 Load FEA output
         ####################################################
@@ -414,38 +414,40 @@ class BIM_Transient_2TSS_Analyzer:
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.stator_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
-        self.cs_stator = self.stator_core.draw(tool)
-        self.stator_tool = tool.prepare_section(self.cs_stator, self.machine_variant.Q)
+        cs_stator = self.stator_core.draw(tool)
+        stator_tool = tool.prepare_section(cs_stator, self.machine_variant.Q)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.winding_layer1.name)
         tool.sketch.SetProperty("Color", r"#B87333")
-        self.cs_winding_layer1 = self.winding_layer1.draw(tool)
-        self.winding_tool1 = tool.prepare_section(self.cs_winding_layer1, self.machine_variant.Q)
+        cs_winding_layer1 = self.winding_layer1.draw(tool)
+        winding_tool1 = tool.prepare_section(cs_winding_layer1, self.machine_variant.Q)
+        self.winding_layer1_inner_coord = cs_winding_layer1.inner_coord
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.winding_layer2.name)
         tool.sketch.SetProperty("Color", r"#B87333")
-        self.cs_winding_layer2 = self.winding_layer2.draw(tool)
-        self.winding_tool2 = tool.prepare_section(self.cs_winding_layer2, self.machine_variant.Q)
+        cs_winding_layer2 = self.winding_layer2.draw(tool)
+        winding_tool2 = tool.prepare_section(cs_winding_layer2, self.machine_variant.Q)
+        self.winding_layer2_inner_coord = cs_winding_layer2.inner_coord
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.rotor_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
-        self.cs_rotor_core = self.rotor_core.draw(tool)
-        self.rotor_tool = tool.prepare_section(self.cs_rotor_core, self.machine_variant.Qr)
+        cs_rotor_core = self.rotor_core.draw(tool)
+        rotor_tool = tool.prepare_section(cs_rotor_core, self.machine_variant.Qr)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.rotor_bar.name)
         tool.sketch.SetProperty("Color", r"#C89E9B")
-        self.cs_rotor_bar = self.rotor_bar.draw(tool)
-        self.rotor_bar_tool = tool.prepare_section(self.cs_rotor_bar, self.machine_variant.Qr)
+        cs_rotor_bar = self.rotor_bar.draw(tool)
+        rotor_bar_tool = tool.prepare_section(cs_rotor_bar, self.machine_variant.Qr)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.shaft.name)
         tool.sketch.SetProperty("Color", r"#71797E")
-        self.cs_shaft = self.shaft.draw(tool)
-        self.shaft_tool = tool.prepare_section(self.cs_shaft)
+        cs_shaft = self.shaft.draw(tool)
+        shaft_tool = tool.prepare_section(cs_shaft)
 
         return True
 
@@ -574,45 +576,47 @@ class BIM_Transient_2TSS_Analyzer:
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.stator_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
-        self.cs_stator = self.stator_core.draw(tool)
-        self.stator_tool = tool.prepare_section(self.cs_stator, self.machine_variant.Q)
+        cs_stator = self.stator_core.draw(tool)
+        stator_tool = tool.prepare_section(cs_stator, self.machine_variant.Q)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.winding_layer1.name)
         tool.sketch.SetProperty("Color", r"#B87333")
-        self.cs_winding_layer1 = self.winding_layer1.draw(tool)
-        self.winding_tool1 = tool.prepare_section(self.cs_winding_layer1, self.machine_variant.Q)
+        cs_winding_layer1 = self.winding_layer1.draw(tool)
+        winding_tool1 = tool.prepare_section(cs_winding_layer1, self.machine_variant.Q)
+        self.winding_layer1_inner_coord = cs_winding_layer1.inner_coord
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.winding_layer2.name)
         tool.sketch.SetProperty("Color", r"#B87333")
-        self.cs_winding_layer2 = self.winding_layer2.draw(tool)
-        self.winding_tool2 = tool.prepare_section(self.cs_winding_layer2, self.machine_variant.Q)
+        cs_winding_layer2 = self.winding_layer2.draw(tool)
+        winding_tool2 = tool.prepare_section(cs_winding_layer2, self.machine_variant.Q)
+        self.winding_layer2_inner_coord = cs_winding_layer2.inner_coord
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.rotor_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
-        self.cs_rotor_core = self.rotor_core.draw(tool)
-        self.rotor_tool = tool.prepare_section(self.cs_rotor_core, self.machine_variant.Qr)
+        cs_rotor_core = self.rotor_core.draw(tool)
+        rotor_tool = tool.prepare_section(cs_rotor_core, self.machine_variant.Qr)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.rotor_bar1.name)
         tool.sketch.SetProperty("Color", r"#C89E9B")
-        self.cs_rotor_bar1 = self.rotor_bar1.draw(tool)
-        self.rotor_bar_tool1 = tool.prepare_section(self.cs_rotor_bar1, self.machine_variant.Qr)
+        cs_rotor_bar1 = self.rotor_bar1.draw(tool)
+        rotor_bar_tool1 = tool.prepare_section(cs_rotor_bar1, self.machine_variant.Qr)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.rotor_bar2.name)
         tool.sketch.SetProperty("Color", r"#C89E9B")
-        self.cs_rotor_bar2 = self.rotor_bar2.draw(tool)
-        self.rotor_bar_tool2 = tool.prepare_section(self.cs_rotor_bar2, self.machine_variant.Qr)
+        cs_rotor_bar2 = self.rotor_bar2.draw(tool)
+        rotor_bar_tool2 = tool.prepare_section(cs_rotor_bar2, self.machine_variant.Qr)
 
         
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.shaft.name)
         tool.sketch.SetProperty("Color", r"#71797E")
-        self.cs_shaft = self.shaft.draw(tool)
-        self.shaft_tool = tool.prepare_section(self.cs_shaft)
+        cs_shaft = self.shaft.draw(tool)
+        shaft_tool = tool.prepare_section(cs_shaft)
 
         return True
 
@@ -631,11 +635,11 @@ class BIM_Transient_2TSS_Analyzer:
         )  # this is also useful for string beginning with digiterations '15 Steel'.
         tuple_list = [(key, the_dict[key]) for key in sorted_key]
         if not toString:
-            print("- Bearingless PMSM Individual #%s\n\t" % name, end=" ")
+            print("- Bearingless BIM Individual #%s\n\t" % name, end=" ")
             print(", \n\t".join("%s = %s" % item for item in tuple_list))
             return ""
         else:
-            return "\n- Bearingless PMSM Individual #%s\n\t" % name + ", \n\t".join(
+            return "\n- Bearingless BIM Individual #%s\n\t" % name + ", \n\t".join(
                 "%s = %s" % item for item in tuple_list
             )
 
@@ -690,8 +694,8 @@ class BIM_Transient_2TSS_Analyzer:
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
         # R = self.r_si + self.d_sp + self.d_st *0.5 # this is not generally working (JMAG selects stator core instead.)
         # THETA = 0.25*(Angle_StatorSlotSpan)/180.*np.pi
-        R = np.sqrt(self.cs_winding_layer1.inner_coord[0] ** 2 + self.cs_winding_layer1.inner_coord[1] ** 2)
-        THETA = np.arctan(self.cs_winding_layer1.inner_coord[1] / self.cs_winding_layer1.inner_coord[0])
+        R = np.sqrt(self.winding_layer1_inner_coord[0] ** 2 + self.winding_layer1_inner_coord[1] ** 2)
+        THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -707,7 +711,7 @@ class BIM_Transient_2TSS_Analyzer:
             Y = R * np.sin(THETA)
 
         # Create Set for left layer
-        THETA = np.arctan(self.cs_winding_layer2.inner_coord[1] / self.cs_winding_layer2.inner_coord[0])
+        THETA = np.arctan(self.winding_layer2_inner_coord[1] / self.winding_layer2_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -819,8 +823,8 @@ class BIM_Transient_2TSS_Analyzer:
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
         # R = self.r_si + self.d_sp + self.d_st *0.5 # this is not generally working (JMAG selects stator core instead.)
         # THETA = 0.25*(Angle_StatorSlotSpan)/180.*np.pi
-        R = np.sqrt(self.cs_winding_layer1.inner_coord[0] ** 2 + self.cs_winding_layer1.inner_coord[1] ** 2)
-        THETA = np.arctan(self.cs_winding_layer1.inner_coord[1] / self.cs_winding_layer1.inner_coord[0])
+        R = np.sqrt(self.winding_layer1_inner_coord[0] ** 2 + self.winding_layer1_inner_coord[1] ** 2)
+        THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -836,7 +840,7 @@ class BIM_Transient_2TSS_Analyzer:
             Y = R * np.sin(THETA)
 
         # Create Set for left layer
-        THETA = np.arctan(self.cs_winding_layer2.inner_coord[1] / self.cs_winding_layer2.inner_coord[0])
+        THETA = np.arctan(self.winding_layer2_inner_coord[1] / self.winding_layer2_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -990,16 +994,13 @@ class BIM_Transient_2TSS_Analyzer:
 
 
     def add_transient_2tss_study(
-        self, toolJmag
+        self, app, model, dir_csv_output_folder, study_name
     ):      
 
-        dir_csv_output_folder = self.config.jmag_csv_folder
-        study_name = self.study_name
-
-        model = toolJmag.create_model(self.study_name)
-        study = toolJmag.create_study(self.study_name, "Transient2D", model)
-        app = toolJmag.jd
+        # study = toolJmag.create_study(self.study_name, "Transient2D", model)
+        model.CreateStudy("Transient2D", study_name)
         app.SetCurrentStudy(self.study_name)
+        study = model.GetStudy(study_name)
 
         # Study properties
         study.GetStudyProperties().SetValue("ApproximateTransientAnalysis", 1) # psuedo steady state freq is for PWM drive to use
@@ -1163,10 +1164,7 @@ class BIM_Transient_2TSS_Analyzer:
             cond.SetValue("FrequencyOrder", "1-50")  # Harmonics up to 50th orders
         self.study_name = study_name
 
-        toolJmag.jd = app
-        toolJmag.model = model
-        toolJmag.study = study
-        return toolJmag
+        return study
 
 
     def add_materials(self, study):

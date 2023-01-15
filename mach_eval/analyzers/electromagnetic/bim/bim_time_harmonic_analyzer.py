@@ -1,21 +1,14 @@
 import os
 import numpy as np
-import pandas as pd
 import sys
 import femm
 from time import sleep
 from time import time as clock_time
 import logging
-import operator
 
 sys.path.append(os.path.dirname(__file__) + "/../../../..")
-from mach_cad.model_obj.cross_sects import (
-    CrossSectInnerRotorStator, CrossSectInnerRotorRoundSlots
-)
 import mach_cad.model_obj as mo
 from mach_cad.tools.femm import FEMM
-
-from mach_opt import InvalidDesign
 
 
 class BIM_Time_Harmonic_Problem:
