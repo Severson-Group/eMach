@@ -1,0 +1,4 @@
+Arguments,Description,Units
+R_wdg,Resistance of a winding,Ohms
+R_wdg_coil_ends,Resistance of coil ends of a winding,Ohms
+R_wdg_coil_sides,Resistance of coil sides of a winding,Ohms
