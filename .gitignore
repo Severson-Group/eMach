@@ -22,6 +22,9 @@ __pycache__/
 *.jproj
 *.xml
 LegacyCode/run_data/
+*.jfiles
+*.fem
+*.ans
 
 # Sphinx documentation
 docs/build/
