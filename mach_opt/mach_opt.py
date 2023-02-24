@@ -32,7 +32,7 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size, filepath="None"):
+    def run_optimization(self, pop, gen_size, filepath=None):
         algo = pg.algorithm(
             pg.moead(
                 gen=1,
