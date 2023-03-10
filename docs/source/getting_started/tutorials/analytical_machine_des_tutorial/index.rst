@@ -97,7 +97,7 @@ When creating ``Machine`` classes, users may desire to create read-only, constan
 Step 3.3: Input Defined Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property`` decorator can be used to expose "read-only" variables. 
+Copy and paste the following code block into the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property`` decorator can be used to expose "read-only" variables. 
 
 In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. The code that you have copy-and-pasted in this step uses property decorators to allow reading the values of these variables. 
 
