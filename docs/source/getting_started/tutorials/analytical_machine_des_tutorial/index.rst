@@ -97,7 +97,7 @@ When creating ``Machine`` classes, users may desire to create read-only, constan
 Step 3.3: Input Defined Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property`` decorator can be used to expose "read-only" variables. 
+Copy and paste the following code block into the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property`` decorator can be used to expose "read-only" variables. 
 
 In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. The code that you have copy-and-pasted in this step uses property decorators to allow reading the values of these variables. 
 
@@ -264,7 +264,7 @@ The ``create_new_design`` method demonstrates how the input tuple values are int
                         w_tooth,d_yoke,z_q,l_st,
                         self.magnet_mat,self.core_mat,self.coil_mat)
                 
-			return machine
+            return machine
 
 Step 6: Define the ``SettingsHandler``
 ---------------------------------------
@@ -275,7 +275,7 @@ Copy the following code into the Python file to implement the example ``Settings
 
 .. code-block:: python
 
-    class ExampleSettingsHandler():
+    class ExampleSettingsHandler(me.SettingsHandler):
         """Settings handler for design creation"""
         def __init__(self,Omega):
             self.Omega=Omega
@@ -396,7 +396,7 @@ Copy and paste the following material dictionaries into ``mach_eval_tutorial.py`
 Step 9: Creating MachineDesigner 
 --------------------------------
 
-The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The `MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
+The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The ``MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
 
 Copy and paste this code into the bottom of the Python file.
 
