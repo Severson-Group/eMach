@@ -275,7 +275,7 @@ Copy the following code into the Python file to implement the example ``Settings
 
 .. code-block:: python
 
-    class ExampleSettingsHandler():
+    class ExampleSettingsHandler(me.SettingsHandler):
         """Settings handler for design creation"""
         def __init__(self,Omega):
             self.Omega=Omega
