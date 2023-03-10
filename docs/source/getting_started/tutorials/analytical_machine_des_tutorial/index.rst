@@ -396,7 +396,7 @@ Copy and paste the following material dictionaries into ``mach_eval_tutorial.py`
 Step 9: Creating MachineDesigner 
 --------------------------------
 
-The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The `MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
+The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The ``MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
 
 Copy and paste this code into the bottom of the Python file.
 
