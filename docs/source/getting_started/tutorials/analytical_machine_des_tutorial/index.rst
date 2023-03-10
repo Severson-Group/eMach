@@ -264,7 +264,7 @@ The ``create_new_design`` method demonstrates how the input tuple values are int
                         w_tooth,d_yoke,z_q,l_st,
                         self.magnet_mat,self.core_mat,self.coil_mat)
                 
-			return machine
+            return machine
 
 Step 6: Define the ``SettingsHandler``
 ---------------------------------------
