@@ -42,7 +42,7 @@ Add the following import statements to the newly created ``mach_eval_tutorial.py
 Step 3: Define ``Machine`` Class
 ------------------------------------------
 
-In this step, the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine (i.e.,  geometric, material, and nameplate information). This class can be though of as "what is on the desk." Items such as operating conditions and other information needed to perform analysis are housed in the ``Settings`` class (defined in a later step).
+In this step, the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine (i.e.,  geometric, material, and nameplate information). This class can be thought of as "what is on the desk." Items such as operating conditions and other information needed to perform analysis are housed in the ``Settings`` class (defined in a later step).
 
 The creation of the ``Machine`` class is split into five sub-steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
 
@@ -442,13 +442,13 @@ The results of the optimization printed in the console are interpreted in this s
    :align: center
    :width: 800 
 
-The results of the example code should look like the following. The form shown in the image above can be seen here, for example for the first evaluation step it is input state, results of power evaluation step of 769kW then output state. The same can be seen for the second step, where the losses are provided as [``Q_tooth``, ``Q_sy`` , ``Q_coil``]
+The results of the example code should look like the following. The form shown in the image above can be seen here, for example for the first evaluation step it is input state, results of power evaluation step of 7.96kW then output state. The same can be seen for the second step, where the losses are provided as [``Q_tooth``, ``Q_sy`` , ``Q_coil``]
 
 .. code-block:: python
 
-		[[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BD60>, 796000.7929035134, <eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BFD0>],
-		[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C4F0>, [47.00334669919978, 44.94622291490794, 947.6525268802451],
-		<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C790>]]
+		[[<eMach.mach_eval.mach_eval.State object at 0x000001CF936D7100>, 7960.007929035136, <eMach.mach_eval.mach_eval.State object at 0x000001CF936D7370>],
+		[<eMach.mach_eval.mach_eval.State object at 0x000001CF936D7850>, [2.8976596216446304, 2.78480754750738, 9.476525268802455],
+		<eMach.mach_eval.mach_eval.State object at 0x000001CF936D7AF0>]]
 	
 Conclusion
 ----------
@@ -458,7 +458,4 @@ You have successfully completed this tutorial of the base capabilities of the ``
 * Create a new ``EvaluationStep`` which calculates the motor efficiency
 * Copy and modify the example ``Machine`` and ``Architect`` classes to analyze a Q12p2y3 machine, could these classes be modified to use the same architect?
 * **Bonus task**: Using the skills learned in the :doc:`Previous tutorial <../rectangle_tutorial/index>`, can you create a simple optimization using the provided ``MachineDesigner`` and ``MachineEvaluator``?
-
-
-	
 
