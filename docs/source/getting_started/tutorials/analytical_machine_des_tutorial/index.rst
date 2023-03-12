@@ -42,7 +42,7 @@ Add the following import statements to the newly created ``mach_eval_tutorial.py
 Step 3: Define ``Machine`` Class
 ------------------------------------------
 
-In this step, the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine (i.e.,  geometric, material, and nameplate information). This class can be though of as "what is on the desk." Items such as operating conditions and other information needed to perform analysis are housed in the ``Settings`` class (defined in a later step).
+In this step, the ``Machine`` class is defined. This class is intended to act as a "Digital Twin" of a physical machine, which means it is designed to hold all the relevant information about a physical machine (i.e.,  geometric, material, and nameplate information). This class can be thought of as "what is on the desk." Items such as operating conditions and other information needed to perform analysis are housed in the ``Settings`` class (defined in a later step).
 
 The creation of the ``Machine`` class is split into five sub-steps: initialization, class constant parameters, input defined parameters, derived parameters, and auxiliary functions.
 
@@ -97,7 +97,7 @@ When creating ``Machine`` classes, users may desire to create read-only, constan
 Step 3.3: Input Defined Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy and paste the following code block into to the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property`` decorator can be used to expose "read-only" variables. 
+Copy and paste the following code block into the ``ExampleMachineQ6p1y3`` class. This step demonstrates how the ``@property`` decorator can be used to expose "read-only" variables. 
 
 In step 3.1, the inputs to the initialization function were defined so that they were assigned to a ``self._`` property. The code that you have copy-and-pasted in this step uses property decorators to allow reading the values of these variables. 
 
@@ -264,7 +264,7 @@ The ``create_new_design`` method demonstrates how the input tuple values are int
                         w_tooth,d_yoke,z_q,l_st,
                         self.magnet_mat,self.core_mat,self.coil_mat)
                 
-                return machine
+            return machine
 
 Step 6: Define the ``SettingsHandler``
 ---------------------------------------
@@ -275,7 +275,7 @@ Copy the following code into the Python file to implement the example ``Settings
 
 .. code-block:: python
 
-    class ExampleSettingsHandler():
+    class ExampleSettingsHandler(me.SettingsHandler):
         """Settings handler for design creation"""
         def __init__(self,Omega):
             self.Omega=Omega
@@ -396,7 +396,7 @@ Copy and paste the following material dictionaries into ``mach_eval_tutorial.py`
 Step 9: Creating MachineDesigner 
 --------------------------------
 
-The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The `MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
+The next step is to create an object of the  ``MachineDesigner`` class. This is a concrete class provided by ``mach_eval`` to hold an ``Architect`` (created in step 5)  and a ``SettingsHandler`` (created in step 6). The ``MachineDesigner.create_design()`` method receives an input tuple (the free variables) and uses the ``Architect`` and ``SettingsHandler`` to create a ``Machine`` and ``Settings`` object. The function returns a ``Design`` object containing the ``Machine`` and ``Settings`` (``design.machine`` and ``design.setttings``). 
 
 Copy and paste this code into the bottom of the Python file.
 
@@ -442,13 +442,13 @@ The results of the optimization printed in the console are interpreted in this s
    :align: center
    :width: 800 
 
-The results of the example code should look like the following. The form shown in the image above can be seen here, for example for the first evaluation step it is input state, results of power evaluation step of 769kW then output state. The same can be seen for the second step, where the losses are provided as [``Q_tooth``, ``Q_sy`` , ``Q_coil``]
+The results of the example code should look like the following. The form shown in the image above can be seen here, for example for the first evaluation step it is input state, results of power evaluation step of 7.96kW then output state. The same can be seen for the second step, where the losses are provided as [``Q_tooth``, ``Q_sy`` , ``Q_coil``]
 
 .. code-block:: python
 
-		[[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BD60>, 796000.7929035134, <eMach.mach_eval.mach_eval.State object at 0x00000166D0F4BFD0>],
-		[<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C4F0>, [47.00334669919978, 44.94622291490794, 947.6525268802451],
-		<eMach.mach_eval.mach_eval.State object at 0x00000166D0F5C790>]]
+		[[<eMach.mach_eval.mach_eval.State object at 0x000001CF936D7100>, 7960.007929035136, <eMach.mach_eval.mach_eval.State object at 0x000001CF936D7370>],
+		[<eMach.mach_eval.mach_eval.State object at 0x000001CF936D7850>, [2.8976596216446304, 2.78480754750738, 9.476525268802455],
+		<eMach.mach_eval.mach_eval.State object at 0x000001CF936D7AF0>]]
 	
 Conclusion
 ----------
@@ -458,7 +458,4 @@ You have successfully completed this tutorial of the base capabilities of the ``
 * Create a new ``EvaluationStep`` which calculates the motor efficiency
 * Copy and modify the example ``Machine`` and ``Architect`` classes to analyze a Q12p2y3 machine, could these classes be modified to use the same architect?
 * **Bonus task**: Using the skills learned in the :doc:`Previous tutorial <../rectangle_tutorial/index>`, can you create a simple optimization using the provided ``MachineDesigner`` and ``MachineEvaluator``?
-
-
-	
 
