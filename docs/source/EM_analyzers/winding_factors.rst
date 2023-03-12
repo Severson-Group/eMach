@@ -35,15 +35,15 @@ calculation would look like the following:
     \bar{k}_\text{w,n} &= \frac{\text{geometric sum}}{\text{algebraic sum}} &= \frac{1}{N} \Sigma_\text{i=1}^N e^{-jn\alpha_i} \\
 
 .. math::
-    \bar{k}_\text{w,1} &= \frac{-e^{-j1\alpha_3} - e^{-j1\alpha_4} - e^{-j1\alpha_5} + e^{-j1\alpha_6} + e^{-j1\alpha_9} + e^{-j1\alpha_10} 
-    + e^{-j1\alpha_11} + e^{-j1\alpha_12}}{8} \\
+    \bar{k}_\text{w,1} &= \frac{-e^{-j1\alpha_3} - e^{-j1\alpha_4} - e^{-j1\alpha_5} + e^{-j1\alpha_6} + e^{-j1\alpha_9} + e^{-j1\alpha_{10}} 
+    + e^{-j1\alpha_{11}} + e^{-j1\alpha_{12}}}{8} \\
 
 .. math::
     \bar{k}_\text{w,1} &= \frac{-e^{-j\frac{5\pi}{12}} - e^{-j\frac{7\pi}{12}} - e^{-j\frac{9\pi}{12}} + e^{-j\frac{11\pi}{12}} + e^{-j\frac{17\pi}{12}} 
     + e^{-j\frac{19\pi}{12}} + e^{-j\frac{21\pi}{12}} + e^{-j\frac{23\pi}{12}}}{8} \\
 
 .. math::
-    \bar{k}_\text{w,1} = -0.808 - j0.217
+    \bar{k}_\text{w,1} = 0.4183 - j7244
 
 The assumptions made going into the development of this model are:
 
@@ -92,7 +92,7 @@ Example code initializing the analyzer and problem1 for the stator and winding l
         )
 
     n = np.array([1,2,3,4,5])
-    winding_layout = np.array([[1,1,0,0,0,0,-1,-1,0,0,0,0],[0,0,0,0,-1,-1,0,0,0,0,1,1]])
+    winding_layout = np.array([[0,0,0,0,-1,-1,0,0,0,0,1,1],[0,0,-1,-1,0,0,0,0,1,1,0,0]])
     alpha_1 = 0
     kw_prob = WindingFactorsProblem(n,winding_layout,alpha_1)
 
