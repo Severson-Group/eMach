@@ -20,7 +20,7 @@ bfield\_spm\_inner\_rotor Module
 winding\_factors Module
 ----------------------------------------------------
 
-.. automodule:: mach_eval.analyzers.electromagnetic.winding_factor_analyzer
+.. automodule:: mach_eval.analyzers.electromagnetic.winding_factors
    :members:
    :undoc-members:
    :show-inheritance:
