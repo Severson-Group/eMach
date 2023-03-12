@@ -157,7 +157,7 @@ Copy the following code into the python file to define the ``DesignSpace`` for t
             self._n_obj=n_obj
             self._bounds=bounds
             
-        def get_objectives(self, valid_constraints, full_results) -> tuple:
+        def get_objectives(self, full_results) -> tuple:
             last_results=full_results[-1]
             last_state=last_results[-1]
             power=last_state.conditions.Power

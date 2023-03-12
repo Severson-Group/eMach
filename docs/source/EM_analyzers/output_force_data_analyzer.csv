@@ -1,0 +1,6 @@
+Arguments,Description,Units
+Fx_avg,Average of force vector x component,Same as input
+Fy_avg,Average of force vector y component,Same as input
+F_abs_avg,Average of force vector magnitude,Same as input
+Em,Error in magnitude,
+Ea,Error in angle,deg

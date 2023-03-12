@@ -1,4 +1,4 @@
-.. figure:: /images/eMach.svg
+.. figure:: images/eMach.svg
    :alt: Trial1 
    :align: center
    :width: 300 

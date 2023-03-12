@@ -30,6 +30,8 @@ reside within this file. You can create this file by simply copying the ``ecce_2
 
 .. code-block:: python
 
+    import os
+    import sys
     from eMach.mach_eval.machines.materials.electric_steels import Arnon5
     from eMach.mach_eval.machines.materials.jmag_library_magnets import N40H
     from eMach.mach_eval.machines.materials.miscellaneous_materials import (
@@ -159,7 +161,7 @@ is stored in ``State`` for future reference. Its worth noting that the losses ob
 	
     from eMach.mach_eval.analyzers.electromagnetic.bspm import jmag_2d as em
     from eMach.mach_eval.analyzers.electromagnetic.bspm.jmag_2d_config import JMAG_2D_Config
-    from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
+    from eMach.examples.mach_eval_examples.bspm_eval.bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
     from eMach.mach_eval import AnalysisStep, ProblemDefinition
 
 
@@ -448,11 +450,11 @@ assumes each ``AnalysisStep`` was defined in a separate Python file / module. Re
 .. code-block:: python
 
     from mach_eval import MachineEvaluator
-    from structural_step import struct_step
-    from electromagnetic_step import em_step
-    from rotor_thermal_step import rotor_therm_step
-    from stator_thermal_step import stator_therm_step
-    from windage_loss_step import windage_step
+    from examples.mach_eval_examples.bspm_eval.structural_step import struct_step
+    from examples.mach_eval_examples.bspm_eval.electromagnetic_step import em_step
+    from examples.mach_eval_examples.bspm_eval.rotor_thermal_step import rotor_therm_step
+    from examples.mach_eval_examples.bspm_eval.stator_thermal_step import stator_therm_step
+    from examples.mach_eval_examples.bspm_eval.windage_loss_step import windage_step
 
     ############################ Create Evaluator ########################
     bspm_evaluator = MachineEvaluator(
@@ -479,7 +481,7 @@ such that the BSPM design is evaluated only when users try to run the ``bspm_eva
         from mach_eval import MachineDesign
 
         ecce_2020_design = MachineDesign(ecce_2020_machine, ecce_2020_op_pt)
-        results = evaluator.evaluate(ecce_2020_design)
+        results = bspm_evaluator.evaluate(ecce_2020_design)
 
 Upon running this script you should get the following results:
 
