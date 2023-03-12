@@ -4,7 +4,7 @@ Electromagnetic Analyzers
 This section provides documentation for the electromagnetic analyzers supported by eMach.
 
 .. toctree::
-    :maxdepth: 7
+    :maxdepth: 3
     :numbered:
 
     bfield_outer_stator
