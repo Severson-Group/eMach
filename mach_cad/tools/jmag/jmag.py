@@ -242,7 +242,7 @@ class JmagDesigner(
     def select(self):
         pass
 
-    def prepare_section(self, cs_token: "CrossSectToken") -> TokenMake:
+    def prepare_section(self, cs_token: "CrossSectToken", num_copy_rotate=0) -> TokenMake:
         """ Creates JMAG geometry region using lines and arcs.
         """
         # self.validate_attr(cs_token, 'CrossSectToken')
@@ -279,6 +279,24 @@ class JmagDesigner(
                 self.doc.GetSelection().Clear()
                 self.doc.GetSelection().Add(self.sketch.GetItem(regionList[idx]))
                 self.doc.GetSelection().Delete()
+
+        # RotateCopy
+        if num_copy_rotate != 0:
+            bMerge = True
+            # print('Copy', num_copy_rotate)
+            Q_float = float(num_copy_rotate)  # don't ask me, ask JSOL
+            circular_pattern = self.sketch.CreateRegionCircularPattern()
+            circular_pattern.SetProperty("Merge", bMerge)
+
+            ref2 = self.doc.CreateReferenceFromItem(region)
+            circular_pattern.SetPropertyByReference("Region", ref2)
+            face_region_string = circular_pattern.GetProperty("Region")
+
+            circular_pattern.SetProperty("CenterType", 2)  # origin I guess
+
+            # print('Copy', Q_float)
+            circular_pattern.SetProperty("Angle", "360/%d" % Q_float)
+            circular_pattern.SetProperty("Instance", str(Q_float))
 
         self.sketch.CloseSketch()
 
@@ -413,4 +431,4 @@ class JmagDesigner(
             self.model.SetUnitCollection("SI_units")
         else:
             raise Exception("Unsupported angle unit")
-
+        
