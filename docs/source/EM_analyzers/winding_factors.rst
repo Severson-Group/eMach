@@ -18,7 +18,7 @@ where :math:`N` is the total number of coil sides, :math:`e^{-jn\alpha_i}` is th
 is the harmonic index, and :math:`i` is the slot number of the stator. The winding factor for each :math:`n` should be calculated separately. The sum of each 
 of these calculations will result in a table of winding factors, all of which must be considered when choosing a design winding layout. This analyzer adds the 
 ability to calculate a winding factor based only on a stator geometry and layout. The addition of this analyzer eliminates the need for hand calculations for 
-winding factors within the bfield_outer_stator analyzer.
+winding factors within the ``bfield_outer_stator`` analyzer.
 
 For example, given the layouts in the figure below, winding factors can be calculated for each of the stator geometries.
 
@@ -100,8 +100,8 @@ Example code initializing the analyzer and problem1 for the stator and winding l
 
 Output to User
 ***************
-The winding factors analyzer returns a `WindingFactors` table. This table has structure that the winding factors are listed for each harmonics_list variable. The 
-first value represents the first harmonics_list variable, the second value represents the second variable, and so on.
+The winding factors analyzer returns a `WindingFactors` table. This table has structure that the winding factors are listed for each ``harmonics_list`` value. The 
+first winding factor represents the first ``harmonics_list`` value, the second winding factor represents the second value, and so on.
 
 Example code using the analyzer to determine the winding factors for each harmonic is provided below (continuation from previous code block):
 
@@ -109,20 +109,20 @@ Example code using the analyzer to determine the winding factors for each harmon
 
     k_w = kw_ana.analyze(kw_prob)
 
-The following complex winding factors should result from this stator for harmonics n = 1-5:
+The following complex winding factors should result from this stator for harmonics ``n`` = 1,2,3,4,5:
 
 .. csv-table:: `WindingFactors`
    :file: output_winding_factors_analyzer.csv
    :widths: 30, 30, 30
    :header-rows: 1
 
-Application to B Field Outer Stator Analyzer
-********************************************
+Application to ``B Field Outer Stator`` Analyzer
+************************************************
 
 In order to plot the current linkage and find the magnetic field of the inner bore of the stator, the winding factor analyzer can be applied to the B Field Outer
 Stator Analyzer by adding some code and making some alterations. 
 
-The definitions of the "harmonics of interest" and "winding factors" (variables "k_w" and "n") can be changed and defined below. Note that for plotting the current
+The definitions of the "harmonics of interest" and "winding factors" (variables ``n`` and ``k_w``) can be changed and defined below. Note that for plotting the current
 linkage, all of the harmonics should be considered. While in reality that is not possible, in practice a number on the scale of :math:`10^3` should be used:
 
 .. code-block:: python
@@ -145,7 +145,7 @@ linkage, all of the harmonics should be considered. While in reality that is not
     kw_ang = np.angle(k_w)
 
 This block is redefining the harmonics of interest, providing the winding layout and :math:`\alpha_\text{1}`, and actually calculating the winding factors instead
-of having them directly provided. From here, the B Field Outer Stator Analyzer code should be entered as existing. After it is written, the following code should 
+of having them directly provided. From here, the ``B Field Outer Stator`` Analyzer code should be entered as existing. After it is written, the following code should 
 be implemented to redefine the problem and plot the current linkage:
 
 .. code-block:: python
@@ -200,7 +200,7 @@ be implemented to redefine the problem and plot the current linkage:
     plt.grid(True, linewidth=0.5, color="#A9A9A9", linestyle="-.")
     plt.show()
 
-This code is taking the MMF function from the B Field Outer Stator Analyzer and calculating the current linkage directly. Within the B Field Outer Stator Analyzer,
+This code is taking the MMF function from the ``B Field Outer Stator`` Analyzer and calculating the current linkage directly. Within the ``B Field Outer Stator`` Analyzer,
 this is then used to calculate the radial and tangential components of the B Field. The applied code should return the following plot for the current linkage of the 
 stator and winding layout depicted above:
 
@@ -209,7 +209,7 @@ stator and winding layout depicted above:
    :align: center
    :width: 500
 
-After plotting the current linkage, we can then use the data to plot the radial and tangential components of the magnetic field in the air gap. The B Field Outer Stator
+After plotting the current linkage, we can then use the data to plot the radial and tangential components of the magnetic field in the air gap. The ``B Field Outer Stator``
 Analyzer does this using the following code:
 
 .. code-block:: python
