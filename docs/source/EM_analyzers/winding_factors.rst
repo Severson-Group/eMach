@@ -7,8 +7,8 @@ Model Background
 ****************
 
 Winding factors :math:`\bar{k}_\text{w}` are a way to quantify the effectiveness of a winding and affect various properties of an electric machine including
-harmonics present in the airgap field, electric loading, etc. They can be thought of as a proportion of the geometric vector sum of coil side phases 
-in a phase winding over the algebraic sum, or mathematically using the following expression using a single phase:
+harmonics present in the airgap field, electric loading, etc. They can be thought of as a proportion of the geometric vector sum of the phasors of an individual 
+back-EMF harmonic induced in coil sides of a phase winding over its algebraic sum, or mathematically using the following expression for a single phase:
 
 .. math::
 
