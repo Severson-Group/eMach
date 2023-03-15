@@ -93,7 +93,7 @@ Example code initializing the analyzer and problem1 for the stator and winding l
 
     n = np.array([1,2,3,4,5])
     winding_layout = np.array([[0,0,0,0,-1,-1,0,0,0,0,1,1],[0,0,-1,-1,0,0,0,0,1,1,0,0]])
-    alpha_1 = 0
+    alpha_1 = np.pi/12
     kw_prob = WindingFactorsProblem(n,winding_layout,alpha_1)
 
     kw_ana = WindingFactorsAnalyzer()
