@@ -133,7 +133,7 @@ linkage, all of the harmonics should be considered. While in reality that is not
     )
 
     n = np.arange(1,1000)
-    winding_layout = np.array([[1,1,0,0,0,0,-1,-1,0,0,0,0],[0,0,0,0,-1,-1,0,0,0,0,1,1]])
+    winding_layout = np.array([[0,0,0,0,-1,-1,0,0,0,0,1,1],[0,0,-1,-1,0,0,0,0,1,1,0,0]])
     alpha_1 = np.pi/12
     kw_prob = WindingFactorsProblem(n,winding_layout,alpha_1)
 
@@ -192,7 +192,7 @@ be implemented to redefine the problem and plot the current linkage:
     ax = plt.axes()
     fig1.add_axes(ax)
     # plot current linkage
-    ax.plot(alpha, linkage)
+    ax.plot(alpha*180/np.pi, linkage)
 
     ax.set_xlabel(r"$\alpha$ [deg]")
     ax.set_ylabel("$Current Linkage$ [A]")
