@@ -8,7 +8,7 @@ Model Background
 
 Winding factors :math:`\bar{k}_\text{w}` are a way to quantify the effectiveness of a winding and affect various properties of an electric machine including
 harmonics present in the airgap field, electric loading, etc. They can be thought of as a proportion of the geometric vector sum of coil side phases 
-in a phase winding over the algebraic sum, or mathematically using the following expression usign a single phase:
+in a phase winding over the algebraic sum, or mathematically using the following expression using a single phase:
 
 .. math::
 
@@ -53,7 +53,7 @@ The assumptions made going into the development of this model are:
 Input from User
 ***************
 
-Users are utilizing a single `problem` class to interface with this analyzer. This class requires the user to provide the number of harmonnics desired to
+Users are utilizing a single `problem` class to interface with this analyzer. This class requires the user to provide the number of harmonics desired to
 be analyzed, the winding layout of the stator, and the location of the first slot. It is assumed that the stator winding is excited with symmetric currents
 and that slot fill and skew factors are ideal. The requirements can each be summarized below:
 
@@ -101,7 +101,7 @@ Example code initializing the analyzer and problem1 for the stator and winding l
 Output to User
 ***************
 The winding factors analyzer returns a `WindingFactors` table. This table has structure that the winding factors are listed for each harmonics_list variable. The 
-first value represents the first harmoincs_list variable, the second value represents the second variable, and so on.
+first value represents the first harmonics_list variable, the second value represents the second variable, and so on.
 
 Example code using the analyzer to determine the winding factors for each harmonic is provided below (continuation from previous code block):
 
@@ -144,7 +144,7 @@ linkage, all of the harmonics should be considered. While in reality that is not
     kw_mag = abs(k_w)
     kw_ang = np.angle(k_w)
 
-This block is redefining the harmonics of interset, providing the winding layout and :math:`\alpha_\text{1}`, and actually calculating the winding factors instead
+This block is redefining the harmonics of interest, providing the winding layout and :math:`\alpha_\text{1}`, and actually calculating the winding factors instead
 of having them directly provided. From here, the B Field Outer Stator Analyzer code should be entered as existing. After it is written, the following code should 
 be implemented to redefine the problem and plot the current linkage:
 
@@ -200,7 +200,7 @@ be implemented to redefine the problem and plot the current linkage:
     plt.grid(True, linewidth=0.5, color="#A9A9A9", linestyle="-.")
     plt.show()
 
-This code is taking the MMF function from the B Field Outer Stator Analyzer and calculating the currently linkage directly. Within the B Field Outer Stator Analyzer,
+This code is taking the MMF function from the B Field Outer Stator Analyzer and calculating the current linkage directly. Within the B Field Outer Stator Analyzer,
 this is then used to calculate the radial and tangential components of the B Field. The applied code should return the following plot for the current linkage of the 
 stator and winding layout depicted above:
 
