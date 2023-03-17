@@ -87,6 +87,20 @@ class SPM_RotorSpeedLimitAnalyzer:
         mat_dict = problem.mat_dict
         mat_failure_dict = problem.mat_failure_dict
 
+        # Failure Condition 
+        self.failure_cond = np.array([mat_failure_dict["shaft_yield_strength"],
+                                      mat_failure_dict["core_yield strength"],
+                                      mat_failure_dict["magnet_ultimate_strength"],
+                                      mat_failure_dict["sleeve_ultimate_strength"],
+                                      mat_failure_dict["adhesive_ultimate_strength"]])
+    
+        # Material Array
+        mat = np.array(["Shaft",
+                        "Core",
+                        "Magnet",
+                        "Sleeve",
+                        "Adhesive"])
+        
         # Vector of radius for materials
         r_vect_sh=np.linspace(r_sh/10000,r_sh,100)
         r_vect_rc=np.linspace(r_sh,r_ro-d_m,100)
@@ -101,8 +115,9 @@ class SPM_RotorSpeedLimitAnalyzer:
         sta_analyzer = sta.SPM_RotorStructuralAnalyzer()
         failure_stress_analyzer = static_failure_stress()
 
-        failure_material = None
-        
+        failure_mat = None
+        stop = False
+
         for i in N:
 
             # Create rotor structral problem
@@ -121,34 +136,30 @@ class SPM_RotorSpeedLimitAnalyzer:
             # ASSUMED GLUE STRESS TO BE AT MINIMUM OF MAGNET
             sigma_e_max_ah = np.min(failure_stress_analyzer.von_mises_stress(sta_sigmas[2].radial(r_vect[2]),
                                                             sta_sigmas[2].tangential(r_vect[2]),0))
-            sigma_e_max = np.append(sigma_e_max,sigma_e_max_ah)
+            self.sigma_e_max = np.append(sigma_e_max,sigma_e_max_ah)
 
             # Check maximum stress against failure condition   
-            if sigma_e_max[0] >= mat_failure_dict["shaft_yield_strength"]:
-                failure_material = "Shaft"
+            for j in range(len(self.failure_cond)):
+                if self.sigma_e_max[j] >= self.failure_cond[j]:
+                    failure_mat = mat[j]
+                    stop = True
+                else:
+                    pass
+            if stop:
                 break
-            elif sigma_e_max[1] >= mat_failure_dict["core_yield strength"]:
-                failure_material = "Core"
-                break
-            elif sigma_e_max[2] >= mat_failure_dict["magnet_ultimate_strength"]:
-                failure_material = "Magnet"
-                break
-            elif sigma_e_max[3] >= mat_failure_dict["sleeve_ultimate_strength"]:
-                failure_material = "Sleeve"
-                break
-            elif sigma_e_max[4] >= mat_failure_dict["sleeve_ultimate_strength"]:
-                failure_material = "Adhesive"
-                break
-            else:
-                pass
+
+        print (self.mat_percentage_to_failure())
                 
-        if failure_material != None:
-            print("Failure in " + failure_material + " at speed of " + str(i) + " RPM" )
-            return (failure_material,i)
+        if failure_mat != None:
+            print("Failure in " + failure_mat + " at speed of " + str(i) + " RPM" )
+            return (failure_mat,i)
         else:
             print("No Material Failure")
             pass
-
+        
+    def mat_percentage_to_failure(self):
+            return self.sigma_e_max/self.failure_cond
+        
 class static_failure_stress:
     def __init__(self):
         pass
@@ -280,7 +291,7 @@ r_sh = 5E-3 # [m]
 d_m = 2E-3 # [m]
 r_ro = 12.5E-3 # [m]
 deltaT = 0 # [K]
-N_max = 300E3 # [RPM]
+N_max = 200E3 # [RPM]
 N_step = 100
 d_sl=0 # [m]
 delta_sl=0 # [m]
