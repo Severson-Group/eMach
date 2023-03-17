@@ -118,10 +118,12 @@ class SPM_RotorSpeedLimitAnalyzer:
                  tangential_stress = sta_sigmas[j].tangential(r_vect[j])
                  sigma_e_max[j] = np.max(failure_stress_analyzer.von_mises_stress(radial_stress,tangential_stress,0))
 
+            # ASSUMED GLUE STRESS TO BE AT MINIMUM OF MAGNET
+            sigma_e_max_ah = np.min(failure_stress_analyzer.von_mises_stress(sta_sigmas[2].radial(r_vect[2]),
+                                                            sta_sigmas[2].tangential(r_vect[2]),0))
+            sigma_e_max = np.append(sigma_e_max,sigma_e_max_ah)
 
-            # NEED GLUE
-            speed = i
-            # Check shaft maximum stress    
+            # Check maximum stress against failure condition   
             if sigma_e_max[0] >= mat_failure_dict["shaft_yield_strength"]:
                 failure_material = "Shaft"
                 break
@@ -134,13 +136,18 @@ class SPM_RotorSpeedLimitAnalyzer:
             elif sigma_e_max[3] >= mat_failure_dict["sleeve_ultimate_strength"]:
                 failure_material = "Sleeve"
                 break
+            elif sigma_e_max[4] >= mat_failure_dict["sleeve_ultimate_strength"]:
+                failure_material = "Adhesive"
+                break
             else:
                 pass
                 
-        print(sigma_e_max)
-        print(speed)
-        print(failure_material)
-        
+        if failure_material != None:
+            print("Failure in " + failure_material + " at speed of " + str(i) + " RPM" )
+            return (failure_material,i)
+        else:
+            print("No Material Failure")
+            pass
 
 class static_failure_stress:
     def __init__(self):
@@ -163,10 +170,12 @@ class static_failure_stress:
         self.tangential_stress = tangential_stress
         self.shear_stress = shear_stress
 
-        mohrs_result = self.mohrs_circle()
-        sigma_1 = mohrs_result[0]
-        sigma_2 = mohrs_result[1]
+        # Determine Principle Stress based on 2D Mohr's cicrle method
+        mohrs_stress = self.mohrs_circle()
+        sigma_1 = mohrs_stress[0]
+        sigma_2 = mohrs_stress[1]
 
+        # Von Mises Equivalent Stress for biaxial stress 
         sigma_e = np.sqrt(sigma_1**2+sigma_2**2-sigma_1*sigma_2)
 
         return sigma_e
@@ -192,8 +201,8 @@ class static_failure_stress:
         # Maximum Shear Stress (magnitude)
         tau_max = np.sqrt(tau_xy**2+((sigma_x-sigma_y)/2)**2)
 
-        mohrs_result = np.array([sigma_1,sigma_2,tau_max])
-        return mohrs_result
+        mohrs_stress = np.array([sigma_1,sigma_2,tau_max])
+        return mohrs_stress
         
 
 ######################################################
@@ -272,9 +281,9 @@ d_m = 2E-3 # [m]
 r_ro = 12.5E-3 # [m]
 deltaT = 0 # [K]
 N_max = 300E3 # [RPM]
-N_step = 1000
-d_sl=1E-3 # [m]
-delta_sl=-2.4E-5 # [m]
+N_step = 100
+d_sl=0 # [m]
+delta_sl=0 # [m]
 
 ######################################################
 #Creating problem and analyzer class
@@ -284,6 +293,3 @@ problem = SPM_RotorSpeedLimitProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT,
 
 analyzer = SPM_RotorSpeedLimitAnalyzer()
 analyzer.analyze(problem)
-
-stress = static_failure_stress()
-stress.von_mises_stress(200E6,100E6,0)
