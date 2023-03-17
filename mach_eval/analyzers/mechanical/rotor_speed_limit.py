@@ -60,7 +60,6 @@ class SPM_RotorSpeedLimitProblem:
         self.mat_dict = mat_dict
         self.mat_failure_dict = mat_failure_dict
 
-
 class SPM_RotorSpeedLimitAnalyzer:
     def __init__(self) -> "SPM_RotorSpeedLimitAnalyzer":
         pass
@@ -88,28 +87,60 @@ class SPM_RotorSpeedLimitAnalyzer:
         mat_dict = problem.mat_dict
         mat_failure_dict = problem.mat_failure_dict
 
+        # Vector of radius for materials
         r_vect_sh=np.linspace(r_sh/10000,r_sh,100)
         r_vect_rc=np.linspace(r_sh,r_ro-d_m,100)
         r_vect_pm=np.linspace(r_ro-d_m,r_ro,100)
         r_vect_sl=np.linspace(r_ro,r_ro+d_sl,100)
+        r_vect = np.array([r_vect_sh,r_vect_rc,r_vect_pm,r_vect_sl])
 
-        # Create Speed Array
+        # Create speed Array
         N = np.arange(0,N_max,N_step) 
 
+        # Initialize analyzers
         sta_analyzer = sta.SPM_RotorStructuralAnalyzer()
         failure_stress_analyzer = static_failure_stress()
 
+        failure_material = None
+        
         for i in N:
+
+            # Create rotor structral problem
             sta_problem = sta.SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, i, mat_dict)
+            
+            # Analyze rotor structual problem
             sta_sigmas = sta_analyzer.analyze(sta_problem)
 
-            for j in len(r_vect_sh):
-                failure_stress_analyzer.von_mises_stress()
-                # YOU STOPPED HERE #
+            # Determine maxmium Von Mises Stress for all rotor materials
+            sigma_e_max = np.zeros(len(r_vect))
+            for j in range(len(r_vect)):
+                 radial_stress = sta_sigmas[j].radial(r_vect[j])
+                 tangential_stress = sta_sigmas[j].tangential(r_vect[j])
+                 sigma_e_max[j] = np.max(failure_stress_analyzer.von_mises_stress(radial_stress,tangential_stress,0))
 
-            # Check shaft maximum stress
-            # if max(sta_sigmas[0].radial(r_vect_sh)) >= mat_failure_dict['core_yield strength']:
-            print (i)
+
+            # NEED GLUE
+            speed = i
+            # Check shaft maximum stress    
+            if sigma_e_max[0] >= mat_failure_dict["shaft_yield_strength"]:
+                failure_material = "Shaft"
+                break
+            elif sigma_e_max[1] >= mat_failure_dict["core_yield strength"]:
+                failure_material = "Core"
+                break
+            elif sigma_e_max[2] >= mat_failure_dict["magnet_ultimate_strength"]:
+                failure_material = "Magnet"
+                break
+            elif sigma_e_max[3] >= mat_failure_dict["sleeve_ultimate_strength"]:
+                failure_material = "Sleeve"
+                break
+            else:
+                pass
+                
+        print(sigma_e_max)
+        print(speed)
+        print(failure_material)
+        
 
 class static_failure_stress:
     def __init__(self):
@@ -137,7 +168,6 @@ class static_failure_stress:
         sigma_2 = mohrs_result[1]
 
         sigma_e = np.sqrt(sigma_1**2+sigma_2**2-sigma_1*sigma_2)
-        print(sigma_e)
 
         return sigma_e
 
@@ -241,7 +271,7 @@ r_sh = 5E-3 # [m]
 d_m = 2E-3 # [m]
 r_ro = 12.5E-3 # [m]
 deltaT = 0 # [K]
-N_max = 100E3 # [RPM]
+N_max = 300E3 # [RPM]
 N_step = 1000
 d_sl=1E-3 # [m]
 delta_sl=-2.4E-5 # [m]
