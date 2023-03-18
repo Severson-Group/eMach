@@ -68,13 +68,13 @@ class SPM_RotorSpeedLimitAnalyzer:
         self, problem: "SPM_RotorSpeedLimitProblem",
         ) -> None:
         
-        """Analyze all rotor speed
+        """Analyze rotor to determine failure material and rotational speed
 
         Args:
             problem (PM_RotorSpeedLimitProblem): problem for analyzer.
 
         Returns:
-            results (): Sigma objects
+            results (): 
         """
         r_sh = problem.r_sh
         d_m = problem.d_m
@@ -113,15 +113,15 @@ class SPM_RotorSpeedLimitAnalyzer:
 
         # Initialize analyzers
         sta_analyzer = sta.SPM_RotorStructuralAnalyzer()
-        failure_stress_analyzer = static_failure_stress()
+        fs_analyzer = StaticFailureStress()
 
         failure_mat = None
         stop = False
 
-        for i in N:
+        for speed in N:
 
             # Create rotor structral problem
-            sta_problem = sta.SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, i, mat_dict)
+            sta_problem = sta.SPM_RotorStructuralProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, speed, mat_dict)
             
             # Analyze rotor structual problem
             sta_sigmas = sta_analyzer.analyze(sta_problem)
@@ -131,36 +131,36 @@ class SPM_RotorSpeedLimitAnalyzer:
             for j in range(len(r_vect)):
                  radial_stress = sta_sigmas[j].radial(r_vect[j])
                  tangential_stress = sta_sigmas[j].tangential(r_vect[j])
-                 sigma_e_max[j] = np.max(failure_stress_analyzer.von_mises_stress(radial_stress,tangential_stress,0))
+                 sigma_e_max[j] = np.max(fs_analyzer.von_mises_stress(radial_stress,tangential_stress,0))
 
             # ASSUMED GLUE STRESS TO BE AT MINIMUM OF MAGNET
-            sigma_e_max_ah = np.min(failure_stress_analyzer.von_mises_stress(sta_sigmas[2].radial(r_vect[2]),
+            sigma_e_max_ah = np.min(fs_analyzer.von_mises_stress(sta_sigmas[2].radial(r_vect[2]),
                                                             sta_sigmas[2].tangential(r_vect[2]),0))
             self.sigma_e_max = np.append(sigma_e_max,sigma_e_max_ah)
 
-            # Check maximum stress against failure condition   
-            for j in range(len(self.failure_cond)):
-                if self.sigma_e_max[j] >= self.failure_cond[j]:
-                    failure_mat = mat[j]
+            # Check maximum stress against failure condition to determine failure speed and material
+            pct_to_fail = self.mat_pct_to_fail()
+            for i, pct in enumerate(pct_to_fail):
+                if pct >= 1:
+                    failure_mat = mat[i]
                     stop = True
                 else:
                     pass
             if stop:
                 break
 
-        print (self.mat_percentage_to_failure())
-                
-        if failure_mat != None:
-            print("Failure in " + failure_mat + " at speed of " + str(i) + " RPM" )
-            return (failure_mat,i)
+        if failure_mat is not None:
+            # if failure is found, material and speed is returned
+            return (failure_mat,speed)
         else:
-            print("No Material Failure")
-            pass
+            # if no failure, return "None"
+            return None
         
-    def mat_percentage_to_failure(self):
+    def mat_pct_to_fail(self):
+            # Determine the material percentage to failure based on failure stress 
             return self.sigma_e_max/self.failure_cond
         
-class static_failure_stress:
+class StaticFailureStress:
     def __init__(self):
         pass
 
@@ -303,4 +303,7 @@ problem = SPM_RotorSpeedLimitProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT,
                                      N_max, N_step, mat_dict, mat_failure_dict)
 
 analyzer = SPM_RotorSpeedLimitAnalyzer()
-analyzer.analyze(problem)
+test = analyzer.analyze(problem)
+print(test)
+test2 = analyzer.mat_pct_to_fail()
+print(test2)
