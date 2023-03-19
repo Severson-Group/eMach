@@ -65,8 +65,8 @@ class SPM_RotorSpeedLimitAnalyzer:
         pass
 
     def analyze(
-        self, problem: "SPM_RotorSpeedLimitProblem",
-        ) -> None:
+        self, problem: "SPM_RotorSpeedLimitProblem"
+        ):
         
         """Analyze rotor to determine failure material and rotational speed
 
@@ -88,7 +88,7 @@ class SPM_RotorSpeedLimitAnalyzer:
         mat_failure_dict = problem.mat_failure_dict
 
         # Failure Condition 
-        self.failure_cond = np.array([mat_failure_dict["shaft_yield_strength"],
+        self.mat_fail_cond = np.array([mat_failure_dict["shaft_yield_strength"],
                                       mat_failure_dict["core_yield strength"],
                                       mat_failure_dict["magnet_ultimate_strength"],
                                       mat_failure_dict["sleeve_ultimate_strength"],
@@ -113,7 +113,6 @@ class SPM_RotorSpeedLimitAnalyzer:
 
         # Initialize analyzers
         sta_analyzer = sta.SPM_RotorStructuralAnalyzer()
-        fs_analyzer = StaticFailureStress()
 
         failure_mat = None
         stop = False
@@ -127,16 +126,21 @@ class SPM_RotorSpeedLimitAnalyzer:
             sta_sigmas = sta_analyzer.analyze(sta_problem)
 
             # Determine maxmium Von Mises Stress for all rotor materials
-            sigma_e_max = np.zeros(len(r_vect))
+            sigma_max = np.zeros(len(r_vect))
             for j in range(len(r_vect)):
-                 radial_stress = sta_sigmas[j].radial(r_vect[j])
-                 tangential_stress = sta_sigmas[j].tangential(r_vect[j])
-                 sigma_e_max[j] = np.max(fs_analyzer.von_mises_stress(radial_stress,tangential_stress,0))
+                sigma_t = sta_sigmas[j].tangential(r_vect[j])
+                sigma_r = sta_sigmas[j].radial(r_vect[j])
+                ss = StaticStressAnalyzer(sigma_t,sigma_r)
+
+                if j <= 1:
+                    sigma_max[j] = np.max(ss.von_mises_stress())
+                else:
+                    sigma_max[j] = np.max(ss.tresca_stress())
 
             # ASSUMED GLUE STRESS TO BE AT MINIMUM OF MAGNET
-            sigma_e_max_ah = np.min(fs_analyzer.von_mises_stress(sta_sigmas[2].radial(r_vect[2]),
-                                                            sta_sigmas[2].tangential(r_vect[2]),0))
-            self.sigma_e_max = np.append(sigma_e_max,sigma_e_max_ah)
+            ss = StaticStressAnalyzer(sta_sigmas[1].tangential(r_ro-d_m),sta_sigmas[1].radial(r_ro-d_m))
+            sigma_max_ah = np.min(ss.tresca_stress())
+            self.sigma_max = np.append(sigma_max,sigma_max_ah)
 
             # Check maximum stress against failure condition to determine failure speed and material
             pct_to_fail = self.mat_pct_to_fail()
@@ -158,64 +162,61 @@ class SPM_RotorSpeedLimitAnalyzer:
         
     def mat_pct_to_fail(self):
             # Determine the material percentage to failure based on failure stress 
-            return self.sigma_e_max/self.failure_cond
+            return self.sigma_max/self.mat_fail_cond
         
-class StaticFailureStress:
-    def __init__(self):
-        pass
+class StaticStressAnalyzer:
+    def __init__(self,sigma_x,sigma_y,sigma_z = 0):
+        self.sigma_x = sigma_x
+        self.sigma_y = sigma_y
+        self.sigma_z = np.full(len(sigma_x),sigma_z)
 
-    def von_mises_stress(self,radial_stress,tangential_stress,shear_stress):
-        """ Determine Principle Stresses (sigma_1, sigma_2) 
-        and Maximum Shear Stress (tau_maximum) using 2D Mohr's Circle Method
-        
-        Args:
-            radial_stress (float): Radial stress on element (y-dir)
-            tangential_stres (float): Tangential stress on element (x-dir)
-            shear_stress (float): Shear Stress on element 
-            
-        Returns:
-            mohrs_result (np.array): numpy array of mohrs cicrle principle stresses and maxmimum shear stress
-        """
+        # Stack nominal stress arrays
+        self.sigma_normal = np.stack((self.sigma_x, self.sigma_y, self.sigma_z), axis=1)
 
-        self.radial_stress = radial_stress
-        self.tangential_stress = tangential_stress
-        self.shear_stress = shear_stress
-
-        # Determine Principle Stress based on 2D Mohr's cicrle method
+    def von_mises_stress(self):
+        # Determine Principle Stress based on 3D Mohr's cicrle method
         mohrs_stress = self.mohrs_circle()
         sigma_1 = mohrs_stress[0]
         sigma_2 = mohrs_stress[1]
+        sigma_3 = mohrs_stress[2]
 
-        # Von Mises Equivalent Stress for biaxial stress 
-        sigma_e = np.sqrt(sigma_1**2+sigma_2**2-sigma_1*sigma_2)
-
+        # Von Mises Equivalent Stress 
+        sigma_e = np.sqrt(2)/2*np.sqrt((sigma_2-sigma_1)**2+(sigma_3-sigma_1)**2+(sigma_3-sigma_2)**2)
         return sigma_e
 
-    def mohrs_circle(self):
-        """ Determine Principle Stresses (sigma_1, sigma_2) 
-        and Maximum Shear Stress (tau_maximum) using 2D Mohr's Circle Method
-        
-        Args:
-            None
+    def tresca_stress(self):
+        # Determine Tresca/MSST stress
+        mohrs_stress = self.mohrs_circle()
+        sigma_1 = mohrs_stress[0]
+        sigma_3 = mohrs_stress[2]
+        return sigma_1-sigma_3
 
+    def mohrs_circle(self):
+        """ Determine Principle Stresses (sigma_1, sigma_2, sigma_3) 
+        and Maximum Shear Stress (tau_maximum) using 3D Mohr's Circle Method
+        ( Applied shear stress terms are omitted in calculation )
+        
         Returns:
             mohrs_result (np.array): numpy array of mohrs cicrle principle stresses and maxmimum shear stress
         """
-        sigma_x = self.tangential_stress
-        sigma_y = self.radial_stress
-        tau_xy = self.shear_stress
+    
+        # Sort arrays for determining principle stresses
+        sigma_normal_s = np.sort(self.sigma_normal)
+
+        # Split arrays into three arrays
+        sigma_principle = [np.array(x) for x in zip(*sigma_normal_s)] 
 
         # Principle Stresses
-        sigma_1 = (sigma_x+sigma_y)/2 + np.sqrt(tau_xy**2+((sigma_x-sigma_y)/2)**2)
-        sigma_2 = (sigma_x+sigma_y)/2 - np.sqrt(tau_xy**2+((sigma_x-sigma_y)/2)**2)
+        sigma_1 = sigma_principle[2]
+        sigma_2 = sigma_principle[1]
+        sigma_3 = sigma_principle[0]
 
-        # Maximum Shear Stress (magnitude)
-        tau_max = np.sqrt(tau_xy**2+((sigma_x-sigma_y)/2)**2)
+        # Maximum Shear Stress
+        tau_max = (sigma_1-sigma_3)/2
 
-        mohrs_stress = np.array([sigma_1,sigma_2,tau_max])
+        mohrs_stress = np.array([sigma_1,sigma_2,sigma_3,tau_max])
         return mohrs_stress
         
-
 ######################################################
 # Creating the required Material Dictionary
 ######################################################
@@ -291,8 +292,8 @@ r_sh = 5E-3 # [m]
 d_m = 2E-3 # [m]
 r_ro = 12.5E-3 # [m]
 deltaT = 0 # [K]
-N_max = 200E3 # [RPM]
-N_step = 100
+N_max = 100E3 # [RPM]
+N_step = 10
 d_sl=0 # [m]
 delta_sl=0 # [m]
 
