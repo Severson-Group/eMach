@@ -64,9 +64,7 @@ class SPM_RotorSpeedLimitAnalyzer:
     def __init__(self) -> "SPM_RotorSpeedLimitAnalyzer":
         pass
 
-    def analyze(
-        self, problem: "SPM_RotorSpeedLimitProblem"
-        ):
+    def analyze(self, problem: "SPM_RotorSpeedLimitProblem"):
         
         """Analyze rotor to determine failure material and rotational speed
 
@@ -150,6 +148,8 @@ class SPM_RotorSpeedLimitAnalyzer:
                     stop = True
                 else:
                     pass
+            
+            # If failure is found, break speed for loop
             if stop:
                 break
 
@@ -174,7 +174,11 @@ class StaticStressAnalyzer:
         self.sigma_normal = np.stack((self.sigma_x, self.sigma_y, self.sigma_z), axis=1)
 
     def von_mises_stress(self):
-        # Determine Principle Stress based on 3D Mohr's cicrle method
+        """ Determine Von Mises Equivalent Stress.
+
+        Returns:
+            sigma_e (float): Von Mises Equivalent Stress.
+        """
         mohrs_stress = self.mohrs_circle()
         sigma_1 = mohrs_stress[0]
         sigma_2 = mohrs_stress[1]
@@ -185,7 +189,12 @@ class StaticStressAnalyzer:
         return sigma_e
 
     def tresca_stress(self):
-        # Determine Tresca/MSST stress
+        """ Determine Tresca Stress (yield) based on MSST/Tresca criterion.
+
+        Returns:
+            sigma_1-sigma_3 (float): Tresca Stress (yield).
+        """
+        # Determine Tresca/MSST stress (yield)
         mohrs_stress = self.mohrs_circle()
         sigma_1 = mohrs_stress[0]
         sigma_3 = mohrs_stress[2]
@@ -193,11 +202,11 @@ class StaticStressAnalyzer:
 
     def mohrs_circle(self):
         """ Determine Principle Stresses (sigma_1, sigma_2, sigma_3) 
-        and Maximum Shear Stress (tau_maximum) using 3D Mohr's Circle Method
+        and Maximum Shear Stress (tau_maximum) using 3D Mohr's Circle Method.
         ( Applied shear stress terms are omitted in calculation )
         
         Returns:
-            mohrs_result (np.array): numpy array of mohrs cicrle principle stresses and maxmimum shear stress
+            mohrs_result (np.array): numpy array of mohrs cicrle principle stresses and maxmimum shear stress.
         """
     
         # Sort arrays for determining principle stresses
@@ -276,7 +285,7 @@ mat_failure_dict = {
 
     # Material: LOCTITE® AA 332™
     # Failure Mode: At break (Ultimate)
-    'adhesive_ultimate_strength': 1.79E7,  # Pa
+    'adhesive_ultimate_strength': 17.9E6,  # Pa
 }
 
 # Sources
@@ -292,7 +301,7 @@ r_sh = 5E-3 # [m]
 d_m = 2E-3 # [m]
 r_ro = 12.5E-3 # [m]
 deltaT = 0 # [K]
-N_max = 100E3 # [RPM]
+N_max = 200E3 # [RPM]
 N_step = 10
 d_sl=0 # [m]
 delta_sl=0 # [m]
