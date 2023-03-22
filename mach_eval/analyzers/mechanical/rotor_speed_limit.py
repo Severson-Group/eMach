@@ -105,6 +105,16 @@ class SPM_RotorSpeedLimitAnalyzer:
             return (True, failure_mat, speed)
         
     def check_if_fail(self, speed):
+        """ Check if rotor material failure occured for a given rotational speed
+
+        Args:
+            speed (float): rotational speed of rotor 
+
+        Returns:
+            results (tuple): Tuple(True, failure_mat) 
+            results (tuple): Tuple(False, None)
+        """
+
         # Material Array
         # ( Must follow this specific order )
         materials = np.array(["Shaft",
@@ -151,14 +161,19 @@ class SPM_RotorSpeedLimitAnalyzer:
 
             if mat in ["Shaft", "Core"]:
                 # Use Von Mises Stress for ductile materials
+                # [0] index provides Von Mises Stress
                 sigma_max[idx] = np.max(ss_stress[0])
             else:
                 # Use Tresca Stress for brittle material
+                # [1] index provides Tresca Stress (yield)
                 sigma_max[idx] = np.max(ss_stress[1])
 
-        # ASSUMED GLUE STRESS TO BE AT MINIMUM OF CORE
-        ss_problem = SteadyStateStressProblem(st_sigmas[1].tangential(self.r_ro-self.d_m),
-                                         st_sigmas[1].radial(self.r_ro-self.d_m))
+        # Determine adhesive Tresca Stress
+        # (assumed to be at the interface between core and magnet with zero thickness)
+        # (self.r_vect[4] is the radial location of the adhesive)
+        core_idx = np.where(materials == "Core")[0][0]
+        ss_problem = SteadyStateStressProblem(st_sigmas[core_idx].tangential(self.r_vect[4]),
+                                         st_sigmas[core_idx].radial(self.r_vect[4]))
         ss_stress = ss_analyzer.analyze(ss_problem)
         sigma_max[-1] = np.min(ss_stress[1])
 
@@ -173,8 +188,6 @@ class SPM_RotorSpeedLimitAnalyzer:
             if pct >= pct_max:
                 failure_mat = materials[idx]
                 return (True,failure_mat)
-            else:
-                pass
             
         return (False, None)
         
