@@ -24,13 +24,13 @@ This tutorial requires that ``eMach`` and the associated packages are installed:
 Step 1: Open Previous Tutorial File
 ------------------------------------------
 
-This tutorial will take example of the classes created in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. All code for this tutorial should be placed in the ``mach_eval_tutorial.py`` file.
+This tutorial will use the classes created in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. The instructions are written so that tutorial participants modify the previously-created ``mach_eval_tutorial.py``.
 
 
 Step 2: Update Import Statements
 ------------------------------------------
 
-At the top of the python file add the following import statements to add the required modules for this tutorial. 
+At the top of the ``mach_eval_tutorial.py`` file, add the following import statements to add the required modules for this tutorial. 
 
 .. code-block:: python
 	
@@ -39,7 +39,7 @@ At the top of the python file add the following import statements to add the req
 	
 Step 3: Add Constraints Step
 ------------------------------------------
-The following class defines an additional ``EvaluationStep`` introduced in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to be discarded during the evaluation process. Copy this code into the python file near the other ``EvalutationSteps``. 
+The following class defines an additional ``EvaluationStep`` introduced in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to be discarded during the evaluation process. Copy this code into the ``mach_eval_tutorial.py`` file near the other ``EvalutationSteps``. 
 
 .. code-block:: python
 
@@ -73,7 +73,7 @@ Step 4.1: ProblemDefinition
 
 The ``ProblemDefinition`` protocol is designed to convert the input state the ``AnalysisStep`` receives, into a ``problem`` class which the ``Analyzer`` can use. The purpose for this class is to allow for ``Analyzers`` to be written generally, not in respect to a specific optimization. By parsing the ``state`` object into a set ``problem``, the ``Analyzer`` does not need to interact with any superfluous information contained in the ``state`` object.
 
-In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the following sub-step) is given in the following code block. The ``problem`` class effectively acts as container of relevant information for the ``Analyzer``. Copy this code into the python file near the other class definitions. 
+In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the following sub-step) is given in the following code block. The ``problem`` class effectively acts as container of relevant information for the ``Analyzer``. Copy this code into the ``mach_eval_tutorial.py`` file near the other class definitions. 
 
 .. code-block:: python
 
@@ -84,7 +84,7 @@ In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the f
             self.h=h
             self.T_out=T_out
 
-The implementation of the ``ProblemDefinition`` protocol is provided in the following code block. The only specified method for this protocol is ``get_problem`` which converts the input ``state`` to the ``problem`` object. Copy this code into the python file under the ``ThermalProblem`` class. 
+The implementation of the ``ProblemDefinition`` protocol is provided in the following code block. The only specified method for this protocol is ``get_problem`` which converts the input ``state`` to the ``problem`` object. Copy this code into the ``mach_eval_tutorial.py`` file under the ``ThermalProblem`` class. 
 
 .. code-block:: python
 
@@ -106,7 +106,7 @@ Step 4.2: Analyzer
 
 As mentioned in the previous sub-step, the ``Analyzer`` protocol is designed to allow for modular and generalized analysis process to be utilized by multiple optimization. Typically implementations of ``Analyzers`` should be code which is lengthy enough to warrant the added complexity over the ``EvaluationStep`` protocol, or be code which is designed to be utilized by multiple optimization. For this example, the ``Analyzer`` is simple and could have been defined as an ``EvaluationStep`` but is defined this way to demonstrate how to implement the relevant classes. 
 
-The only required method of the ``Analyzer`` protocol is the ``analyze`` method, which takes in a ``problem`` object and returns results of the analysis. Though not explicitly checked, each analyzer will have a problem class it is associated with, which defines the information that the analyzer needs. The example analyzer for this tutorial is provided in the following code block. The class checks to see if the temperature rise of the stator will exceed the maximum allowable temperature. If this occurs, then the analyzer raises the ``mo.InvalidDesign`` exception. Copy this code under the ``ThermalProblemDefinition`` class in the python file.
+The only required method of the ``Analyzer`` protocol is the ``analyze`` method, which takes in a ``problem`` object and returns results of the analysis. Though not explicitly checked, each analyzer will have a problem class it is associated with, which defines the information that the analyzer needs. The example analyzer for this tutorial is provided in the following code block. The class checks to see if the temperature rise of the stator will exceed the maximum allowable temperature. If this occurs, then the analyzer raises the ``mo.InvalidDesign`` exception. Paste this code under the ``ThermalProblemDefinition`` class in the ``mach_eval_tutorial.py`` file.
 
 .. code-block:: python
 
@@ -128,7 +128,7 @@ The only required method of the ``Analyzer`` protocol is the ``analyze`` method,
 Step 4.3: PostAnalyzer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step, back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../analytical_machine_des_tutorial/index>`. Copy the following code block into the python file under the ``ThermalAnalyzer`` class.
+The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step, back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../analytical_machine_des_tutorial/index>`. Copy the following code block into the ``mach_eval_tutorial.py`` file under the ``ThermalAnalyzer`` class.
 
 .. code-block:: python
 
@@ -146,7 +146,7 @@ In this step, a ``DesignSpace`` class is created to allow for the example machin
 
 .. note:: The results of the ``MachineEvaluator`` are an ordered list of [ input_state, evaluation results, output_state] for each ``EvaluationStep`` which is injected. The ``DesignSpace`` class often needs only to access the last state of the evaluation process. The code ``last_results=full_results[-1]`` and ``last_state=last_results[-1]`` provide the user easy access to the final state of the evaluation process.
 
-Copy the following code into the python file to define the ``DesignSpace`` for this example.
+Copy the following code into the ``mach_eval_tutorial.py`` file to define the ``DesignSpace`` for this example.
 
 .. code-block:: python
 
@@ -178,7 +178,7 @@ Copy the following code into the python file to define the ``DesignSpace`` for t
         def bounds(self) -> tuple:
             return self._bounds
 
-Once again, a dummy ``DataHandler`` is defined for this tutorial. Copy the following code into the python file.
+Once again, a dummy ``DataHandler`` is defined for this tutorial. Copy the following code into the ``mach_eval_tutorial.py`` file.
 			
 .. code-block:: python
 		
@@ -192,7 +192,7 @@ Once again, a dummy ``DataHandler`` is defined for this tutorial. Copy the follo
 Step 6: Run the optimization
 --------------------------------
 
-In order to run the optimization, the new classes must be initialized, and the evaluator must be modified to include the new steps. Modify the code at the bottom of the python file to include the following when defining the ``MachineEvaluator``. Note that the new steps are injected into the list of ``EvalutationSteps``
+In order to run the optimization, the new classes must be initialized, and the evaluator must be modified to include the new steps. Modify the code at the bottom of the ``mach_eval_tutorial.py`` file to include the following when defining the ``MachineEvaluator``. Note that the new steps are injected into the list of ``EvalutationSteps``
 
 .. code-block:: python
 
