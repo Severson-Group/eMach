@@ -84,7 +84,7 @@ In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the f
             self.h=h
             self.T_out=T_out
 
-The implementation of the ``ProblemDefinition`` protocol is provided in the following code block. The only specified method for this protocol is ``get_problem`` which converts the input ``state`` to the ``problem`` object. Copy this code into the ``mach_eval_tutorial.py`` file under the ``ThermalProblem`` class. 
+The implementation of the ``ProblemDefinition`` protocol is provided in the following code block. This protocol requires that the developer implement a single method, ``get_problem``, which converts the input ``state`` to the ``problem`` object. Copy this code into the ``mach_eval_tutorial.py`` file under the ``ThermalProblem`` class. 
 
 .. code-block:: python
 
