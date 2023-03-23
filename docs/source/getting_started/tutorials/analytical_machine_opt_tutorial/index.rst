@@ -239,7 +239,7 @@ The following code initializes the ``DataHandler`` and ``DesignSpace`` classes, 
     plot1.set_title('Pareto Front')
     plt.savefig('ParetoFront.svg')
 
-If the code was correctly implemented, then the results of the optimization should look similar to the following plot.
+If the code was correctly implemented, the results of the optimization should look similar to the following plot.
 
 .. figure:: ./images/ParetoFront.svg
    :alt: Trial1 
@@ -249,4 +249,4 @@ If the code was correctly implemented, then the results of the optimization shou
 Conclusion
 ----------
 
-You have successfully completed this tutorial which demonstrate the full functionality of the ``mach_eval`` module and shows of the evaluation process can be coupled with the optimization framework of ``mach_opt``. You should now be ready to define your own optimizations using ``eMach``.
+You have successfully completed this tutorial to demonstrate the full functionality of the ``mach_eval`` module and its connection to the optimization framework of ``mach_opt``. You are now ready to create your own optimization workflows using ``eMach``.
