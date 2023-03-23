@@ -128,7 +128,7 @@ The only required method of the ``Analyzer`` protocol is the ``analyze`` method,
 Step 4.3: PostAnalyzer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step, back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../analytical_machine_des_tutorial/index>`. Copy the following code block into the ``mach_eval_tutorial.py`` file under the ``ThermalAnalyzer`` class.
+The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../analytical_machine_des_tutorial/index>`. Copy the following code block into the ``mach_eval_tutorial.py`` file under the ``ThermalAnalyzer`` class.
 
 .. code-block:: python
 
