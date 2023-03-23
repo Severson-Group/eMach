@@ -39,7 +39,7 @@ At the top of the ``mach_eval_tutorial.py`` file, add the following import state
 	
 Step 3: Add Constraints Step
 ------------------------------------------
-The following class defines an additional ``EvaluationStep`` introduced in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception which is defined in the ``mach_opt`` repository, which when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization, and allows for designs to be discarded during the evaluation process. Copy this code into the ``mach_eval_tutorial.py`` file near the other ``EvalutationSteps``. 
+The following class defines an additional ``EvaluationStep`` introduced in the :doc:`analytical machine design tutorial <../analytical_machine_des_tutorial/index>`. This step is designed to check if the tip speed of the rotor exceeds an upper bound. This class introduces a new tool: the ``mo.InvalidDesign`` exception. This is an exception defined in the ``mach_opt`` repository that when raised will exit the evaluation process in the ``fitness`` method of the ``MachineDesignProblem`` class and return back large objective values. This effectively acts as a death penalty constraint for the optimization and allows for invalid designs to be discarded during the evaluation process. Copy this code into the ``mach_eval_tutorial.py`` file near the other ``EvalutationSteps``. 
 
 .. code-block:: python
 
