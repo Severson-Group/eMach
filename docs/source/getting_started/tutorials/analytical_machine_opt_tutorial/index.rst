@@ -142,9 +142,7 @@ The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition
 Step 5: Create DesignSpace 
 --------------------------------
 
-In this step, a ``DesignSpace`` class is created to allow for the example machine to be optimized for maximizing power and power density. The following code block demonstrates how the results returned by the ``MachineEvaluator`` of ``mach_eval`` can be utilized by the ``DesignSpace`` class of the ``mach_opt`` module. 
-
-.. note:: The results of the ``MachineEvaluator`` are an ordered list of [input_state, evaluation results, output_state] for each ``EvaluationStep`` which is injected. The ``DesignSpace`` class often needs only to access the last state of the evaluation process. The code ``last_results=full_results[-1]`` and ``last_state=last_results[-1]`` provide the user easy access to the final state of the evaluation process.
+In this step, a ``DesignSpace`` class is created to configure the optimization workflow. The optimization is intended to maximize power and power density. The example code demonstrates how the results returned by the ``MachineEvaluator`` of ``mach_eval`` can be utilized by the ``DesignSpace`` class of the ``mach_opt`` module. 
 
 Copy the following code into the ``mach_eval_tutorial.py`` file to define the ``DesignSpace`` for this example.
 
@@ -177,6 +175,8 @@ Copy the following code into the ``mach_eval_tutorial.py`` file to define the ``
         @property
         def bounds(self) -> tuple:
             return self._bounds
+
+.. note:: The results of the ``MachineEvaluator`` are an ordered list of [input_state, evaluation results, output_state] for each ``EvaluationStep`` which is injected. The ``DesignSpace`` class often needs only to access the last state of the evaluation process. The code ``last_results=full_results[-1]`` and ``last_state=last_results[-1]`` provide the user easy access to the final state of the evaluation process.
 
 Once again, a dummy ``DataHandler`` is defined for this tutorial. Copy the following code into the ``mach_eval_tutorial.py`` file.
 			
