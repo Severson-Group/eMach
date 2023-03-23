@@ -50,7 +50,7 @@ class BFieldOuterStatorProblem1:
         Returns:
             mmf: Current linkage or Magneto-Motive Force
         """
-        mmf = m / np.pi * zq * N * k_w * I_hat / n
+        mmf = m / np.pi * zq * N * k_w * I_hat / n * np.exp(-np.pi / 2 * 1j)
         return mmf
 
 
