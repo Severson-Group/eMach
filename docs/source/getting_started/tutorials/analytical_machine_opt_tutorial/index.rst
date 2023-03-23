@@ -71,9 +71,9 @@ The example provided in this step will demonstrate the functionality of these pr
 Step 4.1: ProblemDefinition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``ProblemDefinition`` protocol is designed to convert the input state the ``AnalysisStep`` receives, into a ``problem`` class which the ``Analyzer`` can use. The purpose for this class is to allow for ``Analyzers`` to be written generally, not in respect to a specific optimization. By parsing the ``state`` object into a set ``problem``, the ``Analyzer`` does not need to interact with any superfluous information contained in the ``state`` object.
+The ``ProblemDefinition`` protocol is designed to convert the input state the ``AnalysisStep`` receives into a ``problem`` class which the ``Analyzer`` can use. The purpose for this class is to allow for ``Analyzers`` to be written generally, not in respect to a specific optimization. By parsing the ``state`` object into a set ``problem``, the ``Analyzer`` does not need to interact with any superfluous information contained in the ``state`` object.
 
-In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the following sub-step) is given in the following code block. The ``problem`` class effectively acts as container of relevant information for the ``Analyzer``. Copy this code into the ``mach_eval_tutorial.py`` file near the other class definitions. 
+In this example, the ``problem`` defined by the ``Analyzer`` (discussed in the following sub-step) is given in the following code block. The ``problem`` class effectively acts as a container of relevant information for the ``Analyzer``. Copy this code into the ``mach_eval_tutorial.py`` file near the other class definitions. 
 
 .. code-block:: python
 
@@ -106,7 +106,7 @@ Step 4.2: Analyzer
 
 As mentioned in the previous sub-step, the ``Analyzer`` protocol is designed to allow for modular, generalized, and reusable analysis code that is capable of studying aspects of multiple machine types. It usually makes sense to create an ``Analyzer`` for code that is lengthy enough to warrant the added complexity over the ``EvaluationStep`` protocol and/or is likely to be useful to other developers to study multiple machine types. `mach_cad` comes with many `Analyzer` classes already provided (browse the `Analyzers` section of the table of contents). Developers are encouraged to contribute their analyzers to this collection for the benefit of others.
 
-The only required method of the ``Analyzer`` protocol is the ``analyze`` method, which takes in a ``problem`` object and returns results of the analysis. Though not explicitly checked, each analyzer will have a problem class it is associated with, which defines the information that the analyzer needs. The example analyzer for this tutorial is provided in the following code block. The class checks to see if the temperature rise of the stator will exceed the maximum allowable temperature. If this occurs, then the analyzer raises the ``mo.InvalidDesign`` exception. Paste this code under the ``ThermalProblemDefinition`` class in the ``mach_eval_tutorial.py`` file.
+The only required method of the ``Analyzer`` protocol is the ``analyze`` method, which takes in a ``problem`` object and returns results of the analysis. Though not explicitly checked, each analyzer will have a problem class it is associated with, which defines the information that the analyzer needs. The example analyzer for this tutorial is provided in the following code block. The class checks to see if the temperature rise of the stator will exceed the maximum allowable temperature. If this occurs, the analyzer raises the ``mo.InvalidDesign`` exception. Paste this code under the ``ThermalProblemDefinition`` class in the ``mach_eval_tutorial.py`` file.
 
 .. code-block:: python
 
@@ -128,7 +128,7 @@ The only required method of the ``Analyzer`` protocol is the ``analyze`` method,
 Step 4.3: PostAnalyzer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``PostAnalyzer`` class is effectively the inverse of the ``ProblemDefinition`` class. It converts the results of the analysis step back into a ``state`` object. The required method for the ``PostAnalyzer`` is the ``get_next_state`` method which takes in the results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and returns a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../analytical_machine_des_tutorial/index>`. Copy the following code block into the ``mach_eval_tutorial.py`` file under the ``ThermalAnalyzer`` class.
+The ``PostAnalyzer`` class can be thought of as the inverse of the ``ProblemDefinition`` class: it converts the results of the analysis step back into a ``state`` object. The ``PostAnalyzer`` protocol requires that this class implement a ``get_next_state`` method to receive results from the ``Analyzer`` and the input state passed to the ``ProblemDefinition`` and return a new state object. The implementation of the ``PostAnalyzer`` should utilize the ``deepcopy`` function as described in the :doc:`previous tutorial <../analytical_machine_des_tutorial/index>`. Copy the following code block into the ``mach_eval_tutorial.py`` file under the ``ThermalAnalyzer`` class.
 
 .. code-block:: python
 
