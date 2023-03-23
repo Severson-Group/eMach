@@ -51,7 +51,9 @@ Users can choose between the following two `problem` classes to interface with t
 Both the winding factors and the MMF harmonics are to be provided 
 as complex values representing the magnitude and phase of a Fourier Series. The phase must be provided cosidering the following cosine function: 
 :math:`\hat{F}_n \cos(n\alpha + \phi_n)`, where :math:`\hat{F}_n` is the magnitude of the MMF and :math:`\phi_n` is the phase shift at 
-harmonic :math:`n`.  A graphical representation of a stator winding MMF harmonics, along with the phase shift at each harmonic is provided 
+harmonic :math:`n`.  
+
+A graphical representation of a stator winding MMF harmonics, along with the phase shift at each harmonic is provided 
 in the figure below for clarification. The MMF input provided by the user to the analyzer to determine the fields originating from this 
 winding should be [:math:`200 \times e^{-j\pi/3}`, :math:`100 \times e^{j\pi/6}`, :math:`50 \times e^{j0}`] A-turns. The harmonics 
 corresponding to each MMF component, i.e [1, 2, 5], must also be provided to the analyzer as a separate argument.
