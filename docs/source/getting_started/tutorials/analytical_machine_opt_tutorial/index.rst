@@ -144,7 +144,7 @@ Step 5: Create DesignSpace
 
 In this step, a ``DesignSpace`` class is created to allow for the example machine to be optimized for maximizing power and power density. The following code block demonstrates how the results returned by the ``MachineEvaluator`` of the ``mach_eval`` can be utilized by the ``DesignSpace`` class of the ``mach_opt`` module. 
 
-.. note:: The results of the ``MachineEvaluator`` are an ordered list of [ input_state, evaluation results, output_state] for each ``EvaluationStep`` which is injected. The ``DesignSpace`` class often needs only to access the last state of the evaluation process. The code ``last_results=full_results[-1]`` and ``last_state=last_results[-1]`` provide the user easy access to the final state of the evaluation process.
+.. note:: The results of the ``MachineEvaluator`` are an ordered list of [input_state, evaluation results, output_state] for each ``EvaluationStep`` which is injected. The ``DesignSpace`` class often needs only to access the last state of the evaluation process. The code ``last_results=full_results[-1]`` and ``last_state=last_results[-1]`` provide the user easy access to the final state of the evaluation process.
 
 Copy the following code into the ``mach_eval_tutorial.py`` file to define the ``DesignSpace`` for this example.
 
