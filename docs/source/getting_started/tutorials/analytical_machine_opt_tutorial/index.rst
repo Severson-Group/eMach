@@ -64,7 +64,7 @@ The ``AnalysisStep`` class of ``mach_eval`` is a concrete class which implements
 
 * ``ProblemDefinition``
 * ``Analyzer``
-* ``Post Analyzer``
+* ``PostAnalyzer``
 
 The example provided in this step will demonstrate the functionality of these protocols and their role in defining the ``AnalysisStep`` functionality for a simple thermal analysis.
 
