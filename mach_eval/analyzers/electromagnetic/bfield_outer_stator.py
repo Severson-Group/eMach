@@ -50,8 +50,7 @@ class BFieldOuterStatorProblem1:
         Returns:
             mmf: Current linkage or Magneto-Motive Force
         """
-        
-        mmf = m / np.pi * zq * Nc * k_w * I_hat / n
+        mmf = m / np.pi * zq * Nc * k_w * I_hat / n * np.exp(-np.pi / 2 * 1j)
         return mmf
 
 
@@ -139,10 +138,7 @@ class BFieldOuterStator(BField):
             n = self.n[mask]
             b_radial_h = self.radial_harmonics(r)[mask]
 
-        r_si = self.r_si
-        delta = self.delta_e
-        orientation = 'radial'
-        b_radial = self.__field_from_harmonics(b_radial_h, n, alpha, r_si, delta, orientation)
+        b_radial = self.__field_from_harmonics(b_radial_h, n, alpha)
         return b_radial
 
     def tan(self, alpha, r=None, harmonics=None):
@@ -168,10 +164,7 @@ class BFieldOuterStator(BField):
             n = self.n[mask]
             b_tan_h = self.tangential_harmonics()[mask]
 
-        r_si = self.r_si
-        delta = self.delta_e
-        orientation = 'tangential'
-        b_tan = self.__field_from_harmonics(b_tan_h, n, alpha, r_si, delta, orientation)
+        b_tan = self.__field_from_harmonics(b_tan_h, n, alpha)
         return b_tan
 
     def radial_harmonics(self, r=None):
@@ -251,23 +244,15 @@ class BFieldOuterStator(BField):
         )
         return k_cu
 
-    def __field_from_harmonics(self, fields, n, alpha, r, delta, orientation):
+    def __field_from_harmonics(self, fields, n, alpha):
         # get phase and magnitude of B field harmonics
         b_mag = abs(fields)
         b_phase = np.angle(fields)
 
         n = n.reshape(len(n), 1)  # reshape n for matrix multilication
         alpha_t = alpha.reshape(1, len(alpha))  # reshape alpha for matrix multilication
-        
-        if orientation == 'radial':
-            # get effective theta at each harmonic based on n, alpha, and phase shift
-            theta = n * alpha_t + b_phase.reshape(len(b_phase), 1) - np.pi/2
-        elif orientation == 'tangential':
-            # get effective theta at each harmonic based on n, alpha, and phase shift
-            theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)
-        else:
-            raise ValueError("Orientation must be 'radial' or 'tangential'")
-        
+        # get effective theta at each harmonic based on n, alpha, and phase shift
+        theta = n * alpha_t + b_phase.reshape(len(b_phase), 1)
         # get cosine asuuming MMF phase is provided relative to cos function
         cos_array = np.cos(theta)
 
