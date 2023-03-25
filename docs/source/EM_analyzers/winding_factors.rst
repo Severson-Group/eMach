@@ -157,26 +157,20 @@ be implemented to redefine the problem and plot the current linkage:
     delta_e = 0.002  # airgap
     r_si = 0.100  # inner stator bore radius
     r_rfe = r_si - delta_e  # rotor back iron outer radius
-    alpha_so = 0.1  # stator slot opening in radians
-
-    from matplotlib import pyplot as plt
-    from eMach.mach_eval.analyzers.electromagnetic.bfield_outer_stator import (
-        BFieldOuterStatorAnalyzer,
-        BFieldOuterStatorProblem1,
-    )
+    alpha_so = 0.01  # stator slot opening in radians
 
     # define problem
     stator_Bn_prob = BFieldOuterStatorProblem1(
-        m = m,
-        zq = zq,
-        Nc = Nc,
-        k_w = k_w,
-        I_hat = I_hat,
-        n = n,
-        delta_e = delta_e,
-        r_si = r_si,
-        r_rfe = r_rfe,
-        alpha_so = alpha_so,
+        m=m,
+        zq=zq,
+        Nc=Nc,
+        k_w=k_w,
+        I_hat=I_hat,
+        n=n,
+        delta_e=delta_e,
+        r_si=r_si,
+        r_rfe=r_rfe,
+        alpha_so=alpha_so,
     )
 
     # define analyzer
@@ -192,7 +186,7 @@ be implemented to redefine the problem and plot the current linkage:
     ax = plt.axes()
     fig1.add_axes(ax)
     # plot current linkage
-    ax.plot(alpha*180/np.pi, linkage)
+    ax.plot(alpha*180/np.pi, linkage, color='C0')
 
     ax.set_xlabel(r"$\alpha$ [deg]")
     ax.set_ylabel("$Current Linkage$ [A]")
@@ -204,7 +198,7 @@ This code is taking the MMF function from the ``B Field Outer Stator`` Analyzer 
 this is then used to calculate the radial and tangential components of the B Field. The applied code should return the following plot for the current linkage of the 
 stator and winding layout depicted above:
 
-.. figure:: ./Images/Current_Linkage_Plot.png
+.. figure:: ./Images/Current_Linkage_Plot.svg
    :alt: Current_Linkage 
    :align: center
    :width: 500
@@ -217,25 +211,26 @@ Analyzer does this using the following code:
     fig2 = plt.figure()
     ax = plt.axes()
     fig2.add_axes(ax)
-    # plot radial B fields
-    ax.plot(alpha*180/np.pi, B.radial(alpha=alpha, r=r))
     # plot tangential B fields
-    ax.plot(alpha*180/np.pi, B.tan(alpha=alpha))
+    ax.plot(alpha*180/np.pi, B.tan(alpha=alpha), color='C1')
+    # plot radial B fields
+    ax.plot(alpha*180/np.pi, B.radial(alpha=alpha, r=r), color='C0')
 
     # sniff test for checking if fields are right. Below value should be very close to 0
     tor = B.radial(alpha=alpha, r=r) * B.tan(alpha=alpha)
-    #print(np.sum(tor))
+    print(np.sum(tor))
 
     ax.set_xlabel(r"$\alpha$ [deg]")
     ax.set_ylabel("$B$ [T]")
     ax.set_title("$B_n$ and $B_{tan}$ across airgap")
+    ax.set_ybound(-0.75, 0.75)
     plt.legend(["$B_n$", "$B_{tan}$"], fontsize=8)
     plt.grid(True, linewidth=0.5, color="#A9A9A9", linestyle="-.")
     plt.show()
 
 This code will result in the following plots for the magnetic field in the air gap:
 
-.. figure:: ./Images/B_Field_Plot.png
+.. figure:: ./Images/B_Field_Plot.svg
    :alt: B_FIeld
    :align: center
    :width: 500
