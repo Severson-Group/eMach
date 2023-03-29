@@ -131,6 +131,7 @@ stator component alone.
     # create an instance of the JMAG class
     tool_jmag = jd.JmagDesigner()
     
+    # create a new JMAG file and study
     file = r"full_SPM_trial.jproj"
     tool_jmag.open(comp_filepath=file, study_type="Transient")
 
