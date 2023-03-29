@@ -94,7 +94,7 @@ Step 3: Create ``Components`` from ``CrossSects``
 --------------------------------------------------------------------
 	
 In the previous step, all information associated with the 2D geometry of each machine component was defined. To convert these 
-cross-sections to components, we need to define 1) the material defining the component 2) a method by which the 2D cross-section
+cross-sections to components, we need to define 1) the material defining the component and 2) a method by which the 2D cross-section
 should be converted to a 3D component. For materials, ``eMach`` uses just a wrapper class with a ``name`` field. In the present
 implementation, this ``name`` directly corresponds to the name of materials existing by default in the FEA tool and the code simply
 assigns this material to the cross-section within the tool. For converting the cross-section to a 3D component, ``eMach`` currently
