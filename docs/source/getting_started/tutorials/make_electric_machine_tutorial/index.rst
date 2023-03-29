@@ -152,7 +152,6 @@ should be drawn in the sequence they were defined in. The end result is expected
 Conclusion
 ----------------
 
-Congratulations! You have successfully used ``eMach`` to make a most of the components required to simulate a surface permament 
+Congratulations! You have successfully used ``eMach`` to make most of the components required to simulate a surface permament 
 magnet machine! Users are recommended to further explore additional cross-sections currently supported by ``eMach`` or to create 
 their own cross-sections which they feel are generic enough to find use in a wide range of electric machine applications.
-
