@@ -38,7 +38,7 @@ certain parameter inputs.
 Step 2: Create required ``mach_cad`` cross-sections
 --------------------------------------------------------------------
 
-In this step the user will create the different cross-sections required to define an `inner rotor surface permanent magnet`.
+In this step the user will create the different cross-sections required to define an `inner rotor surface permanent magnet machine`.
 This includes cross-sections defining the stator iron, permanent magnets, and rotor back iron. Cross-sections supported by ``eMach``
 vary greatly with regards to their degree of complexity from basic rectangles, to more involved geometries such as the stator of a
 linear motor. The stator of the machine in this particular tutorial can be defined using the ``CrossSectInnerRotorStator`` class.
