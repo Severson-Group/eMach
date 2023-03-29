@@ -105,9 +105,8 @@ get a 3D component. In most applications, users will primarily be using the extr
 The below code snippet shows how to create a component from a cross-section within ``eMach``. In this particular example, the stator
 has been assigned a standard electric steel material supported by JMAG, ``10JNEX900``, and has been extruded to a length of 25mm with
 the ``make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25))`` argument. Following a similar procedure,
-components can be made for the remaining cross-sections as well. Users are recommended to use ``10JNEX900`` for the rotor and 
-``Arnold/Reversible/N40H`` materials for the rotor back iron and magnets respectively. All cross-sections should be extruded to
-the same height (25 mm in this case).
+components can be made for the remaining cross-sections as well. Users are recommended to use ``10JNEX900`` and  ``Arnold/Reversible/N40H`` 
+materials for the rotor back iron and magnets respectively. All cross-sections should be extruded to the same height (25 mm in this case).
 
 .. code-block:: python
 	
