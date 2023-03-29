@@ -35,7 +35,12 @@ links provided on the left to familiarize themselves with the repository.
    :caption: Machine Designs
 
    machines/bspm/index
-   
+
+
+..
+   _INSERT
+
+
 .. toctree::
    :hidden:
    :maxdepth: 1
