@@ -117,6 +117,8 @@ materials for the rotor back iron and magnets respectively. All cross-sections s
         make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 	)
 
+    # add code below for remaining components
+
 Step 4: Make ``Components``
 --------------------------------------------------------------------
 
@@ -135,7 +137,7 @@ stator component alone.
     # make stator component
     stator1_handle = stator_comp.make(tool_jmag, tool_jmag)
 	
-    # add code below for remaining components
+    # add code below to make remaining components
 
 Upon running the above script, an instance of the JMAG application should be launched on your PC and the corresponding components
 should be drawn in the sequence they were defined in. The end result is expected to look as shown in the figure below.
