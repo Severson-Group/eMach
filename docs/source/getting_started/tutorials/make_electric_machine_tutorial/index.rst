@@ -66,13 +66,13 @@ in 3D.
         theta=mo.DimDegree(0),
     )
 
-Each of the arguments provided in the above class definition corresponds directly to a geomtric parameter of the inner rotor stator.
+Each of the arguments provided in the above class definition corresponds directly to a geometric parameter of the inner rotor stator.
 To know what these arguments correspond to users can navigate to the folder in which the implementation of each cross-section resides.
-Here a `README.md` file and a `.svg` file describing each parameter is provided. This makes it convinient to view the geometry within github. 
+Here, a `README.md` file and a `.svg` file describing each parameter is provided. This makes it convenient to view the geometry within GitHub. 
 The link to the inner rotor stator folder is provided `here <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/cross_sects/inner_rotor_stator>`_.
-Please navigate to this link to get a better understanding of what each argument provided for the `CrossSectInnerRotorStator`
+Please navigate to this link to get a better understanding of what each argument provided for the ``CrossSectInnerRotorStator``
 actually mean. All cross-sections also include the additional arguments of ``location`` and ``theta``. This is used to define the
-displacement of the cross-section from the global origin (x=0, y=0, theta=0). 
+displacement of the cross-section from the global origin (``x=0``, ``y=0``, ``theta=0``). 
 
 Another key feature of ``eMach`` worth touching upon at this juncture is its capability to handle different ``dimensions``. In 
 order to ensure that the dimensions expected by the user are respected across different platforms, ``eMach`` defines its own 
@@ -86,8 +86,7 @@ for the rotor. The dimensions can be specified according to the users whim, so l
 smaller than the inner radius of the stator bore, and the outer radius of the inner notched rotor is equal to the inner radius of 
 the arc magnets. Users can create any multiple of 2 arc magnets in their SPM machine.
 
-.. note:: If you get stuck at any point of the tutorial, the example_spm.py script provides a working example of drawing a 4 pole
-  , 6 slot surface permanent magnet machine in JMAG using ``eMach`` which can be used as a reference
+.. note:: In case you have trouble with this example, refer to the script `example_spm.py <https://github.com/Severson-Group/eMach/blob/develop/examples/mach_cad_examples/example_spm.py>`_ for a working example of drawing a 4 pole, 6 slot surface permanent magnet machine in JMAG.
 
 
 Step 3: Create ``Components`` from ``CrossSects``
