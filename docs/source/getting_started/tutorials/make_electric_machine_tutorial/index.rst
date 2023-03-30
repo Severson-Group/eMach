@@ -86,7 +86,7 @@ Similar to creating the ``CrossSectInnerRotorStator`` object, users are recommen
 required for creating the SPM machine. This includes using the ``CrossSectArc`` for the magnets, and the ``CrossSectInnerNotchedRotor`` 
 for the rotor. The dimensions can be specified according to the users whim, so long as the outer radius of the arc magnets are 
 smaller than the inner radius of the stator bore, and the outer radius of the inner notched rotor is equal to the inner radius of 
-the arc magnets. Users can create any multiple of 2 arc magnets in their SPM machine.
+the arc magnets. Users can create any multiple of two arc magnets in their SPM machine.
 
 .. note:: In case you have trouble with this example, refer to the script `example_spm.py <https://github.com/Severson-Group/eMach/blob/develop/examples/mach_cad_examples/example_spm.py>`_ for a working example of drawing a 4 pole, 6 slot surface permanent magnet machine in JMAG.
 
