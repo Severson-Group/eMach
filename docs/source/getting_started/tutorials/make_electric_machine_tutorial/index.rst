@@ -39,9 +39,10 @@ Step 2: Create required ``mach_cad`` cross-sections
 --------------------------------------------------------------------
 
 In this step the user will create the different cross-sections required to define an `inner rotor surface permanent magnet machine`.
-This includes cross-sections defining the stator iron, permanent magnets, and rotor back iron. Cross-sections supported by ``eMach``
-vary greatly with regards to their degree of complexity from basic rectangles, to more involved geometries such as the stator of a
-linear motor. The stator of the machine in this particular tutorial can be defined using the ``CrossSectInnerRotorStator`` class.
+This includes cross-sections defining the stator iron, permanent magnets, and rotor back iron. An overview of the cross-sections 
+supported by ``eMach`` is provided `here <https://github.com/Severson-Group/eMach/blob/develop/mach_cad/model_obj/cross_sects/library.md>`_. 
+These cross-sects vary greatly with regards to their degree of complexity from basic rectangles, to more involved geometries such as the stator of a
+linear motor. The stator of the machine in this tutorial uses the ``CrossSectInnerRotorStator`` class.
 The below example code creates an inner rotor stator cross-section object which can be used subsequently for creating the component
 in 3D. 
 
@@ -70,15 +71,16 @@ Each of the arguments provided in the above class definition corresponds directl
 To know what these arguments correspond to users can navigate to the folder in which the implementation of each cross-section resides.
 Here, a `README.md` file and a `.svg` file describing each parameter is provided. This makes it convenient to view the geometry within GitHub. 
 The link to the inner rotor stator folder is provided `here <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/cross_sects/inner_rotor_stator>`_.
-Please navigate to this link to get a better understanding of what each argument provided for the ``CrossSectInnerRotorStator``
-actually mean. All cross-sections also include the additional arguments of ``location`` and ``theta``. This is used to define the
-displacement of the cross-section from the global origin (``x=0``, ``y=0``, ``theta=0``). 
+Please navigate to this link to get a better understanding of what each argument provided for the ``CrossSectInnerRotorStator``. 
+All cross-sections also include the additional arguments of ``location`` and ``theta``. This is used to define the
+displacement of the cross-section from the global origin (``x=0``, ``y=0``, ``theta=0``). Users are encouraged to review the 
+`eMach cross-sections specifications document <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/cross_sects>`_.
 
-Another key feature of ``eMach`` worth touching upon at this juncture is its capability to handle different ``dimensions``. In 
+Another key feature of ``eMach`` is its capability to handle different ``dimensions``. In 
 order to ensure that the dimensions expected by the user are respected across different platforms, ``eMach`` defines its own 
 classes for linear and angular dimensions. In this particular 
 example, we have used ``DimMillimeter`` to describe linear dimensions in mm and ``DimDegree`` to describe angular dimensions in 
-degrees.
+degrees. The complete set of ``eMach`` dimensions can be found `here < https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/dimensions>`_.
 
 Similar to creating the ``CrossSectInnerRotorStator`` object, users are recommended to try creating other cross-sections objects
 required for creating the SPM machine. This includes using the ``CrossSectArc`` for the magnets, and the ``CrossSectInnerNotchedRotor`` 
