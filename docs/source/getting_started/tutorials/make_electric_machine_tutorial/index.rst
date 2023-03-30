@@ -38,10 +38,11 @@ certain parameter inputs.
 Step 2: Create required ``mach_cad`` cross-sections
 --------------------------------------------------------------------
 
-In this step the user will create the different cross-sections required to define an `inner rotor surface permanent magnet`.
-This includes cross-sections defining the stator iron, permanent magnets, and rotor back iron. Cross-sections supported by ``eMach``
-vary greatly with regards to their degree of complexity from basic rectangles, to more involved geometries such as the stator of a
-linear motor. The stator of the machine in this particular tutorial can be defined using the ``CrossSectInnerRotorStator`` class.
+In this step the user will create the different cross-sections required to define an `inner rotor surface permanent magnet machine`.
+This includes cross-sections defining the stator iron, permanent magnets, and rotor back iron. An overview of the cross-sections 
+supported by ``eMach`` is provided `here <https://github.com/Severson-Group/eMach/blob/develop/mach_cad/model_obj/cross_sects/library.md>`_. 
+These cross-sects vary greatly with regards to their degree of complexity from basic rectangles, to more involved geometries such as the stator of a
+linear motor. The stator of the machine in this tutorial uses the ``CrossSectInnerRotorStator`` class.
 The below example code creates an inner rotor stator cross-section object which can be used subsequently for creating the component
 in 3D. 
 
@@ -66,35 +67,35 @@ in 3D.
         theta=mo.DimDegree(0),
     )
 
-Each of the arguments provided in the above class definition corresponds directly to a geomtric parameter of the inner rotor stator.
+Each of the arguments provided in the above class definition corresponds directly to a geometric parameter of the inner rotor stator.
 To know what these arguments correspond to users can navigate to the folder in which the implementation of each cross-section resides.
-Here a `README.md` file and a `.svg` file describing each parameter is provided. This makes it convinient to view the geometry within github. 
+Here, a `README.md` file and a `.svg` file describing each parameter is provided. This makes it convenient to view the geometry within GitHub. 
 The link to the inner rotor stator folder is provided `here <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/cross_sects/inner_rotor_stator>`_.
-Please navigate to this link to get a better understanding of what each argument provided for the `CrossSectInnerRotorStator`
-actually mean. All cross-sections also include the additional arguments of ``location`` and ``theta``. This is used to define the
-displacement of the cross-section from the global origin (x=0, y=0, theta=0). 
+Please navigate to this link to get a better understanding of what each argument provided for the ``CrossSectInnerRotorStator``. 
+All cross-sections also include the additional arguments of ``location`` and ``theta``. This is used to define the
+displacement of the cross-section from the global origin (``x=0``, ``y=0``, ``theta=0``). Users are encouraged to review the 
+`eMach cross-sections specifications document <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/cross_sects>`_.
 
-Another key feature of ``eMach`` worth touching upon at this juncture is its capability to handle different ``dimensions``. In 
+Another key feature of ``eMach`` is its capability to handle different ``dimensions``. In 
 order to ensure that the dimensions expected by the user are respected across different platforms, ``eMach`` defines its own 
 classes for linear and angular dimensions. In this particular 
 example, we have used ``DimMillimeter`` to describe linear dimensions in mm and ``DimDegree`` to describe angular dimensions in 
-degrees.
+degrees. The complete set of ``eMach`` dimensions can be found `here <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/dimensions>`_.
 
 Similar to creating the ``CrossSectInnerRotorStator`` object, users are recommended to try creating other cross-sections objects
 required for creating the SPM machine. This includes using the ``CrossSectArc`` for the magnets, and the ``CrossSectInnerNotchedRotor`` 
 for the rotor. The dimensions can be specified according to the users whim, so long as the outer radius of the arc magnets are 
 smaller than the inner radius of the stator bore, and the outer radius of the inner notched rotor is equal to the inner radius of 
-the arc magnets. Users can create any multiple of 2 arc magnets in their SPM machine.
+the arc magnets. Users can create any multiple of two arc magnets in their SPM machine.
 
-.. note:: If you get stuck at any point of the tutorial, the example_spm.py script provides a working example of drawing a 4 pole
-  , 6 slot surface permanent magnet machine in JMAG using ``eMach`` which can be used as a reference
+.. note:: In case you have trouble with this example, refer to the script `example_spm.py <https://github.com/Severson-Group/eMach/blob/develop/examples/mach_cad_examples/example_spm.py>`_ for a working example of drawing a 4 pole, 6 slot surface permanent magnet machine in JMAG.
 
 
 Step 3: Create ``Components`` from ``CrossSects``
 --------------------------------------------------------------------
 	
 In the previous step, all information associated with the 2D geometry of each machine component was defined. To convert these 
-cross-sections to components, we need to define 1) the material defining the component 2) a method by which the 2D cross-section
+cross-sections to components, we need to define 1) the material defining the component and 2) a method by which the 2D cross-section
 should be converted to a 3D component. For materials, ``eMach`` uses just a wrapper class with a ``name`` field. In the present
 implementation, this ``name`` directly corresponds to the name of materials existing by default in the FEA tool and the code simply
 assigns this material to the cross-section within the tool. For converting the cross-section to a 3D component, ``eMach`` currently
@@ -105,9 +106,8 @@ get a 3D component. In most applications, users will primarily be using the extr
 The below code snippet shows how to create a component from a cross-section within ``eMach``. In this particular example, the stator
 has been assigned a standard electric steel material supported by JMAG, ``10JNEX900``, and has been extruded to a length of 25mm with
 the ``make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25))`` argument. Following a similar procedure,
-components can be made for the remaining cross-sections as well. Users are recommended to use ``10JNEX900`` for the rotor and 
-``Arnold/Reversible/N40H`` materials for the rotor back iron and magnets respectively. All cross-sections should be extruded to
-the same height (25 mm in this case).
+components can be made for the remaining cross-sections as well. Users are recommended to use ``10JNEX900`` and  ``Arnold/Reversible/N40H`` 
+materials for the rotor back iron and magnets respectively. All cross-sections should be extruded to the same height (25 mm in this case).
 
 .. code-block:: python
 	
@@ -117,6 +117,8 @@ the same height (25 mm in this case).
         material=mo.MaterialGeneric(name="10JNEX900", color=r"#808080"),
         make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(25)),
 	)
+
+    # add code below for remaining components
 
 Step 4: Make ``Components``
 --------------------------------------------------------------------
@@ -130,13 +132,14 @@ stator component alone.
     # create an instance of the JMAG class
     tool_jmag = jd.JmagDesigner()
     
+    # create a new JMAG file and study
     file = r"full_SPM_trial.jproj"
     tool_jmag.open(comp_filepath=file, study_type="Transient")
 
     # make stator component
     stator1_handle = stator_comp.make(tool_jmag, tool_jmag)
 	
-    # add code below for remaining components
+    # add code below to make remaining components
 
 Upon running the above script, an instance of the JMAG application should be launched on your PC and the corresponding components
 should be drawn in the sequence they were defined in. The end result is expected to look as shown in the figure below.
@@ -150,7 +153,6 @@ should be drawn in the sequence they were defined in. The end result is expected
 Conclusion
 ----------------
 
-Congratulations! You have successfully used ``eMach`` to make a most of the components required to simulate a surface permament 
+Congratulations! You have successfully used ``eMach`` to make most of the components required to simulate a surface permanent 
 magnet machine! Users are recommended to further explore additional cross-sections currently supported by ``eMach`` or to create 
 their own cross-sections which they feel are generic enough to find use in a wide range of electric machine applications.
-
