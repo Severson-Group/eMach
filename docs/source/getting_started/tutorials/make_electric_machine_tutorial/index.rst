@@ -80,7 +80,7 @@ Another key feature of ``eMach`` is its capability to handle different ``dimensi
 order to ensure that the dimensions expected by the user are respected across different platforms, ``eMach`` defines its own 
 classes for linear and angular dimensions. In this particular 
 example, we have used ``DimMillimeter`` to describe linear dimensions in mm and ``DimDegree`` to describe angular dimensions in 
-degrees. The complete set of ``eMach`` dimensions can be found `here < https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/dimensions>`_.
+degrees. The complete set of ``eMach`` dimensions can be found `here <https://github.com/Severson-Group/eMach/tree/develop/mach_cad/model_obj/dimensions>`_.
 
 Similar to creating the ``CrossSectInnerRotorStator`` object, users are recommended to try creating other cross-sections objects
 required for creating the SPM machine. This includes using the ``CrossSectArc`` for the magnets, and the ``CrossSectInnerNotchedRotor`` 
