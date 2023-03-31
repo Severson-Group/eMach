@@ -6,7 +6,7 @@ This document explains how the eMach component creation workflow is implemented 
 The geometry creation workflow in eMach is as follows:
 
 1. Draw a cross-section geometry.
-2. Extrude or revolve the cross-section. eMach prvides the tool geometric coordinate `innerCoord` that is located somewhere within the cross-section. 
+2. Extrude or revolve the cross-section. eMach provides the tool geometric coordinate `innerCoord` that is located somewhere within the cross-section. 
 3. Assign materials.
 
 The workflow for geometry creation in JMAG is listed below:
