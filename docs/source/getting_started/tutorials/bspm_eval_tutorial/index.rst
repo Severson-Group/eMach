@@ -290,7 +290,7 @@ de-magnetization from high temperatures, the required airflow and the correspond
 Step 2.4: Create Stator Thermal ``AnalysisStep``
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this step, we define the interface between a BSPM design and the :doc:`Stator Thermal Analyzer <../../../mechanical_analyzers/SPM_rotor_airflow_analyzer>`. 
+In this step, we define the interface between a BSPM design and the :doc:`Stator Thermal Analyzer <../../../mechanical_analyzers/inner_rotor_stator_thermal_analyzer>`. 
 The purpose of this analyzer is evaluate the stator winding temperature for a provided stator outer bore convection coefficient. 
 The cooling rate is set at ``h = 200 W/m^2K`` for this evaluation. The code snip provided below shows how this analyzer can be interfaced to 
 a BSPM design and the loss data obtained from FEA. After the analysis is completed, the stator winding and yoke temperatures are saved for 
