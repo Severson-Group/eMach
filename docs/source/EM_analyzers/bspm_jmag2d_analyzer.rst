@@ -30,7 +30,7 @@ revolution to get reliable information on the motor's performance capabilities.
 Mesh Size 
 ------------------
 
-Meshing is the methob by which FEA tools discretize the motor geometry. In this analyzer, we use the slide mesh feature of JMAG. In addition
+Meshing is the method by which FEA tools discretize the motor geometry. In this analyzer, we use the slide mesh feature of JMAG. In addition
 to a generic mesh size setting for the model, separate handles are provided for the magnet and airgap meshes in the ``JMAG_2D_Config`` class.
 It is recommended that both the airgap and magnet mesh be significantly denser than that of other components for obtaining accurate results.
 Users should balance mesh density with result accuracy to get reliable results as quickly as possible. Figures showing the mesh layout of
