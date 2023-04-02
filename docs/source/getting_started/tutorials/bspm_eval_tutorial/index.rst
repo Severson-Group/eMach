@@ -382,7 +382,7 @@ Step 2.5: Create Windage Loss ``AnalysisStep``
 
 Finally, an ``AnalysisStep`` is created to define the interface between the BSPM design and the :doc:`Windage Loss Analyzer <../../../mechanical_analyzers/windage_loss_analyzer>`.
 The purpose of this analyzer is evaluate the windage loss arising in a BSPM due to rotational speed of the machine. The code snip provided 
-below shows how this analyzer can be interfaced to a BSPM design and the require rotor axial airflow for cooling the magnets. After the 
+below shows how this analyzer can be interfaced to a BSPM design and the required rotor axial airflow for cooling the magnets. After the 
 analysis is completed, the overall efficiency of the motor is calculated and saved.
 
 .. code-block:: python
