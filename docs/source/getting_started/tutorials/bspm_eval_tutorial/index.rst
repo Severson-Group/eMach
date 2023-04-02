@@ -5,7 +5,7 @@ BSPM Evaluation Tutorial
 * **Complexity:** 4/5
 * **Estimated Time:** 30 - 60 min
 
-This tutorial demonstrates how to perform a multi-physics evaluation of a ``BSPM_Machine`` by using the ``Analyzer`` s available in ``eMach``.
+This tutorial demonstrates how to perform a multi-physics evaluation of a ``BSPM_Machine`` by using the ``Analyzers`` available in ``eMach``.
 By the end of this tutorial you will be able to:
 
 * create a digital BSPM design
@@ -50,10 +50,10 @@ Step 2: Create BSPM Evaluator
 The main purpose of this tutorial is to showcase how multi-physics evaluations are handled by ``eMach`` using the analyzers
 provided within the repository. To demonstrate this, the structural, electromagnetic, and thermal performance of the example BSPM design created 
 in ``ecce_2020_bspm.py`` are evaluated. ``AnalysisStep`` objects are created for each analyzer to ensure proper interface to and from the 
-analyzers. The ``AnalysisStep`` s are then joined together to create an ``Evaluator``, in manner so as to 
+analyzers. The ``AnalysisSteps`` are then joined together to create an ``Evaluator``, in a manner so as to 
 ensure proper transfer of information and to facilitate computational efficiency during optimization. In this particular example, the thermal
 analyzers come after the electromagnetic analyzers as thermal performance is determined by motor losses. The structural analyzer is placed 
-at the very beginning as this is a quick, equation based analyzer which determines whether an appropriate sized sleeve can be placed on an 
+at the very beginning as this is a quick equation-based analyzer which determines whether an appropriate sized sleeve can be placed on an 
 SPM rotor or not. Machines which are structurally unsound can be discarded prior to the computationally intensive electromagnetic 
 ``AnalysisStep``, thereby saving time. The steps involved in created a multi-physics BSPM ``Evaluator`` are discussed below. Readers can 
 create a single Python script holding all the code snippets provided below or can separate them out into individual modules as done in  
@@ -154,8 +154,8 @@ to post-process FEA results. Simply modify the import statements as shown below.
     )
 
 The code snip provided below shows how this analyzer can be interfaced to a BSPM design. After the analysis is completed, relevant information 
-is stored in ``State`` for future reference. Its worth noting that the losses obtained from this analysis is required by the next two thermal 
-``AnalysisStep`` s to determine the rotor and stator temperatures.
+is stored in ``State`` for future reference. Its worth noting that the losses obtained from this analysis are required by the next two thermal 
+``AnalysisSteps`` to determine the rotor and stator temperatures.
 
 .. code-block:: python
 	
