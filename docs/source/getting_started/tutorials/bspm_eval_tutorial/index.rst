@@ -1,7 +1,7 @@
 BSPM Evaluation Tutorial
 ===========================================
 
-* **Goal:** Leverage capabilites of ``mach_eval`` to perform multi-physics evaluations on bearingless surface permamanent magnet machines
+* **Goal:** Leverage capabilites of ``mach_eval`` to perform multi-physics evaluations on bearingless surface permanent magnet machines
 * **Complexity:** 4/5
 * **Estimated Time:** 30 - 60 min
 
