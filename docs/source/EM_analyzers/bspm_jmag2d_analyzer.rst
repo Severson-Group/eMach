@@ -11,7 +11,7 @@ Bearingless motors are electric machines capable of simultaneously creating both
 evaluate the performance capabilities of these machines. This analyzer does everything that is required for evaluating a BSPM design from
 drawing the machine geometry to solving the magnetic vector potential matrices. The code has been tested and confirmed to be compatible with 
 JMAG v19 and above. The motor shaft and magnets are assumed to be conductive, and therefore, eddy current losses are enabled in these 
-components. As there are several configurations that can be modifies for any FEA evaluation, a ``JMAG_2D_Config`` is provided to work 
+components. As there are several configurations that can be modified for any FEA evaluation, a ``JMAG_2D_Config`` is provided to work 
 alongside this analyzer. A description of the configurations users have control over from within this class is provided below.
 
 Time Step Size 
