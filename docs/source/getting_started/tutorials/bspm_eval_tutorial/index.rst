@@ -498,7 +498,7 @@ Upon running this script you should get the following results:
 - Efficiency = 97.2\%
 
 .. note:: The ``examples/mach_eval_examples/bspm_eval`` folder provides working code for the tutorial discussed here. You can run the 
-    ``bspm_evaluator.py`` script herewith to evaluate the ``ecce_2020_design`` and compare the results against those obtained from your own 
+    ``bspm_evaluator.py`` script here to evaluate the ``ecce_2020_design`` and compare the results against those obtained from your own 
     ``Evaluator``.
 
 Conclusion
