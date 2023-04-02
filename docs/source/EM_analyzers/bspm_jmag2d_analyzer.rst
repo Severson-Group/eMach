@@ -50,7 +50,7 @@ Other Configurations
 ---------------------------
 
 In addition to time step and mesh size, several other changes can be made to the BSPM JMAG analyzer. Most of these configurations are self
-explanatory and are descirbed using comments withing the ``JMAG_2D_Config`` class. For example: by setting the ``jmag_visible`` to ``True`` or 
+explanatory and are described using comments within the ``JMAG_2D_Config`` class. For example, by setting the ``jmag_visible`` to ``True`` or 
 ``False``, users can control whether the JMAG application will be visible while a FEA evaluation is running.
 
 Input from User
