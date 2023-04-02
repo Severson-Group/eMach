@@ -211,7 +211,7 @@ In this step, we define the interface between a BSPM design and the :doc:`SPM Ai
 The purpose of this analyzer is evaluate the airflow required (under certain bounds) to prevent the BSPM machine magnets from overheating at 
 the provided operating conditions. The code snip provided below shows how this analyzer can be interfaced to a BSPM design and the loss data
 obtained from FEA. After the analysis is completed, the design is discarded if the magnets get overheated. If the magnets are not at risk of
-de-magnetization from high temperatures, the required airflow and the corresponding magnet temperature rise are saved for future reference.
+de-magnetization from high temperatures, the required airflow and the corresponding magnet temperature rises are saved for future reference.
 
 .. code-block:: python
 	
