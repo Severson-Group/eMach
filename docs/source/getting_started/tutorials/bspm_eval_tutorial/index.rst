@@ -135,8 +135,8 @@ Step 2.2: Create Electromagnetic ``AnalysisStep``
 In this step, we define the interface between a BSPM design and the :doc:`BSPM JMAG 2D FEA Analyzer <../../../EM_analyzers/bspm_jmag2d_analyzer>`. 
 The purpose of this analyzer is to run a JMAG 2D FEA simulation of an input BSPM machine and return data relevant to the performance of
 this machine. The input provided to this analyzer is the BSPM machine and its operating point. The analyzer returns a set of dataframes
-extracted from JMAG 2D FEA solve which can be interpreted to determine the motor losses, and torque, force performance. As ineterpreting this
-information can be challenging, readers are adviced to copy the ``bpsm_em_post_analyzer.py`` script file in ``examples/mach_eval_examples/bspm_eval`` 
+extracted from JMAG 2D FEA solve which can be interpreted to determine the motor losses and torque and force performance. As interpreting this
+information can be challenging, readers are advised to copy the ``bpsm_em_post_analyzer.py`` script file in ``examples/mach_eval_examples/bspm_eval`` 
 to post-process FEA results. Simply modify the import statements as shown below.
 
 .. code-block:: python
