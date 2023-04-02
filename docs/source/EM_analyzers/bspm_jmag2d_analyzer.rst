@@ -243,7 +243,8 @@ are observed to closely match expected performance as provided in the paper.
 
     ############################ post processing #################################
     torque_prob = ProcessTorqueDataProblem(results["torque"]["TorCon"])
-    torque_avg, torque_ripple = ProcessTorqueDataAnalyzer.analyze(torque_prob)
+    torque_analyzer = ProcessTorqueDataAnalyzer()
+    torque_avg, torque_ripple = torque_analyzer.analyze(torque_prob)
 
     print("Average torque is ", torque_avg, " Nm")
     print(
