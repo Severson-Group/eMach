@@ -22,7 +22,7 @@ with this analyzer is elaborated below.
 
 The BSPM FEA analyzer has been setup such that it has 2 distinct time steps. The underlying concept behind having 2 distinct time steps is
 to allow artificially created transient effects during FEA solver initialization to dampen out before using FEA data to evaluate the motor's 
-performance. Both time steps have 2 variables, number of revolutions and number of steps per revolution. Users should change these
+performance. Both time steps have 2 variables: number of revolutions and number of steps per revolution. Users should change these
 values based on what makes the most sense for their machine. Generally, the step size should be the same across both time steps, with the
 1st time step running for lesser number of revolutions. It is recommended that the 2nd time step should last for atleast a half 
 revolution to get reliable information on the motor's performance capabilities.
