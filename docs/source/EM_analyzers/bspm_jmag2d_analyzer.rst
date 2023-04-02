@@ -46,7 +46,7 @@ an example motor design are provided below.
           :alt: Zoomed mesh
           :width: 300 
 
-Other configurations
+Other Configurations
 ---------------------------
 
 In addition to time step and mesh size, several other changes can be made to the BSPM JMAG analyzer. Most of these configurations are self
