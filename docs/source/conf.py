@@ -14,13 +14,14 @@
 #
 import os
 import sys
+from datetime import date
 
 sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
 project = "eMach"
-copyright = "2021, Severson Group"
+copyright = str(date.today().year)+", Severson Group"
 author = "Bharat"
 
 # The short X.Y version
