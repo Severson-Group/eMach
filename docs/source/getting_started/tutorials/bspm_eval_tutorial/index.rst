@@ -154,7 +154,7 @@ to post-process FEA results. Simply modify the import statements as shown below.
     )
 
 The code snip provided below shows how this analyzer can be interfaced to a BSPM design. After the analysis is completed, relevant information 
-is stored in ``State`` for future reference. Its worth noting that the losses obtained from this analysis are required by the next two thermal 
+is stored in ``State`` for future reference. It is worth noting that the losses obtained from this analysis are required by the next two thermal 
 ``AnalysisSteps`` to determine the rotor and stator temperatures.
 
 .. code-block:: python
