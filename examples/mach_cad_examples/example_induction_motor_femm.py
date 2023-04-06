@@ -69,27 +69,7 @@ bim_materials = {
 
 
 ###################### Create cross-section objects ######################
-# Partial models are used in JMAG (to reduce drawing time)
-
 stator = mo.CrossSectInnerRotorStator(
-    name="StatorCore",
-    dim_alpha_st=mo.DimDegree(stator_dimensions["alpha_st"]),
-    dim_alpha_so=mo.DimDegree(stator_dimensions["alpha_so"]),
-    dim_r_si=mo.DimMillimeter(stator_dimensions["r_si"]),
-    dim_d_so=mo.DimMillimeter(stator_dimensions["d_so"]),
-    dim_d_sp=mo.DimMillimeter(stator_dimensions["d_sp"]),
-    dim_d_st=mo.DimMillimeter(stator_dimensions["d_st"]),
-    dim_d_sy=mo.DimMillimeter(stator_dimensions["d_sy"]),
-    dim_w_st=mo.DimMillimeter(stator_dimensions["w_st"]),
-    dim_r_st=mo.DimMillimeter(0),
-    dim_r_sf=mo.DimMillimeter(0),
-    dim_r_sb=mo.DimMillimeter(0),
-    Q=Q,
-    location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],theta=mo.DimRadian(0)),
-    theta=mo.DimDegree(0),
-)
-
-stator_partial = mo.CrossSectInnerRotorStatorPartial(
     name="StatorCore",
     dim_alpha_st=mo.DimDegree(stator_dimensions["alpha_st"]),
     dim_alpha_so=mo.DimDegree(stator_dimensions["alpha_so"]),
@@ -114,8 +94,6 @@ for i in range (0, Q):
         stator_core=stator,
         location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],theta=mo.DimRadian(2 * np.pi / Q * i)),
         ))
-    
-winding_layer1_partial = winding_layer1[0]
 
 winding_layer2 = []
 for i in range (0, Q):
@@ -126,23 +104,7 @@ for i in range (0, Q):
         theta=mo.DimDegree(0),
         ))
 
-winding_layer2_partial = winding_layer2[0]
-
 rotor = mo.CrossSectInnerRotorDropSlots(
-    name="RotorCore",
-    dim_r_ri=mo.DimMillimeter(rotor_dimensions["r_ri"]),
-    dim_d_ri=mo.DimMillimeter(rotor_dimensions["d_ri"]),
-    dim_d_rb=mo.DimMillimeter(rotor_dimensions["d_rb"]),
-    dim_r_rb1=mo.DimMillimeter(rotor_dimensions["r_rb1"]),
-    dim_r_rb2=mo.DimMillimeter(rotor_dimensions["r_rb2"]),
-    dim_d_so=mo.DimMillimeter(rotor_dimensions["d_so"]),
-    dim_w_so=mo.DimMillimeter(rotor_dimensions["w_so"]),
-    Qr=Qr,
-    location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)]),
-    theta=mo.DimDegree(0),
-)
-
-rotor_partial = mo.CrossSectInnerRotorDropSlotsPartial(
     name="RotorCore",
     dim_r_ri=mo.DimMillimeter(rotor_dimensions["r_ri"]),
     dim_d_ri=mo.DimMillimeter(rotor_dimensions["d_ri"]),
@@ -165,12 +127,7 @@ for i in range(0,Qr):
     theta=mo.DimDegree(0),
     ))
 
-bar_partial = bar[0]
-
-
 ###################### Create component objects ######################
-# Only used in FEMM. Can also be used in JMAG, but increases drawing time.
-
 comp_stator = mo.Component(
         name="StatorCore",
         cross_sections=[stator],
@@ -211,7 +168,6 @@ for i in range(0,Qr):
     material=mo.MaterialGeneric(name="Copper", color=r"#4d4b4f"),
     make_solid=mo.MakeExtrude(location=mo.Location3D(), dim_depth=mo.DimMillimeter(1)),
     ))
-
 
 ###################### Draw the motor in FEMM ######################
 tool_femm = FEMM.FEMMDesigner()
@@ -278,65 +234,3 @@ if os.path.exists(file):
 
 # Save the file
 tool_femm.save_as(file)
-
-
-###################### Draw the motor in JMAG ######################
-tool_jmag = JMAG.JmagDesigner()
-
-# Check if a specified file name exists already
-file = r"example_induction_motor.jproj"
-attempts = 1
-if os.path.exists(file):
-    print(
-        "JMAG project exists already, I will not delete it but create a new one with a different name instead."
-    )
-    attempts = 2
-    temp_path = file[
-        : -len(".jproj")
-    ] + "_attempts_%d.jproj" % (attempts)
-    while os.path.exists(temp_path):
-        attempts += 1
-        temp_path = file[
-            : -len(".jproj")
-        ] + "_attempts_%d.jproj" % (attempts)
-
-    file = temp_path
-
-tool_jmag.open(comp_filepath=file, length_unit="DimMillimeter", study_type="Transient")
-tool_jmag.set_visibility(True)
-
-# Draw the model
-tool_jmag.sketch = tool_jmag.create_sketch()
-tool_jmag.sketch.SetProperty("Name", stator_partial.name)
-tool_jmag.sketch.SetProperty("Color", r"#808080")
-cs_stator = stator_partial.draw(tool_jmag)
-stator_tool = tool_jmag.prepare_section(cs_stator, num_copy_rotate=Q)
-
-tool_jmag.sketch = tool_jmag.create_sketch()
-tool_jmag.sketch.SetProperty("Name", winding_layer1_partial.name)
-tool_jmag.sketch.SetProperty("Color", r"#B87333")
-cs_winding_layer1 = winding_layer1_partial.draw(tool_jmag)
-winding_tool1 = tool_jmag.prepare_section(cs_winding_layer1, num_copy_rotate=Q)
-
-tool_jmag.sketch = tool_jmag.create_sketch()
-tool_jmag.sketch.SetProperty("Name", winding_layer2_partial.name)
-tool_jmag.sketch.SetProperty("Color", r"#B87333")
-cs_winding_layer2 = winding_layer2_partial.draw(tool_jmag)
-winding_tool2 = tool_jmag.prepare_section(cs_winding_layer2, num_copy_rotate=Q)
-
-tool_jmag.sketch = tool_jmag.create_sketch()
-tool_jmag.sketch.SetProperty("Name", rotor_partial.name)
-tool_jmag.sketch.SetProperty("Color", r"#808080")
-cs_rotor_core = rotor_partial.draw(tool_jmag)
-rotor_tool = tool_jmag.prepare_section(cs_rotor_core, num_copy_rotate=Qr)
-
-tool_jmag.sketch = tool_jmag.create_sketch()
-tool_jmag.sketch.SetProperty("Name", bar_partial.name)
-tool_jmag.sketch.SetProperty("Color", r"#C89E9B")
-cs_rotor_bar = bar_partial.draw(tool_jmag)
-rotor_bar_tool = tool_jmag.prepare_section(cs_rotor_bar, num_copy_rotate=Qr)
-
-tool_jmag.doc.SaveModel(False)
-
-# Save the file
-tool_jmag.save()
