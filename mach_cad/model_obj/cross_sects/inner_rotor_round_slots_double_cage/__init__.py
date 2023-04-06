@@ -449,7 +449,7 @@ class CrossSectInnerRotorRoundSlotsDoubleCageBar1(CrossSectBase):
         ):
             pass
         else:
-            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlotsDoubleCage")
+            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlotsDoubleCage or CrossSectInnerRotorRoundSlotsDoubleCagePartial")
 
 
 class CrossSectInnerRotorRoundSlotsDoubleCageBar2(CrossSectBase):
@@ -529,4 +529,4 @@ class CrossSectInnerRotorRoundSlotsDoubleCageBar2(CrossSectBase):
         ):
             pass
         else:
-            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlotsDoubleCage")
+            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlotsDoubleCage or CrossSectInnerRotorRoundSlotsDoubleCagePartial")
