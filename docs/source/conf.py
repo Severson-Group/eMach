@@ -21,8 +21,10 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- Project information -----------------------------------------------------
 
 project = "eMach"
+
 copyright = str(date.today().year)+", Severson Group"
-author = "Bharat"
+author = "eMach Development Group"
+
 
 # The short X.Y version
 version = ""
