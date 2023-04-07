@@ -7,7 +7,6 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../..")
 
 import mach_cad.tools.jmag as JMAG
-from mach_cad.tools.femm import FEMM
 import mach_cad.model_obj as mo
 import numpy as np
 from mach_eval.machines.materials.electric_steels import M19Gauge29

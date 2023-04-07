@@ -6,7 +6,6 @@ os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
 sys.path.append("../..")
 
-import mach_cad.tools.jmag as JMAG
 from mach_cad.tools.femm import FEMM
 import mach_cad.model_obj as mo
 import numpy as np
