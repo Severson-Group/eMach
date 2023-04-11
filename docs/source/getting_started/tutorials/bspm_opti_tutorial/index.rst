@@ -10,7 +10,7 @@ This tutorial demonstrates how to perform a multi-objective, multi-physics optim
 tutorial you will be able to:
 
 * run multi-objective optimizations using ``eMach`` for a wide range of electric machines;
-* post-proccess optimization data to understand a design space; 
+* post-process optimization data to understand a design space; 
 * select and share candidate designs from a design space.
 
 
