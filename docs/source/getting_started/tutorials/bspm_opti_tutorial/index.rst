@@ -206,7 +206,7 @@ evaluating trends in the ``Free Variables``, and selecting candidate designs.
 
 Copy the ``my_plotting_functions.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder to get the custom functions created for plotting the Pareto front and ``Free Variables`` of this optimization. 
 
-Create a file named ``plot_script.py``. Copy paste the code provided below to plot the Pareto front. As this optimization has three objetives, the marker color is used to indicate the value of the third objective, weighted ripple.
+Create a file named ``plot_script.py``. Copy and paste the code provided below to plot the Pareto front. As this optimization has three objectives, the marker color is used to indicate the value of the third objective, weighted ripple.
 
 .. code-block:: python
 
