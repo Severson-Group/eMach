@@ -232,9 +232,9 @@ An example Pareto plot obtained from running the optimization script from step 5
    :align: center
    :width: 300 
 
-To plot trends in ``Free Variables`` from the beginning to the end of the optimization, copy paste the code provided below to ``plot_script.py``. 
+To plot trends in ``Free Variables`` from the beginning to the end of the optimization, copy and paste the code provided below to ``plot_script.py``. 
 The blue markers provide the value of the ``Free Variable`` corresponding to a design and the red lines indicate the bounds corresponding to 
-each free variable. The bounds should be set such that they are not run into during optiimization if possible. 
+each free variable. The bounds should be set such that they are not run into during optimization if possible. 
 
 .. code-block:: python
 
