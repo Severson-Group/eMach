@@ -316,6 +316,6 @@ Conclusion
 ----------------
 
 Congratulations! You have successfully used ``eMach`` to run a multi-physics, multi-objective optimization! You can now
-attempt optimizating BSPM machines for different objectives and compare the resulting designs from those obtained with this
+attempt optimizing BSPM machines for different objectives and compare the resulting designs from those obtained with this
 optimization.
 
