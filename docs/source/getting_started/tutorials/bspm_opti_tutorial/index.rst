@@ -41,7 +41,7 @@ Nearly all population-based optimization workflows function by creating a set of
 fitness corresponding to these variables. There are a number of steps involved in this process. Creating a ``Design`` from the set of
 ``Free Variables`` is the first step. The class that performs this function is called the ``Designer`` in ``eMach`` terminology. 
 
-To create a ``Designer``, we much first define the input ``Free Variables`` and the desired output ``Design``. In this tutorial, 
+To create a ``Designer``, we must first define the input ``Free Variables`` and the desired output ``Design``. In this tutorial, 
 
 * **Input** ``Free Variables``: we are using a set of 11 variables that define the rotor and stator geometry. These ``Free Variables`` are :math:`\delta_e`, :math:`r_{ro}`, :math:`\alpha_{st}`, :math:`d_{so}`, :math:`w_{st}`, :math:`d_{st}`, :math:`d_{sy}`, :math:`\alpha_m`, :math:`d_m`, :math:`d_{mp}`, and :math:`d_{ri}` dimensions. Readers can refer to the :doc:`BSPM machine <../../../machines/bspm/bspm_machine>` document to understand the physical dimensions corresponding to these ``Free Variables``. 
 * **Output** ``Design``: a BSPM design object which consists of a :doc:`BSPM Machine <../../../machines/bspm/bspm_machine>` and its corresponding :doc:`operating point <../../../machines/bspm/bspm_oper_pt>`. The BSPM ``Designer`` has an ``Architect`` to create the ``BSPM_Machine`` from ``Free Variables`` and a ``Settings_Handler`` to create the ``BSPM_Machine_Oper_Pt`` object. In this tutorial, the operating point is independent of the ``Free Variables``. As a result, the ``Settings_Handler`` always returns the same ``BSPM_Machine_Oper_Pt`` object. 
