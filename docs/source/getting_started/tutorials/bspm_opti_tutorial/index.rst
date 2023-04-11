@@ -124,8 +124,8 @@ Finally, the multi-objective, multi-physics optimization can be run by combining
 
 The code snippet provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. 
 
-An important consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analatyically designed
-machine as the baseline or an existing machine and applying scaling factors on its dimensions to get the bounds. 
+An important consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analytically designed
+machine as the baseline for an existing machine and applying scaling factors on its dimensions to get the bounds. 
 
 Run ``bspm_optimization.py``. The optimization should run for as many generations as required to obtain the Pareto Front. If the optimization terminates before this is achieved due to unexpected errors, simply run the script again and the optimziation will resume from the last saved generation (based on ``latest_pop.csv``). 
 
