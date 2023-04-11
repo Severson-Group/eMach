@@ -2,7 +2,7 @@ BSPM Optimization Tutorial
 ===========================================
 
 * **Goal:** Leverage capabilites of ``mach_opt`` and ``mach_eval`` to perform multi-objective, multi-physics optimization of
-  bearingless surface permamanent magnet machines
+  bearingless surface permanent magnet machines
 * **Complexity:** 4/5
 * **Estimated Time:** 45 - 60 min
 
