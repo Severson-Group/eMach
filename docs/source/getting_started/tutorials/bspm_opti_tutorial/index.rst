@@ -133,7 +133,7 @@ Run ``bspm_optimization.py``. The optimization should run for as many generation
 
     import os
     from bspm_designer import designer
-    from bspm_evaluator import evaluator
+    from bspm_evaluator import bspm_evaluator
     from bspm_ds import BSPMDesignSpace
     from eMach.mach_opt import DesignProblem, DesignOptimizationMOEAD
     from my_data_handler import MyDataHandler
@@ -178,7 +178,7 @@ Run ``bspm_optimization.py``. The optimization should run for as many generation
     dh = MyDataHandler(arch_file, des_file)  # initialize data handler with required file paths
 
     # create pygmo Problem
-    design_prob = DesignProblem(designer, evaluator, opt_settings, dh)
+    design_prob = DesignProblem(designer, bspm_evaluator, opt_settings, dh)
     # defin pygmo MOEAD optimization
     design_opt = DesignOptimizationMOEAD(design_prob)
 
