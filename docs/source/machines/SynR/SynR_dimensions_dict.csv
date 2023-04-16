@@ -1,17 +1,28 @@
 Key,Description,Units
-alpha_st,Stator tooth face angular span,degrees
-d_so,See figure,m
-w_st,Stator tooth width,m
-d_st,Stator tooth depth,m
-d_sy,Stator yoke thickness,m
-alpha_m,Permanent magnet angular span,degrees
-d_m,Permanent magnet thickness,m
-d_mp,See figure,m
-d_ri,Rotor back iron thickness,m
-alpha_so,See figure,degrees
-d_sp,Stator pole thickness,m
-r_si,Stator inner bore radius,m
-alpha_ms,See figure,degrees
-d_ms,See figure,m
-r_sh,Shaft radius,m
-l_st,Stack length,m
+r_sh,Shaft radius,mm
+r_ri,Inner rotor radius,mm
+r_ro,Outer rotor radius,mm
+d_r1,Length to first flux barrier,mm
+d_r2,Length to second flux barrier,mm
+d_r3,Length to third flux barrier,mm
+r_f1,Radius of flux barrier bend,mm
+r_f2,Radius of flux barrier bend,mm
+r_f3,Radius of flux barrier bend,mm
+w_b1,Width of first flux barrier,mm
+w_b2,Width of second flux barrier,mm
+w_b3,Width of third flux barrier,mm
+l_b1,Length of first flux barrier arm,mm
+l_b2,Length of second flux barrier arm,mm
+l_b3,Length of third flux barrier arm,mm
+l_b4,Length of first flux barrier span,mm
+l_b5,Length of second flux barrier span,mm
+l_b6,Length of third flux barrier span,mm
+alpha_b,Flux barrier angle,degrees
+alpha_st,Stator tooth angle,degrees
+d_so,See stator figure,mm
+w_st,Stator tooth width,mm
+d_st,Stator tooth length,mm
+d_sy,Stator yoke width,mm
+alpha_so,See stator figure,degrees
+d_sp,Stator shoe pole thickness,mm
+r_si,Stator tooth radius,mm
