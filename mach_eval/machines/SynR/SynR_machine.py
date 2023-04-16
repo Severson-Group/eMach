@@ -1,16 +1,9 @@
-# Created: 4/13/2023
-# Author: Dante Newman
-
 import sys
 from copy import deepcopy
 import numpy as np
 
-# add the directory three levels above this file's directory to path for module import
-sys.path.append("../../..")
-
-from ..machine import Machine, MissingValueError, Winding, MachineComponent
-from ..radial_machines import Shaft, SynR_Rotor_Iron, Stator
-
+from mach_eval.machines.machine import Machine, MissingValueError, Winding, MachineComponent
+from mach_eval.machines.radial_machines import Stator, Shaft, SynR_Rotor_Iron
 
 __all__ = ['SynR_Machine']
 
@@ -196,14 +189,6 @@ class SynR_Machine(Machine, Shaft, SynR_Rotor_Iron, Stator, Winding):
     @property
     def rated_speed(self):
         return self._parameters_dict["rated_speed"]
-    
-    @property
-    def no_of_phases(self):
-        return self._winding_dict["no_of_phases"]
-    
-    @property
-    def name_phases(self):
-        return self._winding_dict["name_phases"]
 
     @property
     def omega_m(self):
@@ -234,11 +219,6 @@ class SynR_Machine(Machine, Shaft, SynR_Rotor_Iron, Stator, Winding):
     def R_airgap(self):
         R_airgap = (self.r_si + self.r_ro) / 2
         return R_airgap
-
-    @property
-    def R_bar_center(self):
-        R_bar_center = self.r_ri + self.d_ri + self.r_rb
-        return R_bar_center
 
     @property
     def V_shaft(self):
