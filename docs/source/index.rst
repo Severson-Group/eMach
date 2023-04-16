@@ -35,6 +35,7 @@ links provided on the left to familiarize themselves with the repository.
    :caption: Machine Designs
 
    machines/bspm/index
+   machines/SynR/index
 
 
 ..
