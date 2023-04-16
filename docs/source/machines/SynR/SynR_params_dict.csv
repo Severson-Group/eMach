@@ -1,10 +1,7 @@
 Key,Description,Units
-p,Number of torque pole pairs,
-ps,Number of suspension pole pairs,
-n_m,Number of magnet segments,
-Q,Number of slots,
+p,Number of pole pairs,
 rated_speed,Rated speed of machine,rad/s
 rated_power,Rated power of machine,W
 rated_voltage,Line-line voltage rating,V
 rated_current,Rated coil current of machine,A
-name,Identiifer for machine,
+name,Identfier for machine,

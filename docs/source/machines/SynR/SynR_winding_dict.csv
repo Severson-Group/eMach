@@ -7,3 +7,4 @@ Z_q,Number of turns in each coil
 Kov,Over winding factor for distributed windings
 Kcu,Slot fill factor
 coil_groups,Coil group information. Specific to DPNV windings
+phase_current_offset,Offset of phase current
