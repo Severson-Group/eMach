@@ -227,5 +227,5 @@ class SynR_Machine(Machine, Shaft, SynR_Rotor_Iron, Stator, Winding):
 
     @property
     def V_rotor(self):
-        V_rotor = self.l_st * np.pi * self.r_ro ** 2
+        V_rotor = self.l_st * (np.pi * (self.r_ro ** 2 - self.r_ri**2) - self.p * (self.w_b1 * (2 * self.l_b1 + self.l_b4) + self.w_b2 * (2 * self.l_b2 + self.l_b5) + self.w_b3 * (2 * self.l_b3 + self.l_b6)))
         return V_rotor
