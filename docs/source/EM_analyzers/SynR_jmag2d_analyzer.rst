@@ -170,7 +170,7 @@ Example code defining the electromagnetic step is provided below. This code defi
 initializes the analyzer class with an explanation of the required configurations, and calls the post-analyzer class. The 
 ``SynR_EM_PostAnalyzer`` class is used to process the torque and power data (to calculate average and ripple values) and to print the 
 results. This part can be modified by user to perform further processing (calculation of losses, efficiency, torque/power density, etc.).
-A copy of this file lies in the ``SynR_eval`` folder within the ``mach_eval_examples`` folder in the ``examples`` folder of ``eMach``.
+A copy of this file lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder.
 
 .. code-block:: python
 
@@ -241,8 +241,8 @@ of this dictionary and their descriptions are provided below:
    :header-rows: 1
 
 As mentioned, the post analyzer is necessary to extract and compute the analyzer's computations and to interpret the results. The post analyzer 
-contains the following code, and lies also in the ``SynR_eval`` folder within the ``mach_eval_examples`` folder in the ``examples`` folder of
-``eMach``. The code contained in the post analyzer, in this case to find torque and power quantities, can be seen here:
+contains the following code and lies also in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder. The code contained in the post analyzer, 
+in this case to find torque and power quantities, can be seen here:
 
 .. code-block:: python
 
@@ -392,8 +392,8 @@ contains the following code, and lies also in the ``SynR_eval`` folder within th
 
             return state_out
 
-All example SynR evaluation scripts, including the one used for this analyzer, can be found in ``...\mach_eval_examples\SynR_eval``, where 
-the post-analyzer script uses FEA results and calculates machine performance metrics, including torque density, power density, efficiency,
+All example SynR evaluation scripts, including the one used for this analyzer, can be found in ``eMach\examples\mach_eval_examples\SynR_eval``,
+where the post-analyzer script uses FEA results and calculates machine performance metrics, including torque density, power density, efficiency,
 and torque ripple. This analyzer can be run by simply running the ``SynR_evaluator`` file in the aforementioned folder. This example should 
 produce the following results:
 
