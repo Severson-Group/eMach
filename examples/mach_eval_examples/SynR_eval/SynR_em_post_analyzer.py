@@ -29,7 +29,6 @@ class SynR_EM_PostAnalyzer:
         R_wdg = results["stator_wdg_resistances"][0]
         R_wdg_coil_ends = results["stator_wdg_resistances"][1]
         R_wdg_coil_sides = results["stator_wdg_resistances"][2]
-        l_st = machine.l_st
 
         results["current"] = results["current"].iloc[i1:]
         results["voltage"] = results["voltage"].iloc[i1:]
@@ -39,27 +38,11 @@ class SynR_EM_PostAnalyzer:
         results["eddy_current_loss"] = results["eddy_current_loss"]
 
         ############################ calculating volumes ###########################
-
-        # shaft volume
         machine = state_out.design.machine
-        r_sh = machine.r_ro
-        l_st = machine.l_st
-        V_sh = np.pi*(r_sh**2)*l_st
-
-        # rotor iron volume
-        r_ro    = machine.r_ro
+        V_sh = np.pi*(machine.r_sh**2)*machine.l_st
         V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
 
-        # # Copper volume
-        s_slot = machine.s_slot
-        V_scu = machine.Q * machine.Kcu * machine.s_slot
-
-        # # Stator volume
-        r_so = machine.r_so
-        r_si = machine.r_si
-        V_sfe = np.pi * (r_so**2 - r_si**2) * l_st - machine.Q * s_slot * l_st
-
-                ############################ Post-processing #################################
+        ############################ Post-processing #################################
         rotor_mass = (
             V_rfe * 1e-9 * machine.rotor_iron_mat["core_material_density"]
             + V_sh * 1e-9 * machine.shaft_mat["shaft_material_density"]
@@ -97,13 +80,10 @@ class SynR_EM_PostAnalyzer:
         # Calculating electric loss
         expected_torque = machine.mech_power / omega_m
         scale_ratio = expected_torque / torque_avg
-        l_st = l_st * scale_ratio
-
+        l_st = machine.l_st * scale_ratio
         rotor_mass = scale_ratio * rotor_mass
         rotor_volume = scale_ratio * rotor_volume
-
         torque_avg = scale_ratio * torque_avg
-
         stator_iron_loss = scale_ratio * stator_iron_loss
         rotor_iron_loss = scale_ratio * rotor_iron_loss
         stator_eddy_current_loss = scale_ratio * stator_eddy_current_loss
@@ -118,8 +98,7 @@ class SynR_EM_PostAnalyzer:
         # Total losses, output power, and efficiency
         total_losses = (
             stator_iron_loss + rotor_iron_loss + 
-            stator_calc_ohmic_loss
-        )
+            stator_calc_ohmic_loss)
         P_out = torque_avg * omega_m
         efficiency = P_out / (P_out + total_losses)
 
@@ -133,11 +112,8 @@ class SynR_EM_PostAnalyzer:
         post_processing["PRV"] = PRV
         post_processing["l_st"] = l_st
         post_processing["scale_ratio"] = scale_ratio
-
         post_processing["rotor_mass"] = rotor_mass
         post_processing["rotor_volume"] = rotor_volume
-        # post_processing["motor_mass"] = motor_mass
-
         post_processing["stator_iron_loss"] = stator_iron_loss
         post_processing["rotor_iron_loss"] = rotor_iron_loss
         post_processing["stator_eddy_current_loss"] = stator_eddy_current_loss
