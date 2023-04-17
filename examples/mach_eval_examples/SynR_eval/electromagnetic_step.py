@@ -7,7 +7,7 @@ from mach_eval.analyzers.electromagnetic.SynR import SynR_em_analyzer as SynR_em
 from mach_eval.analyzers.electromagnetic.SynR.SynR_em_config import SynR_EM_Config
 from examples.mach_eval_examples.SynR_eval.SynR_em_post_analyzer import SynR_EM_PostAnalyzer
 
-############################ Define EMAnalysisStep ###########################
+############################ Define Electromagnetic Step ###########################
 class SynR_EM_ProblemDefinition(ProblemDefinition):
     """Converts a State into a problem"""
 
