@@ -699,7 +699,7 @@ class SynR_EM_Analyzer:
             # slip period, that's too long!
             cond.ClearParts()
             sel = cond.GetSelection()
-            sel.SelectPartByPosition((self.machine_variant.r_ro + self.machine_variant.r_sh) / 2, 1, 0)
+            sel.SelectPartByPosition(self.machine_variant.r_sh + 0.5 * self.machine_variant.d_r1, 1, 0)
             # sel.SelectPart(self.id_rotorCore)
 
             cond.AddSelected(sel)
