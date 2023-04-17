@@ -48,7 +48,7 @@ class SynR_EM_PostAnalyzer:
 
         # rotor iron volume
         r_ro    = machine.r_ro
-        V_rfe = np.pi*(r_ro**2-r_sh**2)*l_st # <--- needs work
+        V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
 
         # # Copper volume
         s_slot = machine.s_slot
