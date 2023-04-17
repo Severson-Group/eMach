@@ -1,8 +1,5 @@
 Key,Description,Units
-Id,d-axis torque current magnitude relative to rated coil current,pu
-Iq,q-axis torque current magnitude relative to rated coil current,pu
-Ix,x-axis force current magnitude relative to rated coil current,pu
-Iy,y-axis force current magnitude relative to rated coil current,pu
 speed,Speed at which machine is evaluated,RPM
+phi_0,Electrical angle at which currents are offset,degrees
 ambient_temp,Ambient temperature at which machine is evaluated,deg C
 rotor_temp_rise,Expected rotor temperature rise,deg C
