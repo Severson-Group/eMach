@@ -1,10 +1,8 @@
 class SynR_EM_Config:
     def __init__(self, **kwargs) -> None:
         # attributes for the number of rev and steps
-        self.no_of_rev_1st_TSS = kwargs["no_of_rev_1st_TSS"] # number of revolutions for 1st time step (at slip frequency)
-        self.no_of_rev_2nd_TSS = kwargs["no_of_rev_2nd_TSS"] # number of revolutions for 2nd time step (at drive frequency)
-        self.no_of_steps_1st_TSS = kwargs["no_of_steps_1st_TSS"] # number steps for 1st time step section
-        self.no_of_steps_2nd_TSS = kwargs["no_of_steps_2nd_TSS"] # number steps for 2nd time step section
+        self.no_of_rev = kwargs["no_of_rev"] # number of revolutions
+        self.no_of_steps = kwargs["no_of_steps"] # number steps
 
         self.mesh_size = kwargs["mesh_size"] # generic mesh size for overall model [mm]
         self.mesh_size_rotor = kwargs["mesh_size_rotor"] # mesh size for rotor [mm]
