@@ -96,16 +96,14 @@ The parameters dictionary corresponding to the optimized design of the paper cit
 .. code-block:: python
 
    SynR_parameters = {
-      'p': 1, 
-      'ps': 2, 
-      'n_m': 1, 
-      'Q': 6, 
-      'rated_speed': 16755.16, 
-      'rated_power': 5500.0, 
-      'rated_voltage': 240, 
-      'rated_current': 10.0,
-      'name': "ECCE_2020"
-      }
+      'p': 2,
+      'Q': 12,
+      "name": "Example_SynR_Machine",
+      'rated_speed': 1800,
+      'rated_power': 3600,
+      'rated_voltage': 208,
+      'rated_current': 10,   
+   }
 
 SynR Materials
 ------------------------
