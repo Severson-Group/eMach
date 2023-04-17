@@ -96,7 +96,7 @@ Step 3: Create BSPM Optimization Design Space
 Finally, before running the optimization, the number of optimization objectives, the objectives themselves, and the bounds for the ``Free 
 Variables`` must be decided upon. This information is held within the ``BSPMDesignSpace`` object. 
 
-The optimization is run considering three objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is configured such that the bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds 
+The optimization is run considering three objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is configured such that the bounds are passed in as an argument during instantiation to provide users with the freedom of setting the bounds 
 within the actual optimization script. 
 
 To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder. The file can be used as-is.
