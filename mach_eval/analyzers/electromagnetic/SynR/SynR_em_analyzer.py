@@ -75,7 +75,7 @@ class SynR_EM_Analyzer:
         toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="Transient2D")
         toolJmag.save()
 
-        self.study_name = self.project_name + "_Tran_2TSS_SynR"
+        self.study_name = self.project_name + "_Tran_SynR"
         self.design_results_folder = (
             self.config.run_folder + "%s_results/" % self.project_name
         )
@@ -129,14 +129,10 @@ class SynR_EM_Analyzer:
                 phi_0, app, study)
 
         # Add time step settings
-        no_of_steps1 = self.config.no_of_steps_1st_TSS
-        no_of_steps2 = self.config.no_of_steps_2nd_TSS
-        no_of_rev1 = self.config.no_of_rev_1st_TSS
-        no_of_rev2 = self.config.no_of_rev_2nd_TSS
-        time1_interval = no_of_rev1 / (self.drive_freq)
-        time2_interval = no_of_rev2 / self.drive_freq
-        self.add_time_step_settings(time1_interval, no_of_steps1,
-            time2_interval, no_of_steps2, app, study)
+        no_of_steps = self.config.no_of_steps
+        no_of_rev = self.config.no_of_rev
+        time_interval = no_of_rev / (self.drive_freq)
+        self.add_time_step_settings(time_interval, no_of_steps, app, study)
 
         self.run_study(app, study, clock_time())
 
@@ -624,12 +620,10 @@ class SynR_EM_Analyzer:
 
         # two sections of different time step
         # self.add_time_step_settings(app, study)
-        no_of_rev_1st_TSS = self.config.no_of_rev_1st_TSS
-        no_of_rev_2nd_TSS = self.config.no_of_rev_2nd_TSS
-        no_of_steps_1st_TSS = self.config.no_of_steps_1st_TSS
-        no_of_steps_2nd_TSS = self.config.no_of_steps_2nd_TSS
+        no_of_rev = self.config.no_of_rev
+        no_of_steps = self.config.no_of_steps
         number_of_total_steps = (
-            1 + no_of_steps_1st_TSS + no_of_steps_2nd_TSS
+            1 + no_of_steps
         )
         # add equations
         study.GetDesignTable().AddEquation("freq")
@@ -669,8 +663,8 @@ class SynR_EM_Analyzer:
             # Specify the reference steps yourself because you don't really know what JMAG is doing behind you
             cond.SetValue(
                 "StartReferenceStep",
-                number_of_total_steps + 1 - no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25,
-            )  # 1/4 period in no of steps = no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25
+                number_of_total_steps + 1 - no_of_steps / no_of_rev * 0.25,
+            )  # 1/4 period in no of steps = no_of_steps / no_of_rev * 0.25
             cond.SetValue("EndReferenceStep", number_of_total_steps)
             cond.SetValue("UseStartReferenceStep", 1)
             cond.SetValue("UseEndReferenceStep", 1)
@@ -709,8 +703,8 @@ class SynR_EM_Analyzer:
             # Specify the reference steps yourself because you don't really know what JMAG is doing behind you
             cond.SetValue(
                 "StartReferenceStep",
-                number_of_total_steps + 1 - no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25,
-            )  # 1/4 period in no of steps = no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25
+                number_of_total_steps + 1 - no_of_steps / no_of_rev * 0.25,
+            )  # 1/4 period in no of steps = no_of_steps / no_of_rev * 0.25
             cond.SetValue("EndReferenceStep", number_of_total_steps)
             cond.SetValue("UseStartReferenceStep", 1)
             cond.SetValue("UseEndReferenceStep", 1)
@@ -901,8 +895,7 @@ class SynR_EM_Analyzer:
             study.GetCircuit().GetComponent(self.cs_name[i]).SetFunction(func)
 
 
-    def add_time_step_settings(self, time1_interval, no_of_steps_1st_TSS,
-     time2_interval, no_of_steps_2nd_TSS, app, study):
+    def add_time_step_settings(self, time_interval, no_of_steps, app, study):
 
         DM = app.GetDataManager()
         DM.CreatePointArray("point_array/timevsdivision", "SectionStepTable")
@@ -910,15 +903,12 @@ class SynR_EM_Analyzer:
         refarray[0][0] = 0
         refarray[0][1] = 1
         refarray[0][2] = 50
-        refarray[1][0] = time1_interval
-        refarray[1][1] = no_of_steps_1st_TSS
+        refarray[1][0] = time_interval
+        refarray[1][1] = no_of_steps
         refarray[1][2] = 50
-        refarray[2][0] = refarray[1][0] + time2_interval
-        refarray[2][1] = no_of_steps_2nd_TSS
-        refarray[2][2] = 50
         DM.GetDataSet("SectionStepTable").SetTable(refarray)
         number_of_total_steps = (
-            1 + no_of_steps_1st_TSS + no_of_steps_2nd_TSS
+            1 + no_of_steps
         )  # don't forget to modify here!
         study.GetStep().SetValue("Step", number_of_total_steps)
         study.GetStep().SetValue("StepType", 3)
@@ -1132,8 +1122,8 @@ class SynR_EM_Analyzer:
             "hysteresis_loss": hyst_df,
             "eddy_current_loss": eddy_df,
             "ohmic_loss": ohmic_df,
-            "no_of_steps_2nd_TSS": self.config.no_of_steps_2nd_TSS,
-            "no_of_rev_2nd_TSS": self.config.no_of_rev_2nd_TSS,
+            "no_of_steps": self.config.no_of_steps,
+            "no_of_rev": self.config.no_of_rev,
             "scale_axial_length": self.config.scale_axial_length,          
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],

@@ -22,10 +22,8 @@ class SynR_EM_ProblemDefinition(ProblemDefinition):
 
 # initialize em analyzer class with FEA configuration
 configuration = SynR_EM_Config(
-    no_of_rev_1st_TSS = 1,
-    no_of_rev_2nd_TSS = 2,
-    no_of_steps_1st_TSS=72,
-    no_of_steps_2nd_TSS=72,
+    no_of_rev = 2,
+    no_of_steps = 72,
 
     mesh_size=1, # mm
     mesh_size_rotor=0.5, # mm

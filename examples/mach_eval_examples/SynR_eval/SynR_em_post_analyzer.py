@@ -18,11 +18,11 @@ class SynR_EM_PostAnalyzer:
         op_pt = state_out.design.settings
 
         ############################ Extract required info ###########################
-        no_of_steps_2nd_TSS = results["no_of_steps_2nd_TSS"]
-        no_of_rev_2nd_TSS = results["no_of_rev_2nd_TSS"]
+        no_of_steps = results["no_of_steps"]
+        no_of_rev = results["no_of_rev"]
         number_of_total_steps = results["current"].shape[0]
-        i1 = number_of_total_steps - no_of_steps_2nd_TSS # index where 2nd time step section begins
-        i2 = - int(no_of_steps_2nd_TSS / no_of_rev_2nd_TSS * 0.25) # index where last quarter period of 2nd time step section begins
+        i1 = number_of_total_steps - no_of_steps # index where 2nd time step section begins
+        i2 = - int(no_of_steps / no_of_rev * 0.25) # index where last quarter period of 2nd time step section begins
         omega_m = machine.omega_m
         m = 3
         drive_freq = results["drive_freq"]
