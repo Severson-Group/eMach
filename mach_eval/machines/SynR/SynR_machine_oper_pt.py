@@ -7,7 +7,7 @@ class SynR_Machine_Oper_Pt:
     bearingless induction machines
     """
 
-    def __init__(self, speed, phi_0, ambient_temp, rotor_temp_rise,):
+    def __init__(self, speed, current_ratio, phi_0, ambient_temp, rotor_temp_rise,):
         """
         Args:
             speed: Machine rotational speed in RPM.
@@ -17,6 +17,7 @@ class SynR_Machine_Oper_Pt:
         """
 
         self.__speed = speed
+        self.__current_ratio = current_ratio
         self.__phi_0 = phi_0
         self.__ambient_temp = ambient_temp
         self.__rotor_temp_rise = rotor_temp_rise
@@ -25,6 +26,10 @@ class SynR_Machine_Oper_Pt:
     def speed(self):
         return self.__speed
 
+    @property
+    def current_ratio(self):
+        return self.__current_ratio
+    
     @property
     def phi_0(self):
         return self.__phi_0
