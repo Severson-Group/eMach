@@ -25,8 +25,8 @@ configuration = SynR_EM_Config(
     no_of_rev = 1,
     no_of_steps = 72,
 
-    mesh_size=1, # mm
-    mesh_size_rotor=0.5, # mm
+    mesh_size=3, # mm
+    mesh_size_rotor=1.5, # mm
     airgap_mesh_radial_div=4,
     airgap_mesh_circum_div=720,
     mesh_air_region_scale=1.05,
