@@ -72,7 +72,7 @@ class SynR_EM_PostAnalyzer:
         stator_ohmic_loss_end_wdg = stator_ohmic_loss * R_wdg_coil_ends / R_wdg
         
         # Calculate stator winding ohmic losses
-        I_hat = machine.rated_current * np.sqrt(2)
+        I_hat = machine.rated_current * op_pt.current_ratio * np.sqrt(2)
         stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
         stator_calc_ohmic_loss_end_wdg = R_wdg_coil_ends * m / 2 * I_hat ** 2
         stator_calc_ohmic_loss_along_stack = R_wdg_coil_sides * m / 2 * I_hat ** 2

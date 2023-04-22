@@ -80,6 +80,7 @@ Example_SynR_Machine = SynR_Machine(
 ################ DEFINE SynR operating point ################
 Machine_Op_Pt = SynR_Machine_Oper_Pt(
     speed=1800,
+    current_ratio=1,
     phi_0 = 0,
     ambient_temp=25,
     rotor_temp_rise=0,
