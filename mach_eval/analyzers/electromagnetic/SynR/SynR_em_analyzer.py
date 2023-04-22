@@ -123,9 +123,8 @@ class SynR_EM_Analyzer:
 
         # Set current excitation
         I = self.I_hat
-        s1 = self.machine_variant.p
         phi_0 = self.operating_point.phi_0
-        self.set_currents_sequence(I, s1, self.drive_freq,
+        self.set_currents_sequence(I, self.drive_freq,
                 phi_0, app, study)
 
         # Add time step settings
@@ -356,7 +355,7 @@ class SynR_EM_Analyzer:
         tool.sketch.SetProperty("Name", self.rotor_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
         cs_rotor_core = self.rotor_core.draw(tool)
-        rotor_tool = tool.prepare_section(cs_rotor_core, 1)
+        rotor_tool = tool.prepare_section(cs_rotor_core)
 
         return True
 
@@ -883,14 +882,14 @@ class SynR_EM_Analyzer:
                 condition.RemoveSubCondition("delete")
 
 
-    def set_currents_sequence(self, Is1, s1, freq, phi_0, app, study):
+    def set_currents_sequence(self, I, freq, phi_0, app, study):
         # Setting current values after creating a circuit using "add_mp_circuit" method
         # "freq" variable cannot be used here. So pay extra attention when you 
         # create new case of a different freq.
         for i in range(0, 3):
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(Is1, freq,
-                - s1 * 360 / 3 * i + phi_0 + 90)
+            f1 = app.FunctionFactory().Sin(I, freq,
+                - 360 / 3 * i + phi_0 + 90)
             func.AddFunction(f1)
             study.GetCircuit().GetComponent(self.cs_name[i]).SetFunction(func)
 
