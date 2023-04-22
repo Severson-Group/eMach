@@ -133,11 +133,11 @@ class SynR_EM_PostAnalyzer:
         state_out.conditions.em = post_processing
 
         print("\n************************ EM RESULT ************************")
-        print("Scaling factor = ", scale_ratio)
-        print("Torque = ", torque_avg, " Nm")
+        #print("Scaling factor = ", scale_ratio)
+        #print("Torque = ", torque_avg, " Nm")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
-        print("Power = ", P_out, " W")
+        #print("Power = ", P_out, " W")
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
         print("************************************************************\n")
