@@ -31,7 +31,6 @@ class SynR_EM_PostAnalyzer:
         R_wdg_coil_sides = results["stator_wdg_resistances"][2]
 
         results["current"] = results["current"].iloc[i1:]
-        results["voltage"] = results["voltage"].iloc[i1:]
         results["torque"] = results["torque"].iloc[i1:]
         results["iron_loss"] = results["iron_loss"]
         results["hysteresis_loss"] = results["hysteresis_loss"]

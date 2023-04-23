@@ -101,7 +101,6 @@ The parameters dictionary corresponding to the optimized design of the paper cit
       "name": "Example_SynR_Machine",
       'rated_speed': 1800,
       'rated_power': 3600,
-      'rated_voltage': 208,
       'rated_current': 10,   
    }
 

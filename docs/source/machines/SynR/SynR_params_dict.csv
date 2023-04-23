@@ -2,6 +2,5 @@ Key,Description,Units
 p,Number of pole pairs,
 rated_speed,Rated speed of machine,rad/s
 rated_power,Rated power of machine,W
-rated_voltage,Line-line voltage rating,V
 rated_current,Rated coil current of machine,A
 name,Identfier for machine,

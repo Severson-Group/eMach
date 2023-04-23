@@ -1,6 +1,5 @@
 Output,Description
 current,Data frame of stator and rotor currents in A vs time
-voltage,Data frame of coil terminal voltage in V vs time
 torque,Data frame of torque in Nm vs time
 force,Data frame of force in x and y axes in N vs time
 iron_loss,Data frame of iron loss in W at different frequencies
