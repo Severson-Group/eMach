@@ -76,28 +76,9 @@ class SynR_EM_PostAnalyzer:
         stator_calc_ohmic_loss_end_wdg = R_wdg_coil_ends * m / 2 * I_hat ** 2
         stator_calc_ohmic_loss_along_stack = R_wdg_coil_sides * m / 2 * I_hat ** 2
 
-        # Calculating electric loss
-        expected_torque = machine.mech_power / omega_m
-        scale_ratio = expected_torque / torque_avg
-        l_st = machine.l_st * scale_ratio
-        rotor_mass = scale_ratio * rotor_mass
-        rotor_volume = scale_ratio * rotor_volume
-        torque_avg = scale_ratio * torque_avg
-        stator_iron_loss = scale_ratio * stator_iron_loss
-        rotor_iron_loss = scale_ratio * rotor_iron_loss
-        stator_eddy_current_loss = scale_ratio * stator_eddy_current_loss
-        rotor_eddy_current_loss = scale_ratio * rotor_eddy_current_loss
-        stator_hysteresis_loss = scale_ratio * stator_hysteresis_loss
-        rotor_hysteresis_loss = scale_ratio * rotor_hysteresis_loss
-        stator_ohmic_loss_along_stack = scale_ratio * stator_ohmic_loss_along_stack
-        stator_ohmic_loss = stator_ohmic_loss_along_stack + stator_ohmic_loss_end_wdg
-        stator_calc_ohmic_loss_along_stack = scale_ratio * stator_calc_ohmic_loss_along_stack
-        stator_calc_ohmic_loss = stator_calc_ohmic_loss_along_stack + stator_calc_ohmic_loss_end_wdg
-
         # Total losses, output power, and efficiency
         total_losses = (
-            stator_iron_loss + rotor_iron_loss + 
-            stator_calc_ohmic_loss)
+            stator_iron_loss + rotor_iron_loss + stator_calc_ohmic_loss)
         P_out = torque_avg * omega_m
         efficiency = P_out / (P_out + total_losses)
 
@@ -109,8 +90,7 @@ class SynR_EM_PostAnalyzer:
         post_processing["TRV"] = TRV
         post_processing["PRW"] = PRW
         post_processing["PRV"] = PRV
-        post_processing["l_st"] = l_st
-        post_processing["scale_ratio"] = scale_ratio
+        post_processing["l_st"] = machine.l_st
         post_processing["rotor_mass"] = rotor_mass
         post_processing["rotor_volume"] = rotor_volume
         post_processing["stator_iron_loss"] = stator_iron_loss
@@ -132,7 +112,6 @@ class SynR_EM_PostAnalyzer:
         state_out.conditions.em = post_processing
 
         print("\n************************ EM RESULT ************************")
-        #print("Scaling factor = ", scale_ratio)
         #print("Torque = ", torque_avg, " Nm")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
