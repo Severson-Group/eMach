@@ -32,7 +32,7 @@ configuration = SynR_EM_Config(
     mesh_air_region_scale=1.05,
 
     only_table_results=False,
-    csv_results=("Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;"
+    csv_results=("Torque;Force;FEMCoilFlux;LineCurrent;JouleLoss;TotalDisplacementAngle;"
                   "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss"),
     del_results_after_calc=False,
     run_folder=os.path.dirname(__file__) + "/run_data/",

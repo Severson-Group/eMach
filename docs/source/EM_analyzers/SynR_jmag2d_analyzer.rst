@@ -102,7 +102,6 @@ Example code initializing the machine design for the optimized BIM design provid
         "name": "Example_SynR_Machine",
         'rated_speed': 1800,
         'rated_power': 3600,
-        'rated_voltage': 208,
         'rated_current': 10,   
     }
 
@@ -208,7 +207,7 @@ A copy of this file lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` 
         mesh_air_region_scale=1.05,
 
         only_table_results=False,
-        csv_results=("Torque;Force;FEMCoilFlux;LineCurrent;TerminalVoltage;JouleLoss;TotalDisplacementAngle;"
+        csv_results=("Torque;Force;FEMCoilFlux;LineCurrent;JouleLoss;TotalDisplacementAngle;"
                     "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss"),
         del_results_after_calc=False,
         run_folder=os.path.dirname(__file__) + "/run_data/",
@@ -277,7 +276,6 @@ in this case to find torque and power quantities, can be seen here:
             R_wdg_coil_sides = results["stator_wdg_resistances"][2]
 
             results["current"] = results["current"].iloc[i1:]
-            results["voltage"] = results["voltage"].iloc[i1:]
             results["torque"] = results["torque"].iloc[i1:]
             results["iron_loss"] = results["iron_loss"]
             results["hysteresis_loss"] = results["hysteresis_loss"]

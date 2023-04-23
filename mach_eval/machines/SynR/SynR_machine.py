@@ -118,9 +118,7 @@ class SynR_Machine(Machine, Shaft, SynR_Rotor_Iron, Stator, Winding):
     @staticmethod
     def required_parameters():
         req_params = (
-            "rated_power",  # kW
             "rated_speed",  # rad/s
-            "rated_voltage",  # Vrms (line-to-line, Wye-Connect)
             "rated_current",
             "p",
             "name",
@@ -183,20 +181,12 @@ class SynR_Machine(Machine, Shaft, SynR_Rotor_Iron, Stator, Winding):
         return self._dimensions_dict["l_st"]
 
     @property
-    def mech_power(self):
-        return self._parameters_dict["rated_power"]
-
-    @property
     def rated_speed(self):
         return self._parameters_dict["rated_speed"]
 
     @property
     def omega_m(self):
         return self.rated_speed / 60 * 2 * np.pi
-
-    @property
-    def voltage_rating(self):
-        return self._parameters_dict["rated_voltage"]
 
     @property
     def rated_current(self):

@@ -1074,7 +1074,6 @@ class SynR_EM_Analyzer:
 
     def extract_JMAG_results(self, path, study_name):
         current_csv_path = path + study_name + "_circuit_current.csv"
-        voltage_csv_path = path + study_name + "_circuit_voltage.csv"
         torque_csv_path = path + study_name + "_torque.csv"
         force_csv_path = path + study_name + "_force.csv"
         iron_loss_path = path + study_name + "_iron_loss_loss.csv"
@@ -1083,19 +1082,6 @@ class SynR_EM_Analyzer:
         ohmic_loss_path = path + study_name + "_joule_loss.csv"
 
         curr_df = pd.read_csv(current_csv_path, skiprows=6)
-        volt_df = pd.read_csv(voltage_csv_path, skiprows=6)
-        volt_df.rename(
-            columns={
-                "Time, s": "Time(s)",
-                "Terminal_Us [Case 1]": "Terminal_Us",
-                "Terminal_Ut [Case 1]": "Terminal_Ut",
-                "Terminal_Vs [Case 1]": "Terminal_Vs",
-                "Terminal_Vt [Case 1]": "Terminal_Vt",
-                "Terminal_Ws [Case 1]": "Terminal_Ws",
-                "Terminal_Wt [Case 1]": "Terminal_Wt",
-            },
-            inplace=True,
-        )
         tor_df = pd.read_csv(torque_csv_path, skiprows=6)
         force_df = pd.read_csv(force_csv_path, skiprows=6)
         iron_df = pd.read_csv(iron_loss_path, skiprows=6)
@@ -1104,7 +1090,6 @@ class SynR_EM_Analyzer:
         ohmic_df = pd.read_csv(ohmic_loss_path, skiprows=6)
 
         curr_df = curr_df.set_index("Time(s)")
-        volt_df = volt_df.set_index("Time(s)")
         tor_df = tor_df.set_index("Time(s)")
         force_df = force_df.set_index("Time(s)")
         eddy_df = eddy_df.set_index("Frequency(Hz)")
@@ -1114,7 +1099,6 @@ class SynR_EM_Analyzer:
 
         fea_data = {
             "current": curr_df,
-            "voltage": volt_df,
             "torque": tor_df,
             "force": force_df,
             "iron_loss": iron_df,
