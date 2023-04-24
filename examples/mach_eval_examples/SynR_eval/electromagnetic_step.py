@@ -47,7 +47,6 @@ configuration = SynR_EM_Config(
     scale_axial_length = True,
 )
 
-
 SynR_em_analysis = SynR_em.SynR_EM_Analyzer(configuration)
 
 electromagnetic_step = AnalysisStep(SynR_EM_ProblemDefinition, SynR_em_analysis, SynR_EM_PostAnalyzer)

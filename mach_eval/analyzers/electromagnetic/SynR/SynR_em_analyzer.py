@@ -42,8 +42,8 @@ class SynR_EM_Analyzer:
         ####################################################
         
         self.project_name = self.machine_variant.name
-        # expected_project_file = self.config.run_folder + "%s_attempts_2.jproj" % self.project_name
         expected_project_file = self.config.run_folder + "%s.jproj" % self.project_name
+
         # Create output folder
         if not os.path.isdir(self.config.jmag_csv_folder):
             os.makedirs(self.config.jmag_csv_folder)
@@ -53,7 +53,6 @@ class SynR_EM_Analyzer:
             print(
                 "JMAG project exists already, I will not delete it but create a new one with a different name instead."
             )
-            # os.remove(expected_project_file_path)
             attempts = 2
             temp_path = expected_project_file[
                 : -len(".jproj")
@@ -106,7 +105,6 @@ class SynR_EM_Analyzer:
             raise InvalidDesign
 
         # Create transient study with two time step sections
-        # model = toolJmag.create_model(self.study_name)
         study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name)
         self.create_custom_material(
             app, self.machine_variant.stator_iron_mat["core_material"]
@@ -322,7 +320,6 @@ class SynR_EM_Analyzer:
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
 
-
         tool.bMirror = False
 
         tool.sketch = tool.create_sketch()
@@ -390,7 +387,6 @@ class SynR_EM_Analyzer:
             model.GetGroupList().CreateGroup(name)
             for the_id in id_list:
                 model.GetGroupList().AddPartToGroup(name, the_id)
-                # model.GetGroupList().AddPartToGroup(name, name) #<- this also works
 
         part_ID_list = model.GetPartIDs()
 
@@ -426,8 +422,6 @@ class SynR_EM_Analyzer:
 
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
-        # R = self.r_si + self.d_sp + self.d_st *0.5 # this is not generally working (JMAG selects stator core instead.)
-        # THETA = 0.25*(Angle_StatorSlotSpan)/180.*np.pi
         R = np.sqrt(self.winding_layer1_inner_coord[0] ** 2 + self.winding_layer1_inner_coord[1] ** 2)
         THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
         X = R * np.cos(THETA)
@@ -439,7 +433,6 @@ class SynR_EM_Analyzer:
             count += 1
             add_part_to_set("coil_right_%s%s %d" % (UVW, UpDown, count), X, Y)
 
-            # print(X, Y, THETA)
             THETA += Angle_StatorSlotSpan / 180.0 * np.pi
             X = R * np.cos(THETA)
             Y = R * np.sin(THETA)
@@ -499,7 +492,6 @@ class SynR_EM_Analyzer:
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.stator_iron_mat["core_material"]
         ).SetValue("CoerciveForce", 0)
-        # app.GetMaterialLibrary().GetUserMaterial(u"Arnon5-final").GetTable("BhTable").SetName(u"SmoothZeroPointOne")
         BH = np.loadtxt(
             self.machine_variant.stator_iron_mat["core_bh_file"],
             unpack=True,
@@ -557,7 +549,6 @@ class SynR_EM_Analyzer:
         self, app, model, dir_csv_output_folder, study_name
     ):
 
-        # study = toolJmag.create_study(self.study_name, "Transient2D", model)
         model.CreateStudy("Transient2D", study_name)
         app.SetCurrentStudy(self.study_name)
         study = model.GetStudy(study_name)
@@ -578,7 +569,7 @@ class SynR_EM_Analyzer:
 
         # Conditions - Motion
         study.CreateCondition("RotationMotion",
-            "RotCon") # study.GetCondition(u"RotCon").SetXYZPoint(u"", 0, 0, 1) # megbox warning
+            "RotCon")
         study.GetCondition("RotCon").SetValue("AngularVelocity",
             int(self.speed))
         study.GetCondition("RotCon").ClearParts()
@@ -588,7 +579,7 @@ class SynR_EM_Analyzer:
 
         study.CreateCondition(
             "Torque", "TorCon"
-        )  # study.GetCondition(u"TorCon").SetXYZPoint(u"", 0, 0, 0) # megbox warning
+        )
         study.GetCondition("TorCon").SetValue("TargetType", 1)
         study.GetCondition("TorCon").SetLinkWithType("LinkedMotion", "RotCon")
         study.GetCondition("TorCon").ClearParts()
@@ -606,8 +597,6 @@ class SynR_EM_Analyzer:
             "OnlyTableResults", self.config.only_table_results
         )
 
-        # this can be said to be super fast over ICCG solver.
-        # https://www2.jmag-international.com/support/en/pdf/JMAG-Designer_Ver.17.1_ENv3.pdf
         study.GetStudyProperties().SetValue("DirectSolverType", 1)
 
         if self.config.multiple_cpus:
@@ -618,7 +607,6 @@ class SynR_EM_Analyzer:
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
 
         # two sections of different time step
-        # self.add_time_step_settings(app, study)
         no_of_rev = self.config.no_of_rev
         no_of_steps = self.config.no_of_steps
         number_of_total_steps = (
@@ -628,9 +616,6 @@ class SynR_EM_Analyzer:
         study.GetDesignTable().AddEquation("freq")
         study.GetDesignTable().AddEquation("speed")
         study.GetDesignTable().GetEquation("freq").SetType(0)
-        # study.GetDesignTable().GetEquation("freq").SetExpression(
-        #     "%g" % self.drive_freq
-        # )
         study.GetDesignTable().GetEquation("freq").SetDescription(
             "Excitation Frequency"
         )
@@ -642,7 +627,7 @@ class SynR_EM_Analyzer:
 
         # speed, freq
         study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
-        study.GetStudyProperties().SetValue("ApproximateTransientAnalysis", 1) # psuedo steady state freq is for PWM drive to use
+        study.GetStudyProperties().SetValue("ApproximateTransientAnalysis", 1)
         study.GetStudyProperties().SetValue("OutputSteadyResultAs1stStep", 0)
 
         # Iron Loss Calculation Condition
@@ -652,9 +637,7 @@ class SynR_EM_Analyzer:
             cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
             cond.ClearParts()
             sel = cond.GetSelection()
-            # EPS = 1e-3  # unit: mm
             sel.SelectPart(self.id_statorCore)
-            # sel.SelectPartByPosition(self.machine_variant.r_si / 1000 + EPS, 1, 0)
             cond.AddSelected(sel)
             # Use FFT for hysteresis to be consistent with FEMM's results and to have a FFT plot
             cond.SetValue("HysteresisLossCalcType", 1)
@@ -688,12 +671,9 @@ class SynR_EM_Analyzer:
         if True:
             cond = study.CreateCondition("Ironloss", "IronLossConRotor")
             cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
-            # cond.SetValue(u"BasicFrequency", u"slip*freq") # this require the signal length to be at least 1/4 of
-            # slip period, that's too long!
             cond.ClearParts()
             sel = cond.GetSelection()
             sel.SelectPartByPosition(self.machine_variant.r_sh + 0.1 * self.machine_variant.d_r1, 1, 0)
-            # sel.SelectPart(self.id_rotorCore)
 
             cond.AddSelected(sel)
             # Use FFT for hysteresis to be consistent with JMAG's results
@@ -820,7 +800,6 @@ class SynR_EM_Analyzer:
             condition = study.GetCondition(UVW)
 
             # right layer
-            # print (count, "Coil Set %d"%(count), end=' ')
             condition.CreateSubCondition("FEMCoilData", "Coil Set Right %d" % count)
             subcondition = condition.GetSubCondition("Coil Set Right %d" % count)
             subcondition.ClearParts()
@@ -860,7 +839,7 @@ class SynR_EM_Analyzer:
                     UpDown = "-"
                 else:
                     UpDown = "+"
-            # print (count_leftlayer, "Coil Set %d"%(count_leftlayer))
+
             condition.CreateSubCondition(
                 "FEMCoilData", "Coil Set Left %d" % count_leftlayer
             )
@@ -916,23 +895,19 @@ class SynR_EM_Analyzer:
 
     def mesh_study(self, app, model, study):
 
-        # this `if' judgment is effective only if JMAG-DeleteResultFiles is False
-        # if not study.AnyCaseHasResult():
         # mesh
         print("------------------Adding mesh")
         self.add_mesh(study, model)
 
         # Export Image
         app.View().ShowAllAirRegions()
-        # app.View().ShowMeshGeometry() # 2nd btn
-        app.View().ShowMesh()  # 3rn btn
+        app.View().ShowMesh()
         app.View().Zoom(3)
         app.View().Pan(-self.machine_variant.r_si / 1000, 0)
         app.ExportImageWithSize(
             self.design_results_folder + self.project_name + "mesh.png", 2000, 2000
         )
-        app.View().ShowModel()  # 1st btn. close mesh view, and note that mesh data will be deleted if only ouput table
-        # results are selected.
+        app.View().ShowModel()
 
 
     def add_mesh(self, study, model):
@@ -943,7 +918,6 @@ class SynR_EM_Analyzer:
         study.GetMeshControl().GetTable("SlideTable2D").SetTable(refarray)
 
         study.GetMeshControl().SetValue("MeshType", 1)  # make sure this has been exe'd:
-        # study.GetCondition(u"RotCon").AddSet(model.GetSetList().GetSet(u"Motion_Region"), 0)
         study.GetMeshControl().SetValue(
             "RadialDivision", self.config.airgap_mesh_radial_div
         )  # for air region near which motion occurs
@@ -975,18 +949,12 @@ class SynR_EM_Analyzer:
                 if not study.HasMesh():
                     study.CreateMesh()
 
-        # if self.MODEL_ROTATE:
-        #     if self.total_number_of_cases>1: # just to make sure
-        #         model.RestoreCadLink()
-        #         study.ApplyAllCasesCadParameters()
-
         mesh_all_cases(study)
 
 
     def run_study(self, app, study, toc):
         if not self.config.jmag_scheduler:
             print("-----------------------Running JMAG...")
-            # if run_list[1] == True:
             study.RunAllCases()
             msg = "Time spent on %s is %g s." % (study.GetName(), clock_time() - toc)
             print(msg)
@@ -997,7 +965,6 @@ class SynR_EM_Analyzer:
             job.SetValue("Queued", True)
             job.Submit(False)  # False:CurrentCase, True:AllCases
             # wait and check
-            # study.CheckForCaseResults()
         
         app.Save()
 
@@ -1019,7 +986,6 @@ class SynR_EM_Analyzer:
 
             circular_pattern.SetProperty("CenterType", 2)  # origin I guess
 
-            # print('Copy', Q_float)
             circular_pattern.SetProperty("Angle", "360/%d" % Q_float)
             circular_pattern.SetProperty("Instance", str(Q_float))
 
@@ -1031,7 +997,6 @@ class SynR_EM_Analyzer:
                 tool.doc.GetSelection().Add(tool.sketch.GetItem(segment.draw_token.GetName()))
 
             tool.sketch.CreateRegions()
-            # self.sketch.CreateRegionsWithCleanup(EPS, True) # StatorCore will fail
 
             if idx == 0:
                 region_object = tool.sketch.GetItem(

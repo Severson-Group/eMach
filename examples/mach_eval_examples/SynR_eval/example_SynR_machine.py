@@ -10,6 +10,7 @@ from mach_eval.machines.materials.miscellaneous_materials import (
 from mach_eval.machines.SynR.SynR_machine import SynR_Machine
 from mach_eval.machines.SynR.SynR_machine_oper_pt import SynR_Machine_Oper_Pt
 
+################ DEFINE SynR Machine ################
 SynR_dimensions = {
     'alpha_b': 135,
     'r_sh': 6,

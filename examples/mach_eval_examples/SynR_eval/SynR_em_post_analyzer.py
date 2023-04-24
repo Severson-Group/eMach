@@ -21,8 +21,8 @@ class SynR_EM_PostAnalyzer:
         no_of_steps = results["no_of_steps"]
         no_of_rev = results["no_of_rev"]
         number_of_total_steps = results["current"].shape[0]
-        i1 = number_of_total_steps - no_of_steps # index where 2nd time step section begins
-        i2 = - int(no_of_steps / no_of_rev * 0.25) # index where last quarter period of 2nd time step section begins
+        i1 = number_of_total_steps - no_of_steps
+        i2 = - int(no_of_steps / no_of_rev * 0.25)
         omega_m = machine.omega_m
         m = 3
         drive_freq = results["drive_freq"]
@@ -111,13 +111,13 @@ class SynR_EM_PostAnalyzer:
 
         state_out.conditions.em = post_processing
 
-        print("\n************************ EM RESULT ************************")
+        print("\n************************ ELECTROMAGNETIC RESULTS ************************")
         #print("Torque = ", torque_avg, " Nm")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
         #print("Power = ", P_out, " W")
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
-        print("************************************************************\n")
+        print("*************************************************************************\n")
 
         return state_out
