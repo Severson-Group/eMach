@@ -248,7 +248,7 @@ class SynR_EM_Analyzer:
             theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
-        self.rotor_core = mo.CrossSectFluxBarrierRotor(
+        self.rotor_core = mo.CrossSectFluxBarrierRotorPartial(
             name="RotorCore",
             dim_alpha_b=mo.DimDegree(self.machine_variant.alpha_b),
             dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
@@ -343,16 +343,16 @@ class SynR_EM_Analyzer:
         self.winding_layer2_inner_coord = cs_winding_layer2.inner_coord
 
         tool.sketch = tool.create_sketch()
+        tool.sketch.SetProperty("Name", self.rotor_core.name)
+        tool.sketch.SetProperty("Color", r"#808080")
+        cs_rotor_core = self.rotor_core.draw(tool)
+        rotor_tool = tool.prepare_section(cs_rotor_core, 2*self.machine_variant.p)
+
+        tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.shaft.name)
         tool.sketch.SetProperty("Color", r"#71797E")
         cs_shaft = self.shaft.draw(tool)
         shaft_tool = tool.prepare_section(cs_shaft)
-
-        tool.sketch = tool.create_sketch()
-        tool.sketch.SetProperty("Name", self.rotor_core.name)
-        tool.sketch.SetProperty("Color", r"#808080")
-        cs_rotor_core = self.rotor_core.draw(tool)
-        rotor_tool = tool.prepare_section(cs_rotor_core)
 
         return True
 
