@@ -26,7 +26,7 @@ configuration = SynR_Struct_Config(
     no_of_steps = 72,
 
     mesh_size=3, # mm
-    mesh_size_rotor=1, # mm
+    mesh_size_rotor=0.1, # mm
     airgap_mesh_radial_div=4,
     airgap_mesh_circum_div=720,
     mesh_air_region_scale=1.05,
