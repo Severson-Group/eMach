@@ -7,7 +7,7 @@ from mach_eval.analyzers.mechanical.SynR import SynR_struct_analyzer as SynR_str
 from mach_eval.analyzers.mechanical.SynR.SynR_struct_config import SynR_Struct_Config
 from examples.mach_eval_examples.SynR_eval.SynR_struct_post_analyzer import SynR_Struct_PostAnalyzer
 
-############################ Define Electromagnetic Step ###########################
+############################ Define Structural Step ###########################
 class SynR_Struct_ProblemDefinition(ProblemDefinition):
     """Converts a State into a problem"""
 
