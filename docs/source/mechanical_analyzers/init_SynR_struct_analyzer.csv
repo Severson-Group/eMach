@@ -1,0 +1,2 @@
+Arguments,Description
+configuration,"object of type SynR_Struct_Config describing analyzer domain, JMAG configurations, etc."
