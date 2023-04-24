@@ -39,7 +39,6 @@ class SynR_Struct_Analyzer:
         ####################################################
         
         self.project_name = self.machine_variant.name
-        # expected_project_file = self.config.run_folder + "%s_attempts_2.jproj" % self.project_name
         expected_project_file = self.config.run_folder + "%s_Struct.jproj" % self.project_name
         # Create output folder
         if not os.path.isdir(self.config.jmag_csv_folder):
@@ -50,7 +49,6 @@ class SynR_Struct_Analyzer:
             print(
                 "JMAG project exists already, I will not delete it but create a new one with a different name instead."
             )
-            # os.remove(expected_project_file_path)
             attempts = 2
             temp_path = expected_project_file[
                 : -len(".jproj")
@@ -103,7 +101,6 @@ class SynR_Struct_Analyzer:
             raise InvalidDesign
 
         # Create static study
-        # model = toolJmag.create_model(self.study_name)
         study = self.add_struct_study(app, model, self.config.jmag_csv_folder, self.study_name)
         self.create_custom_material(
             app, self.machine_variant.stator_iron_mat["core_material"]
@@ -117,7 +114,7 @@ class SynR_Struct_Analyzer:
         self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        # app.Quit()
+        app.Quit()
 
         ####################################################
         # 03 Load FEA output
@@ -310,7 +307,6 @@ class SynR_Struct_Analyzer:
             model.GetGroupList().CreateGroup(name)
             for the_id in id_list:
                 model.GetGroupList().AddPartToGroup(name, the_id)
-                # model.GetGroupList().AddPartToGroup(name, name) #<- this also works
 
         part_ID_list = model.GetPartIDs()
 
@@ -346,8 +342,6 @@ class SynR_Struct_Analyzer:
 
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
-        # R = self.r_si + self.d_sp + self.d_st *0.5 # this is not generally working (JMAG selects stator core instead.)
-        # THETA = 0.25*(Angle_StatorSlotSpan)/180.*np.pi
         R = np.sqrt(self.winding_layer1_inner_coord[0] ** 2 + self.winding_layer1_inner_coord[1] ** 2)
         THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
         X = R * np.cos(THETA)
@@ -359,7 +353,6 @@ class SynR_Struct_Analyzer:
             count += 1
             add_part_to_set("coil_right_%s%s %d" % (UVW, UpDown, count), X, Y)
 
-            # print(X, Y, THETA)
             THETA += Angle_StatorSlotSpan / 180.0 * np.pi
             X = R * np.cos(THETA)
             Y = R * np.sin(THETA)
@@ -414,7 +407,6 @@ class SynR_Struct_Analyzer:
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.stator_iron_mat["core_material"]
         ).SetValue("CoerciveForce", 0)
-        # app.GetMaterialLibrary().GetUserMaterial(u"Arnon5-final").GetTable("BhTable").SetName(u"SmoothZeroPointOne")
         BH = np.loadtxt(
             self.machine_variant.stator_iron_mat["core_bh_file"],
             unpack=True,
@@ -477,7 +469,6 @@ class SynR_Struct_Analyzer:
         self, app, model, dir_csv_output_folder, study_name
     ):
 
-        # study = toolJmag.create_study(self.study_name, "Transient2D", model)
         model.CreateStudy("StructuralStatic2D", study_name)
         app.SetCurrentStudy(self.study_name)
         study = model.GetStudy(study_name)
@@ -522,16 +513,14 @@ class SynR_Struct_Analyzer:
         )
 
         # Suppress Stator
-        # model.GetStudy(self.study_name).SuppressPart("StatorCore", 1)
-        # model.GetStudy(self.study_name).SuppressPart("Coils", 1)
+        model.GetStudy(self.study_name).SuppressPart("StatorCore", 1)
+        model.GetStudy(self.study_name).SuppressPart("Coils", 1)
 
         # True: no mesh or field results are needed
         study.GetStudyProperties().SetValue(
             "OnlyTableResults", self.config.only_table_results
         )
 
-        # this can be said to be super fast over ICCG solver.
-        # https://www2.jmag-international.com/support/en/pdf/JMAG-Designer_Ver.17.1_ENv3.pdf
         study.GetStudyProperties().SetValue("DirectSolverType", 1)
 
         if self.config.multiple_cpus:
@@ -552,8 +541,6 @@ class SynR_Struct_Analyzer:
         study.GetStudyProperties().SetValue(
             "DeleteResultFiles", self.config.del_results_after_calc
         )
-        #study.GetMaterial("Shaft").SetValue("OutputResult", 0)
-        #study.GetMaterial("Coils").SetValue("OutputResult", 0)
 
         return study
 
@@ -594,23 +581,19 @@ class SynR_Struct_Analyzer:
 
     def mesh_study(self, app, model, study):
 
-        # this `if' judgment is effective only if JMAG-DeleteResultFiles is False
-        # if not study.AnyCaseHasResult():
         # mesh
         print("------------------Adding mesh")
         self.add_mesh(study, model)
 
         # Export Image
         app.View().ShowAllAirRegions()
-        # app.View().ShowMeshGeometry() # 2nd btn
-        app.View().ShowMesh()  # 3rn btn
+        app.View().ShowMesh()
         app.View().Zoom(3)
         app.View().Pan(-self.machine_variant.r_si / 1000, 0)
         app.ExportImageWithSize(
             self.design_results_folder + self.project_name + "mesh.png", 2000, 2000
         )
-        app.View().ShowModel()  # 1st btn. close mesh view, and note that mesh data will be deleted if only ouput table
-        # results are selected.
+        app.View().ShowModel()
 
 
     def add_mesh(self, study, model):
@@ -621,7 +604,6 @@ class SynR_Struct_Analyzer:
         study.GetMeshControl().GetTable("SlideTable2D").SetTable(refarray)
 
         study.GetMeshControl().SetValue("MeshType", 1)  # make sure this has been exe'd:
-        # study.GetCondition(u"RotCon").AddSet(model.GetSetList().GetSet(u"Motion_Region"), 0)
         study.GetMeshControl().SetValue(
             "RadialDivision", self.config.airgap_mesh_radial_div
         )  # for air region near which motion occurs
@@ -653,18 +635,12 @@ class SynR_Struct_Analyzer:
                 if not study.HasMesh():
                     study.CreateMesh()
 
-        # if self.MODEL_ROTATE:
-        #     if self.total_number_of_cases>1: # just to make sure
-        #         model.RestoreCadLink()
-        #         study.ApplyAllCasesCadParameters()
-
         mesh_all_cases(study)
 
 
     def run_study(self, app, study, toc):
         if not self.config.jmag_scheduler:
             print("-----------------------Running JMAG...")
-            # if run_list[1] == True:
             study.RunAllCases()
             msg = "Time spent on %s is %g s." % (study.GetName(), clock_time() - toc)
             print(msg)
@@ -675,7 +651,6 @@ class SynR_Struct_Analyzer:
             job.SetValue("Queued", True)
             job.Submit(False)  # False:CurrentCase, True:AllCases
             # wait and check
-            # study.CheckForCaseResults()
         
         app.Save()
 
@@ -709,7 +684,6 @@ class SynR_Struct_Analyzer:
                 tool.doc.GetSelection().Add(tool.sketch.GetItem(segment.draw_token.GetName()))
 
             tool.sketch.CreateRegions()
-            # self.sketch.CreateRegionsWithCleanup(EPS, True) # StatorCore will fail
 
             if idx == 0:
                 region_object = tool.sketch.GetItem(
@@ -742,7 +716,6 @@ class SynR_Struct_Analyzer:
 
             # RotateCopy
             if tool.iRotateCopy != 0:
-                # print('Copy', self.iRotateCopy)
                 regionCircularPattern360Origin(
                     region_object, tool, bMerge=bRotateMerge
                 )
@@ -753,7 +726,6 @@ class SynR_Struct_Analyzer:
     def extract_JMAG_results(self, path, study_name):
         max_stress_csv_path = path + study_name + "_calculation_MaxStress.csv"
         max_stress_df = pd.read_csv(max_stress_csv_path, skiprows=5)
-        # max_stress_df = max_stress_df.set_index("Time(s)")
         
         fea_data = {
             "max_stress": max_stress_df,

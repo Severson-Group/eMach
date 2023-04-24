@@ -15,6 +15,9 @@ class SynR_Struct_PostAnalyzer:
         print("Maximum Stress = ", max_stress/1000000, " MPa",)
         if max_stress > yield_stress:
             print("This exceeds the yield stress of the rotor!")
+        else:
+            print("This does not exceed the yield stress of the rotor!")
         print("************************************************************\n")
+    
 
         return state_out
