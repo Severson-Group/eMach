@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 from mach_eval.machines.materials.electric_steels import (Arnon5)
 from mach_eval.machines.materials.miscellaneous_materials import (
@@ -48,7 +49,7 @@ SynR_parameters = {
     'Q': 12,
     "name": "Example_SynR_Machine",
     'rated_speed': 1800,
-    'rated_current': 10,   
+    'rated_current': 10 * np.sqrt(2),   
 }
 
 SynR_materials = {

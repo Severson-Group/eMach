@@ -46,7 +46,7 @@ The tables below provide the input expected by the ``MachineDesign`` class and t
    :widths: 70, 70
    :header-rows: 1
 
-Example code initializing the machine design for the optimized BIM design provided in the example found in the ``SynR Design`` section of 
+Example code initializing the machine design for the optimized SynR design provided in the example found in the ``SynR Design`` section of 
 ``MACHINE DESIGNS`` is shown below. An identical file titled ``example_SynR_machine`` is stored in the ``SynR_eval`` folder within the 
 ``mach_eval_examples`` folder in the ``examples`` folder of ``eMach``.
 
@@ -94,7 +94,6 @@ Example code initializing the machine design for the optimized BIM design provid
         'w_st': 12,
         'l_st': 100,
     }
-
 
     SynR_parameters = {
         'p': 2,
@@ -198,10 +197,10 @@ A copy of this file lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` 
     # initialize em analyzer class with FEA configuration
     configuration = SynR_EM_Config(
         no_of_rev = 1,
-        no_of_steps = 72
+        no_of_steps = 72,
 
-        mesh_size=1, # mm
-        mesh_size_rotor=0.5, # mm
+        mesh_size=3, # mm
+        mesh_size_rotor=1.5, # mm
         airgap_mesh_radial_div=4,
         airgap_mesh_circum_div=720,
         mesh_air_region_scale=1.05,
@@ -266,8 +265,8 @@ in this case to find torque and power quantities, can be seen here:
             no_of_steps = results["no_of_steps"]
             no_of_rev = results["no_of_rev"]
             number_of_total_steps = results["current"].shape[0]
-            i1 = number_of_total_steps - no_of_steps # index where 2nd time step section begins
-            i2 = - int(no_of_steps / no_of_rev * 0.25) # index where last quarter period of 2nd time step section begins
+            i1 = number_of_total_steps - no_of_steps
+            i2 = - int(no_of_steps / no_of_rev * 0.25)
             omega_m = machine.omega_m
             m = 3
             drive_freq = results["drive_freq"]
@@ -316,33 +315,14 @@ in this case to find torque and power quantities, can be seen here:
             stator_ohmic_loss_end_wdg = stator_ohmic_loss * R_wdg_coil_ends / R_wdg
             
             # Calculate stator winding ohmic losses
-            I_hat = machine.rated_current * np.sqrt(2)
+            I_hat = machine.rated_current * op_pt.current_ratio * np.sqrt(2)
             stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
             stator_calc_ohmic_loss_end_wdg = R_wdg_coil_ends * m / 2 * I_hat ** 2
             stator_calc_ohmic_loss_along_stack = R_wdg_coil_sides * m / 2 * I_hat ** 2
 
-            # Calculating electric loss
-            expected_torque = machine.mech_power / omega_m
-            scale_ratio = expected_torque / torque_avg
-            l_st = machine.l_st * scale_ratio
-            rotor_mass = scale_ratio * rotor_mass
-            rotor_volume = scale_ratio * rotor_volume
-            torque_avg = scale_ratio * torque_avg
-            stator_iron_loss = scale_ratio * stator_iron_loss
-            rotor_iron_loss = scale_ratio * rotor_iron_loss
-            stator_eddy_current_loss = scale_ratio * stator_eddy_current_loss
-            rotor_eddy_current_loss = scale_ratio * rotor_eddy_current_loss
-            stator_hysteresis_loss = scale_ratio * stator_hysteresis_loss
-            rotor_hysteresis_loss = scale_ratio * rotor_hysteresis_loss
-            stator_ohmic_loss_along_stack = scale_ratio * stator_ohmic_loss_along_stack
-            stator_ohmic_loss = stator_ohmic_loss_along_stack + stator_ohmic_loss_end_wdg
-            stator_calc_ohmic_loss_along_stack = scale_ratio * stator_calc_ohmic_loss_along_stack
-            stator_calc_ohmic_loss = stator_calc_ohmic_loss_along_stack + stator_calc_ohmic_loss_end_wdg
-
             # Total losses, output power, and efficiency
             total_losses = (
-                stator_iron_loss + rotor_iron_loss + 
-                stator_calc_ohmic_loss)
+                stator_iron_loss + rotor_iron_loss + stator_calc_ohmic_loss)
             P_out = torque_avg * omega_m
             efficiency = P_out / (P_out + total_losses)
 
@@ -354,8 +334,7 @@ in this case to find torque and power quantities, can be seen here:
             post_processing["TRV"] = TRV
             post_processing["PRW"] = PRW
             post_processing["PRV"] = PRV
-            post_processing["l_st"] = l_st
-            post_processing["scale_ratio"] = scale_ratio
+            post_processing["l_st"] = machine.l_st
             post_processing["rotor_mass"] = rotor_mass
             post_processing["rotor_volume"] = rotor_volume
             post_processing["stator_iron_loss"] = stator_iron_loss
@@ -376,15 +355,14 @@ in this case to find torque and power quantities, can be seen here:
 
             state_out.conditions.em = post_processing
 
-            print("\n************************ EM RESULT ************************")
-            print("Scaling factor = ", scale_ratio)
-            print("Torque = ", torque_avg, " Nm")
+            print("\n************************ ELECTROMAGNETIC RESULTS ************************")
+            #print("Torque = ", torque_avg, " Nm")
             print("Torque density = ", TRV, " Nm/m3",)
             print("Torque ripple = ", torque_ripple)
-            print("Power = ", P_out, " W")
+            #print("Power = ", P_out, " W")
             print("Power density = ", PRV, " W/m3",)
             print("Efficiency = ", efficiency * 100, " %")
-            print("************************************************************\n")
+            print("*************************************************************************\n")
 
             return state_out
 
@@ -393,7 +371,7 @@ where the post-analyzer script uses FEA results and calculates machine performan
 and torque ripple. This analyzer can be run by simply running the ``SynR_evaluator`` file in the aforementioned folder. This example should 
 produce the following results:
 
-.. csv-table:: `SynR_JMAG_2D_FEA_Analyzer Output`
+.. csv-table:: `SynR_JMAG_2D_FEA_Analyzer Results`
    :file: results_SynR_jmag2d_analyzer.csv
    :widths: 70, 70, 30
    :header-rows: 1
