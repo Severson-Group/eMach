@@ -167,7 +167,7 @@ class SynR_Struct_Analyzer:
             theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
-        self.rotor_core = mo.CrossSectFluxBarrierRotor(
+        self.rotor_core = mo.CrossSectFluxBarrierRotorPartial(
             name="RotorCore",
             dim_alpha_b=mo.DimDegree(self.machine_variant.alpha_b),
             dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
@@ -272,7 +272,7 @@ class SynR_Struct_Analyzer:
         tool.sketch.SetProperty("Name", self.rotor_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
         cs_rotor_core = self.rotor_core.draw(tool)
-        rotor_tool = tool.prepare_section(cs_rotor_core)
+        rotor_tool = tool.prepare_section(cs_rotor_core, 2*self.machine_variant.p)
 
         return True
 
