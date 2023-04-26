@@ -282,7 +282,7 @@ in this case to find torque and power quantities, can be seen here:
             ############################ calculating volumes ###########################
             machine = state_out.design.machine
             V_sh = np.pi*(machine.r_sh**2)*machine.l_st
-            V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
+            V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - 2 * machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
 
             ############################ Post-processing #################################
             rotor_mass = (
