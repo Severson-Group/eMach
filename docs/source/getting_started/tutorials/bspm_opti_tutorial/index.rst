@@ -2,7 +2,7 @@ BSPM Optimization Tutorial
 ===========================================
 
 * **Goal:** Leverage capabilites of ``mach_opt`` and ``mach_eval`` to perform multi-objective, multi-physics optimization of
-  bearingless surface permamanent magnet machines
+  bearingless surface permanent magnet machines
 * **Complexity:** 4/5
 * **Estimated Time:** 45 - 60 min
 
@@ -10,7 +10,7 @@ This tutorial demonstrates how to perform a multi-objective, multi-physics optim
 tutorial you will be able to:
 
 * run multi-objective optimizations using ``eMach`` for a wide range of electric machines;
-* post-proccess optimization data to understand a design space; 
+* post-process optimization data to understand a design space; 
 * select and share candidate designs from a design space.
 
 
@@ -41,7 +41,7 @@ Nearly all population-based optimization workflows function by creating a set of
 fitness corresponding to these variables. There are a number of steps involved in this process. Creating a ``Design`` from the set of
 ``Free Variables`` is the first step. The class that performs this function is called the ``Designer`` in ``eMach`` terminology. 
 
-To create a ``Designer``, we much first define the input ``Free Variables`` and the desired output ``Design``. In this tutorial, 
+To create a ``Designer``, we must first define the input ``Free Variables`` and the desired output ``Design``. In this tutorial, 
 
 * **Input** ``Free Variables``: we are using a set of 11 variables that define the rotor and stator geometry. These ``Free Variables`` are :math:`\delta_e`, :math:`r_{ro}`, :math:`\alpha_{st}`, :math:`d_{so}`, :math:`w_{st}`, :math:`d_{st}`, :math:`d_{sy}`, :math:`\alpha_m`, :math:`d_m`, :math:`d_{mp}`, and :math:`d_{ri}` dimensions. Readers can refer to the :doc:`BSPM machine <../../../machines/bspm/bspm_machine>` document to understand the physical dimensions corresponding to these ``Free Variables``. 
 * **Output** ``Design``: a BSPM design object which consists of a :doc:`BSPM Machine <../../../machines/bspm/bspm_machine>` and its corresponding :doc:`operating point <../../../machines/bspm/bspm_oper_pt>`. The BSPM ``Designer`` has an ``Architect`` to create the ``BSPM_Machine`` from ``Free Variables`` and a ``Settings_Handler`` to create the ``BSPM_Machine_Oper_Pt`` object. In this tutorial, the operating point is independent of the ``Free Variables``. As a result, the ``Settings_Handler`` always returns the same ``BSPM_Machine_Oper_Pt`` object. 
@@ -96,7 +96,7 @@ Step 3: Create BSPM Optimization Design Space
 Finally, before running the optimization, the number of optimization objectives, the objectives themselves, and the bounds for the ``Free 
 Variables`` must be decided upon. This information is held within the ``BSPMDesignSpace`` object. 
 
-The optimization is run considering three objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is configured such that the bounds are passed in as an argument during instatiation to provide users with the freedom of setting the bounds 
+The optimization is run considering three objectives. This includes minimizing the weighted sum of torque and force ripple, and maximizing efficiency, power density. The class is configured such that the bounds are passed in as an argument during instantiation to provide users with the freedom of setting the bounds 
 within the actual optimization script. 
 
 To create the ``BSPMDesignSpace`` class, copy the ``bspm_ds.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder. The file can be used as-is.
@@ -124,8 +124,8 @@ Finally, the multi-objective, multi-physics optimization can be run by combining
 
 The code snippet provided below shows how to run this optimization. This code should be saved to a new Python file named ``bspm_optimization.py``. 
 
-An important consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analatyically designed
-machine as the baseline or an existing machine and applying scaling factors on its dimensions to get the bounds. 
+An important consideration while running the optimization is the bounds for the ``Free Variables``. This can be set by considering an analytically designed
+machine as the baseline for an existing machine and applying scaling factors on its dimensions to get the bounds. 
 
 Run ``bspm_optimization.py``. The optimization should run for as many generations as required to obtain the Pareto Front. If the optimization terminates before this is achieved due to unexpected errors, simply run the script again and the optimziation will resume from the last saved generation (based on ``latest_pop.csv``). 
 
@@ -133,7 +133,7 @@ Run ``bspm_optimization.py``. The optimization should run for as many generation
 
     import os
     from bspm_designer import designer
-    from bspm_evaluator import evaluator
+    from bspm_evaluator import bspm_evaluator
     from bspm_ds import BSPMDesignSpace
     from eMach.mach_opt import DesignProblem, DesignOptimizationMOEAD
     from my_data_handler import MyDataHandler
@@ -178,7 +178,7 @@ Run ``bspm_optimization.py``. The optimization should run for as many generation
     dh = MyDataHandler(arch_file, des_file)  # initialize data handler with required file paths
 
     # create pygmo Problem
-    design_prob = DesignProblem(designer, evaluator, opt_settings, dh)
+    design_prob = DesignProblem(designer, bspm_evaluator, opt_settings, dh)
     # defin pygmo MOEAD optimization
     design_opt = DesignOptimizationMOEAD(design_prob)
 
@@ -206,7 +206,7 @@ evaluating trends in the ``Free Variables``, and selecting candidate designs.
 
 Copy the ``my_plotting_functions.py`` file from the ``examples/mach_opt_examples/bspm_opt`` folder to get the custom functions created for plotting the Pareto front and ``Free Variables`` of this optimization. 
 
-Create a file named ``plot_script.py``. Copy paste the code provided below to plot the Pareto front. As this optimization has three objetives, the marker color is used to indicate the value of the third objective, weighted ripple.
+Create a file named ``plot_script.py``. Copy and paste the code provided below to plot the Pareto front. As this optimization has three objectives, the marker color is used to indicate the value of the third objective, weighted ripple.
 
 .. code-block:: python
 
@@ -232,9 +232,9 @@ An example Pareto plot obtained from running the optimization script from step 5
    :align: center
    :width: 300 
 
-To plot trends in ``Free Variables`` from the beginning to the end of the optimization, copy paste the code provided below to ``plot_script.py``. 
+To plot trends in ``Free Variables`` from the beginning to the end of the optimization, copy and paste the code provided below to ``plot_script.py``. 
 The blue markers provide the value of the ``Free Variable`` corresponding to a design and the red lines indicate the bounds corresponding to 
-each free variable. The bounds should be set such that they are not run into during optiimization if possible. 
+each free variable. The bounds should be set such that they are not run into during optimization if possible. 
 
 .. code-block:: python
 
@@ -316,6 +316,6 @@ Conclusion
 ----------------
 
 Congratulations! You have successfully used ``eMach`` to run a multi-physics, multi-objective optimization! You can now
-attempt optimizating BSPM machines for different objectives and compare the resulting designs from those obtained with this
+attempt optimizing BSPM machines for different objectives and compare the resulting designs from those obtained with this
 optimization.
 
