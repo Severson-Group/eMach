@@ -212,7 +212,7 @@ Create a file named ``plot_script.py``. Copy and paste the code provided below t
 
     import os
 
-    from data_handler import MyDataHandler
+    from my_data_handler import MyDataHandler
     from my_plotting_functions import DataAnalyzer
 
     path = os.path.dirname(__file__)
