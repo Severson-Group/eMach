@@ -10,7 +10,7 @@ from electromagnetic_AM_step import electromagnetic_AM_step
 from example_AM_SynR_machine import Example_AM_SynR_Machine, Machine_Op_Pt
 
 ############################ Create Evaluator ########################
-SynR_evaluator = MachineEvaluator(
+AM_SynR_evaluator = MachineEvaluator(
     [
         electromagnetic_AM_step
     ]
@@ -19,7 +19,7 @@ SynR_evaluator = MachineEvaluator(
 design_variant = MachineDesign(Example_AM_SynR_Machine, Machine_Op_Pt)
 
 tic = clock_time()
-results = SynR_evaluator.evaluate(design_variant)
+results = AM_SynR_evaluator.evaluate(design_variant)
 toc = clock_time()
 
-print("Time spent on SynR evaluation is %g min." % ((toc- tic)/60))
+print("Time spent on AM SynR evaluation is %g min." % ((toc- tic)/60))

@@ -8,10 +8,10 @@ from mach_eval.machines.materials.miscellaneous_materials import (
     Copper,
     Air,
 )
-from mach_eval.machines.SynR.SynR_machine import SynR_Machine
-from mach_eval.machines.SynR.SynR_machine_oper_pt import SynR_Machine_Oper_Pt
+from mach_eval.machines.SynR.AM_SynR_machine import AM_SynR_Machine
+from mach_eval.machines.SynR.AM_SynR_machine_oper_pt import AM_SynR_Machine_Oper_Pt
 
-################ DEFINE SynR Machine ################
+################ DEFINE AM SynR Machine ################
 SynR_dimensions = {
     'r_sh': 6,
     'r_ri': 6,
@@ -60,12 +60,12 @@ SynR_winding = {
     "phase_current_offset": 0,
 }
 
-Example_SynR_Machine = SynR_Machine(
+Example_AM_SynR_Machine = AM_SynR_Machine(
     SynR_dimensions, SynR_parameters, SynR_materials, SynR_winding
 )
 
 ################ DEFINE SynR operating point ################
-Machine_Op_Pt = SynR_Machine_Oper_Pt(
+Machine_Op_Pt = AM_SynR_Machine_Oper_Pt(
     speed=1800,
     current_ratio=1,
     phi_0 = 0,
