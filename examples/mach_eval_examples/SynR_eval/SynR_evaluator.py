@@ -6,17 +6,17 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../../")
 
 from mach_eval import (MachineEvaluator, MachineDesign)
-from electromagnetic_AM_step import electromagnetic_AM_step
-from example_AM_SynR_machine import Example_AM_SynR_Machine, Machine_Op_Pt
+from electromagnetic_step import electromagnetic_step
+from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 
 ############################ Create Evaluator ########################
 SynR_evaluator = MachineEvaluator(
     [
-        electromagnetic_AM_step
+        electromagnetic_step
     ]
 )
 
-design_variant = MachineDesign(Example_AM_SynR_Machine, Machine_Op_Pt)
+design_variant = MachineDesign(Example_SynR_Machine, Machine_Op_Pt)
 
 tic = clock_time()
 results = SynR_evaluator.evaluate(design_variant)

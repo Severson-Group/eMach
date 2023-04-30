@@ -1,4 +1,4 @@
-class AM_SynR_EM_Config:
+class SynR_EM_Config:
     def __init__(self, **kwargs) -> None:
         # attributes for the number of rev and steps
         self.no_of_rev = kwargs["no_of_rev"] # number of revolutions
