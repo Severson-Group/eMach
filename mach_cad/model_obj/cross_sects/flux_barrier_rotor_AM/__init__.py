@@ -68,60 +68,56 @@ class CrossSectFluxBarrierRotorAMPartial_Iron1(CrossSectBase):
         # First Magnetic Segment
 
         # Point on Shaft
-        x0 = r_ri * np.cos(np.pi / (2 * p))
-        y0 = r_ri * np.sin(np.pi / (2 * p))
-        x1 = x0
-        y1 = -y0
+        x0 = 0
+        y0 = r_ri
+        x1 = r_ri
+        y1 = 0
         # Mid Point in Rotor
-        x2 = r_ri + d_r1
-        y2 = 0
+        x2 = (r_ri + d_r1) * np.cos(np.pi / (2 * p))
+        y2 = (r_ri + d_r1) * np.sin(np.pi / (2 * p))
         # Corner Points on Rotor Surface
-        x3 = r_ro * np.cos(np.pi / (2 * p))
-        y3 = r_ro * np.sin(np.pi / (2 * p))
-        x6 = x3
-        y6 = -y3
+        x3 = 0
+        y3 = r_ro
+        x6 = r_ro
+        y6 = 0
         # Points on Rotor Surface
-        l_i1 = np.sqrt(r_ro**2 - (x2 * np.cos(np.pi / (2 * p)))**2) - x2 * np.sin(np.pi / (2 * p))
-        x4 = l_i1 * np.cos(np.pi / (2 * p)) + x2
-        y4 = l_i1 * np.sin(np.pi / (2 * p))
-        x5 = x4
-        y5 = -y4
+        x4 = x2
+        y4 = np.sqrt(r_ro**2 - x2**2)
+        x5 = np.sqrt(r_ro**2 - y2**2)
+        y5 = y2
 
         # First Barrier Segment
 
         # Mid Point in Rotor
-        x7 = x2 + w_b1 / np.cos(np.pi / (2 * p))
-        y7 = 0
+        x7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o1 = np.sqrt(r_ro**2 - (x7 * np.cos(np.pi / (2 * p)))**2) - x7 * np.sin(np.pi / (2 * p))
-        x8 = l_o1 * np.cos(np.pi / (2 * p)) + x7
-        y8 = l_o1 * np.sin(np.pi / (2 * p))
-        x9 = x8
-        y9 = -y8
+        x8 = x7
+        y8 = np.sqrt(r_ro**2 - x7**2)
+        x9 = np.sqrt(r_ro**2 - y7**2)
+        y9 = y7
 
         # Second Magnetic Segment
 
         # Mid Point in Rotor
-        x10 = x7 + d_r2
-        y10 = 0
+        x10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.cos(np.pi / (2 * p))
+        y10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_i2 = np.sqrt(r_ro**2 - (x10 * np.cos(np.pi / (2 * p)))**2) - x10 * np.sin(np.pi / (2 * p))
-        x11 = l_i2 * np.cos(np.pi / (2 * p)) + x10
-        y11 = l_i2 * np.sin(np.pi / (2 * p))
-        x12 = x11
-        y12 = -y11
+        x11 = x10
+        y11 = np.sqrt(r_ro**2 - x10**2)
+        x12 = np.sqrt(r_ro**2 - y10**2)
+        y12 = y10
 
         # Second Barrier Segment
 
         # Mid Point in Rotor
-        x13 = x10 + w_b2 / np.cos(np.pi / (2 * p))
-        y13 = 0
+        x13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o2 = np.sqrt(r_ro**2 - (x13 * np.cos(np.pi / (2 * p)))**2) - x13 * np.sin(np.pi / (2 * p))
-        x14 = l_o2 * np.cos(np.pi / (2 * p)) + x13
-        y14 = l_o2 * np.sin(np.pi / (2 * p))
-        x15 = x14
-        y15 = -y14
+        x14 = x13
+        y14 = np.sqrt(r_ro**2 - x13**2)
+        x15 = np.sqrt(r_ro**2 - y13**2)
+        y15 = y13
 
         x_arr = [x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15]
         y_arr = [y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15]
@@ -156,7 +152,7 @@ class CrossSectFluxBarrierRotorAMPartial_Iron1(CrossSectBase):
             seg4.append(drawer.draw_line(po[6],po[1]))
                         
         rad = (r_ri + d_r1/2) # <---- SOURCE OF ERROR?
-        inner_coord = self.location.transform_coords([[rad, 0]])
+        inner_coord = self.location.transform_coords([[rad*np.cos(np.pi/(2*p)),rad*np.sin(np.pi/(2*p))]])
         segments = [arc1,seg1,arc2,seg2,seg3,arc3,seg4]
         segs = [x for segment in segments for x in segment]
         cs_token = CrossSectToken(inner_coord[0], segs)  # create CrossSectToken object
@@ -247,60 +243,56 @@ class CrossSectFluxBarrierRotorAMPartial_Iron2(CrossSectBase):
         # First Magnetic Segment
 
         # Point on Shaft
-        x0 = r_ri * np.cos(np.pi / (2 * p))
-        y0 = r_ri * np.sin(np.pi / (2 * p))
-        x1 = x0
-        y1 = -y0
+        x0 = 0
+        y0 = r_ri
+        x1 = r_ri
+        y1 = 0
         # Mid Point in Rotor
-        x2 = r_ri + d_r1
-        y2 = 0
+        x2 = (r_ri + d_r1) * np.cos(np.pi / (2 * p))
+        y2 = (r_ri + d_r1) * np.sin(np.pi / (2 * p))
         # Corner Points on Rotor Surface
-        x3 = r_ro * np.cos(np.pi / (2 * p))
-        y3 = r_ro * np.sin(np.pi / (2 * p))
-        x6 = x3
-        y6 = -y3
+        x3 = 0
+        y3 = r_ro
+        x6 = r_ro
+        y6 = 0
         # Points on Rotor Surface
-        l_i1 = np.sqrt(r_ro**2 - (x2 * np.cos(np.pi / (2 * p)))**2) - x2 * np.sin(np.pi / (2 * p))
-        x4 = l_i1 * np.cos(np.pi / (2 * p)) + x2
-        y4 = l_i1 * np.sin(np.pi / (2 * p))
-        x5 = x4
-        y5 = -y4
+        x4 = x2
+        y4 = np.sqrt(r_ro**2 - x2**2)
+        x5 = np.sqrt(r_ro**2 - y2**2)
+        y5 = y2
 
         # First Barrier Segment
 
         # Mid Point in Rotor
-        x7 = x2 + w_b1 / np.cos(np.pi / (2 * p))
-        y7 = 0
+        x7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o1 = np.sqrt(r_ro**2 - (x7 * np.cos(np.pi / (2 * p)))**2) - x7 * np.sin(np.pi / (2 * p))
-        x8 = l_o1 * np.cos(np.pi / (2 * p)) + x7
-        y8 = l_o1 * np.sin(np.pi / (2 * p))
-        x9 = x8
-        y9 = -y8
+        x8 = x7
+        y8 = np.sqrt(r_ro**2 - x7**2)
+        x9 = np.sqrt(r_ro**2 - y7**2)
+        y9 = y7
 
         # Second Magnetic Segment
 
         # Mid Point in Rotor
-        x10 = x7 + d_r2
-        y10 = 0
+        x10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.cos(np.pi / (2 * p))
+        y10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_i2 = np.sqrt(r_ro**2 - (x10 * np.cos(np.pi / (2 * p)))**2) - x10 * np.sin(np.pi / (2 * p))
-        x11 = l_i2 * np.cos(np.pi / (2 * p)) + x10
-        y11 = l_i2 * np.sin(np.pi / (2 * p))
-        x12 = x11
-        y12 = -y11
+        x11 = x10
+        y11 = np.sqrt(r_ro**2 - x10**2)
+        x12 = np.sqrt(r_ro**2 - y10**2)
+        y12 = y10
 
         # Second Barrier Segment
 
         # Mid Point in Rotor
-        x13 = x10 + w_b2 / np.cos(np.pi / (2 * p))
-        y13 = 0
+        x13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o2 = np.sqrt(r_ro**2 - (x13 * np.cos(np.pi / (2 * p)))**2) - x13 * np.sin(np.pi / (2 * p))
-        x14 = l_o2 * np.cos(np.pi / (2 * p)) + x13
-        y14 = l_o2 * np.sin(np.pi / (2 * p))
-        x15 = x14
-        y15 = -y14
+        x14 = x13
+        y14 = np.sqrt(r_ro**2 - x13**2)
+        x15 = np.sqrt(r_ro**2 - y13**2)
+        y15 = y13
 
         x_arr = [x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15]
         y_arr = [y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15]
@@ -330,7 +322,7 @@ class CrossSectFluxBarrierRotorAMPartial_Iron2(CrossSectBase):
             seg12.append(drawer.draw_line(po[9],po[7]))
                         
         rad = (r_ri + d_r1 + w_b1 / np.cos(np.pi / (2 * p)) + d_r2/2) # <---- SOURCE OF ERROR?
-        inner_coord = self.location.transform_coords([[rad, 0]])
+        inner_coord = self.location.transform_coords([[rad*np.cos(np.pi/(2*p)),rad*np.sin(np.pi/(2*p))]])
         segments = [seg9,arc6,seg10,seg11,arc7,seg12]
         segs = [x for segment in segments for x in segment]
         cs_token = CrossSectToken(inner_coord[0], segs)  # create CrossSectToken object
@@ -421,60 +413,56 @@ class CrossSectFluxBarrierRotorAMPartial_Iron3(CrossSectBase):
         # First Magnetic Segment
 
         # Point on Shaft
-        x0 = r_ri * np.cos(np.pi / (2 * p))
-        y0 = r_ri * np.sin(np.pi / (2 * p))
-        x1 = x0
-        y1 = -y0
+        x0 = 0
+        y0 = r_ri
+        x1 = r_ri
+        y1 = 0
         # Mid Point in Rotor
-        x2 = r_ri + d_r1
-        y2 = 0
+        x2 = (r_ri + d_r1) * np.cos(np.pi / (2 * p))
+        y2 = (r_ri + d_r1) * np.sin(np.pi / (2 * p))
         # Corner Points on Rotor Surface
-        x3 = r_ro * np.cos(np.pi / (2 * p))
-        y3 = r_ro * np.sin(np.pi / (2 * p))
-        x6 = x3
-        y6 = -y3
+        x3 = 0
+        y3 = r_ro
+        x6 = r_ro
+        y6 = 0
         # Points on Rotor Surface
-        l_i1 = np.sqrt(r_ro**2 - (x2 * np.cos(np.pi / (2 * p)))**2) - x2 * np.sin(np.pi / (2 * p))
-        x4 = l_i1 * np.cos(np.pi / (2 * p)) + x2
-        y4 = l_i1 * np.sin(np.pi / (2 * p))
-        x5 = x4
-        y5 = -y4
+        x4 = x2
+        y4 = np.sqrt(r_ro**2 - x2**2)
+        x5 = np.sqrt(r_ro**2 - y2**2)
+        y5 = y2
 
         # First Barrier Segment
 
         # Mid Point in Rotor
-        x7 = x2 + w_b1 / np.cos(np.pi / (2 * p))
-        y7 = 0
+        x7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o1 = np.sqrt(r_ro**2 - (x7 * np.cos(np.pi / (2 * p)))**2) - x7 * np.sin(np.pi / (2 * p))
-        x8 = l_o1 * np.cos(np.pi / (2 * p)) + x7
-        y8 = l_o1 * np.sin(np.pi / (2 * p))
-        x9 = x8
-        y9 = -y8
+        x8 = x7
+        y8 = np.sqrt(r_ro**2 - x7**2)
+        x9 = np.sqrt(r_ro**2 - y7**2)
+        y9 = y7
 
         # Second Magnetic Segment
 
         # Mid Point in Rotor
-        x10 = x7 + d_r2
-        y10 = 0
+        x10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.cos(np.pi / (2 * p))
+        y10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_i2 = np.sqrt(r_ro**2 - (x10 * np.cos(np.pi / (2 * p)))**2) - x10 * np.sin(np.pi / (2 * p))
-        x11 = l_i2 * np.cos(np.pi / (2 * p)) + x10
-        y11 = l_i2 * np.sin(np.pi / (2 * p))
-        x12 = x11
-        y12 = -y11
+        x11 = x10
+        y11 = np.sqrt(r_ro**2 - x10**2)
+        x12 = np.sqrt(r_ro**2 - y10**2)
+        y12 = y10
 
         # Second Barrier Segment
 
         # Mid Point in Rotor
-        x13 = x10 + w_b2 / np.cos(np.pi / (2 * p))
-        y13 = 0
+        x13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o2 = np.sqrt(r_ro**2 - (x13 * np.cos(np.pi / (2 * p)))**2) - x13 * np.sin(np.pi / (2 * p))
-        x14 = l_o2 * np.cos(np.pi / (2 * p)) + x13
-        y14 = l_o2 * np.sin(np.pi / (2 * p))
-        x15 = x14
-        y15 = -y14
+        x14 = x13
+        y14 = np.sqrt(r_ro**2 - x13**2)
+        x15 = np.sqrt(r_ro**2 - y13**2)
+        y15 = y13
 
         x_arr = [x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15]
         y_arr = [y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15]
@@ -497,8 +485,8 @@ class CrossSectFluxBarrierRotorAMPartial_Iron3(CrossSectBase):
             arc10.append(drawer.draw_arc(self.location.anchor_xy, po[15], po[14]))
             seg18.append(drawer.draw_line(po[15], po[13]))
                         
-        rad = (r_ro - (r_ro - x13)/2)
-        inner_coord = self.location.transform_coords([[rad, 0]])
+        rad = r_ro
+        inner_coord = self.location.transform_coords([[rad*np.cos(np.pi/(2*p)),rad*np.sin(np.pi/(2*p))]])
         segments = [seg17,arc10,seg18]
         segs = [x for segment in segments for x in segment]
         cs_token = CrossSectToken(inner_coord[0], segs)  # create CrossSectToken object
@@ -589,60 +577,56 @@ class CrossSectFluxBarrierRotorAMPartial_Barrier1(CrossSectBase):
         # First Magnetic Segment
 
         # Point on Shaft
-        x0 = r_ri * np.cos(np.pi / (2 * p))
-        y0 = r_ri * np.sin(np.pi / (2 * p))
-        x1 = x0
-        y1 = -y0
+        x0 = 0
+        y0 = r_ri
+        x1 = r_ri
+        y1 = 0
         # Mid Point in Rotor
-        x2 = r_ri + d_r1
-        y2 = 0
+        x2 = (r_ri + d_r1) * np.cos(np.pi / (2 * p))
+        y2 = (r_ri + d_r1) * np.sin(np.pi / (2 * p))
         # Corner Points on Rotor Surface
-        x3 = r_ro * np.cos(np.pi / (2 * p))
-        y3 = r_ro * np.sin(np.pi / (2 * p))
-        x6 = x3
-        y6 = -y3
+        x3 = 0
+        y3 = r_ro
+        x6 = r_ro
+        y6 = 0
         # Points on Rotor Surface
-        l_i1 = np.sqrt(r_ro**2 - (x2 * np.cos(np.pi / (2 * p)))**2) - x2 * np.sin(np.pi / (2 * p))
-        x4 = l_i1 * np.cos(np.pi / (2 * p)) + x2
-        y4 = l_i1 * np.sin(np.pi / (2 * p))
-        x5 = x4
-        y5 = -y4
+        x4 = x2
+        y4 = np.sqrt(r_ro**2 - x2**2)
+        x5 = np.sqrt(r_ro**2 - y2**2)
+        y5 = y2
 
         # First Barrier Segment
 
         # Mid Point in Rotor
-        x7 = x2 + w_b1 / np.cos(np.pi / (2 * p))
-        y7 = 0
+        x7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o1 = np.sqrt(r_ro**2 - (x7 * np.cos(np.pi / (2 * p)))**2) - x7 * np.sin(np.pi / (2 * p))
-        x8 = l_o1 * np.cos(np.pi / (2 * p)) + x7
-        y8 = l_o1 * np.sin(np.pi / (2 * p))
-        x9 = x8
-        y9 = -y8
+        x8 = x7
+        y8 = np.sqrt(r_ro**2 - x7**2)
+        x9 = np.sqrt(r_ro**2 - y7**2)
+        y9 = y7
 
         # Second Magnetic Segment
 
         # Mid Point in Rotor
-        x10 = x7 + d_r2
-        y10 = 0
+        x10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.cos(np.pi / (2 * p))
+        y10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_i2 = np.sqrt(r_ro**2 - (x10 * np.cos(np.pi / (2 * p)))**2) - x10 * np.sin(np.pi / (2 * p))
-        x11 = l_i2 * np.cos(np.pi / (2 * p)) + x10
-        y11 = l_i2 * np.sin(np.pi / (2 * p))
-        x12 = x11
-        y12 = -y11
+        x11 = x10
+        y11 = np.sqrt(r_ro**2 - x10**2)
+        x12 = np.sqrt(r_ro**2 - y10**2)
+        y12 = y10
 
         # Second Barrier Segment
 
         # Mid Point in Rotor
-        x13 = x10 + w_b2 / np.cos(np.pi / (2 * p))
-        y13 = 0
+        x13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o2 = np.sqrt(r_ro**2 - (x13 * np.cos(np.pi / (2 * p)))**2) - x13 * np.sin(np.pi / (2 * p))
-        x14 = l_o2 * np.cos(np.pi / (2 * p)) + x13
-        y14 = l_o2 * np.sin(np.pi / (2 * p))
-        x15 = x14
-        y15 = -y14
+        x14 = x13
+        y14 = np.sqrt(r_ro**2 - x13**2)
+        x15 = np.sqrt(r_ro**2 - y13**2)
+        y15 = y13
 
         x_arr = [x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15]
         y_arr = [y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15]
@@ -672,11 +656,11 @@ class CrossSectFluxBarrierRotorAMPartial_Barrier1(CrossSectBase):
             seg8.append(drawer.draw_line(po[5],po[2]))
 
                         
-        rad1 = (r_ri + d_r1 + (w_b1 / np.cos(np.pi / (2 * p)))/2)
-        inner_coord1 = self.location.transform_coords([[rad1, 0]])
+        rad = (r_ri + d_r1 + (w_b1 / np.cos(np.pi / (2 * p)))/2)
+        inner_coord = self.location.transform_coords([[rad*np.cos(np.pi/(2*p)),rad*np.sin(np.pi/(2*p))]])
         segments = [seg5,arc4,seg6,seg7,arc5,seg8]
         segs = [x for segment in segments for x in segment]
-        cs_token = CrossSectToken(inner_coord1[0], segs)  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], segs)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
@@ -764,60 +748,56 @@ class CrossSectFluxBarrierRotorAMPartial_Barrier2(CrossSectBase):
         # First Magnetic Segment
 
         # Point on Shaft
-        x0 = r_ri * np.cos(np.pi / (2 * p))
-        y0 = r_ri * np.sin(np.pi / (2 * p))
-        x1 = x0
-        y1 = -y0
+        x0 = 0
+        y0 = r_ri
+        x1 = r_ri
+        y1 = 0
         # Mid Point in Rotor
-        x2 = r_ri + d_r1
-        y2 = 0
+        x2 = (r_ri + d_r1) * np.cos(np.pi / (2 * p))
+        y2 = (r_ri + d_r1) * np.sin(np.pi / (2 * p))
         # Corner Points on Rotor Surface
-        x3 = r_ro * np.cos(np.pi / (2 * p))
-        y3 = r_ro * np.sin(np.pi / (2 * p))
-        x6 = x3
-        y6 = -y3
+        x3 = 0
+        y3 = r_ro
+        x6 = r_ro
+        y6 = 0
         # Points on Rotor Surface
-        l_i1 = np.sqrt(r_ro**2 - (x2 * np.cos(np.pi / (2 * p)))**2) - x2 * np.sin(np.pi / (2 * p))
-        x4 = l_i1 * np.cos(np.pi / (2 * p)) + x2
-        y4 = l_i1 * np.sin(np.pi / (2 * p))
-        x5 = x4
-        y5 = -y4
+        x4 = x2
+        y4 = np.sqrt(r_ro**2 - x2**2)
+        x5 = np.sqrt(r_ro**2 - y2**2)
+        y5 = y2
 
         # First Barrier Segment
 
         # Mid Point in Rotor
-        x7 = x2 + w_b1 / np.cos(np.pi / (2 * p))
-        y7 = 0
+        x7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y7 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o1 = np.sqrt(r_ro**2 - (x7 * np.cos(np.pi / (2 * p)))**2) - x7 * np.sin(np.pi / (2 * p))
-        x8 = l_o1 * np.cos(np.pi / (2 * p)) + x7
-        y8 = l_o1 * np.sin(np.pi / (2 * p))
-        x9 = x8
-        y9 = -y8
+        x8 = x7
+        y8 = np.sqrt(r_ro**2 - x7**2)
+        x9 = np.sqrt(r_ro**2 - y7**2)
+        y9 = y7
 
         # Second Magnetic Segment
 
         # Mid Point in Rotor
-        x10 = x7 + d_r2
-        y10 = 0
+        x10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.cos(np.pi / (2 * p))
+        y10 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_i2 = np.sqrt(r_ro**2 - (x10 * np.cos(np.pi / (2 * p)))**2) - x10 * np.sin(np.pi / (2 * p))
-        x11 = l_i2 * np.cos(np.pi / (2 * p)) + x10
-        y11 = l_i2 * np.sin(np.pi / (2 * p))
-        x12 = x11
-        y12 = -y11
+        x11 = x10
+        y11 = np.sqrt(r_ro**2 - x10**2)
+        x12 = np.sqrt(r_ro**2 - y10**2)
+        y12 = y10
 
         # Second Barrier Segment
 
         # Mid Point in Rotor
-        x13 = x10 + w_b2 / np.cos(np.pi / (2 * p))
-        y13 = 0
+        x13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.cos(np.pi / (2 * p))
+        y13 = (r_ri + d_r1 + w_b1/np.sin(np.pi / (2 * p)) + d_r2 + w_b2/np.sin(np.pi / (2 * p))) * np.sin(np.pi / (2 * p))
         # Points on Rotor Surface
-        l_o2 = np.sqrt(r_ro**2 - (x13 * np.cos(np.pi / (2 * p)))**2) - x13 * np.sin(np.pi / (2 * p))
-        x14 = l_o2 * np.cos(np.pi / (2 * p)) + x13
-        y14 = l_o2 * np.sin(np.pi / (2 * p))
-        x15 = x14
-        y15 = -y14
+        x14 = x13
+        y14 = np.sqrt(r_ro**2 - x13**2)
+        x15 = np.sqrt(r_ro**2 - y13**2)
+        y15 = y13
 
         x_arr = [x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15]
         y_arr = [y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15]
@@ -846,11 +826,11 @@ class CrossSectFluxBarrierRotorAMPartial_Barrier2(CrossSectBase):
             arc9.append(drawer.draw_arc(self.location.anchor_xy, po[12], po[15]))
             seg16.append(drawer.draw_line(po[12],po[10]))
                         
-        rad1 = (r_ri + d_r1 + w_b1 / np.cos(np.pi / (2 * p)) + d_r2 + (w_b2 / np.cos(np.pi / (2 * p)))/2)
-        inner_coord1 = self.location.transform_coords([[rad1, 0]])
+        rad = (r_ri + d_r1 + w_b1 / np.cos(np.pi / (2 * p)) + d_r2 + (w_b2 / np.cos(np.pi / (2 * p)))/2)
+        inner_coord = self.location.transform_coords([[rad*np.cos(np.pi/(2*p)),rad*np.sin(np.pi/(2*p))]])
         segments = [seg13,arc8,seg14,seg15,arc9,seg16]
         segs = [x for segment in segments for x in segment]
-        cs_token = CrossSectToken(inner_coord1[0], segs)  # create CrossSectToken object
+        cs_token = CrossSectToken(inner_coord[0], segs)  # create CrossSectToken object
         return cs_token
 
     def _validate_attr(self):
