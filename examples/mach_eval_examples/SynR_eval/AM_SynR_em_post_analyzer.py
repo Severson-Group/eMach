@@ -61,11 +61,11 @@ class AM_SynR_EM_PostAnalyzer:
         # Losses
         # From JMAG
         stator_iron_loss = results["iron_loss"]["StatorCore"][0]
-        rotor_iron_loss = results["iron_loss"]["RotorCore"][0]
+        rotor_iron_loss = results["iron_loss"]["RotorCore1i"][0] + results["iron_loss"]["RotorCore2i"][0] + results["iron_loss"]["RotorCore3i"][0]
         stator_eddy_current_loss = results["eddy_current_loss"]["StatorCore"][0]
-        rotor_eddy_current_loss = results["eddy_current_loss"]["RotorCore"][0]
+        rotor_eddy_current_loss = results["eddy_current_loss"]["RotorCore1i"][0] + results["eddy_current_loss"]["RotorCore2i"][0] + results["eddy_current_loss"]["RotorCore3i"][0]
         stator_hysteresis_loss= results["hysteresis_loss"]["StatorCore"][0]
-        rotor_hysteresis_loss = results["hysteresis_loss"]["RotorCore"][0]
+        rotor_hysteresis_loss = results["hysteresis_loss"]["RotorCore1i"][0] + results["hysteresis_loss"]["RotorCore2i"][0] + results["hysteresis_loss"]["RotorCore3i"][0]
         stator_ohmic_loss = results["ohmic_loss"]["Coils"].iloc[i2:].mean()
         
         # Calculate stator winding ohmic losses
