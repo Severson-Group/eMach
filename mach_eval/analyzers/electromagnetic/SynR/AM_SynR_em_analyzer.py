@@ -217,7 +217,7 @@ class AM_SynR_EM_Analyzer:
         # Adding parts objects
         ####################################################
 
-        rotor_rotation = mo.DimDegree(-180 / (2 * self.machine_variant.p))
+        rotor_rotation = mo.DimDegree(0)
         stator_rotation = mo.DimDegree(-180 / self.machine_variant.Q)
 
         self.stator_core = mo.CrossSectInnerRotorStatorPartial(
@@ -492,13 +492,13 @@ class AM_SynR_EM_Analyzer:
             print("Parts are missing in this machine")
             return False
 
-        self.id_statorCore = id_statorCore = part_ID_list[0]
+        self.id_statorCore = part_ID_list[0]
         partIDRange_Coil = part_ID_list[1 : int(2 * self.machine_variant.Q + 1)]
         self.id_rotorCore = id_rotorCore = part_ID_list[int(2 * self.machine_variant.Q + 1) : int(2 * self.machine_variant.Q + 2 * self.machine_variant.p * 4 + 2) ]
         id_shaft = part_ID_list[-1]   
 
         group("Coils", partIDRange_Coil)
-        group("Rotor", id_rotorCore)
+        #group("Rotor", id_rotorCore)
 
         """ Add Part to Set for later references """
 
@@ -514,8 +514,24 @@ class AM_SynR_EM_Analyzer:
                 sel.SelectPart(ID)
             model.GetSetList().GetSet(name).AddSelected(sel)
 
+        def add_parts_to_set(name, x, y, ID=None):
+            model.GetSetList().CreatePartSet(name)
+            model.GetSetList().GetSet(name).SetMatcherType("Selection")
+            model.GetSetList().GetSet(name).ClearParts()
+            sel = model.GetSetList().GetSet(name).GetSelection()
+            if ID is None:
+                # print x,y
+                sel.SelectPartByPosition(x, y, 0)  # z=0 for 2D
+            else:
+                for x in ID:
+                    sel.SelectPart(x)
+                model.GetSetList().GetSet(name).AddSelected(sel)
+
         # RotorSet
-        add_part_to_set("RotorSet", 0.0, 0.0, ID=id_shaft)
+        # add_parts_to_set("RotorSet", 0.0, 0.0, ID=self.id_rotorCore)
+
+        # StatorSet
+        add_part_to_set("StatorSet", 0.0, 0.0, ID=self.id_statorCore)
 
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
@@ -550,19 +566,23 @@ class AM_SynR_EM_Analyzer:
             Y = R * np.sin(THETA)
 
         # Create Set for Motion Region
-        def part_list_set(name, list_part_id=None, prefix=None):
+        def part_list_set(name, list_part_id1=None, list_part_id2=None, prefix=None):
             model.GetSetList().CreatePartSet(name)
             model.GetSetList().GetSet(name).SetMatcherType("Selection")
             model.GetSetList().GetSet(name).ClearParts()
             sel = model.GetSetList().GetSet(name).GetSelection()
 
-            if list_part_id is not None:
-                for ID in list_part_id:
+            if list_part_id1 is not None:
+                sel.SelectPart(list_part_id1)
+            model.GetSetList().GetSet(name).AddSelected(sel)
+
+            if list_part_id2 is not None:
+                for ID in list_part_id2:
                     sel.SelectPart(ID)
             model.GetSetList().GetSet(name).AddSelected(sel)
 
         part_list_set(
-            "Motion_Region", list_part_id=[id_rotorCore, id_shaft]
+            "Motion_Region", list_part_id1=id_shaft, list_part_id2=id_rotorCore
         )
 
         return True
@@ -770,7 +790,17 @@ class AM_SynR_EM_Analyzer:
             cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
             cond.ClearParts()
             sel = cond.GetSelection()
-            sel.SelectPartByPosition(self.machine_variant.r_sh + 0.1 * self.machine_variant.d_r1, 1, 0)
+            sel.SelectPartByPosition(self.machine_variant.r_ri + 0.1 * self.machine_variant.d_r1, 0, 0)
+            rad1 = (self.machine_variant.r_ri + self.machine_variant.d_r1 + self.machine_variant.w_b1 + self.machine_variant.d_r2/2)
+            sel.SelectPartByPosition(rad1*np.cos(np.pi/2*self.machine_variant.p), rad1**np.sin(np.pi/2*self.machine_variant.p), 0)
+            sel.SelectPartByPosition(-rad1*np.cos(np.pi/2*self.machine_variant.p), rad1**np.sin(np.pi/2*self.machine_variant.p), 0)
+            sel.SelectPartByPosition(-rad1*np.cos(np.pi/2*self.machine_variant.p), -rad1**np.sin(np.pi/2*self.machine_variant.p), 0)
+            sel.SelectPartByPosition(rad1*np.cos(np.pi/2*self.machine_variant.p), -rad1**np.sin(np.pi/2*self.machine_variant.p), 0)
+            rad2 = (self.machine_variant.r_ro)
+            sel.SelectPartByPosition(rad2*np.cos(np.pi/2*self.machine_variant.p), rad2**np.sin(np.pi/2*self.machine_variant.p), 0)
+            sel.SelectPartByPosition(-rad2*np.cos(np.pi/2*self.machine_variant.p), rad2**np.sin(np.pi/2*self.machine_variant.p), 0)
+            sel.SelectPartByPosition(-rad2*np.cos(np.pi/2*self.machine_variant.p), -rad2**np.sin(np.pi/2*self.machine_variant.p), 0)
+            sel.SelectPartByPosition(rad2*np.cos(np.pi/2*self.machine_variant.p), -rad2**np.sin(np.pi/2*self.machine_variant.p), 0)
 
             cond.AddSelected(sel)
             # Use FFT for hysteresis to be consistent with JMAG's results
@@ -814,31 +844,23 @@ class AM_SynR_EM_Analyzer:
 
         study.SetMaterialByName(self.comp_rotor_core_1i.name, 
             self.machine_variant.rotor_iron_mat["core_material"])
-        study.GetMaterial(self.comp_rotor_core_1i.name).SetValue("Laminated", 1)
-        study.GetMaterial(self.comp_rotor_core_1i.name).SetValue("LaminationFactor",
-            self.machine_variant.rotor_iron_mat["core_stacking_factor"])
+        study.GetMaterial(self.comp_rotor_core_1i.name).SetValue("Laminated", 0)
         
         study.SetMaterialByName(self.comp_rotor_core_2i.name, 
             self.machine_variant.rotor_iron_mat["core_material"])
-        study.GetMaterial(self.comp_rotor_core_2i.name).SetValue("Laminated", 1)
-        study.GetMaterial(self.comp_rotor_core_2i.name).SetValue("LaminationFactor",
-            self.machine_variant.rotor_iron_mat["core_stacking_factor"])
+        study.GetMaterial(self.comp_rotor_core_2i.name).SetValue("Laminated", 0)
 
         study.SetMaterialByName(self.comp_rotor_core_3i.name, 
             self.machine_variant.rotor_iron_mat["core_material"])
-        study.GetMaterial(self.comp_rotor_core_3i.name).SetValue("Laminated", 1)
-        study.GetMaterial(self.comp_rotor_core_3i.name).SetValue("LaminationFactor",
-            self.machine_variant.rotor_iron_mat["core_stacking_factor"])
+        study.GetMaterial(self.comp_rotor_core_3i.name).SetValue("Laminated", 0)
         
         study.SetMaterialByName(self.comp_rotor_core_1b.name,
             self.machine_variant.shaft_mat["shaft_material"])
         study.GetMaterial(self.comp_rotor_core_1b.name).SetValue("Laminated", 0)
-        study.GetMaterial(self.comp_rotor_core_1b.name).SetValue("EddyCurrentCalculation", 1)
 
         study.SetMaterialByName(self.comp_rotor_core_2b.name,
             self.machine_variant.shaft_mat["shaft_material"])
         study.GetMaterial(self.comp_rotor_core_2b.name).SetValue("Laminated", 0)
-        study.GetMaterial(self.comp_rotor_core_2b.name).SetValue("EddyCurrentCalculation", 1)
         
         study.SetMaterialByName(self.comp_shaft.name,
             self.machine_variant.shaft_mat["shaft_material"])
