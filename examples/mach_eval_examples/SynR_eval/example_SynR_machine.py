@@ -13,13 +13,25 @@ from mach_eval.machines.SynR.SynR_machine_oper_pt import SynR_Machine_Oper_Pt
 
 ################ DEFINE SynR Machine ################
 SynR_dimensions = {
+    'alpha_b': 135,
     'r_sh': 6,
     'r_ri': 6,
     'r_ro': 49,
-    'd_r1': 8,
+    'r_f1': 0.1,
+    'r_f2': 0.1,
+    'r_f3': 0.1,
+    'd_r1': 4,
     'd_r2': 8,
+    'd_r3': 8,
     'w_b1': 4,
     'w_b2': 4,
+    'w_b3': 4,
+    'l_b1': 34.1,
+    'l_b2': 24.75,
+    'l_b3': 13.1,
+    'l_b4': 13,
+    'l_b5': 10,
+    'l_b6': 7,
     'alpha_st': 25,
     'alpha_so': 12.5,
     'r_si': 50,
@@ -30,6 +42,7 @@ SynR_dimensions = {
     'w_st': 12,
     'l_st': 100,
 }
+
 
 SynR_parameters = {
     'p': 2,
