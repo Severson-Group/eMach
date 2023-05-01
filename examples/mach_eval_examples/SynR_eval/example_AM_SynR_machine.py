@@ -34,7 +34,7 @@ SynR_dimensions = {
 SynR_parameters = {
     'p': 2,
     'Q': 12,
-    "name": "Example_SynR_Machine",
+    "name": "Example_AM_SynR_Machine",
     'rated_speed': 1800,
     'rated_current': 20,   
 }
