@@ -8,6 +8,10 @@ from mach_eval.machines.materials.miscellaneous_materials import (
     Copper,
     Air,
 )
+from mach_eval.machines.materials.AM_materials import (
+    Fe3Si,
+    L316,
+)
 from mach_eval.machines.SynR.AM_SynR_machine import AM_SynR_Machine
 from mach_eval.machines.SynR.AM_SynR_machine_oper_pt import AM_SynR_Machine_Oper_Pt
 
@@ -41,7 +45,8 @@ SynR_parameters = {
 
 SynR_materials = {
     "air_mat": Air,
-    "rotor_iron_mat": Arnon5,
+    "rotor_iron_mat": Fe3Si,
+    "rotor_barrier_mat": L316,
     "stator_iron_mat": Arnon5,
     "coil_mat": Copper,
     "shaft_mat": Steel,

@@ -43,7 +43,7 @@ class AM_SynR_EM_PostAnalyzer:
 
         ############################ Post-processing #################################
         rotor_mass = (
-            V_rfe * 1e-9 * machine.rotor_iron_mat["core_material_density"]
+            V_rfe * 1e-9 * machine.rotor_iron_mat["rotor_iron_material_density"]
             + V_sh * 1e-9 * machine.shaft_mat["shaft_material_density"]
         )
         rotor_volume = (V_rfe + V_sh) * 1e-9

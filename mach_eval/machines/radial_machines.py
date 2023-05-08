@@ -253,6 +253,10 @@ class AM_SynR_Rotor_Iron(MachineComponent):
     @staticmethod
     def required_materials():
         return ("rotor_iron_mat",)
+    
+    @staticmethod
+    def required_materials():
+        return ("rotor_barrier_mat",)
 
     @property
     def r_ri(self):
@@ -285,6 +289,10 @@ class AM_SynR_Rotor_Iron(MachineComponent):
     @property
     def rotor_iron_mat(self):
         return self._materials_dict["rotor_iron_mat"]
+    
+    @property
+    def rotor_barrier_mat(self):
+        return self._materials_dict["rotor_barrier_mat"]
 
 
 class PM(MachineComponent):
