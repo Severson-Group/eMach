@@ -106,8 +106,14 @@ class AM_SynR_EM_Analyzer:
 
         # Create transient study with two time step sections
         study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name)
-        self.create_custom_material(
+        self.create_stator_material(
             app, self.machine_variant.stator_iron_mat["core_material"]
+        )
+        self.create_rotor_iron_material(
+            app, self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        )
+        self.create_rotor_barrier_material(
+            app, self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
         )
         app.SetCurrentStudy(self.study_name)
 
@@ -347,7 +353,7 @@ class AM_SynR_EM_Analyzer:
         self.comp_rotor_core_1i = mo.Component(
             name="RotorCore1i",
             cross_sections=[self.rotor_core_1i],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["core_material"], color=r"#808080"),
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["rotor_iron_material"], color=r"#808080"),
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
@@ -355,7 +361,7 @@ class AM_SynR_EM_Analyzer:
         self.comp_rotor_core_2i = mo.Component(
             name="RotorCore2i",
             cross_sections=[self.rotor_core_2i],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["core_material"], color=r"#808080"),
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["rotor_iron_material"], color=r"#808080"),
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
@@ -363,7 +369,7 @@ class AM_SynR_EM_Analyzer:
         self.comp_rotor_core_3i = mo.Component(
             name="RotorCore3i",
             cross_sections=[self.rotor_core_3i],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["core_material"], color=r"#808080"),
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["rotor_iron_material"], color=r"#808080"),
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
@@ -371,7 +377,7 @@ class AM_SynR_EM_Analyzer:
         self.comp_rotor_core_1b = mo.Component(
             name="RotorCore1b",
             cross_sections=[self.rotor_core_1b],
-            material=mo.MaterialGeneric(name=self.machine_variant.shaft_mat["shaft_material"], color=r"#71797E"),
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_barrier_mat["rotor_barrier_material"], color=r"#71797E"),
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
@@ -379,7 +385,7 @@ class AM_SynR_EM_Analyzer:
         self.comp_rotor_core_2b = mo.Component(
             name="RotorCore2b",
             cross_sections=[self.rotor_core_2b],
-            material=mo.MaterialGeneric(name=self.machine_variant.shaft_mat["shaft_material"], color=r"#71797E"),
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_barrier_mat["rotor_barrier_material"], color=r"#71797E"),
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
@@ -588,7 +594,7 @@ class AM_SynR_EM_Analyzer:
         return True
 
 
-    def create_custom_material(self, app, steel_name):
+    def create_stator_material(self, app, steel_name):
 
         core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
             self.machine_variant.stator_iron_mat["core_material"]
@@ -660,6 +666,130 @@ class AM_SynR_EM_Analyzer:
             "LossConstantBetaX", self.machine_variant.stator_iron_mat["core_ironloss_b"]
         )
 
+
+    def create_rotor_iron_material(self, app, steel_name):
+
+        core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        )
+        app.GetMaterialLibrary().DeleteCustomMaterialByObject(core_mat_obj)
+
+        app.GetMaterialLibrary().CreateCustomMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"], "Custom Materials"
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue(
+            "Density", self.machine_variant.rotor_iron_mat["rotor_iron_material_density"] / 1000
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("MagneticSteelPermeabilityType", 2)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("CoerciveForce", 0)
+        BH = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_bh_file"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante Magnet BH curve
+        refarray = BH.T.tolist()
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).GetTable("BhTable").SetTable(refarray)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("DemagnetizationCoerciveForce", 0)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("MagnetizationSaturated", 0)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("MagnetizationSaturated2", 0)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("ExtrapolationMethod", 0)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue(
+            "YoungModulus", self.machine_variant.rotor_iron_mat["rotor_iron_youngs_modulus"] / 1000000
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue("Loss_Type", 1)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue(
+            "LossConstantKhX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_Kh"]
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue(
+            "LossConstantKeX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_Ke"]
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue(
+            "LossConstantAlphaX",
+            self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_a"],
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetValue(
+            "LossConstantBetaX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_b"]
+        )
+
+
+    def create_rotor_barrier_material(self, app, steel_name):
+
+        core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        )
+        app.GetMaterialLibrary().DeleteCustomMaterialByObject(core_mat_obj)
+
+        app.GetMaterialLibrary().CreateCustomMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"], "Custom Materials"
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue(
+            "Density", self.machine_variant.rotor_barrier_mat["rotor_barrier_material_density"] / 1000
+        )
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetComplexValue("Permeability", self.machine_variant.rotor_barrier_mat["rotor_barrier_permeability"], 0)
+
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue("CoerciveForce", 0)
+        
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue("DemagnetizationCoerciveForce", 0)
+
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue("MagnetizationSaturated", 0)
+
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue("MagnetizationSaturated2", 0)
+
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue(
+            "YoungModulus", self.machine_variant.rotor_barrier_mat["rotor_barrier_youngs_modulus"] / 1000000
+        )
+
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue(
+            "PoissonRatio", self.machine_variant.rotor_barrier_mat["rotor_barrier_poission_ratio"]
+        )
+
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
+        ).SetValue("ShearModulus", self.machine_variant.rotor_barrier_mat["rotor_barrier_shear_modulus"] / 1000000)
 
 
     def add_em_study(
@@ -843,23 +973,23 @@ class AM_SynR_EM_Analyzer:
             self.machine_variant.stator_iron_mat["core_stacking_factor"])
 
         study.SetMaterialByName(self.comp_rotor_core_1i.name, 
-            self.machine_variant.rotor_iron_mat["core_material"])
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"])
         study.GetMaterial(self.comp_rotor_core_1i.name).SetValue("Laminated", 0)
         
         study.SetMaterialByName(self.comp_rotor_core_2i.name, 
-            self.machine_variant.rotor_iron_mat["core_material"])
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"])
         study.GetMaterial(self.comp_rotor_core_2i.name).SetValue("Laminated", 0)
 
         study.SetMaterialByName(self.comp_rotor_core_3i.name, 
-            self.machine_variant.rotor_iron_mat["core_material"])
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"])
         study.GetMaterial(self.comp_rotor_core_3i.name).SetValue("Laminated", 0)
         
         study.SetMaterialByName(self.comp_rotor_core_1b.name,
-            self.machine_variant.shaft_mat["shaft_material"])
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"])
         study.GetMaterial(self.comp_rotor_core_1b.name).SetValue("Laminated", 0)
 
         study.SetMaterialByName(self.comp_rotor_core_2b.name,
-            self.machine_variant.shaft_mat["shaft_material"])
+            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"])
         study.GetMaterial(self.comp_rotor_core_2b.name).SetValue("Laminated", 0)
         
         study.SetMaterialByName(self.comp_shaft.name,
