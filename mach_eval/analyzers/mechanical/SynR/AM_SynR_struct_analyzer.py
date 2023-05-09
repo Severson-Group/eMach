@@ -101,7 +101,6 @@ class AM_SynR_Struct_Analyzer:
             raise InvalidDesign
 
         # Create static study
-        study = self.add_struct_study(app, model, self.config.jmag_csv_folder, self.study_name)
         self.create_stator_material(
             app, self.machine_variant.stator_iron_mat["core_material"]
         )
@@ -112,6 +111,7 @@ class AM_SynR_Struct_Analyzer:
             app, self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
         )
         app.SetCurrentStudy(self.study_name)
+        study = self.add_struct_study(app, model, self.config.jmag_csv_folder, self.study_name)
 
         # Mesh study
         self.mesh_study(app, model, study)
