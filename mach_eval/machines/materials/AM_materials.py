@@ -6,13 +6,16 @@ Fe3Si = {
     'rotor_iron_youngs_modulus'        : 185E9, # Pa
     'rotor_iron_poission_ratio'        : .3, 
     'rotor_iron_material_cost'         : 17087, # $/m3
-    'rotor_iron_ironloss_a'            : 1.58, 
-    'rotor_iron_ironloss_b'            : 1.17, 
-    'rotor_iron_ironloss_Kh'           : 78.94, # W/m3
-    'rotor_iron_ironloss_Ke'           : 0.0372, # W/m3
+    'rotor_iron_ironloss_file_50'      : os.path.dirname(__file__) + '/Fe3Si_loss_50.iron',
+    'rotor_iron_ironloss_file_60'      : os.path.dirname(__file__) + '/Fe3Si_loss_60.iron',
+    'rotor_iron_ironloss_file_100'     : os.path.dirname(__file__) + '/Fe3Si_loss_100.iron',
+    'rotor_iron_ironloss_file_400'     : os.path.dirname(__file__) + '/Fe3Si_loss_400.iron',
+    'rotor_iron_hys_file_500'          : os.path.dirname(__file__) + '/Fe3Si_500.hys',
+    'rotor_iron_hys_file_1000'         : os.path.dirname(__file__) + '/Fe3Si_1000.hys',
+    'rotor_iron_hys_file_1500'         : os.path.dirname(__file__) + '/Fe3Si_1500.hys',
     'rotor_iron_therm_conductivity'    : 28, # W/m-k
-    'rotor_iron_stacking_factor'       : 96, # percentage
-    'rotor_iron_bh_file'               : os.path.dirname(__file__) + '/Arnon5.BH',
+    'rotor_iron_stacking_factor'       : 100, # percentage
+    'rotor_iron_bh_file'               : os.path.dirname(__file__) + '/Fe3Si.BH',
     'alpha_Fe3Si'                   : 1.2e-5,
     }
 
