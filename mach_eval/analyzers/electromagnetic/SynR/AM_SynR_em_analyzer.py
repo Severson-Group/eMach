@@ -140,7 +140,7 @@ class AM_SynR_EM_Analyzer:
         self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        # app.Quit()
+        app.Quit()
 
         ####################################################
         # 03 Load FEA output
@@ -692,7 +692,7 @@ class AM_SynR_EM_Analyzer:
             self.machine_variant.rotor_iron_mat["rotor_iron_bh_file"],
             unpack=True,
             usecols=(0, 1),
-        )  # values from Dante Magnet BH curve
+        )  # values from Dante BH curve
         refarray = BH.T.tolist()
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
@@ -714,30 +714,72 @@ class AM_SynR_EM_Analyzer:
         ).SetValue(
             "YoungModulus", self.machine_variant.rotor_iron_mat["rotor_iron_youngs_modulus"] / 1000000
         )
+        hys_500 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_hys_file_500"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = hys_500.T.tolist()
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("Loss_Type", 1)
+        ).SetTableList("BHHysteresisX",1,"",refarray)
+        hys_1000 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_hys_file_1000"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = hys_1000.T.tolist()
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantKhX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_Kh"]
-        )
+        ).SetTableList("BHHysteresisX",2,"",refarray)
+        hys_1500 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_hys_file_1500"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = hys_1500.T.tolist()
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantKeX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_Ke"]
-        )
+        ).SetTableList("BHHysteresisX",3,"",refarray)
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantAlphaX",
-            self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_a"],
-        )
+        ).SetValue("Loss_Type", 3) 
+        loss_50 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_file_50"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = loss_50.T.tolist()
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantBetaX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_b"]
-        )
+        ).SetTableList("IronLossX", 50, "Hz", refarray)
+        loss_60 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_file_60"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = loss_60.T.tolist()
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetTableList("IronLossX", 60, "Hz", refarray)
+        loss_100 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_file_100"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = loss_100.T.tolist()
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetTableList("IronLossX", 100, "Hz", refarray)
+        loss_400 = np.loadtxt(
+            self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_file_400"],
+            unpack=True,
+            usecols=(0, 1),
+        )  # values from Dante hysteresis data
+        refarray = loss_400.T.tolist()
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
+        ).SetTableList("IronLossX", 400, "Hz", refarray)
 
 
     def create_rotor_barrier_material(self, app, steel_name):
