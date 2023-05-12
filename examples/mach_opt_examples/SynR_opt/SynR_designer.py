@@ -15,14 +15,14 @@ from SynR_settings_handler import AM_SynR_Settings_Handler
 from mach_eval import MachineDesigner
 
 # Specify machine specifications
-SynR_parameters = {
+AM_SynR_parameters = {
     'p': 2,
     'Q': 12,
     'rated_speed': 1800,
     'rated_current': 20,   
 }
 
-SynR_materials = {
+AM_SynR_materials = {
     "air_mat": Air,
     "rotor_iron_mat": Fe3Si,
     "rotor_barrier_mat": L316,
@@ -31,7 +31,7 @@ SynR_materials = {
     "shaft_mat": L316,
 }
 
-SynR_winding = {
+AM_SynR_winding = {
     "no_of_layers": 2,
     "layer_phases": [ ['U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V'],
                         ['W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U'] ],
@@ -46,7 +46,7 @@ SynR_winding = {
 
 
 # initialize BSPMArchitect with machine specification
-arch = AM_SynR_Architect(SynR_parameters, SynR_materials, SynR_winding)
+arch = AM_SynR_Architect(AM_SynR_parameters, AM_SynR_materials, AM_SynR_winding)
 set_handler = AM_SynR_Settings_Handler()
 
 designer = MachineDesigner(arch, set_handler)
