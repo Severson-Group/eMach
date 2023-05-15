@@ -55,7 +55,7 @@ design_prob = DesignProblem(designer, AM_SynR_evaluator, opt_settings, dh)
 design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
-pop_size = 60
+pop_size = 66
 gen_size = 5 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
 
 # load latest population
