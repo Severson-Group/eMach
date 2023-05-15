@@ -40,7 +40,7 @@ configuration = AM_SynR_EM_Config(
 
     max_nonlinear_iterations=50,
     multiple_cpus=True,
-    num_cpus=4,
+    num_cpus=12,
     jmag_scheduler=False,
     jmag_visible=True,
     non_zero_end_ring_res = False,
