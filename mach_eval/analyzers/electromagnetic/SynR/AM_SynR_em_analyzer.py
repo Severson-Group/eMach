@@ -16,6 +16,7 @@ class AM_SynR_EM_Problem:
         self.machine = machine
         self.operating_point = operating_point
         self._validate_attr()
+        self._check_geom()
 
     def _validate_attr(self):
         if 'AM_SynR_Machine' in str(type(self.machine)):
@@ -27,7 +28,14 @@ class AM_SynR_EM_Problem:
             pass
         else:
             raise TypeError("Invalid settings type")
-
+        
+    def _check_geom(self):
+        r_ro_compare = self.machine.r_ri + self.machine.d_r1 + np.sqrt(2)*self.machine.w_b1 + self.machine.d_r2 + np.sqrt(2)*self.machine.w_b2
+        if r_ro_compare < self.machine.r_ro:
+            print("\nGeometry is vald!")
+            print("\n")
+        else:
+            raise InvalidDesign("Invalid Geometry - Flux Barriers Don't Fit")
 
 class AM_SynR_EM_Analyzer:
     def __init__(self, configuration):
