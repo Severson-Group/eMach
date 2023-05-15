@@ -9,6 +9,7 @@ from mach_eval.machines.materials.AM_materials import (
 )
 from mach_eval.machines.materials.miscellaneous_materials import (
     Copper,
+    Steel,
     Air,
 )
 from SynR_settings_handler import AM_SynR_Settings_Handler
@@ -28,7 +29,7 @@ AM_SynR_materials = {
     "rotor_barrier_mat": L316,
     "stator_iron_mat": Arnon5,
     "coil_mat": Copper,
-    "shaft_mat": L316,
+    "shaft_mat": Steel,
 }
 
 AM_SynR_winding = {
