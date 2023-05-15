@@ -4,7 +4,10 @@ import numpy as np
 import pandas as pd
 import sys
 
-sys.path.append(os.path.dirname(__file__))
+os.chdir(os.path.dirname(__file__))
+sys.path.append("../../../")
+
+# sys.path.append(os.path.dirname(__file__))
 from my_data_handler import MyDataHandler
 from my_plotting_functions import DataAnalyzer
 
@@ -61,16 +64,21 @@ da.plot_x_with_bounds(free_vars, var_label, bounds)
 # check designs which meet required specs
 dh.select_designs()
 
-# proj_1_ selected based on performance (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
-proj_name = 'proj_'
-# load proj_1_ design from archive (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
-proj_1_ = dh.get_design(proj_name)
-print(proj_name, "d_st =", proj_1_.machine.d_st)
+# proj_35 selected based on performance (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
+proj_name = 'proj_35'
+# load proj_35 design from archive (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
+proj_35 = dh.get_design(proj_name)
+print(proj_name, "r_ri =", proj_35.machine.r_ri, " mm")
+print(proj_name, "r_ro =", proj_35.machine.r_ro, " mm")
+print(proj_name, "d_r1 =", proj_35.machine.d_r1, " mm")
+print(proj_name, "d_r2 =", proj_35.machine.d_r2, " mm")
+print(proj_name, "w_b1 =", proj_35.machine.w_b1, " mm")
+print(proj_name, "w_b2 =", proj_35.machine.w_b2, " mm")
 
-# save proj_1_ to pickle file (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
+# save proj_35 to pickle file (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
 object_filename = path + "/" + proj_name + r'.pkl'
-dh.save_object(proj_1_, object_filename)
+dh.save_object(proj_35, object_filename)
 
-# read proj_1_ design from pickle file (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
+# read proj_35 design from pickle file (CHANGE TO PROJECT XXXX BASED ON PERFORMANCE)
 proj_read = dh.load_object(object_filename)
 print("From pickle file, d_st =", proj_read.machine.d_st)
