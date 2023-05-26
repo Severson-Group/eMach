@@ -3,6 +3,7 @@
 ## We have git for backups of IP!
 ##---------------------------------------------------
 
+*.DS_Store
 .idea/
 .vscode/
 # Windows default autosave extension
