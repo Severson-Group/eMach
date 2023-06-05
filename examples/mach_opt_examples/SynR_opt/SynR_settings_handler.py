@@ -1,0 +1,25 @@
+import os
+import sys
+
+from mach_eval.machines.SynR.SynR_machine_oper_pt import SynR_Machine_Oper_Pt
+
+
+class SynR_Settings_Handler:
+    """This is a wrapper class designed to contain all relevant information
+    on the operting point for obtaining eletrical performance evaluation of
+    additively manufactured synchronous reluctance machines
+    """
+
+    def __init__(self):
+        pass
+
+    def get_settings(self, x):
+        em_op = SynR_Machine_Oper_Pt(
+            speed=1800,
+            current_ratio=1,
+            phi_0=0,
+            ambient_temp=25,
+            rotor_temp_rise=0,
+            )
+
+        return em_op
