@@ -100,27 +100,27 @@ class AM_SynR_Architect:
         return machine_variant
 
     def __get_alpha_so(self):
-        alpha_so = 25
+        alpha_so = 3.75
         return alpha_so
     
     def __get_alpha_st(self):
-        alpha_st = 12.5
+        alpha_st = 7.5
         return alpha_st
 
     def __get_d_so(self):
-        d_so = 5
+        d_so = 1
         return d_so
     
     def __get_d_sp(self):
-        d_sp = 9
+        d_sp = 2
         return d_sp
     
     def __get_d_st(self):
-        d_st = 40
+        d_st = 16.52
         return d_st
     
     def __get_d_sy(self):
-        d_sy = 36
+        d_sy = 9.39
         return d_sy
 
     def __get_r_sh(self, free_variables):
@@ -128,15 +128,15 @@ class AM_SynR_Architect:
         return r_sh
     
     def __get_r_si(self):
-        r_si = 50
+        r_si = 50.5
         return r_si
     
     def __get_w_st(self):
-        w_st = 12
+        w_st = 3.25
         return w_st
     
     def __get_l_st(self):
-        l_st = 100
+        l_st = 70.61
         return l_st
 
     def x_to_dict(self, x):
