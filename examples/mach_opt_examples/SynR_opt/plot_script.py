@@ -16,6 +16,12 @@ fitness, free_vars = dh.get_pareto_fitness_freevars()
 da = DataAnalyzer(path)
 
 # Plot pareto front - 3 variations
+
+# get rid of designs that violate constraints
+for i in range(len(fitness)):
+    if fitness[i][1] > -0.85 or fitness[i][1] < -1 or fitness[i][2] > 0.5:
+        fitness[i] = [None,None,None]
+
 da.plot_pareto_front(points=fitness, label=['-PRV [kW/m^3]', '-$\eta$ [%]', 'Trip []'], saveName='/paretoPlot1.svg')
 
 i = 0
@@ -57,8 +63,6 @@ bounds = [
     [0.5 * dims[4], 2 * dims[4]],  # w_b1
     [0.5 * dims[5], 2 * dims[5]],  # w_b2
 ]
-#da.plot_x_with_bounds(free_vars, var_label, bounds)
-
 
 # Create box plots for free vars 
 
@@ -106,8 +110,6 @@ label=['-PRV [kW/m^3]', '-$\eta$ [%]', 'Trip []']
 for i in range(len(fitness)):
     if fitness[i][1] > -0.85 or fitness[i][1] < -1 or fitness[i][2] > 0.5:
         fitness[i] = [None,None,None]
-#        for j in range(10):
-#            xt[j][i] = None
             
 fit = [[0 for x in range(len(fitness[0]))] for y in range(len(fitness))]
 for j in range(len(fitness[0])):

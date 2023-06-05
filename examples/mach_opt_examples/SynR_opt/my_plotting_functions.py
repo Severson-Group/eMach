@@ -68,10 +68,6 @@ class DataAnalyzer:
             else:
                 scatter_handle = ax.scatter(x, y, c=z, s=40, edgecolor=None, alpha=0.5, cmap='viridis', marker=marker, zorder=99) #'viridis'
 
-
-            # ax.set_xlim(-11,-2)
-            # ax.set_ylim(-95,-99)
-
             if up_to_rank_no is None:
                 pass
             else:
@@ -108,51 +104,9 @@ class DataAnalyzer:
         ax.grid()
         ax.tick_params(axis='both', which='major', labelsize=14)
         clb.ax.tick_params(which='major', labelsize=14, rotation=0)
-        # clb.ax.set_yticklabels(clb.ax.get_yticklabels(), rotation='vertical')
-        # fig.set_size_inches(8, 4)
         plt.gcf().subplots_adjust(bottom=0.15)
-        # plt.savefig(self.save_path + 'paretoPlot.eps', bbox_inches='tight', format='eps')
         fig.savefig(self.save_path + saveName, bbox_inches='tight', dpi=300)
 
-
-    def plot_x_with_bounds(self, free_var, var_label, bounds, alpha=0.5):
-        fig, axeses = plt.subplots(3, 4, sharex=True, dpi=300, figsize=(8, 4), facecolor='w', edgecolor='k')
-        plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.35, hspace=None)
-        plt.rcParams['mathtext.fontset'] = 'stix' # 'cm'
-        plt.rcParams['font.family'] = ['Times New Roman']
-        font = {'family' : 'Times New Roman', #'serif',
-                'color' : 'darkblue',
-                'weight' : 'normal',
-                'size' : 8,}
-        var_list = []
-        for var in free_var:
-            var_list.append(var)
-
-        ax_list = []
-        for i in range(3):
-            ax_list.extend(axeses[i].tolist())
-
-        for i,y_label in enumerate(var_label):
-            ax = ax_list[i]; 
-            x_i = [x[i] for x in var_list]  # in [m]
-            len_x = len(x_i)
-            design_number = list(range(len_x))
-            ax.scatter(design_number, x_i, alpha=alpha, s = 10)
-            ax.plot(np.ones(len_x) * bounds[i][0], 'm-')
-            ax.plot(np.ones(len_x) * bounds[i][1], 'm-')
-            ax.ticklabel_format(axis="y", style="sci", scilimits=(0,0), useMathText=True)
-            ax.tick_params(axis ='y', which ='both', length = 0)
-            ax.axes.get_xaxis().set_visible(False)
-            ax.tick_params(axis='both', which='major', labelsize=8)
-            tx = ax.yaxis.get_offset_text()
-            tx.set_fontsize(8)
-            ax.set_ylabel(y_label, **font)
-            ax.yaxis.set_major_locator(mtick.MaxNLocator(3))
-            ax.set_xlim([0,len_x])
-
-        plt.savefig(self.save_path + '/freeVar.svg')    
-
-        return
 
     def plot_XY_sensitivity(self, free_vars, Obj, marker='o', ax=None, fig=None, var_label=None, obj_label=None, saveas=None, s=5):
         plt.rcParams['mathtext.fontset'] = 'stix' # 'cm'
@@ -172,27 +126,15 @@ class DataAnalyzer:
             plt.subplots_adjust(left=None, bottom=None, right=0.85, top=None, wspace=None, hspace=None)
 
         for i, axes in enumerate(ax):
-            axes.scatter(free_vars[i], Obj, s=s, edgecolor="face", alpha=0.5, cmap='viridis', marker=marker, zorder=99) #'viridis'
-            #axes.set_xticks([])
+            axes.scatter(free_vars[i], Obj, s=s, edgecolor="face", alpha=0.5, cmap='viridis', marker=marker, zorder=99)
             plt.gcf().subplots_adjust(bottom=0.2)
             axes.set_xlabel(var_label[i], **font)
-            #axes.ticklabel_format(axis="x", scilimits=(0,0), useMathText=True, style='plain')
             axes.xaxis.set_major_locator(mtick.MaxNLocator(2))
-            #axes.xaxis.set_label_coords(0.5, -0.3)
-            # refine the plotting
-
-            #axes.set_ylabel(label[xy[1]], **font,rotation=0)
-            #axes.set_ylabel(obj_label, **font)
-
-            #axes.yaxis.set_label_coords(-0.1,1.055)
-            #plt.yticks(rotation=90)
             axes.yaxis.set_major_locator(mtick.MaxNLocator(6))
 
             axes.grid()
             axes.tick_params(axis='both', which='major', labelsize=14)
-            #fig.set_size_inches(8, 4)
 
-        #plt.savefig(self.save_path + 'paretoPlot.eps', bbox_inches='tight', format='eps')
         fig.text(-0.01, 0.6, obj_label, va='center', rotation='vertical', **font)
         fig.tight_layout()
         plt.gcf().subplots_adjust(bottom=0.25)
