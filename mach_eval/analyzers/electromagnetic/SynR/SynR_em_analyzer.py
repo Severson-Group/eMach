@@ -16,6 +16,7 @@ class SynR_EM_Problem:
         self.machine = machine
         self.operating_point = operating_point
         self._validate_attr()
+        self._check_geom()
 
     def _validate_attr(self):
         if 'SynR_Machine' in str(type(self.machine)):
@@ -27,6 +28,22 @@ class SynR_EM_Problem:
             pass
         else:
             raise TypeError("Invalid settings type")
+        
+    def _check_geom(self):
+        x1 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1/2 - self.machine.l_b4/2)*np.cos(np.pi/4)
+        y1 = self.machine.l_b1 + self.machine.w_b1/2 + (self.machine.l_b4/2 + self.machine.d_r1 + self.machine.r_ri)*np.cos(np.pi/4)
+        r_ro_compare1 = np.sqrt(x1**2 + y1**2)
+        x2 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.w_b2/2 - self.machine.l_b5/2)*np.cos(np.pi/4)
+        y2 = self.machine.l_b2 + self.machine.w_b2/2 + (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.l_b5/2)*np.cos(np.pi/4)
+        r_ro_compare2 = np.sqrt(x2**2 + y2**2)
+        print(r_ro_compare1)
+        print(r_ro_compare2)
+        print(self.machine.r_ro)
+        if r_ro_compare1 < 0.95*self.machine.r_ro and r_ro_compare2 < 0.95*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2:
+            print("\nGeometry is vald!")
+            print("\n")
+        else:
+            raise InvalidDesign("Invalid Geometry - Flux Barriers Don't Fit")
 
 
 class SynR_EM_Analyzer:
