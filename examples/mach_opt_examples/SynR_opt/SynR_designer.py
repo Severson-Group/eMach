@@ -18,9 +18,9 @@ from mach_eval import MachineDesigner
 # Specify machine specifications
 AM_SynR_parameters = {
     'p': 2,
-    'Q': 12,
+    'Q': 36,
     'rated_speed': 1800,
-    'rated_current': 20,   
+    'rated_current': 5,   
 }
 
 AM_SynR_materials = {
@@ -34,19 +34,18 @@ AM_SynR_materials = {
 
 AM_SynR_winding = {
     "no_of_layers": 2,
-    "layer_phases": [ ['U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V'],
-                        ['W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U'] ],
-    "layer_polarity": [ ['+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-'],
-                        ['-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+'] ],
-    "pitch": 2,
-    "Z_q": 20,
+    "layer_phases": [ ['U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V'],
+                      ['U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U' ] ],
+    "layer_polarity": [ ['+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-'],
+                        ['+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+'] ],
+    "pitch": 8,
+    "Z_q": 29,
     "Kov": 1.8,
     "Kcu": 0.5,
     "phase_current_offset": 0,
 }
 
-
-# initialize BSPMArchitect with machine specification
+# initialize Architect with machine specification
 arch = AM_SynR_Architect(AM_SynR_parameters, AM_SynR_materials, AM_SynR_winding)
 set_handler = AM_SynR_Settings_Handler()
 
