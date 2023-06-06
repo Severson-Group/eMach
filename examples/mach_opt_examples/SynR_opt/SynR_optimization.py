@@ -35,14 +35,14 @@ dims = (
 bounds = [
     [0.5 * dims[0], 2 * dims[0]],  # r_ri
     [0.9 * dims[1], 1 * dims[1]],  # r_ro
-    [0.5 * dims[2], 2 * dims[2]],  # d_r1
-    [0.5 * dims[3], 2 * dims[3]],  # d_r2
-    [0.5 * dims[4], 1.5 * dims[4]],  # w_b1
-    [0.5 * dims[5], 1.5 * dims[5]],  # w_b2
-    [0.5 * dims[2], 1.5 * dims[2]],  # l_b1
-    [0.5 * dims[3], 1.5 * dims[3]],  # l_b2
-    [0.75 * dims[4], 1.5 * dims[4]],  # l_b4
-    [0.75 * dims[5], 1.5 * dims[5]],  # l_b5
+    [0.8 * dims[2], 1.2 * dims[2]],  # d_r1
+    [0.8 * dims[3], 1.2 * dims[3]],  # d_r2
+    [0.8 * dims[4], 1.2 * dims[4]],  # w_b1
+    [0.8 * dims[5], 1.2 * dims[5]],  # w_b2
+    [0.8 * dims[6], 1.2 * dims[6]],  # l_b1
+    [0.8 * dims[7], 1.2 * dims[7]],  # l_b2
+    [0.8 * dims[8], 1.2 * dims[8]],  # l_b4
+    [0.8 * dims[9], 1.2 * dims[9]],  # l_b5
 ]
 
 n_obj = 3
@@ -64,7 +64,7 @@ design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
 pop_size = 78
-gen_size = 20 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
+gen_size = 5 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
 
 # load latest population
 population = design_opt.load_pop(filepath=pop_file, pop_size=pop_size)

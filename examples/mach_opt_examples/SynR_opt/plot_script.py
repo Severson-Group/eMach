@@ -51,17 +51,25 @@ var_label = [
             '$d_{r2}$ [m]',
             '$w_{b1}$ [m]',
             '$w_{b2}$ [m]',
+            '$l_{b1}$ [m]',
+            '$l_{b2}$ [m]',
+            '$l_{b4}$ [m]',
+            '$l_{b5}$ [m]',
             ]
 
-dims = (6e-3, 50e-3, 8e-3, 8e-3, 4e-3, 4e-3)
+dims = (6e-3, 50e-3, 8e-3, 8e-3, 4e-3, 4e-3, 34e-3, 20e-3, 15e-3, 10e-3)
 # bounds for pygmo optimization problem
 bounds = [
     [0.5 * dims[0], 2 * dims[0]],  # r_ri
     [0.9 * dims[1], 1 * dims[1]],  # r_ro
     [0.5 * dims[2], 2 * dims[2]],  # d_r1
     [0.5 * dims[3], 2 * dims[3]],  # d_r2
-    [0.5 * dims[4], 2 * dims[4]],  # w_b1
-    [0.5 * dims[5], 2 * dims[5]],  # w_b2
+    [0.5 * dims[4], 1.5 * dims[4]],  # w_b1
+    [0.5 * dims[5], 1.5 * dims[5]],  # w_b2
+    [0.5 * dims[2], 1.5 * dims[2]],  # l_b1
+    [0.5 * dims[3], 1.5 * dims[3]],  # l_b2
+    [0.75 * dims[4], 1.5 * dims[4]],  # l_b4
+    [0.75 * dims[5], 1.5 * dims[5]],  # l_b5
 ]
 
 # Create box plots for free vars 
@@ -73,6 +81,10 @@ var_label = [
             r'$d_{r2}$ [mm]',
             r'$w_{b1}$ [mm]',
             r'$w_{b2}$ [mm]',
+            r'$l_{b1}$ [mm]',
+            r'$l_{b2}$ [mm]',
+            r'$l_{b4}$ [mm]',
+            r'$l_{b5}$ [mm]',
             ]
 
 fig = plt.figure(figsize =(10, 7))
@@ -87,8 +99,8 @@ for j in range(len(free_vars[0])):
 # generate data
 
 # create a list of data to plot
-data_to_plot = [xt[0], xt[1], xt[2], xt[3], xt[4], xt[5]]
-fig, axes = plt.subplots(nrows=1, ncols=6, sharey=False, figsize=(13, 3))
+data_to_plot = [xt[0], xt[1], xt[2], xt[3], xt[4], xt[5], xt[6], xt[7], xt[8], xt[9]]
+fig, axes = plt.subplots(nrows=1, ncols=10, sharey=False, figsize=(13, 3))
 c = 'tan'
 for i, ax in enumerate(axes):
     ax.boxplot([data_to_plot[i]], showfliers=False, patch_artist=True,

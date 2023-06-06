@@ -122,7 +122,7 @@ class DataAnalyzer:
 
 
         if ax is None:
-            fig, ax = plt.subplots(nrows=1, ncols=6, sharey=True, figsize=(13, 3),constrained_layout=False)
+            fig, ax = plt.subplots(nrows=1, ncols=10, sharey=True, figsize=(13, 3),constrained_layout=False)
             plt.subplots_adjust(left=None, bottom=None, right=0.85, top=None, wspace=None, hspace=None)
 
         for i, axes in enumerate(ax):
