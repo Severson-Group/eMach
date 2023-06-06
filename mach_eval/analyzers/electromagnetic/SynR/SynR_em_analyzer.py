@@ -36,9 +36,6 @@ class SynR_EM_Problem:
         x2 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.w_b2/2 - self.machine.l_b5/2)*np.cos(np.pi/4)
         y2 = self.machine.l_b2 + self.machine.w_b2/2 + (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.l_b5/2)*np.cos(np.pi/4)
         r_ro_compare2 = np.sqrt(x2**2 + y2**2)
-        print(r_ro_compare1)
-        print(r_ro_compare2)
-        print(self.machine.r_ro)
         if r_ro_compare1 < 0.95*self.machine.r_ro and r_ro_compare2 < 0.95*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2:
             print("\nGeometry is vald!")
             print("\n")
@@ -233,6 +230,10 @@ class SynR_EM_Analyzer:
         ####################################################
         # Adding parts objects
         ####################################################
+
+        rotor_rotation = mo.DimDegree(0)
+        stator_rotation = mo.DimDegree(-(180+720) / self.machine_variant.Q)
+
         self.stator_core = mo.CrossSectInnerRotorStatorPartial(
             name="StatorCore",
             dim_alpha_st=mo.DimDegree(self.machine_variant.alpha_st),
@@ -248,21 +249,21 @@ class SynR_EM_Analyzer:
             dim_r_sb=mo.DimMillimeter(0),
             Q=self.machine_variant.Q,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
+            theta=stator_rotation),
             )
 
         self.winding_layer1 = mo.CrossSectInnerRotorStatorRightSlot(
             name="WindingLayer1",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
+            theta=stator_rotation),
             )
 
         self.winding_layer2 = mo.CrossSectInnerRotorStatorLeftSlot(
             name="WindingLayer2",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
+            theta=stator_rotation),
             )
 
         self.rotor_core = mo.CrossSectFluxBarrierRotorPartial(
@@ -286,7 +287,8 @@ class SynR_EM_Analyzer:
             dim_l_b5=mo.DimMillimeter(self.machine_variant.l_b5),
             dim_l_b6=mo.DimMillimeter(self.machine_variant.l_b6),
             p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=mo.DimDegree(-180 / (2 * self.machine_variant.p))),
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], 
+            theta=rotor_rotation),
             )
 
         self.shaft = mo.CrossSectHollowCylinder(
