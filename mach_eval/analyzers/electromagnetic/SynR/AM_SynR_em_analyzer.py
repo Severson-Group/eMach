@@ -32,10 +32,10 @@ class AM_SynR_EM_Problem:
     def _check_geom(self):
         r_ro_compare = self.machine.r_ri + self.machine.d_r1 + np.sqrt(2)*self.machine.w_b1 + self.machine.d_r2 + np.sqrt(2)*self.machine.w_b2
         if r_ro_compare < self.machine.r_ro:
-            print("\nGeometry is vald!")
+            print("\nGeometry is valid!")
             print("\n")
         else:
-            raise InvalidDesign("Invalid Geometry - Flux Barriers Don't Fit")
+            raise InvalidDesign("Invalid Geometry")
 
 class AM_SynR_EM_Analyzer:
     def __init__(self, configuration):

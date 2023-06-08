@@ -6,11 +6,11 @@ Fe3Si = {
     'rotor_iron_youngs_modulus'        : 185E9, # Pa
     'rotor_iron_poission_ratio'        : .3, 
     'rotor_iron_material_cost'         : 17087, # $/m3
-    'rotor_iron_ironloss_a'            : 1.12,
-    'rotor_iron_ironloss_b'            : 2.10,
-    'rotor_iron_ironloss_Kh'           : 91.8, # W/m3
-    'rotor_iron_ironloss_Ke'           : 0.41, # W/m3
-    'rotor_iron_therm_conductivity'    : 25, # W/m-k
+    'rotor_iron_ironloss_a'            : 1.58,
+    'rotor_iron_ironloss_b'            : 1.17,
+    'rotor_iron_ironloss_Kh'           : 78.94, # W/m3
+    'rotor_iron_ironloss_Ke'           : 0.0372, # W/m3
+    'rotor_iron_therm_conductivity'    : 28, # W/m-k
     'rotor_iron_stacking_factor'       : 96, # percentage
     'rotor_iron_bh_file'               : os.path.dirname(__file__) + '/Fe3Si.BH',
     'alpha_Fe3Si'                      : 1.2e-5,
