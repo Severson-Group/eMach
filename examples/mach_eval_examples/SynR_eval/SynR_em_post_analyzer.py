@@ -74,7 +74,7 @@ class SynR_EM_PostAnalyzer:
 
         # Total losses, output power, and efficiency
         total_losses = (
-            stator_iron_loss + rotor_iron_loss + stator_calc_ohmic_loss)
+            stator_hysteresis_loss + rotor_hysteresis_loss + stator_calc_ohmic_loss)
         P_out = torque_avg * omega_m
         efficiency = P_out / (P_out + total_losses)
 
