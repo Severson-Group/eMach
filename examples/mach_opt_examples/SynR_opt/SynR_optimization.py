@@ -9,12 +9,12 @@ from mach_eval import MachineEvaluator
 from examples.mach_opt_examples.SynR_opt.my_data_handler import MyDataHandler
 from SynR_designer import designer
 from SynR_ds import SynRDesignSpace
-from examples.mach_eval_examples.SynR_eval.electromagnetic_step import electromagnetic_step
+from examples.mach_eval_examples.SynR_eval.optimization_step import optimization_step
 from time import time as clock_time
 
 SynR_evaluator = MachineEvaluator(
     [
-        electromagnetic_step,
+        optimization_step,
     ]
 )
 
@@ -22,14 +22,14 @@ SynR_evaluator = MachineEvaluator(
 dims = (
     6, # r_ri
     50, #r_ro
-    8, # d_r1
-    8, # d_r2
+    4, # d_r1
+    6, # d_r2
     4, # w_b1
     4, # w_b2
-    34, # l_b1
-    20, # l_b2
-    15, # l_b4
-    10, # l_b5
+    25, # l_b1
+    27, # l_b2
+    12, # l_b4
+    6, # l_b5
 )
 
 bounds = [
@@ -64,7 +64,7 @@ design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
 pop_size = 78
-gen_size = 5 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
+gen_size = 1 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
 
 # load latest population
 population = design_opt.load_pop(filepath=pop_file, pop_size=pop_size)

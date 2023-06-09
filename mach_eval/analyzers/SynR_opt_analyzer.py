@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import sys
 from time import time as clock_time
+from scipy.optimize import curve_fit
 
 from mach_cad import model_obj as mo
 from mach_opt import InvalidDesign
@@ -11,7 +12,7 @@ from mach_eval.analyzers.electromagnetic.stator_wdg_res import(
 )
 from mach_cad.tools import jmag as JMAG
 
-class SynR_EM_Problem:
+class SynR_Opt_Problem:
     def __init__(self, machine, operating_point):
         self.machine = machine
         self.operating_point = operating_point
@@ -28,7 +29,7 @@ class SynR_EM_Problem:
             pass
         else:
             raise TypeError("Invalid settings type")
-        
+
     def _check_geom(self):
         x1 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1/2 - self.machine.l_b4/2)*np.cos(np.pi/4)
         y1 = self.machine.l_b1 + self.machine.w_b1/2 + (self.machine.l_b4/2 + self.machine.d_r1 + self.machine.r_ri)*np.cos(np.pi/4)
@@ -37,27 +38,27 @@ class SynR_EM_Problem:
         y2 = self.machine.l_b2 + self.machine.w_b2/2 + (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.l_b5/2)*np.cos(np.pi/4)
         r_ro_compare2 = np.sqrt(x2**2 + y2**2)
         if r_ro_compare1 < 0.95*self.machine.r_ro and r_ro_compare2 < 0.95*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2:
-            print("\nGeometry is vald!")
+            print("\nGeometry is valid!")
             print("\n")
         else:
             raise InvalidDesign("Invalid Geometry - Flux Barriers Don't Fit")
+        
 
-
-class SynR_EM_Analyzer:
+class SynR_Opt_Analyzer:
     def __init__(self, configuration):
         self.config = configuration
 
     def analyze(self, problem):
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
+        self.machine_variant.yield_stress = 300 * 10 ** 6
         
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
         
         self.project_name = self.machine_variant.name
-        expected_project_file = self.config.run_folder + "%s.jproj" % self.project_name
-
+        expected_project_file = self.config.run_folder + "%s_Opt.jproj" % self.project_name
         # Create output folder
         if not os.path.isdir(self.config.jmag_csv_folder):
             os.makedirs(self.config.jmag_csv_folder)
@@ -85,10 +86,10 @@ class SynR_EM_Analyzer:
         toolJmag = JMAG.JmagDesigner()
 
         toolJmag.visible = self.config.jmag_visible
-        toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="Transient2D")
+        toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="StructuralStatic2D")
         toolJmag.save()
 
-        self.study_name = self.project_name + "_Tran_SynR"
+        self.study_name = self.project_name + "_Stat_SynR"
         self.design_results_folder = (
             self.config.run_folder + "%s_results/" % self.project_name
         )
@@ -96,7 +97,7 @@ class SynR_EM_Analyzer:
             os.makedirs(self.design_results_folder)
 
         ################################################################
-        # 02 Run Electromagnetic analysis
+        # 02 Run Structural analysis
         ################################################################
 
         # Draw cross_section
@@ -118,11 +119,115 @@ class SynR_EM_Analyzer:
         if not valid_design:
             raise InvalidDesign
 
-        # Create transient study with two time step sections
-        study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name)
+        # Create static study 1
+        study1 = self.add_struct_study_1(app, model, self.config.jmag_csv_folder, self.study_name + "_1")
         self.create_custom_material(
             app, self.machine_variant.stator_iron_mat["core_material"]
         )
+        app.SetCurrentStudy(self.study_name + "_1")
+
+        # Mesh study
+        self.mesh_study(app, model, study1)
+
+        # Run study
+        self.run_study(app, study1, clock_time())
+
+        # Create static study 2
+        study2 = self.add_struct_study_2(app, model, self.config.jmag_csv_folder, self.study_name + "_2")
+        #self.create_custom_material(
+        #    app, self.machine_variant.stator_iron_mat["core_material"]
+        #)
+        app.SetCurrentStudy(self.study_name + "_2")
+
+        # Mesh study
+        self.mesh_study(app, model, study2)
+
+        # Run study
+        self.run_study(app, study2, clock_time())
+
+        # Create static study 3
+        study3 = self.add_struct_study_3(app, model, self.config.jmag_csv_folder, self.study_name + "_3")
+        #self.create_custom_material(
+        #    app, self.machine_variant.stator_iron_mat["core_material"]
+        #)
+        app.SetCurrentStudy(self.study_name + "_3")
+
+        # Mesh study
+        self.mesh_study(app, model, study3)
+
+        # Run study
+        self.run_study(app, study3, clock_time())
+
+        # Create static study 4
+        study4 = self.add_struct_study_4(app, model, self.config.jmag_csv_folder, self.study_name + "_4")
+        #self.create_custom_material(
+        #    app, self.machine_variant.stator_iron_mat["core_material"]
+        #)
+        app.SetCurrentStudy(self.study_name + "_4")
+
+        # Mesh study
+        self.mesh_study(app, model, study4)
+
+        # Run study
+        self.run_study(app, study4, clock_time())
+
+        ####################################################
+        # 03 Load FEA Struct output
+        ####################################################
+
+        fea_rated_output_1 = self.extract_JMAG_results(
+            self.config.jmag_csv_folder, self.study_name + "_1"
+        )
+
+        fea_rated_output_2 = self.extract_JMAG_results(
+            self.config.jmag_csv_folder, self.study_name + "_2"
+        )
+
+        fea_rated_output_3 = self.extract_JMAG_results(
+            self.config.jmag_csv_folder, self.study_name + "_3"
+        )
+
+        fea_rated_output_4 = self.extract_JMAG_results(
+            self.config.jmag_csv_folder, self.study_name + "_4"
+        )
+
+        struct1 = fea_rated_output_1["max_stress"]
+        s1 = struct1['Maximum Value']
+        max_stress1 = s1[0]
+
+        struct2 = fea_rated_output_2["max_stress"]
+        s2 = struct2['Maximum Value']
+        max_stress2 = s2[0]
+
+        struct3 = fea_rated_output_3["max_stress"]
+        s3 = struct3['Maximum Value']
+        max_stress3 = s3[0]
+
+        struct4 = fea_rated_output_4["max_stress"]
+        s4 = struct4['Maximum Value']
+        max_stress4 = s4[0]
+
+        def objective(x, a, b):
+            return x ** a + b
+        
+        x = [0, 0.25 * self.operating_point.speed, 0.5 * self.operating_point.speed, 0.75 * self.operating_point.speed, self.operating_point.speed]
+        y = [0, max_stress1, max_stress2, max_stress3, max_stress4]
+        popt, _ = curve_fit(objective, x, y)
+        a, b = popt
+        max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
+        self.operating_point.new_speed = max_speed
+        max_stress = max_speed ** a + b
+        self.machine_variant.max_stress = max_stress
+
+        print("Operating Speed = ", self.operating_point.speed, " RPM",)
+        print("Maximum Speed = ", self.operating_point.new_speed, " RPM",)
+
+        ################################################################
+        # 04 Run Electromagnetic analysis
+        ################################################################
+
+        # Create transient study with two time step sections
+        study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name)
         app.SetCurrentStudy(self.study_name)
 
         # Mesh study
@@ -138,7 +243,7 @@ class SynR_EM_Analyzer:
         phi_0 = self.operating_point.phi_0
         self.set_currents_sequence(I, self.drive_freq,
                 phi_0, app, study)
-
+        
         # Add time step settings
         no_of_steps = self.config.no_of_steps
         no_of_rev = self.config.no_of_rev
@@ -148,18 +253,18 @@ class SynR_EM_Analyzer:
         self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        app.Quit()
+        # app.Quit()
 
         ####################################################
-        # 03 Load FEA output
+        # 05 Load EM FEA output
         ####################################################
 
-        fea_rated_output = self.extract_JMAG_results(
+        fea_rated_output = self.extract_JMAG_EM_results(
             self.config.jmag_csv_folder, self.study_name
         )
 
         return fea_rated_output
-
+    
     @property
     def drive_freq(self):
         speed_in_elec_ang = 2 * np.pi * self.operating_point.speed / 60 * self.machine_variant.p
@@ -169,7 +274,11 @@ class SynR_EM_Analyzer:
     @property
     def speed(self):
         return self.operating_point.speed
-
+    
+    @property
+    def new_speed(self):
+        return self.operating_point.new_speed
+    
     @property
     def elec_omega(self):
         return 2 * np.pi * self.drive_freq
@@ -390,11 +499,11 @@ class SynR_EM_Analyzer:
         )  # this is also useful for string beginning with digiterations '15 Steel'.
         tuple_list = [(key, the_dict[key]) for key in sorted_key]
         if not toString:
-            print("- Bearingless SynR Individual #%s\n\t" % name, end=" ")
+            print("- SynR Individual #%s\n\t" % name, end=" ")
             print(", \n\t".join("%s = %s" % item for item in tuple_list))
             return ""
         else:
-            return "\n- Bearingless SynR Individual #%s\n\t" % name + ", \n\t".join(
+            return "\n- SynR Individual #%s\n\t" % name + ", \n\t".join(
                 "%s = %s" % item for item in tuple_list
             )
 
@@ -442,7 +551,7 @@ class SynR_EM_Analyzer:
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
         R = np.sqrt(self.winding_layer1_inner_coord[0] ** 2 + self.winding_layer1_inner_coord[1] ** 2)
-        THETA = np.arctan(self.winding_layer2_inner_coord[1] / self.winding_layer2_inner_coord[0])
+        THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -457,7 +566,7 @@ class SynR_EM_Analyzer:
             Y = R * np.sin(THETA)
 
         # Create Set for left layer
-        THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
+        THETA = np.arctan(self.winding_layer2_inner_coord[1] / self.winding_layer2_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -491,11 +600,6 @@ class SynR_EM_Analyzer:
 
 
     def create_custom_material(self, app, steel_name):
-
-        core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
-            self.machine_variant.stator_iron_mat["core_material"]
-        )
-        app.GetMaterialLibrary().DeleteCustomMaterialByObject(core_mat_obj)
 
         app.GetMaterialLibrary().CreateCustomMaterial(
             self.machine_variant.stator_iron_mat["core_material"], "Custom Materials"
@@ -534,9 +638,14 @@ class SynR_EM_Analyzer:
         ).SetValue("ExtrapolationMethod", 0)
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.stator_iron_mat["core_material"]
-        ).SetValue(
-            "YoungModulus", self.machine_variant.stator_iron_mat["core_youngs_modulus"] / 1000000
-        )
+        ).SetValue("YoungModulus", self.machine_variant.stator_iron_mat["core_youngs_modulus"] / 1000000)
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.stator_iron_mat["core_material"]
+        ).SetValue("PoissonRatio", self.machine_variant.stator_iron_mat["core_poission_ratio"])
+        app.GetMaterialLibrary().GetUserMaterial(
+            self.machine_variant.stator_iron_mat["core_material"]
+        ).SetValue("ShearModulus", self.machine_variant.stator_iron_mat["core_youngs_modulus"] / (1000000 * 2 * (1 + self.machine_variant.stator_iron_mat["core_poission_ratio"])))
+
         app.GetMaterialLibrary().GetUserMaterial(
             self.machine_variant.stator_iron_mat["core_material"]
         ).SetValue("Loss_Type", 1)
@@ -563,6 +672,325 @@ class SynR_EM_Analyzer:
         )
 
 
+    def add_struct_study_1(
+        self, app, model, dir_csv_output_folder, study_name
+    ):
+
+        model.CreateStudy("StructuralStatic2D", study_name)
+        app.SetCurrentStudy(study_name)
+        study = model.GetStudy(study_name)
+
+        # Study properties
+        study.GetStudyProperties().SetValue(
+            "ModelThickness", self.machine_variant.l_st
+        )  # [mm] Stack Length
+
+        # Material
+        self.add_materials(study)
+
+        # Conditions - Displacement Restraint
+        study.CreateCondition("Displacement", "Containment")
+        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
+        study.GetCondition("Containment").ClearParts()
+        study.GetCondition("Containment").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 1
+        )
+
+        # Conditions - Centrifugal Force
+        study.CreateCondition("CentrifugalForce",
+            "RotCon") 
+        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
+        study.GetCondition("RotCon").SetValue("AngularVelocity",
+            int(self.speed) * 0.25)
+        study.GetCondition("RotCon").ClearParts()
+        study.GetCondition("RotCon").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Conditions - Target Result
+        app.SetCurrentStudy(study_name)
+        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Suppress Stator
+        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
+        model.GetStudy(study_name).SuppressPart("Coils", 1)
+
+        # True: no mesh or field results are needed
+        study.GetStudyProperties().SetValue(
+            "OnlyTableResults", self.config.only_table_results
+        )
+
+        study.GetStudyProperties().SetValue("DirectSolverType", 1)
+
+        if self.config.multiple_cpus:
+            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
+            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
+            # for eddy current solve. 6~8 is enough for transient solve.
+            study.GetStudyProperties().SetValue("UseMultiCPU", True)
+            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+
+        # speed, freq
+        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
+
+        # Calculate CSV results
+        study.GetStudyProperties().SetValue(
+            "CsvOutputPath", dir_csv_output_folder
+        )  # it's folder rather than file!
+        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
+        study.GetStudyProperties().SetValue(
+            "DeleteResultFiles", self.config.del_results_after_calc
+        )
+
+        return study
+    
+
+    def add_struct_study_2(
+        self, app, model, dir_csv_output_folder, study_name
+    ):
+
+        model.CreateStudy("StructuralStatic2D", study_name)
+        app.SetCurrentStudy(study_name)
+        study = model.GetStudy(study_name)
+
+        # Study properties
+        study.GetStudyProperties().SetValue(
+            "ModelThickness", self.machine_variant.l_st
+        )  # [mm] Stack Length
+
+        # Material
+        self.add_materials(study)
+
+        # Conditions - Displacement Restraint
+        study.CreateCondition("Displacement", "Containment")
+        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
+        study.GetCondition("Containment").ClearParts()
+        study.GetCondition("Containment").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 1
+        )
+
+        # Conditions - Centrifugal Force
+        study.CreateCondition("CentrifugalForce",
+            "RotCon") 
+        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
+        study.GetCondition("RotCon").SetValue("AngularVelocity",
+            int(self.speed) * 0.5)
+        study.GetCondition("RotCon").ClearParts()
+        study.GetCondition("RotCon").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Conditions - Target Result
+        app.SetCurrentStudy(study_name)
+        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Suppress Stator
+        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
+        model.GetStudy(study_name).SuppressPart("Coils", 1)
+
+        # True: no mesh or field results are needed
+        study.GetStudyProperties().SetValue(
+            "OnlyTableResults", self.config.only_table_results
+        )
+
+        study.GetStudyProperties().SetValue("DirectSolverType", 1)
+
+        if self.config.multiple_cpus:
+            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
+            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
+            # for eddy current solve. 6~8 is enough for transient solve.
+            study.GetStudyProperties().SetValue("UseMultiCPU", True)
+            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+
+        # speed, freq
+        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
+
+        # Calculate CSV results
+        study.GetStudyProperties().SetValue(
+            "CsvOutputPath", dir_csv_output_folder
+        )  # it's folder rather than file!
+        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
+        study.GetStudyProperties().SetValue(
+            "DeleteResultFiles", self.config.del_results_after_calc
+        )
+
+        return study
+    
+
+    def add_struct_study_3(
+        self, app, model, dir_csv_output_folder, study_name
+    ):
+
+        model.CreateStudy("StructuralStatic2D", study_name)
+        app.SetCurrentStudy(study_name)
+        study = model.GetStudy(study_name)
+
+        # Study properties
+        study.GetStudyProperties().SetValue(
+            "ModelThickness", self.machine_variant.l_st
+        )  # [mm] Stack Length
+
+        # Material
+        self.add_materials(study)
+
+        # Conditions - Displacement Restraint
+        study.CreateCondition("Displacement", "Containment")
+        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
+        study.GetCondition("Containment").ClearParts()
+        study.GetCondition("Containment").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 1
+        )
+
+        # Conditions - Centrifugal Force
+        study.CreateCondition("CentrifugalForce",
+            "RotCon") 
+        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
+        study.GetCondition("RotCon").SetValue("AngularVelocity",
+            int(self.speed) * 0.75)
+        study.GetCondition("RotCon").ClearParts()
+        study.GetCondition("RotCon").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Conditions - Target Result
+        app.SetCurrentStudy(study_name)
+        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Suppress Stator
+        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
+        model.GetStudy(study_name).SuppressPart("Coils", 1)
+
+        # True: no mesh or field results are needed
+        study.GetStudyProperties().SetValue(
+            "OnlyTableResults", self.config.only_table_results
+        )
+
+        study.GetStudyProperties().SetValue("DirectSolverType", 1)
+
+        if self.config.multiple_cpus:
+            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
+            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
+            # for eddy current solve. 6~8 is enough for transient solve.
+            study.GetStudyProperties().SetValue("UseMultiCPU", True)
+            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+
+        # speed, freq
+        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
+
+        # Calculate CSV results
+        study.GetStudyProperties().SetValue(
+            "CsvOutputPath", dir_csv_output_folder
+        )  # it's folder rather than file!
+        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
+        study.GetStudyProperties().SetValue(
+            "DeleteResultFiles", self.config.del_results_after_calc
+        )
+
+        return study
+    
+
+    def add_struct_study_4(
+        self, app, model, dir_csv_output_folder, study_name
+    ):
+
+        model.CreateStudy("StructuralStatic2D", study_name)
+        app.SetCurrentStudy(study_name)
+        study = model.GetStudy(study_name)
+
+        # Study properties
+        study.GetStudyProperties().SetValue(
+            "ModelThickness", self.machine_variant.l_st
+        )  # [mm] Stack Length
+
+        # Material
+        self.add_materials(study)
+
+        # Conditions - Displacement Restraint
+        study.CreateCondition("Displacement", "Containment")
+        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
+        study.GetCondition("Containment").ClearParts()
+        study.GetCondition("Containment").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 1
+        )
+
+        # Conditions - Centrifugal Force
+        study.CreateCondition("CentrifugalForce",
+            "RotCon") 
+        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
+        study.GetCondition("RotCon").SetValue("AngularVelocity",
+            int(self.speed))
+        study.GetCondition("RotCon").ClearParts()
+        study.GetCondition("RotCon").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Conditions - Target Result
+        app.SetCurrentStudy(study_name)
+        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
+        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
+            model.GetSetList().GetSet("Motion_Region"), 0
+        )
+
+        # Suppress Stator
+        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
+        model.GetStudy(study_name).SuppressPart("Coils", 1)
+
+        # True: no mesh or field results are needed
+        study.GetStudyProperties().SetValue(
+            "OnlyTableResults", self.config.only_table_results
+        )
+
+        study.GetStudyProperties().SetValue("DirectSolverType", 1)
+
+        if self.config.multiple_cpus:
+            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
+            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
+            # for eddy current solve. 6~8 is enough for transient solve.
+            study.GetStudyProperties().SetValue("UseMultiCPU", True)
+            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+
+        # speed, freq
+        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
+
+        # Calculate CSV results
+        study.GetStudyProperties().SetValue(
+            "CsvOutputPath", dir_csv_output_folder
+        )  # it's folder rather than file!
+        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
+        study.GetStudyProperties().SetValue(
+            "DeleteResultFiles", self.config.del_results_after_calc
+        )
+
+        return study
+    
 
     def add_em_study(
         self, app, model, dir_csv_output_folder, study_name
@@ -590,7 +1018,7 @@ class SynR_EM_Analyzer:
         study.CreateCondition("RotationMotion",
             "RotCon")
         study.GetCondition("RotCon").SetValue("AngularVelocity",
-            int(self.speed))
+            int(self.operating_point.new_speed))
         study.GetCondition("RotCon").ClearParts()
         study.GetCondition("RotCon").AddSet(
             model.GetSetList().GetSet("Motion_Region"), 0
@@ -678,7 +1106,7 @@ class SynR_EM_Analyzer:
         study.GetStudyProperties().SetValue(
             "CsvOutputPath", dir_csv_output_folder
         )  # it's folder rather than file!
-        study.GetStudyProperties().SetValue("CsvResultTypes", self.config.csv_results)
+        study.GetStudyProperties().SetValue("CsvResultTypes", self.config.csv_em_results)
         study.GetStudyProperties().SetValue(
             "DeleteResultFiles", self.config.del_results_after_calc
         )
@@ -959,7 +1387,7 @@ class SynR_EM_Analyzer:
         study.GetMeshControl().CreateCondition("Part", "ShaftMeshCtrl")
         study.GetMeshControl().GetCondition("ShaftMeshCtrl").SetValue("Size", 1) # 10 mm
         study.GetMeshControl().GetCondition("ShaftMeshCtrl").ClearParts()
-        study.GetMeshControl().GetCondition("ShaftMeshCtrl").AddSet(model.GetSetList().GetSet("ShaftSet"), 0)
+        study.GetMeshControl().GetCondition("ShaftMeshCtrl").AddSet(model.GetSetList().GetSet("Motion_Region"), 0)
 
         def mesh_all_cases(study):
             numCase = study.GetDesignTable().NumCases()
@@ -1005,6 +1433,7 @@ class SynR_EM_Analyzer:
 
             circular_pattern.SetProperty("CenterType", 2)  # origin I guess
 
+            # print('Copy', Q_float)
             circular_pattern.SetProperty("Angle", "360/%d" % Q_float)
             circular_pattern.SetProperty("Instance", str(Q_float))
 
@@ -1048,7 +1477,6 @@ class SynR_EM_Analyzer:
 
             # RotateCopy
             if tool.iRotateCopy != 0:
-                # print('Copy', self.iRotateCopy)
                 regionCircularPattern360Origin(
                     region_object, tool, bMerge=bRotateMerge
                 )
@@ -1057,6 +1485,17 @@ class SynR_EM_Analyzer:
         return list_region_objects
 
     def extract_JMAG_results(self, path, study_name):
+        max_stress_csv_path = path + study_name + "_calculation_MaxStress.csv"
+        print(max_stress_csv_path)
+        max_stress_df = pd.read_csv(max_stress_csv_path, skiprows=5)
+        
+        fea_data = {
+            "max_stress": max_stress_df,
+        }
+
+        return fea_data
+    
+    def extract_JMAG_EM_results(self, path, study_name):
         current_csv_path = path + study_name + "_circuit_current.csv"
         torque_csv_path = path + study_name + "_torque.csv"
         force_csv_path = path + study_name + "_force.csv"
@@ -1095,6 +1534,9 @@ class SynR_EM_Analyzer:
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
             "stator_slot_area": self.stator_slot_area,
+            "new_speed": self.operating_point.new_speed,
+            "max_stress": self.machine_variant.max_stress,
+            "yield_stress": self.machine_variant.yield_stress
         }
 
         return fea_data
