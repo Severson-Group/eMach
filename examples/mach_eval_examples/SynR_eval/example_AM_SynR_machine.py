@@ -39,7 +39,7 @@ SynR_parameters = {
     'p': 2,
     'Q': 36,
     "name": "Example_SynR_Machine",
-    'rated_speed': 1800,
+    'rated_speed': 60000,
     'rated_current': 4,   
 }
 
@@ -71,7 +71,7 @@ Example_AM_SynR_Machine = AM_SynR_Machine(
 
 ################ DEFINE SynR operating point ################
 Machine_Op_Pt = AM_SynR_Machine_Oper_Pt(
-    speed=1800,
+    speed=60000,
     current_ratio=1,
     phi_0 = 0,
     ambient_temp=25,

@@ -8,7 +8,7 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataAnalyzer,
 )
 
-class AM_SynR_EM_PostAnalyzer:
+class AM_SynR_Opt_PostAnalyzer:
     def copper_loss(self):
         return 3 * (self.I ** 2) * (self.R_wdg + self.R_wdg_coil_ends + self.R_wdg_coil_sides)
 
@@ -20,6 +20,9 @@ class AM_SynR_EM_PostAnalyzer:
         ############################ Extract required info ###########################
         no_of_steps = results["no_of_steps"]
         no_of_rev = results["no_of_rev"]
+        operating_speed = results["new_speed"]
+        max_stress = results["max_stress"]
+        yield_stress = results["yield_stress"]
         number_of_total_steps = results["current"].shape[0]
         i1 = number_of_total_steps - no_of_steps
         i2 = - int(no_of_steps / no_of_rev * 0.25)
@@ -101,10 +104,14 @@ class AM_SynR_EM_PostAnalyzer:
         state_out.conditions.em = post_processing
 
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
-        #print("Torque = ", torque_avg, " Nm")
+        print("Operating speed = ", operating_speed, " RPM")
+        print("Max Stress = ", max_stress/(10**6), " MPa")
+        if max_stress > yield_stress:
+            print("The maximum stress EXCEEDS the yield stress!")
+        else:
+            print("The maximum stress does not exceed the yield stress!")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
-        #print("Power = ", P_out, " W")
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
         print("*************************************************************************\n")
