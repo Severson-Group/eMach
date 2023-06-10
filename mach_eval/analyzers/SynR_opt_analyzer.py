@@ -236,8 +236,6 @@ class SynR_Opt_Analyzer:
         self.breakdown_torque = None
         self.stator_slot_area = None
 
-        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.drive_freq)
-
         # Set current excitation
         I = self.I_hat
         phi_0 = self.operating_point.phi_0
@@ -267,7 +265,7 @@ class SynR_Opt_Analyzer:
     
     @property
     def drive_freq(self):
-        speed_in_elec_ang = 2 * np.pi * self.operating_point.speed / 60 * self.machine_variant.p
+        speed_in_elec_ang = 2 * np.pi * self.operating_point.new_speed / 60 * self.machine_variant.p
         drive_freq = speed_in_elec_ang
         return drive_freq
 
@@ -1061,6 +1059,7 @@ class SynR_Opt_Analyzer:
         )
         # add equations
         study.GetDesignTable().AddEquation("freq")
+        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.drive_freq)
         study.GetDesignTable().AddEquation("speed")
         study.GetDesignTable().GetEquation("freq").SetType(0)
         study.GetDesignTable().GetEquation("freq").SetDescription(
