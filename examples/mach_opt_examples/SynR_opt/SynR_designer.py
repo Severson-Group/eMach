@@ -16,7 +16,7 @@ SynR_parameters = {
     'p': 2,
     'Q': 36,
     'rated_speed': 20000,
-    'rated_current': 5,   
+    'rated_current': 4,   
 }
 
 SynR_materials = {
