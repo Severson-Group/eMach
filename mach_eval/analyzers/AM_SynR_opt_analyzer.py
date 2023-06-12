@@ -20,12 +20,12 @@ class AM_SynR_Opt_Problem:
         self._check_geom()
 
     def _validate_attr(self):
-        if 'SynR_Machine' in str(type(self.machine)):
+        if 'AM_SynR_Machine' in str(type(self.machine)):
             pass
         else:
             raise TypeError("Invalid machine type")
 
-        if 'SynR_Machine_Oper_Pt' in str(type(self.operating_point)):
+        if 'AM_SynR_Machine_Oper_Pt' in str(type(self.operating_point)):
             pass
         else:
             raise TypeError("Invalid settings type")

@@ -6,7 +6,7 @@ from mach_eval.machines.SynR.AM_SynR_machine import AM_SynR_Machine
 
 class AM_SynR_Architect:
     """
-    This class acts as an interface between the end user and the AM-SynR_Machine class.
+    This class acts as an interface between the end user and the AM_SynR_Machine class.
     Each Architect class has to be tailor made based on the expected free variables
     from the optimization algorithm
     """
