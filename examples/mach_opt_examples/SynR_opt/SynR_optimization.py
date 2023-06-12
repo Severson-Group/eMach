@@ -9,12 +9,12 @@ from mach_eval import MachineEvaluator
 from examples.mach_opt_examples.SynR_opt.my_data_handler import MyDataHandler
 from SynR_designer import designer
 from SynR_ds import AMSynRDesignSpace
-from examples.mach_eval_examples.SynR_eval.electromagnetic_AM_step import electromagnetic_AM_step
+from examples.mach_eval_examples.SynR_eval.optimization_AM_step import optimization_AM_step
 from time import time as clock_time
 
 AM_SynR_evaluator = MachineEvaluator(
     [
-        electromagnetic_AM_step,
+        optimization_AM_step,
     ]
 )
 
