@@ -5,7 +5,7 @@ import numpy as np
 from mach_eval.machines.machine import Machine, MissingValueError, Winding, MachineComponent
 from mach_eval.machines.radial_machines import Stator, Shaft, AM_SynR_Rotor_Iron
 
-__all__ = ['SynR_Machine']
+__all__ = ['AM_SynR_Machine']
 
 class AM_SynR_Machine(Machine, Shaft, AM_SynR_Rotor_Iron, Stator, Winding):
 
