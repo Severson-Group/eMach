@@ -15,7 +15,7 @@ class SynR_Settings_Handler:
 
     def get_settings(self, x):
         em_op = SynR_Machine_Oper_Pt(
-            speed=1800,
+            speed=20000,
             current_ratio=1,
             phi_0=0,
             ambient_temp=25,
