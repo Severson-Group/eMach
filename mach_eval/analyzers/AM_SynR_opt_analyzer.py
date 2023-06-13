@@ -994,6 +994,7 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+            # study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # speed, freq
         # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
@@ -1074,6 +1075,7 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+            # study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # speed, freq
         # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
@@ -1154,6 +1156,7 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+            # study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # speed, freq
         # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
@@ -1234,6 +1237,7 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+            # study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # speed, freq
         # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
@@ -1310,6 +1314,7 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
+            # study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # two sections of different time step
         no_of_rev = self.config.no_of_rev
