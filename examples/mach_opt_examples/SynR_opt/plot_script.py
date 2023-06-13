@@ -120,7 +120,7 @@ label=['-PRV [kW/m^3]', '-$\eta$ [%]', 'Trip []']
 
 # get rid of designs that violate constraints
 for i in range(len(fitness)):
-    if fitness[i][1] > -0.8 or fitness[i][1] < -1 or fitness[i][2] > 0.5:
+    if fitness[i][1] > -0.50 or fitness[i][1] < -1 or fitness[i][2] > 0.5:
         fitness[i] = [None,None,None]
             
 fit = [[0 for x in range(len(fitness[0]))] for y in range(len(fitness))]

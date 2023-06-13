@@ -64,7 +64,7 @@ design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
 pop_size = 78
-gen_size = 10 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
+gen_size = 1 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
 
 # load latest population
 population = design_opt.load_pop(filepath=pop_file, pop_size=pop_size)
