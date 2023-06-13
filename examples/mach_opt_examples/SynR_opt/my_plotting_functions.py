@@ -23,7 +23,7 @@ class DataAnalyzer:
         full_comp.remove(xy[0])
         full_comp.remove(xy[1])
         z_comp = full_comp[0]
-
+        print(points)
         fronts, _, _, _= pg.fast_non_dominated_sorting(points)
 
         # We define the colors of the fronts (grayscale from black to white)

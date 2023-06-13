@@ -16,7 +16,7 @@ class MyDataHandler(mo.DataHandler):
                 continue
             final_state = data.full_results[-1][-1]
             i = i+1
-            if data.objs[1]<-0.75 and data.objs[2]<0.5:
+            if data.objs[1]<-0.50 and data.objs[2]<0.5:
                 print("Design is ", final_state.design.machine.name)
                 print(data.objs)
         
