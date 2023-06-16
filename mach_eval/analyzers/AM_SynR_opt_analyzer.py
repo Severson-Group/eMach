@@ -214,9 +214,16 @@ class AM_SynR_Opt_Analyzer:
         
         x = [0, 0.25 * self.operating_point.speed, 0.5 * self.operating_point.speed, 0.75 * self.operating_point.speed, self.operating_point.speed]
         y = [0, max_stress1, max_stress2, max_stress3, max_stress4]
-        popt, _ = curve_fit(objective, x, y)
+
+        try:
+            popt, _ = curve_fit(objective, x, y)
+        except RuntimeError:
+            print("Error - curve_fit failed")
+            max_speed = 60000
+
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
+
         self.operating_point.new_speed = max_speed
         max_stress = max_speed ** a + b
         self.machine_variant.max_stress = max_stress
@@ -994,7 +1001,7 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
-            # study.GetStudyProperties().SetValue("UseGPU", 1)
+            study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # speed, freq
         # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")

@@ -41,7 +41,7 @@ configuration = AM_SynR_Opt_Config(
 
     max_nonlinear_iterations=50,
     multiple_cpus=True,
-    num_cpus=4,
+    num_cpus=8,
     jmag_scheduler=False,
     jmag_visible=True,
     scale_axial_length = True,
