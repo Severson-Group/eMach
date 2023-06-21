@@ -7,7 +7,7 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataProblem,
     ProcessTorqueDataAnalyzer,
 )
-from mach_eval.analyzers.windage_loss import (
+from mach_eval.analyzers.mechanical.windage_loss import (
     WindageLossProblem,
     WindageLossAnalyzer,
 )
