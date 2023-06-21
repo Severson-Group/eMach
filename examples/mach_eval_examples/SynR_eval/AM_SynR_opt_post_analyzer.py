@@ -7,6 +7,10 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataProblem,
     ProcessTorqueDataAnalyzer,
 )
+from mach_eval.analyzers.windage_loss import (
+    WindageLossProblem,
+    WindageLossAnalyzer,
+)
 
 class AM_SynR_Opt_PostAnalyzer:
     def copper_loss(self):
