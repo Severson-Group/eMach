@@ -58,6 +58,13 @@ class AM_SynR_Opt_PostAnalyzer:
         PRW = TRW * omega_m
         PRV = TRV * omega_m
 
+        # Windage
+        windage_prob = WindageLossProblem(
+            Omega = omega_m, R_ro = machine.r_ro/1000, stack_length = machine.l_st/1000, R_st = machine.r_si/1000, u_z=0, T_air=op_pt.ambient_temp
+            )
+        windage_analyzer = WindageLossAnalyzer()
+        windage_loss_radial, windage_loss_endFace, windage_loss_axial = windage_analyzer.analyze(windage_prob)
+
         # Losses
         # From JMAG
         stator_iron_loss = results["iron_loss"]["StatorCore"][0]
@@ -67,6 +74,7 @@ class AM_SynR_Opt_PostAnalyzer:
         stator_hysteresis_loss= results["hysteresis_loss"]["StatorCore"][0]
         rotor_hysteresis_loss = results["hysteresis_loss"]["RotorCore1i"][0] + results["hysteresis_loss"]["RotorCore2i"][0] + results["hysteresis_loss"]["RotorCore3i"][0]
         stator_ohmic_loss = results["ohmic_loss"]["Coils"].iloc[i2:].mean()
+        windage_loss = windage_loss_axial + windage_loss_endFace + windage_loss_radial
         
         # Calculate stator winding ohmic losses
         I_hat = machine.rated_current * op_pt.current_ratio
@@ -74,7 +82,7 @@ class AM_SynR_Opt_PostAnalyzer:
 
         # Total losses, output power, and efficiency
         total_losses = (
-            stator_hysteresis_loss + rotor_hysteresis_loss + stator_calc_ohmic_loss)
+            stator_hysteresis_loss + rotor_hysteresis_loss + stator_calc_ohmic_loss + windage_loss)
         P_out = torque_avg * omega_m
         efficiency = P_out / (P_out + total_losses)
 
