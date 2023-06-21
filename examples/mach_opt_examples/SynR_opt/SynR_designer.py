@@ -19,7 +19,7 @@ from mach_eval import MachineDesigner
 AM_SynR_parameters = {
     'p': 2,
     'Q': 36,
-    'rated_speed': 60000,
+    'rated_speed': 70000,
     'rated_current': 5,   
 }
 
