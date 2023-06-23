@@ -74,9 +74,9 @@ Example code initializing the machine design for the optimized SynR design provi
         'w_b1': 4,
         'w_b2': 4,
         'w_b3': 4,
-        'l_b1': 33.75,
-        'l_b2': 24.4,
-        'l_b3': 12.6,
+        'l_b1': 34.1,
+        'l_b2': 24.75,
+        'l_b3': 13.1,
         'l_b4': 13,
         'l_b5': 10,
         'l_b6': 7,
@@ -91,13 +91,13 @@ Example code initializing the machine design for the optimized SynR design provi
         'l_st': 100,
     }
 
+
     SynR_parameters = {
         'p': 2,
         'Q': 12,
         "name": "Example_SynR_Machine",
         'rated_speed': 1800,
-        'rated_power': 3600,
-        'rated_current': 10,   
+        'rated_current': 20,   
     }
 
     SynR_materials = {
@@ -110,8 +110,8 @@ Example code initializing the machine design for the optimized SynR design provi
 
     SynR_winding = {
         "no_of_layers": 2,
-        "layer_phases": [ ['U', 'V', 'W', 'U', 'V', 'W', 'U', 'V', 'W', 'U', 'V', 'W'],
-                            ['V', 'W', 'U', 'V', 'W', 'U', 'V', 'W', 'U', 'V', 'W', 'U'] ],
+        "layer_phases": [ ['U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V'],
+                            ['W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U'] ],
         "layer_polarity": [ ['+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-'],
                             ['-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+'] ],
         "pitch": 2,
@@ -153,7 +153,7 @@ folder) and create a machine design object.
     ############################ Create Evaluator ########################
     SynR_evaluator = MachineEvaluator(
         [
-            electromagnetic_step
+            electromagnetic_step,
             structural_step
         ]
     )
