@@ -423,7 +423,7 @@ class SynR_EM_Analyzer:
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
         R = np.sqrt(self.winding_layer1_inner_coord[0] ** 2 + self.winding_layer1_inner_coord[1] ** 2)
-        THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
+        THETA = np.arctan(self.winding_layer2_inner_coord[1] / self.winding_layer2_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0
@@ -438,7 +438,7 @@ class SynR_EM_Analyzer:
             Y = R * np.sin(THETA)
 
         # Create Set for left layer
-        THETA = np.arctan(self.winding_layer2_inner_coord[1] / self.winding_layer2_inner_coord[0])
+        THETA = np.arctan(self.winding_layer1_inner_coord[1] / self.winding_layer1_inner_coord[0])
         X = R * np.cos(THETA)
         Y = R * np.sin(THETA)
         count = 0

@@ -78,9 +78,9 @@ Example code initializing the machine design for the optimized SynR design provi
         'w_b1': 4,
         'w_b2': 4,
         'w_b3': 4,
-        'l_b1': 33.75,
-        'l_b2': 24.4,
-        'l_b3': 12.6,
+        'l_b1': 34.1,
+        'l_b2': 24.75,
+        'l_b3': 13.1,
         'l_b4': 13,
         'l_b5': 10,
         'l_b6': 7,
@@ -100,8 +100,7 @@ Example code initializing the machine design for the optimized SynR design provi
         'Q': 12,
         "name": "Example_SynR_Machine",
         'rated_speed': 1800,
-        'rated_power': 3600,
-        'rated_current': 10,   
+        'rated_current': 20,   
     }
 
     SynR_materials = {
@@ -217,7 +216,6 @@ A copy of this file lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` 
         num_cpus=4,
         jmag_scheduler=False,
         jmag_visible=True,
-        non_zero_end_ring_res = False,
         scale_axial_length = True,
     )
 
@@ -283,7 +281,7 @@ in this case to find torque and power quantities, can be seen here:
             ############################ calculating volumes ###########################
             machine = state_out.design.machine
             V_sh = np.pi*(machine.r_sh**2)*machine.l_st
-            V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
+            V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - 2 * machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
 
             ############################ Post-processing #################################
             rotor_mass = (
@@ -311,14 +309,10 @@ in this case to find torque and power quantities, can be seen here:
             stator_hysteresis_loss= results["hysteresis_loss"]["StatorCore"][0]
             rotor_hysteresis_loss = results["hysteresis_loss"]["RotorCore"][0]
             stator_ohmic_loss = results["ohmic_loss"]["Coils"].iloc[i2:].mean()
-            stator_ohmic_loss_along_stack = stator_ohmic_loss * R_wdg_coil_sides / R_wdg
-            stator_ohmic_loss_end_wdg = stator_ohmic_loss * R_wdg_coil_ends / R_wdg
             
             # Calculate stator winding ohmic losses
             I_hat = machine.rated_current * op_pt.current_ratio * np.sqrt(2)
             stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
-            stator_calc_ohmic_loss_end_wdg = R_wdg_coil_ends * m / 2 * I_hat ** 2
-            stator_calc_ohmic_loss_along_stack = R_wdg_coil_sides * m / 2 * I_hat ** 2
 
             # Total losses, output power, and efficiency
             total_losses = (
@@ -344,11 +338,7 @@ in this case to find torque and power quantities, can be seen here:
             post_processing["stator_hysteresis_loss"] = stator_hysteresis_loss
             post_processing["rotor_hysteresis_loss"] = rotor_hysteresis_loss
             post_processing["stator_ohmic_loss"] = stator_ohmic_loss
-            post_processing["stator_ohmic_loss_along_stack"] = stator_ohmic_loss_along_stack
-            post_processing["stator_ohmic_loss_end_wdg"] = stator_ohmic_loss_end_wdg
             post_processing["stator_calc_ohmic_loss"] = stator_calc_ohmic_loss
-            post_processing["stator_calc_ohmic_loss_along_stack"] = stator_calc_ohmic_loss_along_stack
-            post_processing["stator_calc_ohmic_loss_end_wdg"] = stator_calc_ohmic_loss_end_wdg
             post_processing["total_losses"] = total_losses
             post_processing["output_power"] = P_out
             post_processing["efficiency"] = efficiency

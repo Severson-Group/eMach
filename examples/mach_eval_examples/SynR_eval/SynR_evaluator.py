@@ -10,7 +10,7 @@ from electromagnetic_step import electromagnetic_step
 from structural_step import structural_step
 from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 
-############################ Create Evaluator ########################
+############################ Create Evaluator #####################
 SynR_evaluator = MachineEvaluator(
     [
         electromagnetic_step,

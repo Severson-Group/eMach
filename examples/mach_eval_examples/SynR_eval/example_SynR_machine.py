@@ -26,9 +26,9 @@ SynR_dimensions = {
     'w_b1': 4,
     'w_b2': 4,
     'w_b3': 4,
-    'l_b1': 33.75,
-    'l_b2': 24.4,
-    'l_b3': 12.6,
+    'l_b1': 34.1,
+    'l_b2': 24.75,
+    'l_b3': 13.1,
     'l_b4': 13,
     'l_b5': 10,
     'l_b6': 7,
@@ -49,7 +49,7 @@ SynR_parameters = {
     'Q': 12,
     "name": "Example_SynR_Machine",
     'rated_speed': 1800,
-    'rated_current': 10 * np.sqrt(2),   
+    'rated_current': 20,   
 }
 
 SynR_materials = {

@@ -39,7 +39,7 @@ class SynR_EM_PostAnalyzer:
         ############################ calculating volumes ###########################
         machine = state_out.design.machine
         V_sh = np.pi*(machine.r_sh**2)*machine.l_st
-        V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
+        V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2) - 2 * machine.p * (machine.w_b1 * (2 * machine.l_b1 + machine.l_b4) + machine.w_b2 * (2 * machine.l_b2 + machine.l_b5) + machine.w_b3 * (2 * machine.l_b3 + machine.l_b6)))
 
         ############################ Post-processing #################################
         rotor_mass = (
@@ -67,14 +67,10 @@ class SynR_EM_PostAnalyzer:
         stator_hysteresis_loss= results["hysteresis_loss"]["StatorCore"][0]
         rotor_hysteresis_loss = results["hysteresis_loss"]["RotorCore"][0]
         stator_ohmic_loss = results["ohmic_loss"]["Coils"].iloc[i2:].mean()
-        stator_ohmic_loss_along_stack = stator_ohmic_loss * R_wdg_coil_sides / R_wdg
-        stator_ohmic_loss_end_wdg = stator_ohmic_loss * R_wdg_coil_ends / R_wdg
         
         # Calculate stator winding ohmic losses
         I_hat = machine.rated_current * op_pt.current_ratio
         stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
-        stator_calc_ohmic_loss_end_wdg = R_wdg_coil_ends * m / 2 * I_hat ** 2
-        stator_calc_ohmic_loss_along_stack = R_wdg_coil_sides * m / 2 * I_hat ** 2
 
         # Total losses, output power, and efficiency
         total_losses = (
@@ -100,11 +96,7 @@ class SynR_EM_PostAnalyzer:
         post_processing["stator_hysteresis_loss"] = stator_hysteresis_loss
         post_processing["rotor_hysteresis_loss"] = rotor_hysteresis_loss
         post_processing["stator_ohmic_loss"] = stator_ohmic_loss
-        post_processing["stator_ohmic_loss_along_stack"] = stator_ohmic_loss_along_stack
-        post_processing["stator_ohmic_loss_end_wdg"] = stator_ohmic_loss_end_wdg
         post_processing["stator_calc_ohmic_loss"] = stator_calc_ohmic_loss
-        post_processing["stator_calc_ohmic_loss_along_stack"] = stator_calc_ohmic_loss_along_stack
-        post_processing["stator_calc_ohmic_loss_end_wdg"] = stator_calc_ohmic_loss_end_wdg
         post_processing["total_losses"] = total_losses
         post_processing["output_power"] = P_out
         post_processing["efficiency"] = efficiency
