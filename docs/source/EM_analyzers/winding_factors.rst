@@ -67,7 +67,7 @@ windings going into the page, a "0" should be indicated for a slot with no windi
 of the page. Each winding layer should consume a single row of the winding array. Each slot should consume a single column of the winding array.
 
 The location of the first slot should be indicated in radians from the +x axis. For example, a stator with the first slot at the x-axis will have an 
-:math:`\alpha_\text{1}` of 0 radians. The stator geometry in the picture below would have an :math:`\alpha_\text{1}` of :math:`\frac{\pi}{12}` radians.
+:math:`\alpha_\text{1}` of 0 radians. The stator geometry in the machine depicted in the picture below (and stator cross-section above) has an :math:`\alpha_\text{1}` of :math:`\frac{\pi}{12}` radians.
 
 .. figure:: ./Images/Winding_Diagram.svg
    :alt: Slot_Angles
