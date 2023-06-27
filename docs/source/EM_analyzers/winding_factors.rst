@@ -6,15 +6,15 @@ This analyzer determines the winding factors of a stator and winding layout for 
 Model Background
 ****************
 
-Winding factors :math:`\bar{k}_\text{w}` are a way to quantify the effectiveness of a winding and affect various properties of an electric machine including
-harmonics present in the airgap field, electric loading, etc. They can be thought of as a proportion of the geometric vector sum of the phasors of an individual 
+Winding factors :math:`\bar{k}_\text{w}` are a way to characterize a winding's ability to create or link flux and are instrumental in determining many aspects of electric machines, including 
+harmonics present in the airgap field, electric loading, and shape of back-EMF. They can be thought of as a proportion of the geometric vector sum of the phasors of an individual 
 back-EMF harmonic induced in coil sides of a phase winding over its algebraic sum, or mathematically using the following expression for a single phase:
 
 .. math::
 
     \bar{k}_\text{w,n} &= \frac{\text{geometric sum}}{\text{algebraic sum}} &= \frac{1}{N} \Sigma_\text{i=1}^N e^{-jn\alpha_i} \\
 
-where :math:`N` is the total number of coil sides, :math:`e^{-jn\alpha_i}` is the geometric representation of the winding factor of each slot, :math:`n` 
+where :math:`N` is the total number of coil sides, :math:`e^{-jn\alpha_i}` is the geometric representation of the phasor of each slot, :math:`n` 
 is the harmonic index, and :math:`i` is the slot number of the stator. The winding factor for each :math:`n` should be calculated separately. The sum of each 
 of these calculations will result in a table of winding factors, all of which must be considered when choosing a design winding layout. This analyzer adds the 
 ability to calculate a winding factor based only on a stator geometry and layout. The addition of this analyzer eliminates the need for hand calculations for 
@@ -35,15 +35,15 @@ calculation would look like the following:
     \bar{k}_\text{w,n} &= \frac{\text{geometric sum}}{\text{algebraic sum}} &= \frac{1}{N} \Sigma_\text{i=1}^N e^{-jn\alpha_i} \\
 
 .. math::
-    \bar{k}_\text{w,1} &= \frac{-e^{-j1\alpha_3} - e^{-j1\alpha_4} - e^{-j1\alpha_5} + e^{-j1\alpha_6} + e^{-j1\alpha_9} + e^{-j1\alpha_{10}} 
+    \bar{k}_\text{w,1} &= \frac{-e^{-j1\alpha_3} - e^{-j1\alpha_4} - e^{-j1\alpha_5} - e^{-j1\alpha_6} + e^{-j1\alpha_9} + e^{-j1\alpha_{10}} 
     + e^{-j1\alpha_{11}} + e^{-j1\alpha_{12}}}{8} \\
 
 .. math::
-    \bar{k}_\text{w,1} &= \frac{-e^{-j\frac{5\pi}{12}} - e^{-j\frac{7\pi}{12}} - e^{-j\frac{9\pi}{12}} + e^{-j\frac{11\pi}{12}} + e^{-j\frac{17\pi}{12}} 
+    \bar{k}_\text{w,1} &= \frac{-e^{-j\frac{5\pi}{12}} - e^{-j\frac{7\pi}{12}} - e^{-j\frac{9\pi}{12}} - e^{-j\frac{11\pi}{12}} + e^{-j\frac{17\pi}{12}} 
     + e^{-j\frac{19\pi}{12}} + e^{-j\frac{21\pi}{12}} + e^{-j\frac{23\pi}{12}}}{8} \\
 
 .. math::
-    \bar{k}_\text{w,1} = 0.4183 - j7244
+    \bar{k}_\text{w,1} = 0.4183 + j0.7244
 
 The assumptions made going into the development of this model are:
 
