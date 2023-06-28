@@ -10,7 +10,7 @@ Synchronous reluctance (SynR) machines are electric machines capable of producin
 rotor-mounted field source. Basic characteristics of the design and analysis of synchronous reluctance machines can be done 
 by hand, as is shown in the paper `here <https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5167704>`_. Reluctance rotors
 are able to achieve high inductance ratios because of their complex rotor design. This complex rotor design is great for creating
-reluctace torque, but can have some unintended consequences regarding mechanical integrity. The following parameter is crucial to
+reluctance torque, but can have some unintended consequences regarding mechanical integrity. The following parameter is crucial to
 ensuring SynR rotors maintain mechanical integrity under rated conditions:
 
 1) Maximum rotor stress must be below yield stress
@@ -228,7 +228,7 @@ of this dictionary and their descriptions are provided below:
 
 .. csv-table:: `SynR_Structural_Analyzer Output`
    :file: output_SynR_struct_analyzer.csv
-   :widths: 70, 70
+   :widths: 70, 70, 30
    :header-rows: 1
 
 As mentioned, the post analyzer is necessary to extract and compute the analyzer's computations and to interpret the results. The post analyzer 
