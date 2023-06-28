@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 
-from mach_eval.machines.SynR.SynR_machine import SynR_Machine
+from mach_eval.machines.SynR.Vision_SynR_machine import Vision_SynR_Machine
 
 
 class SynR_Architect:
@@ -106,7 +106,7 @@ class SynR_Architect:
 
         SynR_materials = self.__SynR_materials
 
-        machine_variant = SynR_Machine(
+        machine_variant = Vision_SynR_Machine(
             SynR_dimensions, SynR_parameters, SynR_materials, SynR_winding
         )
         return machine_variant
