@@ -1,7 +1,7 @@
 import os
 import sys
 
-from mach_eval.machines.SynR.SynR_machine_oper_pt import SynR_Machine_Oper_Pt
+from mach_eval.machines.SynR.Vision_SynR_machine_oper_pt import Vision_SynR_Machine_Oper_Pt
 
 
 class SynR_Settings_Handler:
@@ -14,8 +14,8 @@ class SynR_Settings_Handler:
         pass
 
     def get_settings(self, x):
-        em_op = SynR_Machine_Oper_Pt(
-            speed=20000,
+        em_op = Vision_SynR_Machine_Oper_Pt(
+            speed=70000,
             current_ratio=1,
             phi_0=0,
             ambient_temp=25,

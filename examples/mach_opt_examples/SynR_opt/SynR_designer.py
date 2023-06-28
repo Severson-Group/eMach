@@ -8,6 +8,10 @@ from mach_eval.machines.materials.miscellaneous_materials import (
     Steel,
     Air,
 )
+from mach_eval.machines.materials.AM_materials import (
+    Fe3Si,
+    L316,
+)
 from SynR_settings_handler import SynR_Settings_Handler
 from mach_eval import MachineDesigner
 
@@ -15,13 +19,14 @@ from mach_eval import MachineDesigner
 SynR_parameters = {
     'p': 2,
     'Q': 36,
-    'rated_speed': 20000,
+    'rated_speed': 70000,
     'rated_current': 4,   
 }
 
 SynR_materials = {
     "air_mat": Air,
-    "rotor_iron_mat": Arnon5,
+    "rotor_iron_mat": Fe3Si,
+    "rotor_barrier_mat": L316,
     "stator_iron_mat": Arnon5,
     "coil_mat": Copper,
     "shaft_mat": Steel,

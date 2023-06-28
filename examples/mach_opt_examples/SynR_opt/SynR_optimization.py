@@ -9,12 +9,12 @@ from mach_eval import MachineEvaluator
 from examples.mach_opt_examples.SynR_opt.my_data_handler import MyDataHandler
 from SynR_designer import designer
 from SynR_ds import SynRDesignSpace
-from examples.mach_eval_examples.SynR_eval.optimization_step import optimization_step
+from examples.mach_eval_examples.SynR_eval.optimization_vision_step import optimization_vision_step
 from time import time as clock_time
 
 SynR_evaluator = MachineEvaluator(
     [
-        optimization_step,
+        optimization_vision_step,
     ]
 )
 
@@ -77,4 +77,4 @@ if population is None:
 tic = clock_time()
 pop = design_opt.run_optimization(population, gen_size, pop_file)
 toc = clock_time()
-print("Time spent on AM SynR optimization is %g hours." % ((toc- tic)/3600))
+print("Time spent on Vision SynR optimization is %g hours." % ((toc- tic)/3600))
