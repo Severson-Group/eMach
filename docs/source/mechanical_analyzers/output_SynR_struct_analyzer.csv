@@ -1,2 +1,2 @@
-Output,Description
-maximum stress,Maximum stress found in rotor at full speed
+Output,Description,Units
+maximum stress,Maximum stress found in rotor at full speed,MPa
