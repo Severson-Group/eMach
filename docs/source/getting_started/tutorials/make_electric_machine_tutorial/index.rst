@@ -156,3 +156,8 @@ Conclusion
 Congratulations! You have successfully used ``eMach`` to make most of the components required to simulate a surface permanent 
 magnet machine! Users are recommended to further explore additional cross-sections currently supported by ``eMach`` or to create 
 their own cross-sections which they feel are generic enough to find use in a wide range of electric machine applications.
+
+If it takes a considerable amount of time to draw a motor in JMAG using the above approach, 
+users are suggested to have a look at another approach, as demonstrated in ``eMach/examples/mach_cad_examples/example_induction_motor_jmag.py`` 
+for an example induction machine. In this example, all cross-sections are first drawn in 
+JMAG Geometry Editor and only then exported to JMAG Designer.

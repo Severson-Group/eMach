@@ -399,4 +399,4 @@ class CrossSectInnerRotorRoundSlotsBar(CrossSectBase):
         if (isinstance(self.rotor_core, CrossSectInnerRotorRoundSlots)) or (isinstance(self.rotor_core, CrossSectInnerRotorRoundSlotsPartial)):
             pass
         else:
-            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlots")
+            raise TypeError("rotor_core not of type CrossSectInnerRotorRoundSlots or CrossSectInnerRotorRoundSlotsPartial")
