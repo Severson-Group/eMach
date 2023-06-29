@@ -38,7 +38,7 @@ class SynR_Opt_Problem:
         y2 = self.machine.l_b2 + self.machine.w_b2/2 + (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.l_b5/2)*np.cos(np.pi/4)
         r_ro_compare2 = np.sqrt(x2**2 + y2**2)
         in_rad = (self.machine.r_ri + self.machine.d_r1) * np.cos(np.pi/4)
-        out_rad = self.machine.l_b4 / 2 * np.cos(np.pi/4) + self.machine.w_b1
+        out_rad = self.machine.l_b4 / 2 * np.cos(np.pi/4) + self.machine.w_b1/2
         if r_ro_compare1 < 0.975*self.machine.r_ro and r_ro_compare2 < 0.975*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2 and 0.975*in_rad > out_rad:
             print("\nGeometry is valid!")
             print("\n")
@@ -219,7 +219,10 @@ class SynR_Opt_Analyzer:
             popt, _ = curve_fit(objective, x, y)
         except RuntimeError:
             print("Error - curve_fit failed")
-            max_speed = 20000
+            max_speed = 10000
+        except RuntimeWarning:
+            print("Error - curve_fit failed")
+            max_speed = 10000
 
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
