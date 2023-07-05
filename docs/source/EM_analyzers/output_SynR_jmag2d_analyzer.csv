@@ -1,0 +1,15 @@
+Output,Description
+current,Data frame of stator and rotor currents in A vs time
+torque,Data frame of torque in Nm vs time
+force,Data frame of force in x and y axes in N vs time
+iron_loss,Data frame of iron loss in W at different frequencies
+hysteresis_loss,Data frame of hysterisis loss in W at different frequencies
+eddy_current_loss,Data frame of eddy current loss in W at different frequencies
+ohmic_loss,Data frame of ohmic loss in W vs time
+Other parameters for post-processing:,
+no_of_steps_2nd_TSS,Number of revolutions for 2nd time step (at drive frequency)
+no_of_rev_2nd_TSS,Number steps for 2nd time step section
+scale_axial_length,Boolean determining whether to scale axial length 
+drive_freq,Drive frequency in Hz
+stator_wdg_resistances,"Array of stator winding resistances in Ohms: [total winding res., end winding res., res. along stack]"
+stator_slot_area_tha,Stator slot area in m^2

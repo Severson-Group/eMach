@@ -35,6 +35,7 @@ links provided on the left to familiarize themselves with the repository.
    :caption: Machine Designs
 
    machines/bspm/index
+   machines/SynR/index
 
 ..
    Please!! Do not remove/modify the following INSERT comment. This allows a script to insert additional rst content into the index file.
