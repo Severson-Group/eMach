@@ -227,6 +227,9 @@ class Vision_SynR_Opt_Analyzer:
         except RuntimeError:
             print("Error - curve_fit failed")
             max_speed = 60000
+        except RuntimeWarning:
+            print("Error - curve_fit failed")
+            max_speed = 60000
 
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
