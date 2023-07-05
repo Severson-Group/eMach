@@ -49,6 +49,7 @@ class DataAnalyzer:
 
             # Then sort them by the first objective
             tmp = [(a, b, c) for a, b, c in zip(x, y, z)]
+            print(tmp)
             tmp = sorted(tmp, key=lambda k: k[0])
 
             # Now plot using step

@@ -18,9 +18,9 @@ da = DataAnalyzer(path)
 # Plot pareto front - 3 variations
 
 # get rid of designs that violate constraints
-for i in range(len(fitness)):
-    if fitness[i][1] > -0.5 or fitness[i][1] < -1 or fitness[i][2] > 0.5:
-        fitness[i] = [None,None,None]
+#for i in range(len(fitness)):
+#    if fitness[i][1] > -0.0 or fitness[i][1] < -1 or fitness[i][2] > 0.9:
+#        fitness[i] = [None,None,None]
 
 da.plot_pareto_front(points=fitness, label=['-PRV [kW/m^3]', '-$\eta$ [%]', 'Trip []'], saveName='/paretoPlot1.svg')
 

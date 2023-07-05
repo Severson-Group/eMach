@@ -29,7 +29,7 @@ dims = (
 )
 
 bounds = [
-    [1 * dims[0], 1 * dims[0]],  # r_ri
+    [0.99 * dims[0], 1 * dims[0]],  # r_ri
     [0.9 * dims[1], 1 * dims[1]],  # r_ro
     [0.5 * dims[2], 2 * dims[2]],  # d_r1
     [0.5 * dims[3], 2 * dims[3]],  # d_r2
@@ -56,7 +56,7 @@ design_opt = DesignOptimizationMOEAD(design_prob)
 
 # define population size and number of generations
 pop_size = 66
-gen_size = 2 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
+gen_size = 20 # CHANGE ONCE OPTIMIZATION IS FINALIZED!
 
 # load latest population
 population = design_opt.load_pop(filepath=pop_file, pop_size=pop_size)
