@@ -36,7 +36,7 @@ class AMSynRDesignSpace:
         final_results = full_results[-1]
         final_state = final_results[-1]
         em_results = final_state.conditions.em
-        if abs(em_results['torque_ripple']) >= 0.5 or em_results['efficiency'] <= 0.85 or em_results['efficiency'] > 1:
+        if abs(em_results['torque_ripple']) >= 0.5 or em_results['efficiency'] <= 0.50 or em_results['efficiency'] > 1:
             print('Constraints are violated:')
             print('\t torque_ripple: ', em_results['torque_ripple'], ', efficiency: ', em_results['efficiency'])
             valid_constraints = False
