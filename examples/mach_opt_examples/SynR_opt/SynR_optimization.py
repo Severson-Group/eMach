@@ -29,7 +29,7 @@ dims = (
 )
 
 bounds = [
-    [0.99 * dims[0], 1 * dims[0]],  # r_ri
+    [0.999 * dims[0], 1 * dims[0]],  # r_ri
     [0.9 * dims[1], 1 * dims[1]],  # r_ro
     [0.5 * dims[2], 2 * dims[2]],  # d_r1
     [0.5 * dims[3], 2 * dims[3]],  # d_r2

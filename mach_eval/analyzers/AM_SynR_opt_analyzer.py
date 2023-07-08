@@ -217,11 +217,16 @@ class AM_SynR_Opt_Analyzer:
 
         try:
             popt, _ = curve_fit(objective, x, y)
+            if RuntimeWarning:
+                print("RuntimeWarning - curve_fit failed")
+                max_speed = 60000
         except RuntimeError:
-            print("Error - curve_fit failed")
+            print("RuntimeError - curve_fit failed")
             max_speed = 60000
-        except RuntimeWarning:
-            print("Error - curve_fit failed")
+
+        if max_speed == float('nan'):
+            max_speed = 60000
+        elif max_speed == float('NaN'):
             max_speed = 60000
 
         a, b = popt
