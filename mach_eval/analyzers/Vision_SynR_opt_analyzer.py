@@ -224,21 +224,19 @@ class Vision_SynR_Opt_Analyzer:
 
         try:
             popt, _ = curve_fit(objective, x, y)
-            if RuntimeWarning:
-                print("RuntimeWarning - curve_fit failed")
-                max_speed = 60000
         except RuntimeError:
             print("RuntimeError - curve_fit failed")
-            max_speed = 60000
-
-        if max_speed == float('nan'):
-            max_speed = 60000
-        elif max_speed == float('NaN'):
             max_speed = 60000
 
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
 
+        if max_speed:
+            print('No Error or Warning')
+        else:
+            print('Warning Present')
+            max_speed = 60000
+        
         self.operating_point.new_speed = max_speed
         max_stress = max_speed ** a + b
         self.machine_variant.max_stress = max_stress
