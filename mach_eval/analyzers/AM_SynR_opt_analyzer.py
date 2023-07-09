@@ -116,6 +116,7 @@ class AM_SynR_Opt_Analyzer:
 
         # Create static study 1
         study1 = self.add_struct_study_1(app, model, self.config.jmag_csv_folder, self.study_name + "_1")
+
         # Create transient study with two time step sections
         self.create_stator_material(
             app, self.machine_variant.stator_iron_mat["core_material"]
@@ -217,21 +218,19 @@ class AM_SynR_Opt_Analyzer:
 
         try:
             popt, _ = curve_fit(objective, x, y)
-            if RuntimeWarning:
-                print("RuntimeWarning - curve_fit failed")
-                max_speed = 60000
         except RuntimeError:
             print("RuntimeError - curve_fit failed")
-            max_speed = 60000
-
-        if max_speed == float('nan'):
-            max_speed = 60000
-        elif max_speed == float('NaN'):
             max_speed = 60000
 
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
 
+        if max_speed:
+            print('No Error or Warning')
+        else:
+            print('Warning Present')
+            max_speed = 60000
+        
         self.operating_point.new_speed = max_speed
         max_stress = max_speed ** a + b
         self.machine_variant.max_stress = max_stress
@@ -268,7 +267,7 @@ class AM_SynR_Opt_Analyzer:
         self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        app.Quit()
+        #app.Quit()
 
         ####################################################
         # 05 Load EM FEA output
@@ -656,6 +655,7 @@ class AM_SynR_Opt_Analyzer:
         partIDRange_Coil = part_ID_list[1 : int(2 * self.machine_variant.Q + 1)]
         self.id_rotorCore = id_rotorCore = part_ID_list[int(2 * self.machine_variant.Q + 1) : int(2 * self.machine_variant.Q + 2 * self.machine_variant.p * 4 + 2) ]
         id_shaft = part_ID_list[-1]   
+        self.id_rotorIron = part_ID_list[int(2 * self.machine_variant.Q + 1) : int(2 * self.machine_variant.Q + 9)]
 
         group("Coils", partIDRange_Coil)
         #group("Rotor", id_rotorCore)
@@ -687,8 +687,8 @@ class AM_SynR_Opt_Analyzer:
                     sel.SelectPart(x)
                 model.GetSetList().GetSet(name).AddSelected(sel)
 
-        # RotorSet
-        # add_parts_to_set("RotorSet", 0.0, 0.0, ID=self.id_rotorCore)
+        # RotorIron
+        add_parts_to_set("RotorIron", 0.0, 0.0, ID=self.id_rotorIron)
 
         # StatorSet
         add_part_to_set("StatorSet", 0.0, 0.0, ID=self.id_statorCore)
@@ -826,7 +826,7 @@ class AM_SynR_Opt_Analyzer:
         core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"]
         )
-        app.GetMaterialLibrary().DeleteCustomMaterialByObject(core_mat_obj)
+        app.GetMaterialLibrary().DeleteCustomMaterial(self.machine_variant.rotor_iron_mat["rotor_iron_material"])
 
         app.GetMaterialLibrary().CreateCustomMaterial(
             self.machine_variant.rotor_iron_mat["rotor_iron_material"], "Custom Materials"
@@ -1398,10 +1398,8 @@ class AM_SynR_Opt_Analyzer:
             cond = study.CreateCondition("Ironloss", "IronLossConRotor")
             cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
             cond.ClearParts()
-            sel = cond.GetSelection()
-            sel.SelectPartByPosition(self.machine_variant.r_sh + 0.1 * self.machine_variant.d_r1, 1, 0)
+            cond.AddSet(model.GetSetList().GetSet("RotorIron"), 0)
 
-            cond.AddSelected(sel)
             # Use FFT for hysteresis to be consistent with JMAG's results
             cond.SetValue("HysteresisLossCalcType", 1)
             cond.SetValue("PresetType", 3)
