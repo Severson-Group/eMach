@@ -4,6 +4,7 @@ import pandas as pd
 import sys
 from time import time as clock_time
 from scipy.optimize import curve_fit
+import math
 
 from mach_cad import model_obj as mo
 from mach_opt import InvalidDesign
@@ -225,11 +226,12 @@ class AM_SynR_Opt_Analyzer:
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
 
-        if max_speed:
-            print('No Error or Warning')
-        else:
-            print('Warning Present')
+        if math.isnan(max_speed) is True:
+            print('CURVE FIT FAILURE - CHANGING SPEED TO 5000 RPM')
             max_speed = 60000
+        else:
+            print('No Error or Warning')
+            
         
         self.operating_point.new_speed = max_speed
         max_stress = max_speed ** a + b
