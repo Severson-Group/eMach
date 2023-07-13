@@ -30,7 +30,7 @@ class Vision_SynR_Opt_PostAnalyzer:
         number_of_total_steps = results["current"].shape[0]
         i1 = number_of_total_steps - no_of_steps
         i2 = - int(no_of_steps / no_of_rev * 0.25)
-        omega_m = machine.omega_m
+        omega_m = results["new_speed"] * 2 * np.pi / 60
         m = 3
         R_wdg = results["stator_wdg_resistances"][0]
 
