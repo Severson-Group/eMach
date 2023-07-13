@@ -7,7 +7,7 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataProblem,
     ProcessTorqueDataAnalyzer,
 )
-from mach_eval.analyzer.windage_loss import (
+from mach_eval.analyzers.mechanical.windage_loss import (
     WindageLossProblem,
     WindageLossAnalyzer,
 )
@@ -63,11 +63,11 @@ class SynR_EM_PostAnalyzer:
         PRV = TRV * omega_m
 
         # Windage
-        windage_prob = WindageLossProblem(
-            Omega = omega_m, R_ro = machine.r_ro/1000, stack_length = machine.l_st/1000, R_st = machine.r_si/1000, u_z=0, T_air=op_pt.ambient_temp
+        windage_loss_prob = WindageLossProblem(
+            Omega=omega_m, R_ro=machine.r_ro/1000, stack_length=machine.l_st/1000,
+            R_st=machine.r_si/1000, u_z=0, T_air=op_pt.ambient_temp
             )
-        windage_analyzer = WindageLossAnalyzer()
-        windage_loss_radial, windage_loss_endFace, windage_loss_axial = windage_analyzer.analyze(windage_prob)
+        [windage_loss_radial, windage_loss_endFace, windage_loss_axial] = WindageLossAnalyzer.analyze(windage_loss_prob)
 
         # Losses
         # From JMAG
@@ -115,11 +115,16 @@ class SynR_EM_PostAnalyzer:
 
         state_out.conditions.em = post_processing
 
+        print("\n************************ ELECTROMAGNETIC LOSSES ************************")
+        print("Stator Ohmic = ", stator_calc_ohmic_loss, " W",)
+        print("Windage = ", windage_loss, " W")
+        print("Stator Iron = ", stator_hysteresis_loss, " W",)
+        print("Rotor Iron = ", rotor_hysteresis_loss, " W")
+        print("*************************************************************************\n")
+
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
-        #print("Torque = ", torque_avg, " Nm")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
-        #print("Power = ", P_out, " W")
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
         print("*************************************************************************\n")
