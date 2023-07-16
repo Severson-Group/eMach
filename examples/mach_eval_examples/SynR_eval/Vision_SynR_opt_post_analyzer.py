@@ -115,6 +115,13 @@ class Vision_SynR_Opt_PostAnalyzer:
 
         state_out.conditions.em = post_processing
 
+        print("\n************************ LOSSES ************************")
+        print("Stator = ", stator_hysteresis_loss, " W")
+        print("Rotor = ", rotor_hysteresis_loss, " W")
+        print("Ohmic = ", stator_calc_ohmic_loss, " W",)
+        print("Windage = ", windage_loss, " W")
+        print("*************************************************************************\n")
+
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
         print("Operating speed = ", operating_speed, " RPM")
         print("Max Stress = ", max_stress/(10**6), " MPa")
