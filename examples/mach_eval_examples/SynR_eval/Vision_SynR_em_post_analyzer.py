@@ -27,7 +27,7 @@ class Vision_SynR_EM_PostAnalyzer:
         number_of_total_steps = results["current"].shape[0]
         i1 = number_of_total_steps - no_of_steps
         i2 = - int(no_of_steps / no_of_rev * 0.25)
-        omega_m = machine.omega_m
+        omega_m = results["rotor_speed"] * 2 * np.pi / 60
         m = 3
         drive_freq = results["drive_freq"]
         R_wdg = results["stator_wdg_resistances"][0]

@@ -1787,7 +1787,8 @@ class Vision_SynR_Opt_Analyzer:
             "stator_slot_area": self.stator_slot_area,
             "new_speed": self.operating_point.new_speed,
             "max_stress": self.machine_variant.max_stress,
-            "yield_stress": self.machine_variant.yield_stress
+            "yield_stress": self.machine_variant.yield_stress,
+            "rotor_speed": self.operating_point.speed
         }
 
         return fea_data
