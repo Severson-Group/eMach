@@ -44,7 +44,7 @@ class AM_SynR_Opt_PostAnalyzer:
         machine = state_out.design.machine
         V_sh = np.pi*(machine.r_sh**2)*machine.l_st
         V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2))
-        V_machine = machine.l_st * np.pi * (machine.r_si + machine.d_sp + machine.d_st + machine.d_sy)
+        V_machine = machine.l_st * np.pi * (machine.r_si + machine.d_sp + machine.d_st + machine.d_sy) ** 2
 
         ############################ Post-processing #################################
         rotor_mass = (

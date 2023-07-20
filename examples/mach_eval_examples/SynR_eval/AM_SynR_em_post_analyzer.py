@@ -42,13 +42,14 @@ class AM_SynR_EM_PostAnalyzer:
         machine = state_out.design.machine
         V_sh = np.pi*(machine.r_sh**2)*machine.l_st
         V_rfe = machine.l_st * (np.pi * (machine.r_ro ** 2 - machine.r_ri**2))
+        V_machine = machine.l_st * np.pi * (machine.r_si + machine.d_sp + machine.d_st + machine.d_sy) ** 2
 
         ############################ Post-processing #################################
         rotor_mass = (
             V_rfe * 1e-9 * machine.rotor_iron_mat["rotor_iron_material_density"]
             + V_sh * 1e-9 * machine.shaft_mat["shaft_material_density"]
         )
-        rotor_volume = (V_rfe + V_sh) * 1e-9
+        machine_volume = (V_machine) * 1e-9
 
         ############################ post processing ###########################
         # Torque
@@ -56,16 +57,16 @@ class AM_SynR_EM_PostAnalyzer:
         torque_analyzer = ProcessTorqueDataAnalyzer()
         torque_avg, torque_ripple = torque_analyzer.analyze(torque_prob)
         TRW = torque_avg / rotor_mass
-        TRV = torque_avg / rotor_volume
+        TRV = torque_avg / machine_volume
         PRW = TRW * omega_m
         PRV = TRV * omega_m
 
         # Windage
-        windage_prob = WindageLossProblem(
-            Omega = omega_m, R_ro = machine.r_ro/1000, stack_length = machine.l_st/1000, R_st = machine.r_si/1000, u_z=0, T_air=op_pt.ambient_temp
+        windage_loss_prob = WindageLossProblem(
+            Omega=omega_m, R_ro=machine.r_ro/1000, stack_length=machine.l_st/1000,
+            R_st=machine.r_si/1000, u_z=0, T_air=op_pt.ambient_temp
             )
-        windage_analyzer = WindageLossAnalyzer()
-        windage_loss_radial, windage_loss_endFace, windage_loss_axial = windage_analyzer.analyze(windage_prob)
+        [windage_loss_radial, windage_loss_endFace, windage_loss_axial] = WindageLossAnalyzer.analyze(windage_loss_prob)
 
         # Losses
         # From JMAG
@@ -98,7 +99,7 @@ class AM_SynR_EM_PostAnalyzer:
         post_processing["PRV"] = PRV
         post_processing["l_st"] = machine.l_st
         post_processing["rotor_mass"] = rotor_mass
-        post_processing["rotor_volume"] = rotor_volume
+        post_processing["machine_volume"] = machine_volume
         post_processing["stator_iron_loss"] = stator_iron_loss
         post_processing["rotor_iron_loss"] = rotor_iron_loss
         post_processing["stator_eddy_current_loss"] = stator_eddy_current_loss
@@ -112,6 +113,13 @@ class AM_SynR_EM_PostAnalyzer:
         post_processing["efficiency"] = efficiency
 
         state_out.conditions.em = post_processing
+
+        print("\n************************ LOSSES ************************")
+        print("Stator = ", stator_hysteresis_loss, " W")
+        print("Rotor = ", rotor_hysteresis_loss, " W")
+        print("Ohmic = ", stator_calc_ohmic_loss, " W",)
+        print("Windage = ", windage_loss, " W")
+        print("*************************************************************************\n")
 
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
         #print("Torque = ", torque_avg, " Nm")
