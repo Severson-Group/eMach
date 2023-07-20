@@ -7,6 +7,7 @@ sys.path.append("../../../")
 
 from mach_eval import (MachineEvaluator, MachineDesign)
 from optimization_step import optimization_step
+from electromagnetic_step import electromagnetic_step
 from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 
 ############################ Create Evaluator ########################

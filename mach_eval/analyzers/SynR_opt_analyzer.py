@@ -4,6 +4,7 @@ import pandas as pd
 import sys
 from time import time as clock_time
 from scipy.optimize import curve_fit
+import math
 
 from mach_cad import model_obj as mo
 from mach_opt import InvalidDesign
@@ -37,7 +38,9 @@ class SynR_Opt_Problem:
         x2 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.w_b2/2 - self.machine.l_b5/2)*np.cos(np.pi/4)
         y2 = self.machine.l_b2 + self.machine.w_b2/2 + (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.l_b5/2)*np.cos(np.pi/4)
         r_ro_compare2 = np.sqrt(x2**2 + y2**2)
-        if r_ro_compare1 < 0.975*self.machine.r_ro and r_ro_compare2 < 0.975*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2:
+        in_rad = (self.machine.r_ri + self.machine.d_r1) * np.cos(np.pi/4)
+        out_rad = self.machine.l_b4 / 2 * np.cos(np.pi/4) + self.machine.w_b1/2
+        if r_ro_compare1 < 0.975*self.machine.r_ro and r_ro_compare2 < 0.975*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2 and 0.975*in_rad > out_rad:
             print("\nGeometry is valid!")
             print("\n")
         else:
@@ -212,9 +215,23 @@ class SynR_Opt_Analyzer:
         
         x = [0, 0.25 * self.operating_point.speed, 0.5 * self.operating_point.speed, 0.75 * self.operating_point.speed, self.operating_point.speed]
         y = [0, max_stress1, max_stress2, max_stress3, max_stress4]
-        popt, _ = curve_fit(objective, x, y)
+
+        try:
+            popt, _ = curve_fit(objective, x, y)
+        except RuntimeError:
+            print("RuntimeError - curve_fit failed")
+            max_speed = 5000
+
         a, b = popt
         max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
+
+        if math.isnan(max_speed) is True:
+            print('CURVE FIT FAILURE - CHANGING SPEED TO 5000 RPM')
+            max_speed = 5000
+        else:
+            print('No Error or Warning')
+            
+        
         self.operating_point.new_speed = max_speed
         max_stress = max_speed ** a + b
         self.machine_variant.max_stress = max_stress
@@ -1536,7 +1553,8 @@ class SynR_Opt_Analyzer:
             "stator_slot_area": self.stator_slot_area,
             "new_speed": self.operating_point.new_speed,
             "max_stress": self.machine_variant.max_stress,
-            "yield_stress": self.machine_variant.yield_stress
+            "yield_stress": self.machine_variant.yield_stress,
+            "rotor_speed": self.operating_point.speed
         }
 
         return fea_data

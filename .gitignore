@@ -32,7 +32,11 @@ docs/source/_templates/
 docs/source/_build/
 
 # JMAG simulation files
+<<<<<<< HEAD
 run_data/
 
 # archive files
 *.pkl
+=======
+run_data/
+>>>>>>> 4b6bbb4ad9f7b6a3d39677b18af9554ba33cf6ed
