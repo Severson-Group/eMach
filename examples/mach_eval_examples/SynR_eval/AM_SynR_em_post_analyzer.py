@@ -7,7 +7,7 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataProblem,
     ProcessTorqueDataAnalyzer,
 )
-from mach_eval.analyzers.windage_loss import (
+from mach_eval.analyzers.mechanical.windage_loss import (
     WindageLossProblem,
     WindageLossAnalyzer,
 )
@@ -36,7 +36,6 @@ class AM_SynR_EM_PostAnalyzer:
         results["iron_loss"] = results["iron_loss"]
         results["hysteresis_loss"] = results["hysteresis_loss"]
         results["eddy_current_loss"] = results["eddy_current_loss"]
-        results["new_speed"] = results["new_speed"]
 
         ############################ calculating volumes ###########################
         machine = state_out.design.machine
@@ -113,6 +112,12 @@ class AM_SynR_EM_PostAnalyzer:
         post_processing["efficiency"] = efficiency
 
         state_out.conditions.em = post_processing
+        print("\n************************ LOSSES ************************")
+        print("Stator = ", stator_hysteresis_loss, " W")
+        print("Rotor = ", rotor_hysteresis_loss, " W")
+        print("Ohmic = ", stator_calc_ohmic_loss, " W",)
+        print("Windage = ", windage_loss, " W")
+        print("*************************************************************************\n")
 
         print("\n************************ LOSSES ************************")
         print("Stator = ", stator_hysteresis_loss, " W")
