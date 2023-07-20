@@ -282,7 +282,7 @@ class SynR_Opt_Analyzer:
     
     @property
     def drive_freq(self):
-        speed_in_elec_ang = 2 * np.pi * self.operating_point.new_speed / 60 * self.machine_variant.p
+        speed_in_elec_ang = self.operating_point.new_speed / 60 * self.machine_variant.p
         drive_freq = speed_in_elec_ang
         return drive_freq
 
