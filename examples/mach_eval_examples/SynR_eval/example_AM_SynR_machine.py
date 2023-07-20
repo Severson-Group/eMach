@@ -17,13 +17,13 @@ from mach_eval.machines.SynR.AM_SynR_machine_oper_pt import AM_SynR_Machine_Oper
 
 ################ DEFINE AM SynR Machine ################
 SynR_dimensions = {
-    'r_sh': 11.61,
-    'r_ri': 11.61,
-    'r_ro': 49.45,
-    'd_r1': 9.379,
-    'd_r2': 8.025,
-    'w_b1': 6.579,
-    'w_b2': 7.487,
+    'r_sh': 6.348,
+    'r_ri': 6.348,
+    'r_ro': 49.99,
+    'd_r1': 5.258,
+    'd_r2': 12.47,
+    'w_b1': 3.304,
+    'w_b2': 6.361,
     'alpha_st': 7.5,
     'alpha_so': 3.75,
     'r_si': 50.5,
