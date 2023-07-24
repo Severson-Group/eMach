@@ -82,7 +82,7 @@ class SynR_Opt_PostAnalyzer:
         windage_loss = windage_loss_axial + windage_loss_endFace + windage_loss_radial
         
         # Calculate stator winding ohmic losses
-        I_hat = machine.rated_current * op_pt.current_ratio
+        I_hat = machine.rated_current
         stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
 
         # Total losses, output power, and efficiency

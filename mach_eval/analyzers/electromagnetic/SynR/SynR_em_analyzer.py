@@ -176,7 +176,7 @@ class SynR_EM_Analyzer:
 
     @property
     def I_hat(self):
-        I_hat = self.machine_variant.rated_current * self.operating_point.current_ratio
+        I_hat = self.machine_variant.rated_current
         return I_hat
 
     @property
