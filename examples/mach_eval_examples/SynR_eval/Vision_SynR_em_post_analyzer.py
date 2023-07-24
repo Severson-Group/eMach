@@ -82,7 +82,7 @@ class Vision_SynR_EM_PostAnalyzer:
         windage_loss = windage_loss_axial + windage_loss_endFace + windage_loss_radial
         
         # Calculate stator winding ohmic losses
-        I_hat = machine.rated_current * op_pt.current_ratio
+        I_hat = machine.rated_current
         stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
 
         # Total losses, output power, and efficiency
@@ -115,6 +115,13 @@ class Vision_SynR_EM_PostAnalyzer:
         post_processing["efficiency"] = efficiency
 
         state_out.conditions.em = post_processing
+
+        print("\n************************ LOSSES ************************")
+        print("Stator = ", stator_hysteresis_loss, " W")
+        print("Rotor = ", rotor_hysteresis_loss, " W")
+        print("Ohmic = ", stator_calc_ohmic_loss, " W",)
+        print("Windage = ", windage_loss, " W")
+        print("*************************************************************************\n")
 
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
         #print("Torque = ", torque_avg, " Nm")

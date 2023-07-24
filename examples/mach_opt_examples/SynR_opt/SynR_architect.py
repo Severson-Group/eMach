@@ -195,5 +195,6 @@ class SynR_Architect:
             "l_b2": x[7],
             "l_b4": x[8],
             "l_b5": x[9],
+            "speed_ratio": x[10],
         }
         return free_variables

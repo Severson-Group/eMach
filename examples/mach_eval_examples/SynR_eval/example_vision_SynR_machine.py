@@ -85,7 +85,7 @@ Example_Vision_SynR_Machine = Vision_SynR_Machine(
 ################ DEFINE SynR operating point ################
 Vision_Machine_Op_Pt = Vision_SynR_Machine_Oper_Pt(
     speed=60000,
-    current_ratio=1,
+    speed_ratio=1,
     phi_0 = 0,
     ambient_temp=25,
     rotor_temp_rise=0,
