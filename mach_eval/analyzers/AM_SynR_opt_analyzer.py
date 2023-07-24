@@ -233,7 +233,7 @@ class AM_SynR_Opt_Analyzer:
             print('No Error or Warning')
             
         
-        self.operating_point.new_speed = max_speed
+        self.operating_point.new_speed = max_speed * self.operating_point.speed_ratio
         max_stress = max_speed ** a + b
         self.machine_variant.max_stress = max_stress
 
@@ -301,7 +301,7 @@ class AM_SynR_Opt_Analyzer:
 
     @property
     def I_hat(self):
-        I_hat = self.machine_variant.rated_current * self.operating_point.current_ratio
+        I_hat = self.machine_variant.rated_current
         return I_hat
 
     @property

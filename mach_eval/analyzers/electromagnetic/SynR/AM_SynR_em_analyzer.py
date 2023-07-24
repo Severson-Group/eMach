@@ -106,6 +106,7 @@ class AM_SynR_EM_Analyzer:
         # Pre-processing
         model.SetName(self.project_name)
         model.SetDescription(self.show(self.project_name, toString=True))
+        self.operating_point.speed = self.operating_point.speed * self.operating_point.speed_ratio
 
         valid_design = self.pre_process(model)
 
@@ -176,7 +177,7 @@ class AM_SynR_EM_Analyzer:
 
     @property
     def I_hat(self):
-        I_hat = self.machine_variant.rated_current * self.operating_point.current_ratio
+        I_hat = self.machine_variant.rated_current
         return I_hat
 
     @property

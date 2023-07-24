@@ -16,7 +16,7 @@ class AM_SynR_Settings_Handler:
     def get_settings(self, x):
         em_op = AM_SynR_Machine_Oper_Pt(
             speed=70000,
-            current_ratio=1,
+            speed_ratio=x[6],
             phi_0=0,
             ambient_temp=25,
             rotor_temp_rise=0,
