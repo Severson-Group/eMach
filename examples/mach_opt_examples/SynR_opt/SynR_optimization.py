@@ -44,7 +44,7 @@ bounds = [
     [0.8 * dims[7], 1.2 * dims[7]],  # l_b2
     [0.8 * dims[8], 1.2 * dims[8]],  # l_b4
     [0.8 * dims[9], 1.2 * dims[9]],  # l_b5
-    [0.3 * dims[10], 1.0 * dims[10]], # speed
+    [0.7 * dims[10], 1.0 * dims[10]], # speed
 ]
 
 n_obj = 3
