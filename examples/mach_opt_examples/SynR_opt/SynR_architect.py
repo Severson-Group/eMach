@@ -147,5 +147,6 @@ class AM_SynR_Architect:
             "d_r2": x[3],
             "w_b1": x[4],
             "w_b2": x[5],
+            "speed": x[6],
         }
         return free_variables
