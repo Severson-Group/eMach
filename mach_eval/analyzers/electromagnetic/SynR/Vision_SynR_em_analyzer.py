@@ -114,7 +114,6 @@ class Vision_SynR_EM_Analyzer:
         # Pre-processing
         model.SetName(self.project_name)
         model.SetDescription(self.show(self.project_name, toString=True))
-        self.operating_point.speed = self.operating_point.speed * self.operating_point.speed_ratio
 
         valid_design = self.pre_process(model)
 
