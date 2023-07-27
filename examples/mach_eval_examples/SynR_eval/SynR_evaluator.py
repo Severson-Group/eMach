@@ -13,7 +13,7 @@ from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 ############################ Create Evaluator ########################
 SynR_evaluator = MachineEvaluator(
     [
-        optimization_step
+        electromagnetic_step
     ]
 )
 

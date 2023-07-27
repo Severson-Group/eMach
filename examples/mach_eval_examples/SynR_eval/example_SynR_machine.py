@@ -14,23 +14,23 @@ from mach_eval.machines.SynR.SynR_machine_oper_pt import SynR_Machine_Oper_Pt
 ################ DEFINE SynR Machine ################
 SynR_dimensions = {
     'alpha_b': 135,
-    'r_sh': 11.56,
-    'r_ri': 11.56,
-    'r_ro': 49.98,
+    'r_sh': 11.46,
+    'r_ri': 11.46,
+    'r_ro': 49.99,
     'r_f1': 0.1,
     'r_f2': 0.1,
     'r_f3': 0.1,
-    'd_r1': 3.518,
-    'd_r2': 6.533,
+    'd_r1': 3.692,
+    'd_r2': 6.441,
     'd_r3': 0,
-    'w_b1': 4.713,
-    'w_b2': 4.706,
+    'w_b1': 4.763,
+    'w_b2': 4.669,
     'w_b3': 0,
-    'l_b1': 29.91,
-    'l_b2': 21.65,
+    'l_b1': 29.98,
+    'l_b2': 21.67,
     'l_b3': 0,
-    'l_b4': 13.73,
-    'l_b5': 6.626,
+    'l_b4': 13.60,
+    'l_b5': 6.763,
     'l_b6': 0,
     'alpha_st': 7.5,
     'alpha_so': 3.75,
@@ -48,7 +48,7 @@ SynR_parameters = {
     'p': 2,
     'Q': 36,
     "name": "Example_SynR_Machine",
-    'rated_speed': 1800,
+    'rated_speed': 20244,
     'rated_current': 4,   
 }
 
@@ -79,7 +79,7 @@ Example_SynR_Machine = SynR_Machine(
 
 ################ DEFINE SynR operating point ################
 Machine_Op_Pt = SynR_Machine_Oper_Pt(
-    speed=1800,
+    speed=20244,
     speed_ratio=1,
     phi_0 = 0,
     ambient_temp=25,

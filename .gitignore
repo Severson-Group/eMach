@@ -40,3 +40,5 @@ run_data/
 =======
 run_data/
 >>>>>>> 4b6bbb4ad9f7b6a3d39677b18af9554ba33cf6ed
+*.eps
+*.svg
