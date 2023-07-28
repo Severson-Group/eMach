@@ -123,6 +123,7 @@ class SynR_EM_PostAnalyzer:
         print("*************************************************************************\n")
 
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
+        print("Speed-Power = ", omega_m*np.sqrt(P_out), " RPM/kW") 
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
         print("Power density = ", PRV, " W/m3",)
