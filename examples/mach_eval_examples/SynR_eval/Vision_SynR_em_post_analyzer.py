@@ -124,10 +124,9 @@ class Vision_SynR_EM_PostAnalyzer:
         print("*************************************************************************\n")
 
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
-        #print("Torque = ", torque_avg, " Nm")
+        print("Speed-Power = ", omega_m*np.sqrt(P_out), " Nm")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
-        #print("Power = ", P_out, " W")
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
         print("*************************************************************************\n")

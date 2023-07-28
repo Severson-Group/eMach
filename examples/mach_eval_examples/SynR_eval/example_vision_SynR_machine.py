@@ -52,7 +52,7 @@ SynR_parameters = {
     'p': 2,
     'Q': 36,
     "name": "Example_Vision_SynR_Machine",
-    'rated_speed': 20244,
+    'rated_speed': 57414,
     'rated_current': 4,   
 }
 
@@ -84,7 +84,7 @@ Example_Vision_SynR_Machine = Vision_SynR_Machine(
 
 ################ DEFINE SynR operating point ################
 Vision_Machine_Op_Pt = Vision_SynR_Machine_Oper_Pt(
-    speed=20244,
+    speed=57414,
     speed_ratio=1,
     phi_0 = 0,
     ambient_temp=25,
