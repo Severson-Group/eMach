@@ -112,12 +112,6 @@ class AM_SynR_EM_PostAnalyzer:
         post_processing["efficiency"] = efficiency
 
         state_out.conditions.em = post_processing
-        print("\n************************ LOSSES ************************")
-        print("Stator = ", stator_hysteresis_loss, " W")
-        print("Rotor = ", rotor_hysteresis_loss, " W")
-        print("Ohmic = ", stator_calc_ohmic_loss, " W",)
-        print("Windage = ", windage_loss, " W")
-        print("*************************************************************************\n")
 
         print("\n************************ LOSSES ************************")
         print("Stator = ", stator_hysteresis_loss, " W")
@@ -127,10 +121,9 @@ class AM_SynR_EM_PostAnalyzer:
         print("*************************************************************************\n")
 
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
-        #print("Torque = ", torque_avg, " Nm")
+        print("Speed-Power = ", omega_m*np.sqrt(P_out), " RPM/kW")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
-        #print("Power = ", P_out, " W")
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
         print("*************************************************************************\n")
