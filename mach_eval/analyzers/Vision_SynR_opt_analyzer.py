@@ -240,6 +240,7 @@ class Vision_SynR_Opt_Analyzer:
             
         
         self.operating_point.new_speed = max_speed * self.operating_point.speed_ratio
+        self.machine_variant.final_speed = self.operating_point.new_speed
         max_stress = max_speed ** a + b
         self.machine_variant.max_stress = max_stress
 
@@ -1788,7 +1789,8 @@ class Vision_SynR_Opt_Analyzer:
             "new_speed": self.operating_point.new_speed,
             "max_stress": self.machine_variant.max_stress,
             "yield_stress": self.machine_variant.yield_stress,
-            "rotor_speed": self.operating_point.speed
+            "rotor_speed": self.operating_point.speed,
+            "final_speed": self.machine_variant.final_speed
         }
 
         return fea_data
