@@ -36,7 +36,7 @@ bounds = [
     [0.5 * dims[3], 2 * dims[3]],  # d_r2
     [0.5 * dims[4], 2 * dims[4]],  # w_b1
     [0.5 * dims[5], 2 * dims[5]],  # w_b2
-    [0.7 * dims[6], 1 * dims[6]], # speed
+    [0.6 * dims[6], 1 * dims[6]], # speed
 ]
 
 n_obj = 3
