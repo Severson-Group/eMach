@@ -20,10 +20,10 @@ SynR_dimensions = {
     'r_sh': 6.348,
     'r_ri': 6.348,
     'r_ro': 49.99,
-    'd_r1': 5.258,
-    'd_r2': 12.47,
-    'w_b1': 3.304,
-    'w_b2': 6.361,
+    'd_r1': 4.799,
+    'd_r2': 9.931,
+    'w_b1': 5.543,
+    'w_b2': 3.609,
     'alpha_st': 7.5,
     'alpha_so': 3.75,
     'r_si': 50.5,
@@ -39,7 +39,7 @@ SynR_parameters = {
     'p': 2,
     'Q': 36,
     "name": "Example_AM_SynR_Machine",
-    'rated_speed': 60000,
+    'rated_speed': 20244,
     'rated_current': 4,   
 }
 
@@ -71,7 +71,7 @@ Example_AM_SynR_Machine = AM_SynR_Machine(
 
 ################ DEFINE SynR operating point ################
 Machine_Op_Pt = AM_SynR_Machine_Oper_Pt(
-    speed=60000,
+    speed=20244,
     speed_ratio=1,
     phi_0 = 0,
     ambient_temp=25,
