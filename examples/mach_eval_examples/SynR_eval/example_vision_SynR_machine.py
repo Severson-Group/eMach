@@ -18,23 +18,23 @@ from mach_eval.machines.SynR.Vision_SynR_machine_oper_pt import Vision_SynR_Mach
 ################ DEFINE SynR Machine ################
 SynR_dimensions = {
     'alpha_b': 135,
-    'r_sh': 11.34,
-    'r_ri': 11.34,
-    'r_ro': 49.97,
+    'r_sh': 11.31,
+    'r_ri': 11.31,
+    'r_ro': 49.99,
     'r_f1': 0.1,
     'r_f2': 0.1,
     'r_f3': 0.1,
-    'd_r1': 4.065,
-    'd_r2': 6.166,
+    'd_r1': 3.845,
+    'd_r2': 6.471,
     'd_r3': 0,
-    'w_b1': 4.794,
-    'w_b2': 4.611,
+    'w_b1': 4.783,
+    'w_b2': 4.697,
     'w_b3': 0,
-    'l_b1': 29.66,
-    'l_b2': 21.60,
+    'l_b1': 29.97,
+    'l_b2': 21.63,
     'l_b3': 0,
-    'l_b4': 12.95,
-    'l_b5': 6.888,
+    'l_b4': 14.28,
+    'l_b5': 6.594,
     'l_b6': 0,
     'alpha_st': 7.5,
     'alpha_so': 3.75,
@@ -52,7 +52,7 @@ SynR_parameters = {
     'p': 2,
     'Q': 36,
     "name": "Example_Vision_SynR_Machine",
-    'rated_speed': 60000,
+    'rated_speed': 20244,
     'rated_current': 4,   
 }
 
@@ -84,7 +84,7 @@ Example_Vision_SynR_Machine = Vision_SynR_Machine(
 
 ################ DEFINE SynR operating point ################
 Vision_Machine_Op_Pt = Vision_SynR_Machine_Oper_Pt(
-    speed=60000,
+    speed=20244,
     speed_ratio=1,
     phi_0 = 0,
     ambient_temp=25,
