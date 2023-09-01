@@ -205,11 +205,11 @@ class SPM_RotorSpeedLimitAnalyzer:
                 # [0] index provides Von Mises Stress
                 sigma_max[idx] = np.max(ss_stress[0])
             else:
-                # Use Tresca Stress for brittle material
-                # [1] index provides Tresca Stress (yield)
+                # Use MSST Stress for brittle material
+                # [1] index provides MSST Stress (yield)
                 sigma_max[idx] = np.max(ss_stress[1])
 
-        # Determine adhesive Tresca Stress
+        # Determine adhesive MSST Stress
         # (assumed to be at the interface between core and magnet with zero thickness)
         # (self.r_vect[4] is the radial location of the adhesive)
         core_idx = np.where(materials == "Core")[0][0]
