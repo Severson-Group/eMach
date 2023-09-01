@@ -33,6 +33,5 @@ docs/source/_build/
 
 # JMAG simulation files
 run_data/
-
-# archive files
-*.pkl
+*.eps
+*.svg
