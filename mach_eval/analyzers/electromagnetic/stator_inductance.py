@@ -3,18 +3,14 @@ import scipy.optimize
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("test.csv", skiprows = 2) # read in csv file <-- NEED TO CHANGE NAME
-data = df.to_numpy() # change csv format to readable array
-
 class ProcessInductanceProblem:
-    """Problem class for torque data processing
+    """Problem class for inductance and saliency ratio calculations
     Attributes:
-        torque: numpy array of torque against time or position
+        Uu_flux: numpy array of torque against time or position
     """
 
-    def __init__(self, Uu_flux_linkage, Uv_flux_linkage, graph, save_path=None):
-        self.Uu_flux_linkage = Uu_flux_linkage
-        self.Uv_flux_linkage = Uv_flux_linkage
+    def __init__(self, file_path, graph, save_path=None):
+        self.file_path = file_path
         self.graph = graph
         self.save_path = save_path
 
@@ -29,6 +25,11 @@ class ProcessInductanceAnalyzer:
             torque_avg: Average torque calculated from provided data
             torque_ripple: Torque ripple calculated from provided data
         """
+
+        self.problem = problem
+
+        df = pd.read_csv(self.file_path + "_inductance_of_fem_coil.csv", skiprows = 7) # read in csv file <-- NEED TO CHANGE NAME
+        data = df.to_numpy() # change csv format to readable array
         t = data[:,0] # define x axis data as time
         Uu = data[:,1] # define y axis data as self inductance
         Uv = data[:,2] # define y axis data as mutual inductance
