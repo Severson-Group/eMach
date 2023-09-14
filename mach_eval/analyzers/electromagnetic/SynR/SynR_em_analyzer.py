@@ -134,7 +134,7 @@ class SynR_EM_Analyzer:
         self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        app.Quit()
+        # app.Quit()
 
         ####################################################
         # 03 Load FEA output
@@ -1045,6 +1045,7 @@ class SynR_EM_Analyzer:
         hysteresis_loss_path = path + study_name + "_hysteresis_loss_loss.csv"
         eddy_current_loss_path = path + study_name + "_joule_loss_loss.csv"
         ohmic_loss_path = path + study_name + "_joule_loss.csv"
+        fem_coil_flux_path = path + study_name + "_inductance_of_fem_coil.csv"
 
         curr_df = pd.read_csv(current_csv_path, skiprows=6)
         tor_df = pd.read_csv(torque_csv_path, skiprows=6)
@@ -1053,6 +1054,7 @@ class SynR_EM_Analyzer:
         hyst_df = pd.read_csv(hysteresis_loss_path, skiprows=6)
         eddy_df = pd.read_csv(eddy_current_loss_path, skiprows=6)
         ohmic_df = pd.read_csv(ohmic_loss_path, skiprows=6)
+        flux_df = pd.read_csv(fem_coil_flux_path, skiprows=6)
 
         curr_df = curr_df.set_index("Time(s)")
         tor_df = tor_df.set_index("Time(s)")
@@ -1061,6 +1063,7 @@ class SynR_EM_Analyzer:
         hyst_df = hyst_df.set_index("Frequency(Hz)")
         iron_df = iron_df.set_index("Frequency(Hz)")
         ohmic_df = ohmic_df.set_index("Time(s)")
+        flux_df = flux_df.set_index("Time(s)")
 
         fea_data = {
             "current": curr_df,
@@ -1076,6 +1079,7 @@ class SynR_EM_Analyzer:
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
             "stator_slot_area": self.stator_slot_area,
+            "coil_inductances": flux_df,
         }
 
         return fea_data
