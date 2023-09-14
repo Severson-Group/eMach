@@ -71,7 +71,7 @@ class SynR_Inductance_PostAnalyzer:
         post_processing["Lq"] = Lq
         post_processing["saliency_ratio"] = saliency_ratio
 
-        state_out.conditions.em = post_processing
+        state_out.conditions.inductance = post_processing
 
         print("\n************************ INDUCTANCE RESULTS ************************")
         print("Ld = ", Ld, " H")

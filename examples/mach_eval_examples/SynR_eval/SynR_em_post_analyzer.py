@@ -8,11 +8,6 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataAnalyzer,
 )
 
-from mach_eval.analyzers.electromagnetic.stator_inductance import (
-    ProcessInductanceProblem,
-    ProcessInductanceAnalyzer,
-)
-
 class SynR_EM_PostAnalyzer:
     def copper_loss(self):
         return 3 * (self.I ** 2) * (self.R_wdg + self.R_wdg_coil_ends + self.R_wdg_coil_sides)
@@ -64,12 +59,6 @@ class SynR_EM_PostAnalyzer:
         PRW = TRW * omega_m
         PRV = TRV * omega_m
 
-        # Inductances
-        # print(results["coil_inductances"])
-        ind_prob = ProcessInductanceProblem(results["coil_inductances"])
-        ind_analyzer = ProcessInductanceAnalyzer()
-        Ld, Lq, saliency_ratio = ind_analyzer.analyze(ind_prob)
-
         # Losses
         # From JMAG
         stator_iron_loss = results["iron_loss"]["StatorCore"][0]
@@ -119,9 +108,6 @@ class SynR_EM_PostAnalyzer:
         #print("Torque = ", torque_avg, " Nm")
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
-        print("Ld = ", Ld, " H")
-        print("Lq = ", Lq, " H")
-        print("Saliency Ratio = ", saliency_ratio)
         print("Power density = ", PRV, " W/m3",)
         print("Efficiency = ", efficiency * 100, " %")
         print("*************************************************************************\n")

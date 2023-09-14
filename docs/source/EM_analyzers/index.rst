@@ -15,3 +15,4 @@ This section provides documentation for the electromagnetic analyzers supported 
     bspm_jmag2d_analyzer
     winding_factors
     SynR_jmag2d_analyzer
+    inductance_analyzer

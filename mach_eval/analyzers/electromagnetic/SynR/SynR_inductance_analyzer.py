@@ -375,7 +375,7 @@ class SynR_Inductance_Analyzer:
             print(", \n\t".join("%s = %s" % item for item in tuple_list))
             return ""
         else:
-            return "\n- Bearingless SynR Individual #%s\n\t" % name + ", \n\t".join(
+            return "\n- SynR Individual #%s\n\t" % name + ", \n\t".join(
                 "%s = %s" % item for item in tuple_list
             )
 
