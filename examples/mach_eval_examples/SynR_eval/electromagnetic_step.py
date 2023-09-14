@@ -33,7 +33,7 @@ configuration = SynR_EM_Config(
 
     only_table_results=False,
     csv_results=("Torque;Force;FEMCoilFlux;LineCurrent;JouleLoss;TotalDisplacementAngle;"
-                  "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss"),
+                  "JouleLoss_IronLoss;IronLoss_IronLoss;HysteresisLoss_IronLoss;FEMCoilInductance"),
     del_results_after_calc=False,
     run_folder=os.path.dirname(__file__) + "/run_data/",
     jmag_csv_folder=os.path.dirname(__file__) + "/run_data/jmag_csv/",
