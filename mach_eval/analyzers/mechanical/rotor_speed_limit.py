@@ -26,7 +26,7 @@ class SPM_RotorSpeedLimitProblem:
             deltaT (float): Temperature Rise [K].
             N_max (float): Maximum RPM to evaluate [RPM].
             mat_dict (dict): material dictionary 
-            mat_yield_dict (dict): material yield strength dictionary
+            mat_failure_dict (dict): material yield strength dictionary
 
         Returns:
             problem (RotorSpeedLimitProblem): RotorSpeedLimitProblem
@@ -83,7 +83,7 @@ class SPM_RotorSpeedLimitAnalyzer:
         mat_failure_dict = problem.mat_failure_dict
         self.mat_fail_cond = np.array([
             mat_failure_dict["shaft_yield_strength"],
-            mat_failure_dict["core_yield strength"],
+            mat_failure_dict["core_yield_strength"],
             mat_failure_dict["magnet_ultimate_strength"],
             mat_failure_dict["sleeve_ultimate_strength"],
             mat_failure_dict["adhesive_ultimate_strength"]])
@@ -410,7 +410,7 @@ def example():
 
         # Material: M19 29-gauge laminated steel
         # Failure Mode: Yield
-        'core_yield strength': 359E6,   # Pa
+        'core_yield_strength': 359E6,   # Pa
 
         # Material: N40 neodymium magnets
         # Failure Mode: Ultimate
