@@ -9,10 +9,8 @@ class ProcessInductanceProblem:
         Uu_flux: numpy array of torque against time or position
     """
 
-    def __init__(self, file_path, graph, save_path=None):
-        self.file_path = file_path
-        self.graph = graph
-        self.save_path = save_path
+    def __init__(self, data):
+        self.data = data
 
 
 class ProcessInductanceAnalyzer:
@@ -26,31 +24,15 @@ class ProcessInductanceAnalyzer:
             torque_ripple: Torque ripple calculated from provided data
         """
 
-        self.problem = problem
-
-        df = pd.read_csv(self.file_path + "_inductance_of_fem_coil.csv", skiprows = 7) # read in csv file <-- NEED TO CHANGE NAME
-        data = df.to_numpy() # change csv format to readable array
+        data = problem.data
+        
+        data = data.to_numpy() # change csv format to readable array
         t = data[:,0] # define x axis data as time
         Uu = data[:,1] # define y axis data as self inductance
         Uv = data[:,2] # define y axis data as mutual inductance
 
         [Uu_fit, sUu] = self.fit_sin(t, Uu) # carry out calculations on self inductance
         [Uv_fit, sUv] = self.fit_sin(t, Uv) # carry out calculations on mutual inductance
-
-        if self.graph == 1:
-            fig1, ax1 = plt.subplots()
-            ax1.plot(t, Uu, "-k", label="y", linewidth=2)
-            ax1.plot(t, Uu_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
-            ax1.legend(loc="best")
-            plt.savefig(self.save_path + '/Uu_inductance_fit.svg')   
-
-            fig2, ax2 = plt.subplots()
-            ax2.plot(t, Uv, "-k", label="y", linewidth=2)
-            ax2.plot(t, Uv_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
-            ax2.legend(loc="best")
-            plt.savefig(self.save_path + '/Uv_inductance_fit.svg') 
-        else:
-            return
 
         Lzero = 2/3 * abs(sUv.x[3]); # calculate L0 based on equations in publication
         Lg = abs(sUv.x[0]) # calculate Lg based on equations in publication
@@ -59,11 +41,13 @@ class ProcessInductanceAnalyzer:
         Lq = Lls + 3/2*(Lzero - Lg) # calculate Lq based on equations in publication
         saliency_ratio = Ld/Lq # calculate saliency ratio
 
+        print("test")
+
         return Ld, Lq, saliency_ratio
 
 
     # curve fit inductance values and calculate curve
-    def fit_sin(t, y):
+    def fit_sin(self, t, y):
         fft_func = np.fft.fftfreq(len(t), (t[1]-t[0])) # define fft function with assumed uniform spacing
         fft_y = abs(np.fft.fft(y)) # carry out fft function for inductance values
         guess_freq = abs(fft_func[np.argmax(fft_y[1:])+1]) # excluding the zero frequency "peak", which can cause problematic fits
