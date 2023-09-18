@@ -6,11 +6,10 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../../")
 
 from mach_eval import (MachineEvaluator, MachineDesign)
-from optimization_step import optimization_step
 from electromagnetic_step import electromagnetic_step
 from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 
-############################ Create Evaluator ########################
+############################ Create Evaluator #####################
 SynR_evaluator = MachineEvaluator(
     [
         electromagnetic_step
@@ -23,4 +22,4 @@ tic = clock_time()
 results = SynR_evaluator.evaluate(design_variant)
 toc = clock_time()
 
-print("Time spent on SynR evaluation is %g min." % ((toc - tic)/60))
+print("Time spent on SynR evaluation is %g min." % ((toc- tic)/60))
