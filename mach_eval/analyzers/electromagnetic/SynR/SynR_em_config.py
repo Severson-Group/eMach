@@ -1,4 +1,4 @@
-class AM_SynR_Opt_Config:
+class SynR_EM_Config:
     def __init__(self, **kwargs) -> None:
         # attributes for the number of rev and steps
         self.no_of_rev = kwargs["no_of_rev"] # number of revolutions
@@ -12,8 +12,7 @@ class AM_SynR_Opt_Config:
 
         # results and paths
         self.only_table_results = kwargs["only_table_results"] # if True: no mesh or field results are extracted
-        self.csv_struct_results = kwargs["csv_struct_results"] # data to be extracted from JMAG in csv format
-        self.csv_em_results = kwargs["csv_em_results"] # data to be extracted from JMAG in csv format
+        self.csv_results = kwargs["csv_results"] # data to be extracted from JMAG in csv format
         self.del_results_after_calc = kwargs["del_results_after_calc"] # Flag to delete result plot files after calculation
         self.run_folder = kwargs["run_folder"] # folder in which JMAG files will reside
         self.jmag_csv_folder = kwargs["jmag_csv_folder"] # folder in which csv files from solve are extracted to

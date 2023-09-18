@@ -3,8 +3,6 @@ import numpy as np
 import pandas as pd
 import sys
 from time import time as clock_time
-from scipy.optimize import curve_fit
-import math
 
 from mach_cad import model_obj as mo
 from mach_opt import InvalidDesign
@@ -13,48 +11,39 @@ from mach_eval.analyzers.electromagnetic.stator_wdg_res import(
 )
 from mach_cad.tools import jmag as JMAG
 
-class AM_SynR_Opt_Problem:
+class SynR_EM_Problem:
     def __init__(self, machine, operating_point):
         self.machine = machine
         self.operating_point = operating_point
         self._validate_attr()
-        self._check_geom()
 
     def _validate_attr(self):
-        if 'AM_SynR_Machine' in str(type(self.machine)):
+        if 'SynR_Machine' in str(type(self.machine)):
             pass
         else:
             raise TypeError("Invalid machine type")
 
-        if 'AM_SynR_Machine_Oper_Pt' in str(type(self.operating_point)):
+        if 'SynR_Machine_Oper_Pt' in str(type(self.operating_point)):
             pass
         else:
             raise TypeError("Invalid settings type")
 
-    def _check_geom(self):
-        r_ro_compare = self.machine.r_ri + self.machine.d_r1 + np.sqrt(2)*self.machine.w_b1 + self.machine.d_r2 + np.sqrt(2)*self.machine.w_b2
-        if r_ro_compare < self.machine.r_ro:
-            print("\nGeometry is valid!")
-            print("\n")
-        else:
-            raise InvalidDesign("Invalid Geometry")
-        
 
-class AM_SynR_Opt_Analyzer:
+class SynR_EM_Analyzer:
     def __init__(self, configuration):
         self.config = configuration
 
     def analyze(self, problem):
         self.machine_variant = problem.machine
         self.operating_point = problem.operating_point
-        self.machine_variant.yield_stress = 300 * 10 ** 6
         
         ####################################################
         # 01 Setting project name and output folder
         ####################################################
         
         self.project_name = self.machine_variant.name
-        expected_project_file = self.config.run_folder + "%s_Opt.jproj" % self.project_name
+        expected_project_file = self.config.run_folder + "%s.jproj" % self.project_name
+
         # Create output folder
         if not os.path.isdir(self.config.jmag_csv_folder):
             os.makedirs(self.config.jmag_csv_folder)
@@ -82,10 +71,10 @@ class AM_SynR_Opt_Analyzer:
         toolJmag = JMAG.JmagDesigner()
 
         toolJmag.visible = self.config.jmag_visible
-        toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="StructuralStatic2D")
+        toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="Transient2D")
         toolJmag.save()
 
-        self.study_name = self.project_name + "_Stat_SynR"
+        self.study_name = self.project_name + "_Tran_SynR"
         self.design_results_folder = (
             self.config.run_folder + "%s_results/" % self.project_name
         )
@@ -93,7 +82,7 @@ class AM_SynR_Opt_Analyzer:
             os.makedirs(self.design_results_folder)
 
         ################################################################
-        # 02 Run Structural analysis
+        # 02 Run Electromagnetic analysis
         ################################################################
 
         # Draw cross_section
@@ -115,138 +104,11 @@ class AM_SynR_Opt_Analyzer:
         if not valid_design:
             raise InvalidDesign
 
-        # Create static study 1
-        study1 = self.add_struct_study_1(app, model, self.config.jmag_csv_folder, self.study_name + "_1")
-
-        # Create transient study with two time step sections
-        self.create_stator_material(
-            app, self.machine_variant.stator_iron_mat["core_material"]
-        )
-        self.create_rotor_iron_material(
-            app, self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        )
-        self.create_rotor_barrier_material(
-            app, self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        )
-        app.SetCurrentStudy(self.study_name + "_1")
-
-        # Mesh study
-        self.mesh_study(app, model, study1)
-
-        # Run study
-        self.run_study(app, study1, clock_time())
-
-        # Create static study 2
-        study2 = self.add_struct_study_2(app, model, self.config.jmag_csv_folder, self.study_name + "_2")
-        #self.create_custom_material(
-        #    app, self.machine_variant.stator_iron_mat["core_material"]
-        #)
-        app.SetCurrentStudy(self.study_name + "_2")
-
-        # Mesh study
-        self.mesh_study(app, model, study2)
-
-        # Run study
-        self.run_study(app, study2, clock_time())
-
-        # Create static study 3
-        study3 = self.add_struct_study_3(app, model, self.config.jmag_csv_folder, self.study_name + "_3")
-        #self.create_custom_material(
-        #    app, self.machine_variant.stator_iron_mat["core_material"]
-        #)
-        app.SetCurrentStudy(self.study_name + "_3")
-
-        # Mesh study
-        self.mesh_study(app, model, study3)
-
-        # Run study
-        self.run_study(app, study3, clock_time())
-
-        # Create static study 4
-        study4 = self.add_struct_study_4(app, model, self.config.jmag_csv_folder, self.study_name + "_4")
-        #self.create_custom_material(
-        #    app, self.machine_variant.stator_iron_mat["core_material"]
-        #)
-        app.SetCurrentStudy(self.study_name + "_4")
-
-        # Mesh study
-        self.mesh_study(app, model, study4)
-
-        # Run study
-        self.run_study(app, study4, clock_time())
-
-        ####################################################
-        # 03 Load FEA Struct output
-        ####################################################
-
-        fea_rated_output_1 = self.extract_JMAG_results(
-            self.config.jmag_csv_folder, self.study_name + "_1"
-        )
-
-        fea_rated_output_2 = self.extract_JMAG_results(
-            self.config.jmag_csv_folder, self.study_name + "_2"
-        )
-
-        fea_rated_output_3 = self.extract_JMAG_results(
-            self.config.jmag_csv_folder, self.study_name + "_3"
-        )
-
-        fea_rated_output_4 = self.extract_JMAG_results(
-            self.config.jmag_csv_folder, self.study_name + "_4"
-        )
-
-        struct1 = fea_rated_output_1["max_stress"]
-        s1 = struct1['Maximum Value']
-        max_stress1 = s1[0]
-
-        struct2 = fea_rated_output_2["max_stress"]
-        s2 = struct2['Maximum Value']
-        max_stress2 = s2[0]
-
-        struct3 = fea_rated_output_3["max_stress"]
-        s3 = struct3['Maximum Value']
-        max_stress3 = s3[0]
-
-        struct4 = fea_rated_output_4["max_stress"]
-        s4 = struct4['Maximum Value']
-        max_stress4 = s4[0]
-
-        def objective(x, a, b):
-            return x ** a + b
-        
-        x = [0, 0.25 * self.operating_point.speed, 0.5 * self.operating_point.speed, 0.75 * self.operating_point.speed, self.operating_point.speed]
-        y = [0, max_stress1, max_stress2, max_stress3, max_stress4]
-
-        try:
-            popt, _ = curve_fit(objective, x, y)
-        except RuntimeError:
-            print("RuntimeError - curve_fit failed")
-            max_speed = 60000
-
-        a, b = popt
-        max_speed = (self.machine_variant.yield_stress - b) ** (1 / a)
-
-        if math.isnan(max_speed) is True:
-            print('CURVE FIT FAILURE - CHANGING SPEED TO 5000 RPM')
-            max_speed = 60000
-        else:
-            print('No Error or Warning')
-            
-        
-        self.operating_point.new_speed = max_speed * self.operating_point.speed_ratio
-        self.machine_variant.final_speed = self.operating_point.new_speed
-        max_stress = max_speed ** a + b
-        self.machine_variant.max_stress = max_stress
-
-        print("Operating Speed = ", self.operating_point.speed, " RPM",)
-        print("Maximum Speed = ", self.operating_point.new_speed, " RPM",)
-
-        ################################################################
-        # 04 Run Electromagnetic analysis
-        ################################################################
-
         # Create transient study with two time step sections
         study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name)
+        self.create_custom_material(
+            app, self.machine_variant.stator_iron_mat["core_material"]
+        )
         app.SetCurrentStudy(self.study_name)
 
         # Mesh study
@@ -255,12 +117,14 @@ class AM_SynR_Opt_Analyzer:
         self.breakdown_torque = None
         self.stator_slot_area = None
 
+        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.drive_freq)
+
         # Set current excitation
         I = self.I_hat
         phi_0 = self.operating_point.phi_0
         self.set_currents_sequence(I, self.drive_freq,
                 phi_0, app, study)
-        
+
         # Add time step settings
         no_of_steps = self.config.no_of_steps
         no_of_rev = self.config.no_of_rev
@@ -273,36 +137,32 @@ class AM_SynR_Opt_Analyzer:
         app.Quit()
 
         ####################################################
-        # 05 Load EM FEA output
+        # 03 Load FEA output
         ####################################################
 
-        fea_rated_output = self.extract_JMAG_EM_results(
+        fea_rated_output = self.extract_JMAG_results(
             self.config.jmag_csv_folder, self.study_name
         )
 
         return fea_rated_output
-    
+
     @property
     def drive_freq(self):
-        speed_in_elec_ang = self.operating_point.new_speed / 60 * self.machine_variant.p
+        speed_in_elec_ang = 2 * np.pi * self.operating_point.speed / 60 * self.machine_variant.p
         drive_freq = speed_in_elec_ang
         return drive_freq
 
     @property
     def speed(self):
         return self.operating_point.speed
-    
-    @property
-    def new_speed(self):
-        return self.operating_point.new_speed
-    
+
     @property
     def elec_omega(self):
         return 2 * np.pi * self.drive_freq
 
     @property
     def I_hat(self):
-        I_hat = self.machine_variant.rated_current
+        I_hat = self.machine_variant.rated_current * self.operating_point.current_ratio
         return I_hat
 
     @property
@@ -356,10 +216,6 @@ class AM_SynR_Opt_Analyzer:
         ####################################################
         # Adding parts objects
         ####################################################
-
-        rotor_rotation = mo.DimDegree(0)
-        stator_rotation = mo.DimDegree(-(180+720) / self.machine_variant.Q)
-
         self.stator_core = mo.CrossSectInnerRotorStatorPartial(
             name="StatorCore",
             dim_alpha_st=mo.DimDegree(self.machine_variant.alpha_st),
@@ -375,81 +231,45 @@ class AM_SynR_Opt_Analyzer:
             dim_r_sb=mo.DimMillimeter(0),
             Q=self.machine_variant.Q,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=stator_rotation),
+            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
         self.winding_layer1 = mo.CrossSectInnerRotorStatorRightSlot(
             name="WindingLayer1",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=stator_rotation),
+            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
         self.winding_layer2 = mo.CrossSectInnerRotorStatorLeftSlot(
             name="WindingLayer2",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=stator_rotation),
+            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
-        self.rotor_core_1i = mo.CrossSectFluxBarrierRotorAMPartial_Iron1(
-            name="RotorCore1i",
+        self.rotor_core = mo.CrossSectFluxBarrierRotorPartial(
+            name="RotorCore",
+            dim_alpha_b=mo.DimDegree(self.machine_variant.alpha_b),
             dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
             dim_r_ro=mo.DimMillimeter(self.machine_variant.r_ro),
+            dim_r_f1=mo.DimMillimeter(self.machine_variant.r_f1),
+            dim_r_f2=mo.DimMillimeter(self.machine_variant.r_f2),
+            dim_r_f3=mo.DimMillimeter(self.machine_variant.r_f3),
             dim_d_r1=mo.DimMillimeter(self.machine_variant.d_r1),
             dim_d_r2=mo.DimMillimeter(self.machine_variant.d_r2),
+            dim_d_r3=mo.DimMillimeter(self.machine_variant.d_r3),
             dim_w_b1=mo.DimMillimeter(self.machine_variant.w_b1),
             dim_w_b2=mo.DimMillimeter(self.machine_variant.w_b2),
+            dim_w_b3=mo.DimMillimeter(self.machine_variant.w_b3),
+            dim_l_b1=mo.DimMillimeter(self.machine_variant.l_b1),
+            dim_l_b2=mo.DimMillimeter(self.machine_variant.l_b2),
+            dim_l_b3=mo.DimMillimeter(self.machine_variant.l_b3),
+            dim_l_b4=mo.DimMillimeter(self.machine_variant.l_b4),
+            dim_l_b5=mo.DimMillimeter(self.machine_variant.l_b5),
+            dim_l_b6=mo.DimMillimeter(self.machine_variant.l_b6),
             p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=rotor_rotation),
-            )
-        
-        self.rotor_core_2i = mo.CrossSectFluxBarrierRotorAMPartial_Iron2(
-            name="RotorCore2i",
-            dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
-            dim_r_ro=mo.DimMillimeter(self.machine_variant.r_ro),
-            dim_d_r1=mo.DimMillimeter(self.machine_variant.d_r1),
-            dim_d_r2=mo.DimMillimeter(self.machine_variant.d_r2),
-            dim_w_b1=mo.DimMillimeter(self.machine_variant.w_b1),
-            dim_w_b2=mo.DimMillimeter(self.machine_variant.w_b2),
-            p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=rotor_rotation),
-            )
-        
-        self.rotor_core_3i = mo.CrossSectFluxBarrierRotorAMPartial_Iron3(
-            name="RotorCore3i",
-            dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
-            dim_r_ro=mo.DimMillimeter(self.machine_variant.r_ro),
-            dim_d_r1=mo.DimMillimeter(self.machine_variant.d_r1),
-            dim_d_r2=mo.DimMillimeter(self.machine_variant.d_r2),
-            dim_w_b1=mo.DimMillimeter(self.machine_variant.w_b1),
-            dim_w_b2=mo.DimMillimeter(self.machine_variant.w_b2),
-            p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=rotor_rotation),
-            )
-        
-        self.rotor_core_1b = mo.CrossSectFluxBarrierRotorAMPartial_Barrier1(
-            name="RotorCore1b",
-            dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
-            dim_r_ro=mo.DimMillimeter(self.machine_variant.r_ro),
-            dim_d_r1=mo.DimMillimeter(self.machine_variant.d_r1),
-            dim_d_r2=mo.DimMillimeter(self.machine_variant.d_r2),
-            dim_w_b1=mo.DimMillimeter(self.machine_variant.w_b1),
-            dim_w_b2=mo.DimMillimeter(self.machine_variant.w_b2),
-            p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=rotor_rotation),
-            )
-        
-        self.rotor_core_2b = mo.CrossSectFluxBarrierRotorAMPartial_Barrier2(
-            name="RotorCore2b",
-            dim_r_ri=mo.DimMillimeter(self.machine_variant.r_ri),
-            dim_r_ro=mo.DimMillimeter(self.machine_variant.r_ro),
-            dim_d_r1=mo.DimMillimeter(self.machine_variant.d_r1),
-            dim_d_r2=mo.DimMillimeter(self.machine_variant.d_r2),
-            dim_w_b1=mo.DimMillimeter(self.machine_variant.w_b1),
-            dim_w_b2=mo.DimMillimeter(self.machine_variant.w_b2),
-            p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=rotor_rotation),
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=mo.DimDegree(-180 / (2 * self.machine_variant.p))),
             )
 
         self.shaft = mo.CrossSectHollowCylinder(
@@ -484,42 +304,10 @@ class AM_SynR_Opt_Analyzer:
             dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
 
-        self.comp_rotor_core_1i = mo.Component(
-            name="RotorCore1i",
-            cross_sections=[self.rotor_core_1i],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["rotor_iron_material"], color=r"#808080"),
-            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
-                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-            )
-        
-        self.comp_rotor_core_2i = mo.Component(
-            name="RotorCore2i",
-            cross_sections=[self.rotor_core_2i],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["rotor_iron_material"], color=r"#808080"),
-            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
-                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-            )
-        
-        self.comp_rotor_core_3i = mo.Component(
-            name="RotorCore3i",
-            cross_sections=[self.rotor_core_3i],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["rotor_iron_material"], color=r"#808080"),
-            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
-                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-            )
-        
-        self.comp_rotor_core_1b = mo.Component(
-            name="RotorCore1b",
-            cross_sections=[self.rotor_core_1b],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_barrier_mat["rotor_barrier_material"], color=r"#71797E"),
-            make_solid=mo.MakeExtrude(location=mo.Location3D(), 
-                    dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
-            )
-        
-        self.comp_rotor_core_2b = mo.Component(
-            name="RotorCore2b",
-            cross_sections=[self.rotor_core_2b],
-            material=mo.MaterialGeneric(name=self.machine_variant.rotor_barrier_mat["rotor_barrier_material"], color=r"#71797E"),
+        self.comp_rotor_core = mo.Component(
+            name="RotorCore",
+            cross_sections=[self.rotor_core],
+            material=mo.MaterialGeneric(name=self.machine_variant.rotor_iron_mat["core_material"], color=r"#808080"),
             make_solid=mo.MakeExtrude(location=mo.Location3D(), 
                     dim_depth=mo.DimMillimeter(self.machine_variant.l_st)),
             )
@@ -555,34 +343,10 @@ class AM_SynR_Opt_Analyzer:
         self.winding_layer2_inner_coord = cs_winding_layer2.inner_coord
 
         tool.sketch = tool.create_sketch()
-        tool.sketch.SetProperty("Name", self.rotor_core_1i.name)
+        tool.sketch.SetProperty("Name", self.rotor_core.name)
         tool.sketch.SetProperty("Color", r"#808080")
-        cs_rotor_core_1i = self.rotor_core_1i.draw(tool)
-        rotor_1i_tool = tool.prepare_section(cs_rotor_core_1i, 2*self.machine_variant.p)
-
-        tool.sketch = tool.create_sketch()
-        tool.sketch.SetProperty("Name", self.rotor_core_2i.name)
-        tool.sketch.SetProperty("Color", r"#808080")
-        cs_rotor_core_2i = self.rotor_core_2i.draw(tool)
-        rotor_2i_tool = tool.prepare_section(cs_rotor_core_2i, 2*self.machine_variant.p)
-
-        tool.sketch = tool.create_sketch()
-        tool.sketch.SetProperty("Name", self.rotor_core_3i.name)
-        tool.sketch.SetProperty("Color", r"#808080")
-        cs_rotor_core_3i = self.rotor_core_3i.draw(tool)
-        rotor_3i_tool = tool.prepare_section(cs_rotor_core_3i, 2*self.machine_variant.p)
-
-        tool.sketch = tool.create_sketch()
-        tool.sketch.SetProperty("Name", self.rotor_core_1b.name)
-        tool.sketch.SetProperty("Color", r"#71797E")
-        cs_rotor_core_1b = self.rotor_core_1b.draw(tool)
-        rotor_1b_tool = tool.prepare_section(cs_rotor_core_1b, 2*self.machine_variant.p)
-
-        tool.sketch = tool.create_sketch()
-        tool.sketch.SetProperty("Name", self.rotor_core_2b.name)
-        tool.sketch.SetProperty("Color", r"#71797E")
-        cs_rotor_core_2b = self.rotor_core_2b.draw(tool)
-        rotor_2b_tool = tool.prepare_section(cs_rotor_core_2b, 2*self.machine_variant.p)
+        cs_rotor_core = self.rotor_core.draw(tool)
+        rotor_tool = tool.prepare_section(cs_rotor_core, 2*self.machine_variant.p)
 
         tool.sketch = tool.create_sketch()
         tool.sketch.SetProperty("Name", self.shaft.name)
@@ -607,33 +371,11 @@ class AM_SynR_Opt_Analyzer:
         )  # this is also useful for string beginning with digiterations '15 Steel'.
         tuple_list = [(key, the_dict[key]) for key in sorted_key]
         if not toString:
-            print("- SynR Individual #%s\n\t" % name, end=" ")
+            print("- Bearingless SynR Individual #%s\n\t" % name, end=" ")
             print(", \n\t".join("%s = %s" % item for item in tuple_list))
             return ""
         else:
-            return "\n- SynR Individual #%s\n\t" % name + ", \n\t".join(
-                "%s = %s" % item for item in tuple_list
-            )
-
-    def show(self, name, toString=False):
-        attrs = list(vars(self).items())
-        key_list = [el[0] for el in attrs]
-        val_list = [el[1] for el in attrs]
-        the_dict = dict(list(zip(key_list, val_list)))
-        sorted_key = sorted(
-            key_list,
-            key=lambda item: (
-                int(item.partition(" ")[0]) if item[0].isdigit() else float("inf"),
-                item,
-            ),
-        )  # this is also useful for string beginning with digiterations '15 Steel'.
-        tuple_list = [(key, the_dict[key]) for key in sorted_key]
-        if not toString:
-            print("- AM SynR Individual #%s\n\t" % name, end=" ")
-            print(", \n\t".join("%s = %s" % item for item in tuple_list))
-            return ""
-        else:
-            return "\n- AM SynR Individual #%s\n\t" % name + ", \n\t".join(
+            return "\n- Bearingless SynR Individual #%s\n\t" % name + ", \n\t".join(
                 "%s = %s" % item for item in tuple_list
             )
 
@@ -649,19 +391,17 @@ class AM_SynR_Opt_Analyzer:
         part_ID_list = model.GetPartIDs()
 
         if len(part_ID_list) != int(
-            1 + 1 + 2 * self.machine_variant.p * 4 + self.machine_variant.Q * 2 + 1
+            1 + 1 + self.machine_variant.Q * 2 + 1
         ):
             print("Parts are missing in this machine")
             return False
 
-        self.id_statorCore = part_ID_list[0]
+        self.id_statorCore = id_statorCore = part_ID_list[0]
         partIDRange_Coil = part_ID_list[1 : int(2 * self.machine_variant.Q + 1)]
-        self.id_rotorCore = id_rotorCore = part_ID_list[int(2 * self.machine_variant.Q + 1) : int(2 * self.machine_variant.Q + 2 * self.machine_variant.p * 4 + 2) ]
+        self.id_rotorCore = id_rotorCore = part_ID_list[int(2 * self.machine_variant.Q + 1)]
         id_shaft = part_ID_list[-1]   
-        self.id_rotorIron = part_ID_list[int(2 * self.machine_variant.Q + 1) : int(2 * self.machine_variant.Q + 9)]
 
         group("Coils", partIDRange_Coil)
-        #group("Rotor", id_rotorCore)
 
         """ Add Part to Set for later references """
 
@@ -677,24 +417,8 @@ class AM_SynR_Opt_Analyzer:
                 sel.SelectPart(ID)
             model.GetSetList().GetSet(name).AddSelected(sel)
 
-        def add_parts_to_set(name, x, y, ID=None):
-            model.GetSetList().CreatePartSet(name)
-            model.GetSetList().GetSet(name).SetMatcherType("Selection")
-            model.GetSetList().GetSet(name).ClearParts()
-            sel = model.GetSetList().GetSet(name).GetSelection()
-            if ID is None:
-                # print x,y
-                sel.SelectPartByPosition(x, y, 0)  # z=0 for 2D
-            else:
-                for x in ID:
-                    sel.SelectPart(x)
-                model.GetSetList().GetSet(name).AddSelected(sel)
-
-        # RotorIron
-        add_parts_to_set("RotorIron", 0.0, 0.0, ID=self.id_rotorIron)
-
-        # StatorSet
-        add_part_to_set("StatorSet", 0.0, 0.0, ID=self.id_statorCore)
+        # RotorSet
+        add_part_to_set("RotorSet", 0.0, 0.0, ID=id_shaft)
 
         # Create Set for right layer
         Angle_StatorSlotSpan = 360 / self.machine_variant.Q
@@ -729,29 +453,25 @@ class AM_SynR_Opt_Analyzer:
             Y = R * np.sin(THETA)
 
         # Create Set for Motion Region
-        def part_list_set(name, list_part_id1=None, list_part_id2=None, prefix=None):
+        def part_list_set(name, list_part_id=None, prefix=None):
             model.GetSetList().CreatePartSet(name)
             model.GetSetList().GetSet(name).SetMatcherType("Selection")
             model.GetSetList().GetSet(name).ClearParts()
             sel = model.GetSetList().GetSet(name).GetSelection()
 
-            if list_part_id1 is not None:
-                sel.SelectPart(list_part_id1)
-            model.GetSetList().GetSet(name).AddSelected(sel)
-
-            if list_part_id2 is not None:
-                for ID in list_part_id2:
+            if list_part_id is not None:
+                for ID in list_part_id:
                     sel.SelectPart(ID)
             model.GetSetList().GetSet(name).AddSelected(sel)
 
         part_list_set(
-            "Motion_Region", list_part_id1=id_shaft, list_part_id2=id_rotorCore
+            "Motion_Region", list_part_id=[id_rotorCore, id_shaft]
         )
 
         return True
 
 
-    def create_stator_material(self, app, steel_name):
+    def create_custom_material(self, app, steel_name):
 
         core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
             self.machine_variant.stator_iron_mat["core_material"]
@@ -824,453 +544,6 @@ class AM_SynR_Opt_Analyzer:
         )
 
 
-    def create_rotor_iron_material(self, app, steel_name):
-
-        core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        )
-        app.GetMaterialLibrary().DeleteCustomMaterial(self.machine_variant.rotor_iron_mat["rotor_iron_material"])
-
-        app.GetMaterialLibrary().CreateCustomMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"], "Custom Materials"
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "Density", self.machine_variant.rotor_iron_mat["rotor_iron_material_density"] / 1000
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("MagneticSteelPermeabilityType", 2)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("CoerciveForce", 0)
-        BH = np.loadtxt(
-            self.machine_variant.rotor_iron_mat["rotor_iron_bh_file"],
-            unpack=True,
-            usecols=(0, 1),
-        )  # values from Dante BH curve
-        refarray = BH.T.tolist()
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).GetTable("BhTable").SetTable(refarray)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("DemagnetizationCoerciveForce", 0)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("MagnetizationSaturated", 0)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("MagnetizationSaturated2", 0)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("ExtrapolationMethod", 0)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "YoungModulus", self.machine_variant.rotor_iron_mat["rotor_iron_youngs_modulus"] / 1000000
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue("Loss_Type", 1)
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantKhX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_Kh"]
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantKeX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_Ke"]
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantAlphaX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_a"],
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"]
-        ).SetValue(
-            "LossConstantBetaX", self.machine_variant.rotor_iron_mat["rotor_iron_ironloss_b"]
-        )
-
-
-    def create_rotor_barrier_material(self, app, steel_name):
-
-        core_mat_obj = app.GetMaterialLibrary().GetCustomMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        )
-        app.GetMaterialLibrary().DeleteCustomMaterialByObject(core_mat_obj)
-
-        app.GetMaterialLibrary().CreateCustomMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"], "Custom Materials"
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue(
-            "Density", self.machine_variant.rotor_barrier_mat["rotor_barrier_material_density"] / 1000
-        )
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetComplexValue("Permeability", self.machine_variant.rotor_barrier_mat["rotor_barrier_permeability"], 0)
-
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue("CoerciveForce", 0)
-        
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue("DemagnetizationCoerciveForce", 0)
-
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue("MagnetizationSaturated", 0)
-
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue("MagnetizationSaturated2", 0)
-
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue(
-            "YoungModulus", self.machine_variant.rotor_barrier_mat["rotor_barrier_youngs_modulus"] / 1000000
-        )
-
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue(
-            "PoissonRatio", self.machine_variant.rotor_barrier_mat["rotor_barrier_poission_ratio"]
-        )
-
-        app.GetMaterialLibrary().GetUserMaterial(
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"]
-        ).SetValue("ShearModulus", self.machine_variant.rotor_barrier_mat["rotor_barrier_shear_modulus"] / 1000000)
-
-
-    def add_struct_study_1(
-        self, app, model, dir_csv_output_folder, study_name
-    ):
-
-        model.CreateStudy("StructuralStatic2D", study_name)
-        app.SetCurrentStudy(study_name)
-        study = model.GetStudy(study_name)
-
-        # Study properties
-        study.GetStudyProperties().SetValue(
-            "ModelThickness", self.machine_variant.l_st
-        )  # [mm] Stack Length
-
-        # Material
-        self.add_materials(study)
-
-        # Conditions - Displacement Restraint
-        study.CreateCondition("Displacement", "Containment")
-        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
-        study.GetCondition("Containment").ClearParts()
-        study.GetCondition("Containment").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 1
-        )
-
-        # Conditions - Centrifugal Force
-        study.CreateCondition("CentrifugalForce",
-            "RotCon") 
-        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
-        study.GetCondition("RotCon").SetValue("AngularVelocity",
-            int(self.speed) * 0.25)
-        study.GetCondition("RotCon").ClearParts()
-        study.GetCondition("RotCon").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Conditions - Target Result
-        app.SetCurrentStudy(study_name)
-        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Suppress Stator
-        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
-        model.GetStudy(study_name).SuppressPart("Coils", 1)
-
-        # True: no mesh or field results are needed
-        study.GetStudyProperties().SetValue(
-            "OnlyTableResults", self.config.only_table_results
-        )
-
-        study.GetStudyProperties().SetValue("DirectSolverType", 1)
-
-        if self.config.multiple_cpus:
-            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
-            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
-            # for eddy current solve. 6~8 is enough for transient solve.
-            study.GetStudyProperties().SetValue("UseMultiCPU", True)
-            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
-            study.GetStudyProperties().SetValue("UseGPU", 1)
-
-        # speed, freq
-        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
-
-        # Calculate CSV results
-        study.GetStudyProperties().SetValue(
-            "CsvOutputPath", dir_csv_output_folder
-        )  # it's folder rather than file!
-        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
-        study.GetStudyProperties().SetValue(
-            "DeleteResultFiles", self.config.del_results_after_calc
-        )
-
-        return study
-    
-
-    def add_struct_study_2(
-        self, app, model, dir_csv_output_folder, study_name
-    ):
-
-        model.CreateStudy("StructuralStatic2D", study_name)
-        app.SetCurrentStudy(study_name)
-        study = model.GetStudy(study_name)
-
-        # Study properties
-        study.GetStudyProperties().SetValue(
-            "ModelThickness", self.machine_variant.l_st
-        )  # [mm] Stack Length
-
-        # Material
-        self.add_materials(study)
-
-        # Conditions - Displacement Restraint
-        study.CreateCondition("Displacement", "Containment")
-        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
-        study.GetCondition("Containment").ClearParts()
-        study.GetCondition("Containment").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 1
-        )
-
-        # Conditions - Centrifugal Force
-        study.CreateCondition("CentrifugalForce",
-            "RotCon") 
-        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
-        study.GetCondition("RotCon").SetValue("AngularVelocity",
-            int(self.speed) * 0.5)
-        study.GetCondition("RotCon").ClearParts()
-        study.GetCondition("RotCon").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Conditions - Target Result
-        app.SetCurrentStudy(study_name)
-        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Suppress Stator
-        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
-        model.GetStudy(study_name).SuppressPart("Coils", 1)
-
-        # True: no mesh or field results are needed
-        study.GetStudyProperties().SetValue(
-            "OnlyTableResults", self.config.only_table_results
-        )
-
-        study.GetStudyProperties().SetValue("DirectSolverType", 1)
-
-        if self.config.multiple_cpus:
-            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
-            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
-            # for eddy current solve. 6~8 is enough for transient solve.
-            study.GetStudyProperties().SetValue("UseMultiCPU", True)
-            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
-            # study.GetStudyProperties().SetValue("UseGPU", 1)
-
-        # speed, freq
-        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
-
-        # Calculate CSV results
-        study.GetStudyProperties().SetValue(
-            "CsvOutputPath", dir_csv_output_folder
-        )  # it's folder rather than file!
-        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
-        study.GetStudyProperties().SetValue(
-            "DeleteResultFiles", self.config.del_results_after_calc
-        )
-
-        return study
-    
-
-    def add_struct_study_3(
-        self, app, model, dir_csv_output_folder, study_name
-    ):
-
-        model.CreateStudy("StructuralStatic2D", study_name)
-        app.SetCurrentStudy(study_name)
-        study = model.GetStudy(study_name)
-
-        # Study properties
-        study.GetStudyProperties().SetValue(
-            "ModelThickness", self.machine_variant.l_st
-        )  # [mm] Stack Length
-
-        # Material
-        self.add_materials(study)
-
-        # Conditions - Displacement Restraint
-        study.CreateCondition("Displacement", "Containment")
-        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
-        study.GetCondition("Containment").ClearParts()
-        study.GetCondition("Containment").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 1
-        )
-
-        # Conditions - Centrifugal Force
-        study.CreateCondition("CentrifugalForce",
-            "RotCon") 
-        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
-        study.GetCondition("RotCon").SetValue("AngularVelocity",
-            int(self.speed) * 0.75)
-        study.GetCondition("RotCon").ClearParts()
-        study.GetCondition("RotCon").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Conditions - Target Result
-        app.SetCurrentStudy(study_name)
-        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Suppress Stator
-        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
-        model.GetStudy(study_name).SuppressPart("Coils", 1)
-
-        # True: no mesh or field results are needed
-        study.GetStudyProperties().SetValue(
-            "OnlyTableResults", self.config.only_table_results
-        )
-
-        study.GetStudyProperties().SetValue("DirectSolverType", 1)
-
-        if self.config.multiple_cpus:
-            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
-            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
-            # for eddy current solve. 6~8 is enough for transient solve.
-            study.GetStudyProperties().SetValue("UseMultiCPU", True)
-            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
-            # study.GetStudyProperties().SetValue("UseGPU", 1)
-
-        # speed, freq
-        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
-
-        # Calculate CSV results
-        study.GetStudyProperties().SetValue(
-            "CsvOutputPath", dir_csv_output_folder
-        )  # it's folder rather than file!
-        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
-        study.GetStudyProperties().SetValue(
-            "DeleteResultFiles", self.config.del_results_after_calc
-        )
-
-        return study
-    
-
-    def add_struct_study_4(
-        self, app, model, dir_csv_output_folder, study_name
-    ):
-
-        model.CreateStudy("StructuralStatic2D", study_name)
-        app.SetCurrentStudy(study_name)
-        study = model.GetStudy(study_name)
-
-        # Study properties
-        study.GetStudyProperties().SetValue(
-            "ModelThickness", self.machine_variant.l_st
-        )  # [mm] Stack Length
-
-        # Material
-        self.add_materials(study)
-
-        # Conditions - Displacement Restraint
-        study.CreateCondition("Displacement", "Containment")
-        study.GetCondition("Containment").SetXYZPoint("Direction", 0, 0, 1)
-        study.GetCondition("Containment").ClearParts()
-        study.GetCondition("Containment").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 1
-        )
-
-        # Conditions - Centrifugal Force
-        study.CreateCondition("CentrifugalForce",
-            "RotCon") 
-        study.GetCondition("RotCon").SetXYZPoint("Axis", 0, 0, 1) # megbox warning
-        study.GetCondition("RotCon").SetValue("AngularVelocity",
-            int(self.speed))
-        study.GetCondition("RotCon").ClearParts()
-        study.GetCondition("RotCon").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Conditions - Target Result
-        app.SetCurrentStudy(study_name)
-        model.GetStudy(study_name).CreateCalculationDefinition("MaxStress")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultType("MisesStress", "")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetResultCoordinate("Global Rectangular")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetCalculationType("max")
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").SetDirectionAxis(0, 0, 1)
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").ClearParts()
-        model.GetStudy(study_name).GetCalculationDefinition("MaxStress").AddSet(
-            model.GetSetList().GetSet("Motion_Region"), 0
-        )
-
-        # Suppress Stator
-        model.GetStudy(study_name).SuppressPart("StatorCore", 1)
-        model.GetStudy(study_name).SuppressPart("Coils", 1)
-
-        # True: no mesh or field results are needed
-        study.GetStudyProperties().SetValue(
-            "OnlyTableResults", self.config.only_table_results
-        )
-
-        study.GetStudyProperties().SetValue("DirectSolverType", 1)
-
-        if self.config.multiple_cpus:
-            # This SMP(shared memory process) is effective only if there are tons of elements. e.g., over 100,000.
-            # too many threads will in turn make them compete with each other and slow down the solve. 2 is good enough
-            # for eddy current solve. 6~8 is enough for transient solve.
-            study.GetStudyProperties().SetValue("UseMultiCPU", True)
-            study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
-            # study.GetStudyProperties().SetValue("UseGPU", 1)
-
-        # speed, freq
-        # study.GetCondition("RotCon").SetValue("AngularVelocity", "speed")
-
-        # Calculate CSV results
-        study.GetStudyProperties().SetValue(
-            "CsvOutputPath", dir_csv_output_folder
-        )  # it's folder rather than file!
-        study.GetStudyProperties().SetValue(self.config.csv_struct_results,1)
-        study.GetStudyProperties().SetValue(
-            "DeleteResultFiles", self.config.del_results_after_calc
-        )
-
-        return study
-    
 
     def add_em_study(
         self, app, model, dir_csv_output_folder, study_name
@@ -1298,7 +571,7 @@ class AM_SynR_Opt_Analyzer:
         study.CreateCondition("RotationMotion",
             "RotCon")
         study.GetCondition("RotCon").SetValue("AngularVelocity",
-            int(self.operating_point.new_speed))
+            int(self.speed))
         study.GetCondition("RotCon").ClearParts()
         study.GetCondition("RotCon").AddSet(
             model.GetSetList().GetSet("Motion_Region"), 0
@@ -1332,7 +605,6 @@ class AM_SynR_Opt_Analyzer:
             # for eddy current solve. 6~8 is enough for transient solve.
             study.GetStudyProperties().SetValue("UseMultiCPU", True)
             study.GetStudyProperties().SetValue("MultiCPU", self.config.num_cpus)
-            # study.GetStudyProperties().SetValue("UseGPU", 1)
 
         # two sections of different time step
         no_of_rev = self.config.no_of_rev
@@ -1342,7 +614,6 @@ class AM_SynR_Opt_Analyzer:
         )
         # add equations
         study.GetDesignTable().AddEquation("freq")
-        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.drive_freq)
         study.GetDesignTable().AddEquation("speed")
         study.GetDesignTable().GetEquation("freq").SetType(0)
         study.GetDesignTable().GetEquation("freq").SetDescription(
@@ -1388,7 +659,7 @@ class AM_SynR_Opt_Analyzer:
         study.GetStudyProperties().SetValue(
             "CsvOutputPath", dir_csv_output_folder
         )  # it's folder rather than file!
-        study.GetStudyProperties().SetValue("CsvResultTypes", self.config.csv_em_results)
+        study.GetStudyProperties().SetValue("CsvResultTypes", self.config.csv_results)
         study.GetStudyProperties().SetValue(
             "DeleteResultFiles", self.config.del_results_after_calc
         )
@@ -1401,8 +672,10 @@ class AM_SynR_Opt_Analyzer:
             cond = study.CreateCondition("Ironloss", "IronLossConRotor")
             cond.SetValue("RevolutionSpeed", "freq*60/%d" % self.machine_variant.p)
             cond.ClearParts()
-            cond.AddSet(model.GetSetList().GetSet("RotorIron"), 0)
+            sel = cond.GetSelection()
+            sel.SelectPartByPosition(self.machine_variant.r_sh + 0.1 * self.machine_variant.d_r1, 1, 0)
 
+            cond.AddSelected(sel)
             # Use FFT for hysteresis to be consistent with JMAG's results
             cond.SetValue("HysteresisLossCalcType", 1)
             cond.SetValue("PresetType", 3)
@@ -1442,32 +715,12 @@ class AM_SynR_Opt_Analyzer:
         study.GetMaterial(self.comp_stator_core.name).SetValue("LaminationFactor",
             self.machine_variant.stator_iron_mat["core_stacking_factor"])
 
-        study.SetMaterialByName(self.comp_rotor_core_1i.name, 
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"])
-        study.GetMaterial(self.comp_rotor_core_1i.name).SetValue("Laminated", 1)
-        study.GetMaterial(self.comp_rotor_core_1i.name).SetValue("LaminationFactor",
-            self.machine_variant.rotor_iron_mat["rotor_iron_stacking_factor"])
-        
-        study.SetMaterialByName(self.comp_rotor_core_2i.name, 
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"])
-        study.GetMaterial(self.comp_rotor_core_2i.name).SetValue("Laminated", 1)
-        study.GetMaterial(self.comp_rotor_core_2i.name).SetValue("LaminationFactor",
-            self.machine_variant.rotor_iron_mat["rotor_iron_stacking_factor"])
+        study.SetMaterialByName(self.comp_rotor_core.name, 
+            self.machine_variant.rotor_iron_mat["core_material"])
+        study.GetMaterial(self.comp_rotor_core.name).SetValue("Laminated", 1)
+        study.GetMaterial(self.comp_rotor_core.name).SetValue("LaminationFactor",
+            self.machine_variant.rotor_iron_mat["core_stacking_factor"])
 
-        study.SetMaterialByName(self.comp_rotor_core_3i.name, 
-            self.machine_variant.rotor_iron_mat["rotor_iron_material"])
-        study.GetMaterial(self.comp_rotor_core_3i.name).SetValue("Laminated", 1)
-        study.GetMaterial(self.comp_rotor_core_3i.name).SetValue("LaminationFactor",
-            self.machine_variant.rotor_iron_mat["rotor_iron_stacking_factor"])
-        
-        study.SetMaterialByName(self.comp_rotor_core_1b.name,
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"])
-        study.GetMaterial(self.comp_rotor_core_1b.name).SetValue("Laminated", 0)
-
-        study.SetMaterialByName(self.comp_rotor_core_2b.name,
-            self.machine_variant.rotor_barrier_mat["rotor_barrier_material"])
-        study.GetMaterial(self.comp_rotor_core_2b.name).SetValue("Laminated", 0)
-        
         study.SetMaterialByName(self.comp_shaft.name,
             self.machine_variant.shaft_mat["shaft_material"])
         study.GetMaterial(self.comp_shaft.name).SetValue("Laminated", 0)
@@ -1687,7 +940,7 @@ class AM_SynR_Opt_Analyzer:
         study.GetMeshControl().CreateCondition("Part", "ShaftMeshCtrl")
         study.GetMeshControl().GetCondition("ShaftMeshCtrl").SetValue("Size", 1) # 10 mm
         study.GetMeshControl().GetCondition("ShaftMeshCtrl").ClearParts()
-        study.GetMeshControl().GetCondition("ShaftMeshCtrl").AddSet(model.GetSetList().GetSet("Motion_Region"), 0)
+        study.GetMeshControl().GetCondition("ShaftMeshCtrl").AddSet(model.GetSetList().GetSet("ShaftSet"), 0)
 
         def mesh_all_cases(study):
             numCase = study.GetDesignTable().NumCases()
@@ -1733,7 +986,6 @@ class AM_SynR_Opt_Analyzer:
 
             circular_pattern.SetProperty("CenterType", 2)  # origin I guess
 
-            # print('Copy', Q_float)
             circular_pattern.SetProperty("Angle", "360/%d" % Q_float)
             circular_pattern.SetProperty("Instance", str(Q_float))
 
@@ -1777,6 +1029,7 @@ class AM_SynR_Opt_Analyzer:
 
             # RotateCopy
             if tool.iRotateCopy != 0:
+                # print('Copy', self.iRotateCopy)
                 regionCircularPattern360Origin(
                     region_object, tool, bMerge=bRotateMerge
                 )
@@ -1785,17 +1038,6 @@ class AM_SynR_Opt_Analyzer:
         return list_region_objects
 
     def extract_JMAG_results(self, path, study_name):
-        max_stress_csv_path = path + study_name + "_calculation_MaxStress.csv"
-        print(max_stress_csv_path)
-        max_stress_df = pd.read_csv(max_stress_csv_path, skiprows=5)
-        
-        fea_data = {
-            "max_stress": max_stress_df,
-        }
-
-        return fea_data
-    
-    def extract_JMAG_EM_results(self, path, study_name):
         current_csv_path = path + study_name + "_circuit_current.csv"
         torque_csv_path = path + study_name + "_torque.csv"
         force_csv_path = path + study_name + "_force.csv"
@@ -1834,11 +1076,6 @@ class AM_SynR_Opt_Analyzer:
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
             "stator_slot_area": self.stator_slot_area,
-            "new_speed": self.operating_point.new_speed,
-            "max_stress": self.machine_variant.max_stress,
-            "yield_stress": self.machine_variant.yield_stress,
-            "rotor_speed": self.operating_point.speed,
-            "final_speed": self.machine_variant.final_speed
         }
 
         return fea_data
