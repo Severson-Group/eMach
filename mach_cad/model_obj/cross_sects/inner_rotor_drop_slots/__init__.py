@@ -540,7 +540,7 @@ class CrossSectInnerRotorDropSlotsBar(CrossSectBase):
 
     def _validate_attr(self):
 
-        if isinstance(self.rotor_core, CrossSectInnerRotorDropSlots):
+        if isinstance(self.rotor_core, CrossSectInnerRotorDropSlots) or isinstance(self.rotor_core, CrossSectInnerRotorDropSlotsPartial):
             pass
         else:
-            raise TypeError("rotor_core not of type CrossSectInnerRotorDropSlots")
+            raise TypeError("rotor_core not of type CrossSectInnerRotorDropSlots or CrossSectInnerRotorDropSlotsPartial")

@@ -65,7 +65,7 @@ class MyStatorThermalPostAnalyzer:
 
     def get_next_state(results, stateIn):
         if results["Coil temperature"] > 300 == True:
-            raise InvalidDesign("Magnet temperature beyond limits")
+            raise InvalidDesign("Coil temperature beyond limits")
         else:
             stateOut = deepcopy(stateIn)
             stateOut.conditions.T_coil = results["Coil temperature"]

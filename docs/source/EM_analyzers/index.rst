@@ -4,7 +4,7 @@ Electromagnetic Analyzers
 This section provides documentation for the electromagnetic analyzers supported by eMach.
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 4
     :numbered:
 
     bfield_outer_stator
@@ -13,4 +13,5 @@ This section provides documentation for the electromagnetic analyzers supported 
     force_vector_data
     stator_wdg_res
     bspm_jmag2d_analyzer
+    winding_factors
     SynR_jmag2d_analyzer

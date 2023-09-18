@@ -37,5 +37,5 @@ jobs:
         -H "Accept: application/vnd.github.everest-preview+json" \
         -H "Content-Type: application/json" \
         https://api.github.com/repos/Severson-Group/eMachPrivate/actions/workflows/emach-update.yml/dispatches \
-        --data '{"event_type": "update_submodule"}'
+        --data '{"ref": "develop"}'
 

@@ -121,7 +121,9 @@ class DesignProblem:
             return objs
 
         except Exception as e:
-            if type(e) is InvalidDesign:
+            # Check if e is an InvalidDesign exception using the class name
+            # This is done to catch InvalidDesign exceptions regardless of what module they orginate from (mach_opt.mach_opt.InvalidDesign OR eMachPrivate.eMach.mach_opt.mach_opt.InvalidDesign)
+            if (e.__class__.__name__ == InvalidDesign().__class__.__name__): 
                 temp = tuple(map(tuple, 1e4 * np.ones([1, self.get_nobj()])))
                 objs = temp[0]
                 return objs
