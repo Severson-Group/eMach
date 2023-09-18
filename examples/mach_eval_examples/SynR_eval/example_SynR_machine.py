@@ -46,10 +46,10 @@ SynR_dimensions = {
 
 SynR_parameters = {
     'p': 2,
-    'Q': 36,
+    'Q': 12,
     "name": "Example_SynR_Machine",
-    'rated_speed': 20244,
-    'rated_current': 4,   
+    'rated_speed': 1800,
+    'rated_current': 20,   
 }
 
 SynR_materials = {
@@ -62,14 +62,14 @@ SynR_materials = {
 
 SynR_winding = {
     "no_of_layers": 2,
-    "layer_phases": [ ['U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V'],
-                      ['U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U', 'U', 'U', 'W', 'W', 'W', 'V', 'V', 'V', 'U' ] ],
-    "layer_polarity": [ ['+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-'],
-                        ['+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+', '+', '+', '-', '-', '-', '+'] ],
-    "pitch": 8,
-    "Z_q": 36,
+    "layer_phases": [ ['U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V'],
+                        ['W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U', 'W', 'V', 'U'] ],
+    "layer_polarity": [ ['+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-'],
+                        ['-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+'] ],
+    "pitch": 2,
+    "Z_q": 20,
     "Kov": 1.8,
-    "Kcu": 0.4,
+    "Kcu": 0.5,
     "phase_current_offset": 0,
 }
 
@@ -79,7 +79,7 @@ Example_SynR_Machine = SynR_Machine(
 
 ################ DEFINE SynR operating point ################
 Machine_Op_Pt = SynR_Machine_Oper_Pt(
-    speed=20244,
+    speed=1800,
     speed_ratio=1,
     phi_0 = 0,
     ambient_temp=25,
