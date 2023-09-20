@@ -68,9 +68,10 @@ in the tables below:
 
 The example code initializing the machine design for the optimized SynR design provided in the example found in the ``SynR Design`` section of 
 ``MACHINE DESIGNS`` is also identical, along with the ``example_SynR_machine`` file in the ``SynR_eval`` folder within the ``mach_eval_examples``
-folder in the ``examples`` folder of ``eMach``. This code is used exactly the same, as another file must be created and placed one level outside 
-of the ``eMach`` folder in the repository in which it lies. The objective of this file is to call the example machine (in this case the 
-``example_SynR_machine.py`` that was just created in the ``SynR_eval`` folder) and create a machine design object. 
+folder in the ``examples`` folder of ``eMach``. This example code is used exactly the same, where the step within the ``SynR_evaluator`` file
+should be changed to the ``inductance_step``, which is also contained in the aforementinoed folder. The objective of this file is to call the 
+example machine (in this case the ``example_SynR_machine.py`` that was just created in the ``SynR_eval`` folder) and create a machine design 
+object. 
 
 .. code-block:: python
 
@@ -96,9 +97,7 @@ of the ``eMach`` folder in the repository in which it lies. The objective of thi
     results = SynR_evaluator.evaluate(design_variant)
 
 Example code defining the inductance step is provided below. This code defines the analyzer problem class (input to the analyzer), 
-initializes the analyzer class with an explanation of the required configurations, and calls the post-analyzer class. The 
-``SynR_Inductance_PostAnalyzer`` class is used to process the inductance data and saliency ratio and to print the results. A copy of 
-this file lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder.
+initializes the analyzer class with an explanation of the required configurations, and calls the post-analyzer class.
 
 .. code-block:: python
 
@@ -152,6 +151,94 @@ this file lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder.
     SynR_inductance_analysis = SynR_inductance.SynR_Inductance_Analyzer(configuration)
 
     inductance_step = AnalysisStep(SynR_Inductance_ProblemDefinition, SynR_inductance_analysis, SynR_Inductance_PostAnalyzer)
+
+The ``SynR_Inductance_PostAnalyzer`` class is used to process the inductance data and saliency ratio and to print the results. A copy of 
+the post-analyzer file also lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder. This code can be seen below:
+
+.. code-block:: python
+
+    import copy
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import scipy.optimize
+
+    class SynR_Inductance_PostAnalyzer:
+        
+        def get_next_state(results, in_state):
+            state_out = copy.deepcopy(in_state)
+
+            ############################ Extract required info ###########################
+            inductances = results["coil_inductances"]
+            I_hat = results["current_peak"]
+
+            ############################ post processing ###########################
+            data = inductances.to_numpy() # change csv format to readable array
+            
+            t = data[:,0] # define x axis data as time
+            Uu = data[:,1] # define y axis data as self inductance
+            Uv = data[:,2] # define y axis data as mutual inductance
+
+            # curve fit inductance values and calculate curve
+            def fit_sin(t, y):
+                fft_func = np.fft.fftfreq(len(t), (t[1]-t[0])) # define fft function with assumed uniform spacing
+                fft_y = abs(np.fft.fft(y)) # carry out fft function for inductance values
+                guess_freq = abs(fft_func[np.argmax(fft_y[1:])+1]) # excluding the zero frequency "peak", which can cause problematic fits
+                guess_amp = np.std(y) # guess amplitude based on one standard deviation
+                guess_offset = np.mean(y) # guess y offset based on average of magnitude
+                guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset]) # arrage in array
+                
+                # define sin function 
+                def sinfunc(t, A, w, p, c):  
+                    return A * np.sin(w*t + p) + c
+                
+                popt, pcov = scipy.optimize.curve_fit(sinfunc, t, y, p0=guess) # calculate sin function fit
+                A, w, p, c = popt # assign appropriate variables
+                fitfunc = lambda t: A * np.sin(w*t + p) + c # define fit function for curve fit
+                
+                # define function used to calculate least square
+                def sumfunc(x):
+                    return sum((sinfunc(t, x[0], x[1], x[2], x[3]) - y)**2)
+                
+                sUx = scipy.optimize.minimize(fun=sumfunc, x0=np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset])) # calculate matching curve fit values with minimum error
+                return [{"amp": A, "omega": w, "phase": p, "offset": c, "fitfunc": fitfunc}, sUx]
+
+            [Uu_fit, sUu] = fit_sin(t, Uu) # carry out calculations on self inductance
+            [Uv_fit, sUv] = fit_sin(t, Uv) # carry out calculations on mutual inductance
+            
+            fig1, ax1 = plt.subplots()
+            ax1.plot(t, Uu, "-k", label="y", linewidth=2)
+            ax1.plot(t, Uu_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
+            ax1.legend(loc="best")
+            plt.savefig("temp1.svg")
+
+            fig2, ax2 = plt.subplots()
+            ax2.plot(t, Uv, "-k", label="y", linewidth=2)
+            ax2.plot(t, Uv_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
+            ax2.legend(loc="best")
+            plt.savefig("temp2.svg")
+
+            Lzero = 2/3 * abs(sUv.x[3]); # calculate L0 based on equations in publication
+            Lg = abs(sUv.x[0]) # calculate Lg based on equations in publication
+            Lls = abs(sUu.x[3]) # calculate Lls based on equations in publication
+            Ld = (Lls + 3/2*(Lzero + Lg))/I_hat # calculate Ld based on equations in publication
+            Lq = (Lls + 3/2*(Lzero - Lg))/I_hat # calculate Lq based on equations in publication
+            saliency_ratio = Ld/Lq # calculate saliency ratio
+
+            ############################ Output #################################
+            post_processing = {}
+            post_processing["Ld"] = Ld
+            post_processing["Lq"] = Lq
+            post_processing["saliency_ratio"] = saliency_ratio
+
+            state_out.conditions.inductance = post_processing
+
+            print("\n************************ INDUCTANCE RESULTS ************************")
+            print("Ld = ", Ld, " H")
+            print("Lq = ", Lq, " H")
+            print("Saliency Ratio = ", saliency_ratio)
+            print("*************************************************************************\n")
+
+            return state_out
 
 Output to User
 **********************************
