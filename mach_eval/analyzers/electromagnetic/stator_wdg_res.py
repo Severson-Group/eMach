@@ -17,6 +17,7 @@ class StatorWindingResistanceProblem:
         Kov: winding overlength factor
         sigma_cond: conductor conductivity [Siemens/m]
         slot_area: stator slot area [m^2]
+        n_layers: number of layers (1 for a single-layer and 2 for a double-layer winding)
 
     """
 
@@ -43,11 +44,14 @@ class StatorWindingResistanceAnalyzer:
 
         Args:
             problem: object of type StatorWindingResistanceProblem holding force data
-        Returns:
-            R_wdg: phase winding resistance [Ohm]
-            R_wdg_coil_ends: phase winding resistance due to coil ends [Ohm]
-            R_wdg_coil_sides: phase winding resistance due to coil sides [Ohm]
+        Returns results dictionary with the following parameters:
+            l_coil: length of a single loop of a coil [m]
+            l_ew: length of an end winding (one side) [m]
+            R_coil: resistance of a coil [m]
+            R_ew: resistance of an end winding [Ohms]
+            R_wdg: resistance of a phase winding [Ohms]
         """
+
         r_si = problem.r_si
         d_sp = problem.d_sp
         d_st = problem.d_st
