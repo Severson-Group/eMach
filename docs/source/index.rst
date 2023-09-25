@@ -46,11 +46,11 @@ links provided on the left to familiarize themselves with the repository.
 
 .. toctree::
    :hidden:
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Guidelines
 
    contribution
-   
+   code_documentation
    
 
 .. toctree::
