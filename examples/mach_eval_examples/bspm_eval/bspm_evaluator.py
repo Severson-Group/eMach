@@ -1,8 +1,12 @@
 import os
 import sys
 
+
+os.chdir(os.path.dirname(__file__))
+
 # add the directory 3 levels above this file's directory to path for module import
 sys.path.append(os.path.dirname(__file__)+"/../../..")
+sys.path.append(os.path.dirname(__file__)+"/../../../..")
 sys.path.append(os.path.dirname(__file__))
 
 from mach_eval import MachineEvaluator
