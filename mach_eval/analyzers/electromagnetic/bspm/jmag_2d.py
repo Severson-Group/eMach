@@ -166,9 +166,10 @@ class BSPM_EM_Analyzer:
     @property
     def copper_loss(self):
         copper_loss_per_phase = (
-            ((self.current_trms / 2) ** 2 + self.current_srms**2) * self.R_coil * self.z_C
+            ((self.current_trms / 2) ** 2 + self.current_srms ** 2) * self.R_coil * self.z_C
         )
-        copper_loss = self.m * copper_loss_per_phase,
+
+        copper_loss = self.m * copper_loss_per_phase
         return copper_loss
 
     def draw_machine(self, toolJd):
