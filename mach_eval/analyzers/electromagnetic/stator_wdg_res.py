@@ -70,7 +70,9 @@ class StatorWindingResistanceAnalyzer:
         # Length between adjacent slots evaluated at median depth of slot
         tau_u = 2 * np.pi / Q * (r_si + d_sp + d_st / 2)
         # Length of end winding
-        l_ew = 0.5 * np.pi * (tau_u + w_st) / 2 + tau_u * Kov * (y - 1)
+        l_1 = tau_u * Kov * (y - 1)
+        l_2 = 1 / 4 * np.pi * (tau_u + w_st) / 2
+        l_ew = l_1 + 2 * l_2
         # Mean length of one coil
         l_coil = 2 * (l_st + l_ew)
 

@@ -66,7 +66,7 @@ Here, :math:`\tau_u` is calculated as the length of an arc (when a stator is in 
     \tau_u &= \frac{2 \pi}{Q} (r_\text{si} + d_\text{sp} + \frac{d_\text{st}}{2})\\
 
 where :math:`Q` is the number of stator slots, :math:`r_\text{si}` is the stator inner radius, :math:`d_\text{sp}` is the stator pole thickness, and :math:`d_\text{st}` is the stator 
-tooth depth (see :doc:`here <../machines/bspm/bspm_machine>`).
+tooth depth (see :doc:`here <../machines/bspm/bspm_machine>` or the figure below).
 
 
 Input from User
