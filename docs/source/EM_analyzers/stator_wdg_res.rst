@@ -24,7 +24,7 @@ To calculate :math:`l_\text{coil}`, the following coil shape is assumed
 .. figure:: ./Images/coil_diagram.svg
    :alt: coil_diagram 
    :align: center
-   :width: 500 
+   :width: 250 
 
 This is the view when one side of the stator is cut along the axial direction and unrolled. Using this diagram, :math:`l_\text{coil}` is calculated as
 
