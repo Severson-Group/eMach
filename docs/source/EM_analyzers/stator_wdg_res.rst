@@ -23,7 +23,7 @@ Conductor area is found as:
 
 .. math::
     
-    A_\text{cond} = \frac{K_\text{Cu}A_\text{slot}}{(n_\text{layers}z_Q)}
+    A_\text{cond} = \frac{K_\text{Cu}A_\text{slot}}{n_\text{layers}z_Q}
     
 where :math:`A_\text{slot}` is the stator slot area, :math:`K_\text{Cu}` is the slot fill factor, and :math:`n_\text{layers}` is the number of layers (:math:`n_\text{layers}=1` 
 for a single-layer winding and :math:`n_\text{layers} = 2` for a double-layer winding). 
