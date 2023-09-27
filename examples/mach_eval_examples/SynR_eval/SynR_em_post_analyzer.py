@@ -10,7 +10,7 @@ from mach_eval.analyzers.torque_data import (
 
 class SynR_EM_PostAnalyzer:
     def copper_loss(self):
-        return 3 * (self.I ** 2) * (self.R_wdg + self.R_wdg_coil_ends + self.R_wdg_coil_sides)
+        return 3 * (self.I ** 2) * (self.R_wdg)
 
     def get_next_state(results, in_state):
         state_out = copy.deepcopy(in_state)

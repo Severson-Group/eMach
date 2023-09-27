@@ -7,8 +7,9 @@ l_st,Stack length,m
 Q,Number of slots,
 y,Slot pitch (in number of slots),
 z_Q,Number of turns per coil,
-z_C,Number of coils per phase,
+z_C,Number of series coils per phase,
 Kcu,Slot fill factor,
 Kov,Winding overlength factor,
 sigma_cond,Conductor conductivity,S/m
 slot_area,Stator slot area,m^2
+n_layers,Number of layers (single or double),
