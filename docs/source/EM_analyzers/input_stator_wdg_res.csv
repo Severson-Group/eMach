@@ -12,3 +12,4 @@ Kcu,Slot fill factor,
 Kov,Winding overlength factor,
 sigma_cond,Conductor conductivity,S/m
 slot_area,Stator slot area,m^2
+n_layers,Number of layers (single or double),

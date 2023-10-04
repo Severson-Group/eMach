@@ -17,10 +17,11 @@ class StatorWindingResistanceProblem:
         Kov: winding overlength factor
         sigma_cond: conductor conductivity [Siemens/m]
         slot_area: stator slot area [m^2]
+        n_layers: number of layers (1 for a single-layer and 2 for a double-layer winding)
 
     """
 
-    def __init__(self, r_si, d_sp, d_st, w_st, l_st, Q, y, z_Q, z_C, Kcu, Kov, sigma_cond, slot_area):
+    def __init__(self, r_si, d_sp, d_st, w_st, l_st, Q, y, z_Q, z_C, Kcu, Kov, sigma_cond, slot_area,n_layers):
         self.r_si = r_si
         self.d_sp = d_sp
         self.d_st = d_st
@@ -34,6 +35,7 @@ class StatorWindingResistanceProblem:
         self.Kov = Kov
         self.sigma_cond = sigma_cond
         self.slot_area = slot_area
+        self.n_layers = n_layers
 
 
 class StatorWindingResistanceAnalyzer:
@@ -42,11 +44,14 @@ class StatorWindingResistanceAnalyzer:
 
         Args:
             problem: object of type StatorWindingResistanceProblem holding force data
-        Returns:
-            R_wdg: phase winding resistance [Ohm]
-            R_wdg_coil_ends: phase winding resistance due to coil ends [Ohm]
-            R_wdg_coil_sides: phase winding resistance due to coil sides [Ohm]
+        Returns results dictionary with the following parameters:
+            l_coil: length of a single loop of a coil [m]
+            l_ew: length of an end winding (one side) [m]
+            R_coil: resistance of a coil [m]
+            R_ew: resistance of an end winding [Ohms]
+            R_wdg: resistance of a phase winding [Ohms]
         """
+
         r_si = problem.r_si
         d_sp = problem.d_sp
         d_st = problem.d_st
@@ -60,20 +65,31 @@ class StatorWindingResistanceAnalyzer:
         Kov = problem.Kov
         sigma_cond = problem.sigma_cond
         slot_area = problem.slot_area
+        n_layers = problem.n_layers
 
         # Length between adjacent slots evaluated at median depth of slot
         tau_u = 2 * np.pi / Q * (r_si + d_sp + d_st / 2)
-        # Length of end winding (one side of coil)
-        l_end_wdg = 0.5 * np.pi * (tau_u + w_st) / 2 + tau_u * Kov * (y - 1)
-        # Length of end winding (both sides of coil)
-        l_coil_end_wdg = 2 * l_end_wdg
+        # Length of end winding
+        l_ew = 0.5 * np.pi * (tau_u + w_st) / 2 + tau_u * Kov * (y - 1)
         # Mean length of one coil
-        l_coil = 2 * l_st + l_coil_end_wdg
+        l_coil = 2 * (l_st + l_ew)
+
         # Conductor area
-        cond_area = slot_area * Kcu / z_Q
+        cond_area = slot_area / n_layers * Kcu / z_Q
 
-        R_wdg = (l_coil * z_Q * z_C) / (sigma_cond * cond_area)
-        R_wdg_coil_ends = (l_coil_end_wdg * z_Q * z_C) / (sigma_cond * cond_area)
-        R_wdg_coil_sides = (2 * l_st * z_Q * z_C) / (sigma_cond * cond_area)
+        # Coil resistance
+        R_coil = (l_coil * z_Q) / (sigma_cond * cond_area)
+        # End winding resistance
+        R_ew = (l_ew * z_Q) / (sigma_cond * cond_area)
+        # Phase winding resistance
+        R_wdg = R_coil * z_C
 
-        return R_wdg, R_wdg_coil_ends, R_wdg_coil_sides
+        results = {
+            'l_coil': l_coil,
+            'l_ew': l_ew,
+            'R_coil': R_coil,
+            'R_ew': R_ew,
+            'R_wdg': R_wdg,
+        }
+
+        return results
