@@ -1,6 +1,5 @@
 Key,Description,Units
 speed,Speed at which machine is evaluated,RPM
-speed_ratio,Decimal percentage at which speed is commanded,-
 phi_0,Electrical angle at which currents are offset,degrees
 ambient_temp,Ambient temperature at which machine is evaluated,deg C
 rotor_temp_rise,Expected rotor temperature rise,deg C

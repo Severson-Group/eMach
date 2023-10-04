@@ -7,10 +7,6 @@ from mach_eval.analyzers.torque_data import (
     ProcessTorqueDataProblem,
     ProcessTorqueDataAnalyzer,
 )
-from mach_eval.analyzers.mechanical.windage_loss import (
-    WindageLossProblem,
-    WindageLossAnalyzer,
-)
 
 class SynR_EM_PostAnalyzer:
     def copper_loss(self):
@@ -27,7 +23,7 @@ class SynR_EM_PostAnalyzer:
         number_of_total_steps = results["current"].shape[0]
         i1 = number_of_total_steps - no_of_steps
         i2 = - int(no_of_steps / no_of_rev * 0.25)
-        omega_m = results["rotor_speed"] * 2 * np.pi / 60
+        omega_m = machine.omega_m
         m = 3
         drive_freq = results["drive_freq"]
         R_wdg = results["stator_wdg_resistances"][0]
@@ -62,13 +58,6 @@ class SynR_EM_PostAnalyzer:
         PRW = TRW * omega_m
         PRV = TRV * omega_m
 
-        # Windage
-        windage_loss_prob = WindageLossProblem(
-            Omega=omega_m, R_ro=machine.r_ro/1000, stack_length=machine.l_st/1000,
-            R_st=machine.r_si/1000, u_z=0, T_air=op_pt.ambient_temp
-            )
-        [windage_loss_radial, windage_loss_endFace, windage_loss_axial] = WindageLossAnalyzer.analyze(windage_loss_prob)
-
         # Losses
         # From JMAG
         stator_iron_loss = results["iron_loss"]["StatorCore"][0]
@@ -78,15 +67,14 @@ class SynR_EM_PostAnalyzer:
         stator_hysteresis_loss= results["hysteresis_loss"]["StatorCore"][0]
         rotor_hysteresis_loss = results["hysteresis_loss"]["RotorCore"][0]
         stator_ohmic_loss = results["ohmic_loss"]["Coils"].iloc[i2:].mean()
-        windage_loss = windage_loss_axial + windage_loss_endFace + windage_loss_radial
         
         # Calculate stator winding ohmic losses
-        I_hat = machine.rated_current
+        I_hat = machine.rated_current * op_pt.current_ratio
         stator_calc_ohmic_loss = R_wdg * m / 2 * I_hat ** 2
 
         # Total losses, output power, and efficiency
         total_losses = (
-            stator_hysteresis_loss + rotor_hysteresis_loss + stator_calc_ohmic_loss + windage_loss)
+            stator_iron_loss + rotor_iron_loss + stator_calc_ohmic_loss)
         P_out = torque_avg * omega_m
         efficiency = P_out / (P_out + total_losses)
 
@@ -115,16 +103,8 @@ class SynR_EM_PostAnalyzer:
 
         state_out.conditions.em = post_processing
 
-        print("\n************************ ELECTROMAGNETIC LOSSES ************************")
-        print("Stator Ohmic = ", stator_calc_ohmic_loss, " W",)
-        print("Windage = ", windage_loss, " W")
-        print("Stator Iron = ", stator_hysteresis_loss, " W",)
-        print("Rotor Iron = ", rotor_hysteresis_loss, " W")
-        print("*************************************************************************\n")
-
         print("\n************************ ELECTROMAGNETIC RESULTS ************************")
         #print("Torque = ", torque_avg, " Nm")
-        print("Speed-Power = ", omega_m*np.sqrt(P_out), " RPM/kW") 
         print("Torque density = ", TRV, " Nm/m3",)
         print("Torque ripple = ", torque_ripple)
         #print("Power = ", P_out, " W")

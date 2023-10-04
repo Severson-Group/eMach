@@ -16,7 +16,6 @@ class SynR_EM_Problem:
         self.machine = machine
         self.operating_point = operating_point
         self._validate_attr()
-        self._check_geom()
 
     def _validate_attr(self):
         if 'SynR_Machine' in str(type(self.machine)):
@@ -28,19 +27,6 @@ class SynR_EM_Problem:
             pass
         else:
             raise TypeError("Invalid settings type")
-        
-    def _check_geom(self):
-        x1 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1/2 - self.machine.l_b4/2)*np.cos(np.pi/4)
-        y1 = self.machine.l_b1 + self.machine.w_b1/2 + (self.machine.l_b4/2 + self.machine.d_r1 + self.machine.r_ri)*np.cos(np.pi/4)
-        r_ro_compare1 = np.sqrt(x1**2 + y1**2)
-        x2 = (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.w_b2/2 - self.machine.l_b5/2)*np.cos(np.pi/4)
-        y2 = self.machine.l_b2 + self.machine.w_b2/2 + (self.machine.r_ri + self.machine.d_r1 + self.machine.w_b1 + self.machine.d_r2 + self.machine.l_b5/2)*np.cos(np.pi/4)
-        r_ro_compare2 = np.sqrt(x2**2 + y2**2)
-        if r_ro_compare1 < 0.99*self.machine.r_ro and r_ro_compare2 < 0.99*self.machine.r_ro and self.machine.l_b4 > 1.25*self.machine.w_b1 and self.machine.l_b5 > 1.25*self.machine.w_b2:
-            print("\nGeometry is valid!")
-            print("\n")
-        else:
-            raise InvalidDesign("Invalid Geometry - Flux Barriers Don't Fit")
 
 
 class SynR_EM_Analyzer:
@@ -162,7 +148,7 @@ class SynR_EM_Analyzer:
 
     @property
     def drive_freq(self):
-        speed_in_elec_ang = self.operating_point.speed / 60 * self.machine_variant.p
+        speed_in_elec_ang = 2 * np.pi * self.operating_point.speed / 60 * self.machine_variant.p
         drive_freq = speed_in_elec_ang
         return drive_freq
 
@@ -176,7 +162,7 @@ class SynR_EM_Analyzer:
 
     @property
     def I_hat(self):
-        I_hat = self.machine_variant.rated_current
+        I_hat = self.machine_variant.rated_current * self.operating_point.current_ratio
         return I_hat
 
     @property
@@ -230,10 +216,6 @@ class SynR_EM_Analyzer:
         ####################################################
         # Adding parts objects
         ####################################################
-
-        rotor_rotation = mo.DimDegree(-180 / (2 * self.machine_variant.p))
-        stator_rotation = mo.DimDegree(-180 / self.machine_variant.Q)
-
         self.stator_core = mo.CrossSectInnerRotorStatorPartial(
             name="StatorCore",
             dim_alpha_st=mo.DimDegree(self.machine_variant.alpha_st),
@@ -249,21 +231,21 @@ class SynR_EM_Analyzer:
             dim_r_sb=mo.DimMillimeter(0),
             Q=self.machine_variant.Q,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=stator_rotation),
+            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
         self.winding_layer1 = mo.CrossSectInnerRotorStatorRightSlot(
             name="WindingLayer1",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=stator_rotation),
+            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
         self.winding_layer2 = mo.CrossSectInnerRotorStatorLeftSlot(
             name="WindingLayer2",
             stator_core=self.stator_core,
             location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)],
-            theta=stator_rotation),
+            theta=mo.DimDegree(-180 / self.machine_variant.Q)),
             )
 
         self.rotor_core = mo.CrossSectFluxBarrierRotorPartial(
@@ -287,8 +269,7 @@ class SynR_EM_Analyzer:
             dim_l_b5=mo.DimMillimeter(self.machine_variant.l_b5),
             dim_l_b6=mo.DimMillimeter(self.machine_variant.l_b6),
             p=2,
-            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], 
-            theta=rotor_rotation),
+            location=mo.Location2D(anchor_xy=[mo.DimMillimeter(0), mo.DimMillimeter(0)], theta=mo.DimDegree(-180 / (2 * self.machine_variant.p))),
             )
 
         self.shaft = mo.CrossSectHollowCylinder(
@@ -1095,7 +1076,6 @@ class SynR_EM_Analyzer:
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
             "stator_slot_area": self.stator_slot_area,
-            "rotor_speed": self.operating_point.speed
         }
 
         return fea_data
