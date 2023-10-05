@@ -68,6 +68,37 @@ developers of the new feature, they can open a PR (or simply merge) their user b
 
 Valid branch name examples: ``user/johndoe/motor_tests``, ``user/janestil2/issue_652``, ``feature/regression_tests``, ``feature/tutorial_femm``
 
+Reviewer Checklists
+-------------------------------------------
+
+All PRs on GitHub must be reviewed by multiple separate parties prior to being integrated into the mainn ``develop`` branch of ``eMach``. A 
+minimum of two reviews are required, with more being preferred. When making a PR, the contributor must request a Level 1 and Level 2 reviewer,
+whose responsibilities for reviewing can be seen in the following subsections.
+
+Level 1 Review Requirements
+++++++++++++++++++++++++++++++++++++++++++++
+
+A Level 1 reviewer should be someone with a minimal-to-adequate understanding of the review material. This reviewer must accomplish the
+following tasks:
+
+1. Pull/fetch the branch being reviewed onto their device
+2. Run the code to ensure no errors occur 
+3. Verify that the results detailed in the PR documentation are true and accurate
+4. Ensure that any major changes/additions to the codebase are accompanied with proper documentation
+5. Review to the best of their abilities the contents of the PR to ensure its accuracy and validity
+6. Request changes/give approval to pass to a Level 2 reviewer
+
+Level 2 Review Requirements
+++++++++++++++++++++++++++++++++++++++++++++
+
+A Level 2 reviewer should be someone with a adequte-to-expert understanding of the review material. This reviewer must accomplish the
+following tasks:
+
+1. Pull/fetch the branch being reviewed onto their device
+2. Run the code to ensure no errors occur and verify results are accurate
+3. Investigate code to verify proper math/simulations are being done correctly
+4. Double check any references used to validate contents of the PR
+5. Request changes/give final approval for merge into ``develop``
 
 Documentation
 -------------------------------------------

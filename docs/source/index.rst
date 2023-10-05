@@ -50,7 +50,8 @@ links provided on the left to familiarize themselves with the repository.
    :caption: Guidelines
 
    contribution
-   code_documentation
+   code
+   documentation
    
 
 .. toctree::
