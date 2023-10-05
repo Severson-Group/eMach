@@ -15,3 +15,4 @@ This page contains links to analyzers in eMach which aid in evaluating the mecha
     inner_rotor_stator_thermal_analyzer
     SPM_structural_analyzer
     SPM_sleeve_analyzer
+    buried_pm_rotor_speed_limit_analyzer
