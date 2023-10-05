@@ -82,6 +82,8 @@ class DesignProblem:
         design_space: Objects which characterizes the design space of the optimization.
 
         dh: Data handlers which enable saving optimization results and its resumption.
+
+        invalid_design_objs: List of (large) objective values to use for invalid designs
     """
 
     def __init__(
