@@ -103,7 +103,7 @@ class DesignProblem:
             self.__invalid_design_objs = 1e4 * np.ones([1, self.get_nobj()])
         else:
             if len(invalid_design_objs) != self.get_nobj():
-                raise Exception("Incorrect lenth for invalid_design_objs")
+                raise Exception("Incorrect length for invalid_design_objs")
             self.__invalid_design_objs = invalid_design_objs
 
         dh.save_designer(designer)
