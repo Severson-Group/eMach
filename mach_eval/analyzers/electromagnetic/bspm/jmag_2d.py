@@ -156,11 +156,13 @@ class BSPM_EM_Analyzer:
 
     @property
     def z_C(self):
-        if len(self.machine_variant.layer_phases) == 1:
+        if self.machine_variant.no_of_layers == 1:
             z_C = self.machine_variant.Q / (2 * self.m)
-        elif len(self.machine_variant.layer_phases) == 2:
+        elif self.machine_variant.no_of_layers == 2:
             z_C = self.machine_variant.Q / (self.m)
-
+        else:
+            raise InvalidDesign(message="The number of winding layers must be 1 or 2")
+            
         return z_C
 
     @property
