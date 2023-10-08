@@ -4,13 +4,14 @@ import numpy as np
 class SynR_Machine_Oper_Pt:
     """This is a wrapper class designed to contain all relevant information
     on the operating point for obtaining electrical performance evaluation of
-    bearingless induction machines
+    synchronous reluctance machines
     """
 
     def __init__(self, speed, speed_ratio, phi_0, ambient_temp, rotor_temp_rise,):
         """
         Args:
             speed: Machine rotational speed in RPM.
+            speed_ratio: percent of speed being operated in decimal form.
             ambient_temp: ambient temperature in celsius.
             rotor_temp_rise: allowed rotor temperature rise in K.
             phi_0: current phase shift in deg.

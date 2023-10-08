@@ -162,13 +162,13 @@ class SynR_EM_Analyzer:
 
     @property
     def drive_freq(self):
-        speed_in_elec_ang = self.operating_point.speed / 60 * self.machine_variant.p
+        speed_in_elec_ang = (self.operating_point.speed * self.operating_point.speed_ratio) / 60 * self.machine_variant.p
         drive_freq = speed_in_elec_ang
         return drive_freq
 
     @property
     def speed(self):
-        return self.operating_point.speed
+        return (self.operating_point.speed * self.operating_point.speed_ratio)
 
     @property
     def elec_omega(self):
@@ -1095,7 +1095,7 @@ class SynR_EM_Analyzer:
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
             "stator_slot_area": self.stator_slot_area,
-            "rotor_speed": self.operating_point.speed
+            "rotor_speed": (self.operating_point.speed * self.operating_point.speed_ratio)
         }
 
         return fea_data
