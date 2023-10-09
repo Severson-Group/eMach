@@ -13,3 +13,4 @@ scale_axial_length,Boolean determining whether to scale axial length
 drive_freq,Drive frequency in Hz
 stator_wdg_resistances,"Array of stator winding resistances in Ohms: [total winding res., end winding res., res. along stack]"
 stator_slot_area_tha,Stator slot area in m^2
+speed,Final rotor speed
