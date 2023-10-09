@@ -139,6 +139,7 @@ Outputs to User
 ***********************************
 When a certain material in the rotor reaches its failure criterion, the script will break out of the for loop and return a tuple containing the following
 
+
 .. code-block:: python
 
    (True, 'material', 'speed')
