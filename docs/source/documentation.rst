@@ -65,7 +65,7 @@ Inputs from User
 *******************************************
 
 The ``user_inputs`` section of the machine needs to explain to the user what is required as inputs to the machine. This should come in the form the 
-following four dictionairies/libraries:
+following four dictionaries/libraries:
 
 1. Dimensions
 2. Parameters
@@ -79,7 +79,7 @@ should follow the form of the previous ``user_inputs`` and ``user_outputs`` tabl
 will be used by the machine evaluator file.
 
 The ``parameters`` section of the machine needs to divulge to the user the parameters of the machine configuration. Items such as pole pairs, slots, 
-names, rated conditions, etc. should be included here. The documentation of this subsection should cobeme in the form of organized tables and example 
+names, rated conditions, etc. should be included here. The documentation of this subsection should come in the form of organized tables and example 
 code. If additional information is necessary to understand the extent of the machine parameters, it should be included here. The table included in this 
 section should follow the form of the previous ``dimensions`` table. The example code contained in this section should be the code that will be used by 
 the machine evaluator file.
