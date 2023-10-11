@@ -45,6 +45,30 @@ results directly in the automatic creation of pretty, well indexed documentation
 hosted online on the Read the Docs platform which supports real-time document updation, or on Github pages via HTML files. It 
 should be noted that free document hosting with Read the Docs is supported only for public Git repositories.
 
+
+Git/GitHub Usage
+-------------------------------------------
+
+All code development should occur within the Git version control environment. When code is ready to be contributed back 
+to eMach, users should open a Pull Request (PR) on GitHub which explains their contribution.
+
+The branch naming conventions are as follows:
+
+- **User branch:** ``user/my_user_name/foo_bar`` -- "private" development sandbox per user
+- **Feature branch:** ``feature/foo_bar`` -- shared feature development
+
+**Hint:** Most development will occur in user branches! If multiple users are working on an eMach feature concurrently, use a feature branch.
+
+Contributors can expect that their user branches will not be commited to by other users---this is "private" space. On the other hand,
+feature branches are "public" space and should be treated as such---at any time, another developer can commit new code onto the branch.
+
+For example, if a big feature is being developed by several developers, a common feature branch will be created. Then, developers can
+branch from this common feature branch to their own private user branch. Once they are ready to share their code back with the other
+developers of the new feature, they can open a PR (or simply merge) their user branch back to the feature branch.
+
+Valid branch name examples: ``user/johndoe/motor_tests``, ``user/janestil2/issue_652``, ``feature/regression_tests``, ``feature/tutorial_femm``
+
+
 Documentation
 -------------------------------------------
 
