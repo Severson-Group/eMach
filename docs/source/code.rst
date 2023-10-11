@@ -1,15 +1,15 @@
 Code Guidelines
 -------------------------------------------
 
-The documentation of the ``eMach`` repository contains sections devoted to ``analyzers`` and ``machines``. All of the documentation in the 
+The documentation of the ``eMach`` repository contains sections devoted to ``analyzers`` and ``machine_designs``. All of the documentation in the 
 repository must be properly structured to ensure consistency as more contributors get added. This section contains the guidelines to detail the 
 ``code`` for each section of the ``eMach`` repository. 
 
 Analyzer Code
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The code required for each analyzer within the ``eMach`` repository must be structured to analyze any set of ``user_inputs`` and produce accurate 
-``user_outputs``. The code structure of each analyzer should contain each of the following classes:
+The code required for each analyzer within the ``eMach`` repository must be structured to analyze any set of user-defined inputs and produce 
+user-defined outputs. The code structure of each analyzer should contain each of the following classes:
 
 1. DesignProblem Class
 2. DesignAnalyzer Class
@@ -17,10 +17,11 @@ The code required for each analyzer within the ``eMach`` repository must be stru
 DesignProbelm Class
 *******************************************
 
-The ``DesignProblem`` class should contain all of the ``user_inputs`` and result in a single variable with multiple attributes that will be passed 
-into the ``DesignAnalyzer`` class. The goal of this class is to take as many inputs as required by the ``user_inputs`` and process them into any and 
-all required inputs of the ``DesignAnalyzer`` class. All input variables should be commented out and described as `attributes` of the problem class. 
-The output of this class shall be used as a singular input of the following ``DesignAnalyzer`` class.
+The ``DesignProblem`` class takes all of the user-defined inputs as its arguments. The output of the ``DesignProblem`` class is a single variable with 
+multiple attributes. Once defined, the ``DesignProblem`` output variable is passed into the ``DesignAnalyzer`` class. The goal of the ``DesignProblem`` 
+class is to take the user-defined inputs and process them into a single library that is usable by the ``DesignAnalyzer`` class. All attributes and 
+results of the ``DesignProblem`` class should be explained in commented code that lists the variable definition and unit(s). The output of this class 
+shall be used as an input of the following ``DesignAnalyzer`` class.
 
 DesignAnalyzer Class
 *******************************************
@@ -30,11 +31,11 @@ defined in the ``DesignProbelm`` class and uses various means of calculating, si
 (per described in the ``Analyzer_Documentation`` section). All inputs of the problem class should be listed as `arguments`, which should at the very
 least contain the defined problem. The outputs of the problem class should also be commented out in the code and described as `returns`. 
 
-Machine Code
+Machine Designs Code
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The code required for each machine within the ``eMach`` repository must be structured to analyze any set of ``user_inputs`` to produce an accurate 
-usable machine object. The code structure of each machine should contain each of the following code files:
+The code required for each machine design within the ``eMach`` repository must be structured to analyze any set of ``user_inputs`` to produce an 
+accurate usable machine object. The code structure of each machine design should contain each of the following code files:
 
 1. Machine
 2. Machine Operating Point

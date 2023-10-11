@@ -47,6 +47,7 @@ links provided on the left to familiarize themselves with the repository.
 .. toctree::
    :hidden:
    :maxdepth: 2
+   :numbered:
    :caption: Guidelines
 
    contribution

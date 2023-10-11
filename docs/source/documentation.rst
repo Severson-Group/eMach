@@ -1,7 +1,7 @@
 Documentation Guidelines
 -------------------------------------------
 
-The documentation of the ``eMach`` repository contains sections devoted to ``analyzers`` and ``machines``. All of the documentation in the 
+The documentation of the ``eMach`` repository contains sections devoted to ``analyzers`` and ``machine_designs``. All of the documentation in the 
 repository must be properly structured to ensure consistency as more contributors get added. This section contains the guidelines to detail the 
 ``documentation`` for each section of the ``eMach`` repository. 
 
@@ -42,7 +42,7 @@ shown as a result of this analyzer should be included in this section as well. T
 code that should be included in this section is any post-processing code to calculate the final variables or construct any plots. This code should not
 be the analyzer code itself, but any code that is required to post-process the analyzer outputs to usable data or images. 
 
-Machine Documentation
+Machine Designs Documentation
 ++++++++++++++++++++++++++++++++++++++++++++
 
 Each machine within the ``eMach`` codebase must be summarized such that the purpose and structure of how each machine is defined, constructed, and 

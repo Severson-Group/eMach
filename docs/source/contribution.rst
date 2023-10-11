@@ -82,11 +82,13 @@ A Level 1 reviewer should be someone with a minimal-to-adequate understanding of
 following tasks:
 
 1. Pull/fetch the branch being reviewed onto their device
-2. Run the code to ensure no errors occur 
-3. Verify that the results detailed in the PR documentation are true and accurate
-4. Ensure that any major changes/additions to the codebase are accompanied with proper documentation
-5. Review to the best of their abilities the contents of the PR to ensure its accuracy and validity
+2. Verify code works
+3. Edit language of the documentation if necessary
+4. Ensure proper python coding practices
+5. Add a preliminary review of eMach architecture and subject matter
 6. Request changes/give approval to pass to a Level 2 reviewer
+
+Level 1 reviewers as of 10/10/2023: Dante Newman, Anson Chan, Takahiro Noguchi
 
 Level 2 Review Requirements
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -95,10 +97,11 @@ A Level 2 reviewer should be someone with a adequte-to-expert understanding of t
 following tasks:
 
 1. Pull/fetch the branch being reviewed onto their device
-2. Run the code to ensure no errors occur and verify results are accurate
-3. Investigate code to verify proper math/simulations are being done correctly
-4. Double check any references used to validate contents of the PR
-5. Request changes/give final approval for merge into ``develop``
+2. Ensure code displays expected result
+3. Add an in depth review on eMach architecture and subject matter
+4. Request changes/give final approval for merge into ``develop``
+
+Level 2 reviewers as of 10/10/2023: Nathan Petersen, Anvar Khamitov, Eric Severson
 
 Documentation
 -------------------------------------------
