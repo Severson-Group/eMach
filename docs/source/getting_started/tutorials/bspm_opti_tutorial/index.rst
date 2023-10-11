@@ -315,7 +315,7 @@ After determining the design you wish to analyze in further detail, use the foll
 
 .. note:: The ``examples/mach_opt_examples/bspm_opt`` folder provides working code for the tutorial discussed here. You can run the 
     ``bspm_optimization.py`` script here to optimize the BSPM machine. The ``plot_script.py`` file in this folder plots the resulting 
-    data as is discussed in this eample.
+    data as is discussed in this example.
 
 Conclusion
 ----------------
