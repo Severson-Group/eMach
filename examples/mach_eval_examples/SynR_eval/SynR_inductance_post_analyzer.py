@@ -9,11 +9,11 @@ class SynR_Inductance_PostAnalyzer:
         state_out = copy.deepcopy(in_state)
 
         ############################ Extract required info ###########################
-        inductances = results["coil_inductances"]
+        flux_linkages = results["coil_flux_linkages"]
         I_hat = results["current_peak"]
 
         ############################ post processing ###########################
-        data = inductances.to_numpy() # change csv format to readable array
+        data = flux_linkages.to_numpy() # change csv format to readable array
         
         t = data[:,0] # define x axis data as time
         Uu = data[:,1] # define y axis data as self inductance
@@ -58,11 +58,11 @@ class SynR_Inductance_PostAnalyzer:
         ax2.legend(loc="best")
         plt.savefig("temp2.svg")
 
-        Lzero = 2/3 * abs(sUv.x[3]); # calculate L0 based on equations in publication
-        Lg = abs(sUv.x[0]) # calculate Lg based on equations in publication
-        Lls = abs(sUu.x[3]) # calculate Lls based on equations in publication
-        Ld = (Lls + 3/2*(Lzero + Lg))/I_hat # calculate Ld based on equations in publication
-        Lq = (Lls + 3/2*(Lzero - Lg))/I_hat # calculate Lq based on equations in publication
+        Lzero = 2/3 * abs(sUv.x[3])/I_hat; # calculate L0 based on equations in publication
+        Lg = abs(sUv.x[0])/I_hat # calculate Lg based on equations in publication
+        Lls = abs(sUu.x[3])/I_hat # calculate Lls based on equations in publication
+        Ld = (Lls + 3/2*(Lzero + Lg)) # calculate Ld based on equations in publication
+        Lq = (Lls + 3/2*(Lzero - Lg)) # calculate Lq based on equations in publication
         saliency_ratio = Ld/Lq # calculate saliency ratio
 
         ############################ Output #################################

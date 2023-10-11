@@ -35,7 +35,7 @@ class SynR_EM_PostAnalyzer:
         results["iron_loss"] = results["iron_loss"]
         results["hysteresis_loss"] = results["hysteresis_loss"]
         results["eddy_current_loss"] = results["eddy_current_loss"]
-        results["coil_inductances"] = results["coil_inductances"]
+        results["coil_flux_linkages"] = results["coil_flux_linkages"]
 
         ############################ calculating volumes ###########################
         machine = state_out.design.machine

@@ -1079,7 +1079,7 @@ class SynR_EM_Analyzer:
             "drive_freq": self.drive_freq,
             "stator_wdg_resistances": [self.R_wdg, self.R_wdg_coil_ends, self.R_wdg_coil_sides],
             "stator_slot_area": self.stator_slot_area,
-            "coil_inductances": flux_df,
+            "coil_flux_linkages": flux_df,
         }
 
         return fea_data

@@ -1043,7 +1043,7 @@ class SynR_Inductance_Analyzer:
         flux_df = pd.read_csv(fem_coil_flux_path, skiprows=7)
 
         fea_data = {
-            "coil_inductances": flux_df,
+            "coil_flux_linkages": flux_df,
             "current_peak": self.I_hat,
         }
 
