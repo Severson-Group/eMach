@@ -28,3 +28,19 @@ Use the following procedure to submit a patch:
 2. Create a topic branch `git checkout -b my_branch`
 3. Push to your branch `git push origin my_branch`
 4. Initiate a pull request [on GitHub](https://help.github.com/articles/creating-a-pull-request/)
+
+# Requesting a Review
+
+A review must be requested from at least 1 person in the following two groups:
+
+Level 1 Reviewers
+1. dmnewman3
+2. wchan29
+3. noguchi-takahiro
+
+Level 2 Reviewers
+1. npetersen2
+2. Anvar-Khamitov
+3. elsevers
+
+Each reviewers should adhere to their respective responsibilities outlined in Section 1.4 of the [eMach Contribution Guidelines](https://emach.readthedocs.io/en/latest/contribution.html)

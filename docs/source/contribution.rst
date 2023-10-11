@@ -71,9 +71,10 @@ Valid branch name examples: ``user/johndoe/motor_tests``, ``user/janestil2/issue
 Reviewer Checklists
 -------------------------------------------
 
-All PRs on GitHub must be reviewed by multiple separate parties prior to being integrated into the mainn ``develop`` branch of ``eMach``. A 
+All PRs on GitHub must be reviewed by multiple separate parties prior to being integrated into the main ``develop`` branch of ``eMach``. A 
 minimum of two reviews are required, with more being preferred. When making a PR, the contributor must request a Level 1 and Level 2 reviewer,
-whose responsibilities for reviewing can be seen in the following subsections.
+whose responsibilities for reviewing can be seen in the following subsections. A list of the existing Level 1 and Level 2 reviewers can be found
+`here <https://github.com/Severson-Group/eMach/blob/develop/CONTRIBUTING.md>`_.
 
 Level 1 Review Requirements
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -82,13 +83,13 @@ A Level 1 reviewer should be someone with a minimal-to-adequate understanding of
 following tasks:
 
 1. Pull/fetch the branch being reviewed onto their device
-2. Verify code works
-3. Edit language of the documentation if necessary
-4. Ensure proper python coding practices
-5. Add a preliminary review of eMach architecture and subject matter
-6. Request changes/give approval to pass to a Level 2 reviewer
-
-Level 1 reviewers as of 10/10/2023: Dante Newman, Anson Chan, Takahiro Noguchi
+2. Confirm that the code runs and produces the expected results
+3. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_ and confirm this in writing in the review summary
+4. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_ and confirm this in writing in the review summary
+5. Edit the grammar and syntax of the language to ensure that it reads clearly (or request the developer revise)
+6. Comment on if the changeset is generally compliant with the eMach architecture
+7. Comment on if this review included a review of whether the physics are correct (it's okay if the reviewer did not, just let everyone know)
+8. Request changes/give approval to pass to a Level 2 reviewer with a written summary
 
 Level 2 Review Requirements
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -96,12 +97,13 @@ Level 2 Review Requirements
 A Level 2 reviewer should be someone with a adequte-to-expert understanding of the review material. This reviewer must accomplish the
 following tasks:
 
-1. Pull/fetch the branch being reviewed onto their device
-2. Ensure code displays expected result
-3. Add an in depth review on eMach architecture and subject matter
+1. Review the remarks from the Level 1 reviewer and see if anything from this review requires further investigation
+2. Review whether the approach, code, and documentation is compliant with the eMach architecture
+3. Identify whether the physics are correct (seek outside help as needed, including from the developer)
 4. Request changes/give final approval for merge into ``develop``
 
-Level 2 reviewers as of 10/10/2023: Nathan Petersen, Anvar Khamitov, Eric Severson
+For both Level 1 and Level 2 reviewers, it should be noted that the aforementioned requirements are meant to serve as a template to be followed and 
+with each a summary with comments should be included in the transitions from Level 1 to Level 2 and from Level 2 to merge.
 
 Documentation
 -------------------------------------------
