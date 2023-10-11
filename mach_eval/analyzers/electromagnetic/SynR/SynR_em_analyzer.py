@@ -134,7 +134,7 @@ class SynR_EM_Analyzer:
         self.run_study(app, study, clock_time())
 
         toolJmag.save()
-        # app.Quit()
+        app.Quit()
 
         ####################################################
         # 03 Load FEA output
