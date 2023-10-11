@@ -17,7 +17,7 @@ for a 3-phase machine:
 
     T &= \frac{3p}{2}[\psi_\text{pm} I_\text{q} + (L_\text{d} - L_\text{q}) I_\text{d} I_\text{q}] \\
 
-* T. Vo-Duy, and M. C. Ta, \emph{Encyclopedia of Electrical and Electronic Power Engineering}. Oxford: Elsevier, 2023.
+* T. Vo-Duy, and M. C. Ta, *Encyclopedia of Electrical and Electronic Power Engineering*. Oxford: Elsevier, 2023.
 
 where :math:`T` is calculated based on the rotor pole pairs :math:`p`, any permanent magnet flux :math:`\psi_\text{pm}`, the d- and 
 q-axis currents :math:`I_\text{d,q}`, and the d- and q-axis inductances :math:`L_\text{d,q}`. In this equation the first term 
