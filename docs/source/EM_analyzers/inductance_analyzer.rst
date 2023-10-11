@@ -349,3 +349,6 @@ This example should produce the following results:
    :file: results_SynR_inductance_analyzer.csv
    :widths: 70, 70, 30
    :header-rows: 1
+
+It should be noted that the inductance values calculated will be dependent on the number of turns in the stator. The saliency ratio however will 
+remain independent of this.
