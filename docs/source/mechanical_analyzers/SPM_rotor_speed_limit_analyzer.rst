@@ -1,7 +1,4 @@
-.. _rotor_speed_analyzer:
-
-
-SPM Rotor Speed Analyzer
+SPM Rotor Speed Limit Analyzer
 ##############################
 
 This analyzer determines the failure speed of a given surface-mounted permanent magnet (SPM) rotor design.  
@@ -9,20 +6,27 @@ This analyzer determines the failure speed of a given surface-mounted permanent 
 Model Background
 ****************
 
-This analyzer utilizes the **SPM Rotor Structural Analyzer** to determine the rotor internal stresses at a given range of rotational speed. For determining failure point, maximum shear stress theory (MSST) and von Mises failure criterion are used. 
-To provide context, ductile material such as rotor shaft and rotor lamianation, von Mises failure criterion was used in evaluating failure. For brittle material, such as adhesive and permanent magnet, MSST failure criterion [#]_ was used.
+This analyzer utilizes the **SPM Rotor Structural Analyzer** to determine the rotor internal stresses at a given range of rotational speed. For 
+determining failure point, maximum shear stress theory (MSST) and von Mises failure criterion are used. To provide context, von Mises failure 
+criterion was used in evaluating failure for ductile materials such as rotor shafts and laminations. For brittle material, such as adhesive and 
+permanent magnet, MSST failure criterion [#]_ was used.
 
-Detailed description of the **SPM Rotor Structural Analyzer** can be found on the analyzer page `here <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html#inputs-from-user>`_.
+Detailed description of the **SPM Rotor Structural Analyzer** can be found on the analyzer page 
+`here <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html#inputs-from-user>`_.
 
-.. [#]  Ideally, for brittle materials, Mohr–Coulomb theory should be used in determining failure. However, due to the lack of material data avaliable to us, MSST is used instead.
+.. [#]  Ideally, for brittle materials, Mohr–Coulomb theory should be used in determining failure. However, due to the lack of material data avaliable, MSST is used instead.
 
 Inputs from User
 **********************************
 
-The SPM rotor speed problem class requires the dimensions of the rotor shaft, the rotor material dictionary ``mat_dict``, the maximum RPM ``N_max`` to evaluate problem up to , and material failure dictionary ``mat_failure_dict``.
-For the required rotor shaft dimensions and rotor material dictionary ``mat_dict``, please refer to the `Input from User  <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html>`_ section in the **SPM Rotor Structural Analyzer** documentation page.
+The SPM rotor speed problem class requires the dimensions of the rotor shaft, the rotor material dictionary ``mat_dict``, the maximum RPM ``N_max``, 
+and the material failure dictionary ``mat_failure_dict`` in order to evaluate the problem. For the required rotor and shaft dimensions and rotor 
+material dictionary ``mat_dict``, please refer to the `Input from User <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html#inputs-from-user>`_ 
+section in the **SPM Rotor Structural Analyzer** documentation page.
 
-For material failure strength dictionary ``mat_failure_dict``, the following key value pairs are needed. Notice, ductile materials require yield strength while brittle materials require ultimate strength. 
+For the material failure strength dictionary ``mat_failure_dict``, the following key value pairs are needed. Notice that ductile materials require 
+yield strength while brittle materials require ultimate strength. This is due to ductile materials ability to plastically deform while brittle 
+materials cannot deform without failure.
 
 .. _mat-failure-dict:
 .. csv-table:: ``mat_failure_dict`` input to SPM rotor speed limit problem
@@ -31,7 +35,9 @@ For material failure strength dictionary ``mat_failure_dict``, the following key
    :header-rows: 1
 
 
-The following code demonstrates how to initialize the ``SPM_RotorSpeedLimitProblem`` class. The values used by the ``mat_dict`` are representative of typical values used by this analyzer assuming 1045 carbon steel for the shaft, M19 29-gauge laminated steel for the rotor core, N40 neodymium magnets, and carbon fiber for the sleeve.
+The following code demonstrates how to initialize the ``SPM_RotorSpeedLimitProblem`` class. The values used by the ``mat_dict`` are representative 
+of typical values used by this analyzer assuming 1045 carbon steel for the shaft, M19 29-gauge laminated steel for the rotor core, N40 neodymium 
+magnets, and carbon fiber for the sleeve.
 
 .. code-block:: python
 
@@ -125,7 +131,10 @@ The following code demonstrates how to initialize the ``SPM_RotorSpeedLimitProbl
                                         N_max, mat_dict, mat_failure_dict)
 
 
-To initialize the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must spcify the RPM evaluation step size ``N_step`` in unit *RPM* and number of rotor nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, user can call the ``.analyze`` method and input the defined SPM_RotorSpeedLimitProblem ``problem`` object. The script will run through the code at an incremental speed increase (``N_step`` defined by the user) to determine the failure speed and material.
+To initialize the analyzer class of the ``SPM_RotorSpeedLimitAnalyzer``, the user must spcify the RPM evaluation step size ``N_step`` in units of 
+*RPM* and number of rotor nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, 
+the user can call the ``analyze`` method and input the defined ``SPM_RotorSpeedLimitProblem`` object. The script will run through the code at an 
+incremental speed increase (``N_step`` defined by the user) to determine the failure speed and material.
 
 .. code-block:: python
 
@@ -137,20 +146,18 @@ To initialize the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must 
 
 Outputs to User
 ***********************************
-When a certain material in the rotor reaches its failure criterion, the script will break out of the for loop and return a tuple containing the following
-
-
-.. code-block:: python
-
-   (True, 'material', 'speed')
-
-where ``material`` is the failure material (type: string) and speed is the failure speed (type: float).
-
-On the other hand, if failure was not found. The script would simply return
+When a certain material in the rotor reaches its failure criterion, the script will break out of the for loop and return a tuple structured as 
+(True, 'material', 'speed') where ``material`` is the failure material (type: string) and speed is the failure speed (type: float). On the other hand, 
+if failure was not found. The script would simply return 'False'. As an example, the following code block can be run to demonstrate an application
+of the analyzer using the inputs defined above:
 
 .. code-block:: python
 
-   False
+   ######################################################
+   #Creating analyzer class
+   ######################################################
+   analyzer = rsl.SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
+   analyzer.analyze(problem)
 
 Running the example case shown above returns the following result
 
@@ -158,6 +165,4 @@ Running the example case shown above returns the following result
 
    (True, 'Adhesive', 77700.0)
 
-indicating a failure with the adhesive at 77700 RPM.
-
-
+This would indicate a failure speed with the adhesive at 77700 RPM.
