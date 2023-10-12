@@ -1,4 +1,6 @@
 Arguments,Description,Units
-R_wdg,Resistance of a winding,Ohms
-R_wdg_coil_ends,Resistance of coil ends of a winding,Ohms
-R_wdg_coil_sides,Resistance of coil sides of a winding,Ohms
+l_coil,Length of a single loop of a coil,meters
+l_ew,Length of an end winding,meters
+R_coil,Resistance of a coil,Ohms
+R_ew,Resistance of an end winding,Ohms
+R_wdg,Resistance of a phase winding,Ohms

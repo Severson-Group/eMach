@@ -1,0 +1,4 @@
+Arguments,Description,Units
+harmonics_list,"""n"" harmonics to be calculated",
+winding_layout,layout of stator winding for single phase,
+alpha_1,location of first slot,radians

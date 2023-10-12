@@ -1,0 +1,6 @@
+Key,Description
+air_mat,Material in the airgap of the machine. Impacts windage loss and rotor to stator heat transfer
+rotor_iron_mat,Rotor back iron material
+stator_iron_mat,Stator iron material
+coil_mat,Coil material
+shaft_mat,Rotor shaft material

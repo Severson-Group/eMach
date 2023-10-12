@@ -72,7 +72,8 @@ class BSPM_EM_PostAnalyzer:
 
         ############################ post processing #################################
         torque_prob = ProcessTorqueDataProblem(results["torque"]["TorCon"])
-        torque_avg, torque_ripple = ProcessTorqueDataAnalyzer.analyze(torque_prob)
+        torque_analyzer = ProcessTorqueDataAnalyzer()
+        torque_avg, torque_ripple = torque_analyzer.analyze(torque_prob)
 
         force_prob = ProcessForceDataProblem(
             Fx=results["force"][r"ForCon:1st"],

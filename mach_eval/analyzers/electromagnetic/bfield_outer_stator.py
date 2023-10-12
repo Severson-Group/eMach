@@ -28,8 +28,8 @@ class BFieldOuterStatorProblem1:
         alpha_so: stator slot opening [radians]
     """
 
-    def __init__(self, m, zq, Nc, k_w, I_hat, n, delta_e, r_si, r_rfe, alpha_so):
-        self.MMF = self.mmf(m, zq, Nc, n, k_w, I_hat)
+    def __init__(self, m, zq, N, k_w, I_hat, n, delta_e, r_si, r_rfe, alpha_so):
+        self.MMF = self.mmf(m, zq, N, n, k_w, I_hat)
         self.n = n
         self.delta_e = delta_e
         self.r_si = r_si
@@ -50,7 +50,7 @@ class BFieldOuterStatorProblem1:
         Returns:
             mmf: Current linkage or Magneto-Motive Force
         """
-        mmf = m / np.pi * zq * N * k_w * I_hat / n
+        mmf = m / np.pi * zq * N * k_w * I_hat / n * np.exp(-np.pi / 2 * 1j)
         return mmf
 
 

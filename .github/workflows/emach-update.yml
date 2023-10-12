@@ -1,0 +1,41 @@
+name: Send repository dispatch
+
+# Trigger events: Manual trigger, or Pushes to develop branch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+
+jobs:
+  send-dispatch:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        # Number of commits to fetch. 0 indicates all history for all branches and tags.
+        fetch-depth: '0'
+
+    - name: debug
+      run: |
+        whoami
+        pwd
+        cd ~
+        pwd
+        ls -a
+        cd /home/runner/work/eMach/eMach
+
+    - name: Send Dispatch
+      run: |
+        curl -X POST \
+        -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}" \
+        -H "Accept: application/vnd.github.everest-preview+json" \
+        -H "Content-Type: application/json" \
+        https://api.github.com/repos/Severson-Group/eMachPrivate/actions/workflows/emach-update.yml/dispatches \
+        --data '{"ref": "develop"}'
+

@@ -43,13 +43,17 @@ This analyzer implements the model(s) provided in the following references:
 Input from User
 *********************************
 
-Users have the option to choose between 2 `problem` classes to interface with this analyzer. The first class requires the user to provide
-winding factors and other relavent parameters and handles MMF calculation behind the scenes.  It is assumed that the stator winding is 
-excited with symmetric currents and that winding factors are provided considering the current space vector orientation. With the second 
-class, users are expected to provide the MMF harmonics directly as an input. Both the winding factors and the MMF harmonics can be provided 
-as complex values to represent magnitude and phase. The phase must be provided cosidering the following cosine function: 
+Users can choose between the following two `problem` classes to interface with this analyzer:
+
+1. `BFieldOuterStatorProblem1`: Users provide winding factors and the problem class handles MMF calculation behind the scenes.  It is assumed that the stator winding is excited with symmetric currents and that winding factors are provided considering the current space vector orientation. 
+2. `BFieldOuterStatorProblem2`: Users provide the MMF harmonics acting on the airgap directly as an input. This problem class allows users to consider assymetric or single phase excitation.
+
+Both the winding factors and the MMF harmonics are to be provided 
+as complex values representing the magnitude and phase of a Fourier Series. The phase must be provided cosidering the following cosine function: 
 :math:`\hat{F}_n \cos(n\alpha + \phi_n)`, where :math:`\hat{F}_n` is the magnitude of the MMF and :math:`\phi_n` is the phase shift at 
-harmonic :math:`n`.  A graphical representation of a stator winding MMF harmonics, along with the phase shift at each harmonic is provided 
+harmonic :math:`n`.  
+
+A graphical representation of a stator winding MMF harmonics, along with the phase shift at each harmonic is provided 
 in the figure below for clarification. The MMF input provided by the user to the analyzer to determine the fields originating from this 
 winding should be [:math:`200 \times e^{-j\pi/3}`, :math:`100 \times e^{j\pi/6}`, :math:`50 \times e^{j0}`] A-turns. The harmonics 
 corresponding to each MMF component, i.e [1, 2, 5], must also be provided to the analyzer as a separate argument.
