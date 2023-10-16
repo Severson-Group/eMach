@@ -1,71 +1,107 @@
 Stator Winding Resistance Analyzer
 ##########################################
 
-This analyzer determines stator winding resistance, considering effects of end windings.
+This analyzer calculates stator winding resistance and coil length, considering effects of end windings.
 
 Model Background
 ****************
 
-The following equation is used to calculate stator winding resistance:
+This analyzer implements the coil length and resistance calculation approach provided in the following reference:
+
+* N. Bianchi, S. Bolognani, and P. Frare, “Design Criteria for High-Efficiency SPM Synchronous Motors,” in `IEEE Transactions on Energy Conversion`, June 2006.
+
+The calculation approach is summarized below. The following equation is used to calculate stator winding resistance:
 
 .. math::
 
     R_\text{wdg} &= \frac{z_Q z_C l_\text{coil}}{\sigma_\text{cond} A_\text{cond}}\\
 
-where :math:`z_Q` is a number of turns per coil, :math:`z_C` is a number of coils per phase, :math:`l_\text{coil}` is a length of a coil including coil ends, and :math:`\sigma_\text{cond}` and :math:`A_\text{cond}` are conductor conductivity and cross-section area. 
-Conductor area is found as :math:`A_\text{cond} = K_\text{Cu}A_\text{slot}/z_Q`, where :math:`A_\text{slot}` is a stator slot area and :math:`K_\text{Cu}` is a slot fill factor. The length of a coil consists of two main parts:
+where :math:`z_Q` is the number of turns per coil, :math:`z_C` is the number of series coils per phase, :math:`l_\text{coil}` is the average length of a single coil 
+loop, :math:`\sigma_\text{cond}` is the conductor conductivity, and :math:`A_\text{cond}` is the cross-section area. 
+
+Conductor area is found as:
+
+.. math::
+    
+    A_\text{cond} = \frac{K_\text{Cu}A_\text{slot}}{n_\text{layers}z_Q}
+    
+where :math:`A_\text{slot}` is the stator slot area, :math:`K_\text{Cu}` is the slot fill factor, and :math:`n_\text{layers}` is the number of layers (:math:`n_\text{layers}=1` 
+for a single-layer winding and :math:`n_\text{layers} = 2` for a double-layer winding). 
+
+To calculate :math:`l_\text{coil}`, the following coil shape is assumed:
+
+.. figure:: ./Images/coil_diagram.svg
+   :alt: coil_diagram 
+   :align: center
+   :width: 250 
+
+This is the view when one side of the stator is cut along the axial direction and unrolled. Using this diagram, :math:`l_\text{coil}` is calculated as
 
 .. math::
 
     l_\text{coil} &= 2(l_\text{st} + l_\text{end wdg})\\
 
-Here, :math:`l_\text{st}` is a length of a coil along the axial length of a motor and :math:`l_\text{end wdg}` is an end winding length. A factor of two is included to take into account a returning coil side.
+where :math:`l_\text{st}` is the length of a coil along the axial length of a motor and :math:`l_\text{end wdg} = l_1 + 2l_2` is the end winding length.
 
-Equation that is used to estimate :math:`l_\text{end wdg}` is shown below:
-
-.. math::
-
-    l_\text{end wdg} &= \frac{1}{2} \pi \frac{\tau_u + w_\text{st}}{2} + \tau_u K_\text{ov} (y - 1)\\
-
-This equation consists of two main parts.
-The first part is a length of bent parts of a coil end, which is evaluated as a length of a half-circle with a diameter :math:`(\tau_u + w_\text{st})/2`. 
-Here, :math:`w_\text{st}` is a stator tooth width and :math:`\tau_u` is an arc length between adjacent slots evaluated at a median depth of a slot:
+The segments with length :math:`l_1` represent the parts of the end winding that appear only in distributed windings, which are calculated as
 
 .. math::
 
-    \tau_u &= \frac{2 \pi}{Q} (r_\text{si} + d_\text{sp} + d_\text{st})\\
+    l_1 &= \tau_u K_\text{ov} (y-1)\\
 
-where :math:`r_\text{si},~d_\text{sp},~d_\text{st}` are stator dimensions in a radial direction (described more in the next section).
-The second part in the equation of :math:`l_\text{end wdg}` is a length of a coil end that appears in distributed windings where coil pitch :math:`y > 1`. :math:`K_\text{ov}` is a coil overlength factor.
+where :math:`y` is a coil pitch represented in a number of slots and :math:`K_\text{ov}` is a coil overlength factor. For a concentrated winding, :math:`y = 1`, resulting in 
+:math:`l_1 = 0`.
+
+The segments with length :math:`l_2` represent the bent parts of a coil and are calculated as 1/4th of the circle circumference. The diameter of this circle is estimated as 
+the average of the stator tooth width :math:`w_\text{st}` and the length between adjacent slots :math:`\tau_u`.
+
+.. math::
+
+    l_2 &= \frac{1}{4} \pi \frac{\tau_u + w_\text{st}}{2}\\
+
+Here, :math:`\tau_u` is calculated as the length of an arc (when a stator is in its normal cylindrical shape) at the median depth of a slot:
+
+.. math::
+
+    \tau_u &= \frac{2 \pi}{Q} (r_\text{si} + d_\text{sp} + \frac{d_\text{st}}{2})\\
+
+where :math:`Q` is the number of stator slots, :math:`r_\text{si}` is the stator inner radius, :math:`d_\text{sp}` is the stator pole thickness, and :math:`d_\text{st}` is the stator 
+tooth depth (see :doc:`here <../machines/bspm/bspm_machine>` or the figure below).
 
 
 Input from User
 *********************************
 
-User is required to provide the following parameters.
+The user is required to provide the following parameters:
 
 .. csv-table:: `Input to stator winding resistance problem`
    :file: input_stator_wdg_res.csv
    :widths: 50, 70, 50
    :header-rows: 1
 
-For the definition of dimensions, please refer :doc:`here <../machines/bspm/bspm_machine>`.
+For the definition of dimensions, please refer to the figure below:
+
+.. figure:: ./Images/stator_wdg_cross_sect.svg
+   :alt: coil_diagram 
+   :align: center
+   :width: 400 
 
 
 Output to User
 **********************************
 
-Stator winding resistance analyzer returns the following scalar values:
+The stator winding resistance analyzer returns a dictionary that has the following parameters:
 
 .. csv-table:: `Output of stator winding resistance analyzer`
    :file: output_stator_wdg_res.csv
    :widths: 50, 70, 50
    :header-rows: 1
 
-Here, the total winding resistance `R_wdg` is the sum of `R_wdg_coil_ends` and `R_wdg_coil_sides`.
+
+Here, the total phase winding resistance `R_wdg` is the product of `R_coil` and the number of coils per phase `z_C`.
 
 
-Example code using resistance analyzer is provided below.
+Example code using the stator winding resistance analyzer is provided below:
 
 .. code-block:: python
 
@@ -90,10 +126,16 @@ Example code using resistance analyzer is provided below.
         Kov=1.8,
         sigma_cond=5.7773*1e7,
         slot_area=251*1e-6,
+        n_layers=2,
         )
     res_analyzer = StatorWindingResistanceAnalyzer()
 
     # analyze the problem
-    R_wdg, R_wdg_coil_ends, R_wdg_coil_sides = res_analyzer.analyze(res_prob)
+    results = res_analyzer.analyze(res_prob)
 
-The output of the code is `R_wdg = 0.07 Ohms`, `R_wdg_coil_ends = 0.056 Ohms`, and `R_wdg_coil_sides = 0.014 Ohms`.
+The output of the code is the dictionary with the following key-value pairs:
+
+.. csv-table:: `Results of stator winding resistance analyzer`
+   :file: results_stator_wdg_res.csv
+   :widths: 50, 70, 50
+   :header-rows: 1
