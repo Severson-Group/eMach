@@ -82,6 +82,8 @@ class DesignProblem:
         design_space: Objects which characterizes the design space of the optimization.
 
         dh: Data handlers which enable saving optimization results and its resumption.
+
+        invalid_design_objs: List of (large) objective values to use for invalid designs
     """
 
     def __init__(
@@ -90,11 +92,20 @@ class DesignProblem:
         evaluator: "Evaluator",
         design_space: "DesignSpace",
         dh: "DataHandler",
+        invalid_design_objs=None,
     ):
         self.__designer = designer
         self.__evaluator = evaluator
         self.__design_space = design_space
         self.__dh = dh
+
+        if invalid_design_objs is None:
+            self.__invalid_design_objs = 1e4 * np.ones([1, self.get_nobj()])
+        else:
+            if len(invalid_design_objs) != self.get_nobj():
+                raise Exception("Incorrect length for invalid_design_objs")
+            self.__invalid_design_objs = invalid_design_objs
+
         dh.save_designer(designer)
 
     def fitness(self, x: "tuple") -> "tuple":
@@ -121,15 +132,17 @@ class DesignProblem:
             return objs
 
         except Exception as e:
-            if type(e) is InvalidDesign:
-                temp = tuple(map(tuple, 1e4 * np.ones([1, self.get_nobj()])))
+            # Check if e is an InvalidDesign exception using the class name
+            # This is done to catch InvalidDesign exceptions regardless of what module they orginate from (mach_opt.mach_opt.InvalidDesign OR eMachPrivate.eMach.mach_opt.mach_opt.InvalidDesign)
+            if (e.__class__.__name__ == InvalidDesign().__class__.__name__): 
+                temp = tuple(map(tuple, self.__invalid_design_objs))
                 objs = temp[0]
                 return objs
 
             ################ Uncomment below block of code to prevent one off errors from JMAG ###################
             elif type(e) is FileNotFoundError:
                 print('**********ERROR*************')
-                temp = tuple(map(tuple, 1E4 * np.ones([1, self.get_nobj()])))
+                temp = tuple(map(tuple, self.__invalid_design_objs))
                 objs = temp[0]
                 return objs
             else:
