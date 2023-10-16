@@ -210,6 +210,7 @@ class Vision_SynR_EM_Analyzer:
             Kov=self.machine_variant.Kov,
             sigma_cond=self.machine_variant.coil_mat["copper_elec_conductivity"],
             slot_area=self.machine_variant.s_slot*1e-6,
+            n_layers=self.machine_variant.no_of_layers
         )
         res_analyzer = StatorWindingResistanceAnalyzer()
         stator_resistance = res_analyzer.analyze(res_prob)
@@ -217,15 +218,15 @@ class Vision_SynR_EM_Analyzer:
 
     @property
     def R_wdg(self):
-        return self.stator_resistance[0]
+        return self.stator_resistance["R_wdg"]
 
     @property
     def R_wdg_coil_ends(self):
-        return self.stator_resistance[1]
+        return 2 * self.stator_resistance["R_ew"] * self.z_C
 
     @property
     def R_wdg_coil_sides(self):
-        return self.stator_resistance[2]
+        return self.R_wdg - self. R_wdg_coil_ends
 
 
     def draw_machine(self, tool):
