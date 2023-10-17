@@ -50,19 +50,19 @@ class SynR_Inductance_PostAnalyzer:
         ax1.plot(t, Uu, "-k", label="y", linewidth=2)
         ax1.plot(t, Uu_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
         ax1.legend(loc="best")
-        plt.savefig("temp1.svg")
+        #plt.savefig("temp1.svg")
 
         fig2, ax2 = plt.subplots()
         ax2.plot(t, Uv, "-k", label="y", linewidth=2)
         ax2.plot(t, Uv_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
         ax2.legend(loc="best")
-        plt.savefig("temp2.svg")
+        #plt.savefig("temp2.svg")
 
-        Lzero = 2/3 * abs(sUv.x[3])/I_hat; # calculate L0 based on equations in publication
-        Lg = abs(sUv.x[0])/I_hat # calculate Lg based on equations in publication
-        Lls = abs(sUu.x[3])/I_hat # calculate Lls based on equations in publication
-        Ld = (Lls + 3/2*(Lzero + Lg)) # calculate Ld based on equations in publication
-        Lq = (Lls + 3/2*(Lzero - Lg)) # calculate Lq based on equations in publication
+        Lzero = -2*sUv.x[3]/I_hat; # calculate L0 based on equations in publication
+        Lg = sUv.x[0]/I_hat # calculate Lg based on equations in publication
+        Lls = (sUu.x[3] + 2*sUv.x[3])/I_hat # calculate Lls based on equations in publication
+        Ld = Lls + 3/2*(Lzero - Lg) # calculate Ld based on equations in publication
+        Lq = Lls + 3/2*(Lzero + Lg) # calculate Lq based on equations in publication
         saliency_ratio = Ld/Lq # calculate saliency ratio
 
         ############################ Output #################################

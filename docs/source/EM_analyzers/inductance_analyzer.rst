@@ -36,10 +36,10 @@ the V-phase coil to calcualte :math:`L_\text{d}` and :math:`L_\text{q}`. This is
     L_\text{d} &= L_\text{ls} + \frac{3}{2}(L_\text{0} + L_\text{g}) \\
     L_\text{q} &= L_\text{ls} + \frac{3}{2}(L_\text{0} + L_\text{g}) \\
 
-where :math:`L_\text{ls}` is the average stator leakage inductance, :math:`L_\text{0}` is the average stator mutual inductance, and 
-:math:`L_\text{g}` is the magnitude of the stator mutual inductance. More information and images depicting the relationships between
-these variables can be found using the reference at the conclusion of this paragraph. Together, both :math:`L_\text{d}` and 
-:math:`L_\text{q}` can be used to find the saliency ratio, which is defined as:
+where :math:`L_\text{ls}` is the average value of the self- and mutual-inductances, :math:`L_\text{0}` is the inductance component caused 
+by the air-gap magnetic field, and :math:`L_\text{g}` is the the amplitude of self/mutual inductance variation due to saliency. More 
+information and images depicting the relationships between these variables can be found using the reference at the conclusion of this 
+paragraph. Together, both :math:`L_\text{d}` and :math:`L_\text{q}` can be used to find the saliency ratio, which is defined as:
 
 .. math::
 
@@ -152,94 +152,6 @@ initializes the analyzer class with an explanation of the required configuration
 
     inductance_step = AnalysisStep(SynR_Inductance_ProblemDefinition, SynR_inductance_analysis, SynR_Inductance_PostAnalyzer)
 
-The ``SynR_Inductance_PostAnalyzer`` class is used to process the inductance data and saliency ratio and to print the results. A copy of 
-the post-analyzer file also lies in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder. This code can be seen below:
-
-.. code-block:: python
-
-    import copy
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import scipy.optimize
-
-    class SynR_Inductance_PostAnalyzer:
-        
-        def get_next_state(results, in_state):
-            state_out = copy.deepcopy(in_state)
-
-            ############################ Extract required info ###########################
-            inductances = results["coil_inductances"]
-            I_hat = results["current_peak"]
-
-            ############################ post processing ###########################
-            data = inductances.to_numpy() # change csv format to readable array
-            
-            t = data[:,0] # define x axis data as time
-            Uu = data[:,1] # define y axis data as self inductance
-            Uv = data[:,2] # define y axis data as mutual inductance
-
-            # curve fit inductance values and calculate curve
-            def fit_sin(t, y):
-                fft_func = np.fft.fftfreq(len(t), (t[1]-t[0])) # define fft function with assumed uniform spacing
-                fft_y = abs(np.fft.fft(y)) # carry out fft function for inductance values
-                guess_freq = abs(fft_func[np.argmax(fft_y[1:])+1]) # excluding the zero frequency "peak", which can cause problematic fits
-                guess_amp = np.std(y) # guess amplitude based on one standard deviation
-                guess_offset = np.mean(y) # guess y offset based on average of magnitude
-                guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset]) # arrage in array
-                
-                # define sin function 
-                def sinfunc(t, A, w, p, c):  
-                    return A * np.sin(w*t + p) + c
-                
-                popt, pcov = scipy.optimize.curve_fit(sinfunc, t, y, p0=guess) # calculate sin function fit
-                A, w, p, c = popt # assign appropriate variables
-                fitfunc = lambda t: A * np.sin(w*t + p) + c # define fit function for curve fit
-                
-                # define function used to calculate least square
-                def sumfunc(x):
-                    return sum((sinfunc(t, x[0], x[1], x[2], x[3]) - y)**2)
-                
-                sUx = scipy.optimize.minimize(fun=sumfunc, x0=np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset])) # calculate matching curve fit values with minimum error
-                return [{"amp": A, "omega": w, "phase": p, "offset": c, "fitfunc": fitfunc}, sUx]
-
-            [Uu_fit, sUu] = fit_sin(t, Uu) # carry out calculations on self inductance
-            [Uv_fit, sUv] = fit_sin(t, Uv) # carry out calculations on mutual inductance
-            
-            fig1, ax1 = plt.subplots()
-            ax1.plot(t, Uu, "-k", label="y", linewidth=2)
-            ax1.plot(t, Uu_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
-            ax1.legend(loc="best")
-            plt.savefig("temp1.svg")
-
-            fig2, ax2 = plt.subplots()
-            ax2.plot(t, Uv, "-k", label="y", linewidth=2)
-            ax2.plot(t, Uv_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
-            ax2.legend(loc="best")
-            plt.savefig("temp2.svg")
-
-            Lzero = 2/3 * abs(sUv.x[3]); # calculate L0 based on equations in publication
-            Lg = abs(sUv.x[0]) # calculate Lg based on equations in publication
-            Lls = abs(sUu.x[3]) # calculate Lls based on equations in publication
-            Ld = (Lls + 3/2*(Lzero + Lg))/I_hat # calculate Ld based on equations in publication
-            Lq = (Lls + 3/2*(Lzero - Lg))/I_hat # calculate Lq based on equations in publication
-            saliency_ratio = Ld/Lq # calculate saliency ratio
-
-            ############################ Output #################################
-            post_processing = {}
-            post_processing["Ld"] = Ld
-            post_processing["Lq"] = Lq
-            post_processing["saliency_ratio"] = saliency_ratio
-
-            state_out.conditions.inductance = post_processing
-
-            print("\n************************ INDUCTANCE RESULTS ************************")
-            print("Ld = ", Ld, " H")
-            print("Lq = ", Lq, " H")
-            print("Saliency Ratio = ", saliency_ratio)
-            print("*************************************************************************\n")
-
-            return state_out
-
 Output to User
 **********************************
 
@@ -317,11 +229,11 @@ in this case to find inductance quantities the saliency ratio, can be seen here:
             ax2.legend(loc="best")
             plt.savefig("temp2.svg")
 
-            Lzero = 2/3 * abs(sUv.x[3]); # calculate L0 based on equations in publication
-            Lg = abs(sUv.x[0]) # calculate Lg based on equations in publication
-            Lls = abs(sUu.x[3]) # calculate Lls based on equations in publication
-            Ld = (Lls + 3/2*(Lzero + Lg))/I_hat # calculate Ld based on equations in publication
-            Lq = (Lls + 3/2*(Lzero - Lg))/I_hat # calculate Lq based on equations in publication
+            Lzero = -2*sUv.x[3]/I_hat; # calculate L0 based on equations in publication
+            Lg = sUv.x[0]/I_hat # calculate Lg based on equations in publication
+            Lls = (sUu.x[3] + 2*sUv.x[3])/I_hat # calculate Lls based on equations in publication
+            Ld = Lls + 3/2*(Lzero - Lg) # calculate Ld based on equations in publication
+            Lq = Lls + 3/2*(Lzero + Lg) # calculate Lq based on equations in publication
             saliency_ratio = Ld/Lq # calculate saliency ratio
 
             ############################ Output #################################
