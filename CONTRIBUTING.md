@@ -43,4 +43,4 @@ Level 2 Reviewers
 - @Anvar-Khamitov
 - @elsevers
 
-Reviewers will perform reviews following the instructions in the [eMach Contribution Guidelines](https://emach.readthedocs.io/en/latest/contribution.html)
+Instruction on how reviewers examine PRs can be found in the [eMach Contribution Guidelines](https://emach.readthedocs.io/en/latest/contribution.html)
