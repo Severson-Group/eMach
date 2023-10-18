@@ -33,10 +33,10 @@ the V-phase coil to calcualte :math:`L_\text{d}` and :math:`L_\text{q}`. This is
 
 .. math::
 
-    L_\text{d} &= L_\text{ls} + \frac{3}{2}(L_\text{0} + L_\text{g}) \\
+    L_\text{d} &= L_\text{ls} + \frac{3}{2}(L_\text{0} - L_\text{g}) \\
     L_\text{q} &= L_\text{ls} + \frac{3}{2}(L_\text{0} + L_\text{g}) \\
 
-where :math:`L_\text{ls}` is the average value of the self- and mutual-inductances, :math:`L_\text{0}` is the inductance component caused 
+where :math:`L_\text{ls}` is the average value of the self leakage inductance, :math:`L_\text{0}` is the inductance component caused 
 by the air-gap magnetic field, and :math:`L_\text{g}` is the the amplitude of self/mutual inductance variation due to saliency. More 
 information and images depicting the relationships between these variables can be found using the reference at the conclusion of this 
 paragraph. Together, both :math:`L_\text{d}` and :math:`L_\text{q}` can be used to find the saliency ratio, which is defined as:
