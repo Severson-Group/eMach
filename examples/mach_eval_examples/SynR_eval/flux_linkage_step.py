@@ -3,9 +3,9 @@ import sys
 import copy
 
 from mach_eval import AnalysisStep, ProblemDefinition
-from mach_eval.analyzers.electromagnetic.SynR import SynR_inductance_analyzer as SynR_inductance
-from mach_eval.analyzers.electromagnetic.SynR.SynR_em_config import SynR_EM_Config
-from examples.mach_eval_examples.SynR_eval.SynR_inductance_post_analyzer import SynR_Inductance_PostAnalyzer
+from mach_eval.analyzers.electromagnetic import flux_linkage_analyzer as flux_linkage
+from mach_eval.analyzers.electromagnetic.flux_linkage_analyzer_config import Flux_Linkage_Config
+from examples.mach_eval_examples.SynR_eval.flux_linkage_post_analyzer import Flux_Linkage_PostAnalyzer
 
 ############################ Define Electromagnetic Step ###########################
 class SynR_EM_ProblemDefinition(ProblemDefinition):
@@ -16,12 +16,12 @@ class SynR_EM_ProblemDefinition(ProblemDefinition):
 
     def get_problem(state):
 
-        problem = SynR_inductance.SynR_Inductance_Problem(
+        problem = flux_linkage.Flux_Linkage_Problem(
             state.design.machine, state.design.settings)
         return problem
 
 # initialize em analyzer class with FEA configuration
-configuration = SynR_EM_Config(
+configuration = Flux_Linkage_Config(
     no_of_rev = 1,
     no_of_steps = 72,
 
@@ -44,8 +44,9 @@ configuration = SynR_EM_Config(
     jmag_visible=True,
     non_zero_end_ring_res = False,
     scale_axial_length = True,
+    time_step = 0.0001
 )
 
-SynR_inductance_analysis = SynR_inductance.SynR_Inductance_Analyzer(configuration)
+flux_linkage_analysis = flux_linkage.Flux_Linkage_Analyzer(configuration)
 
-inductance_step = AnalysisStep(SynR_EM_ProblemDefinition, SynR_inductance_analysis, SynR_Inductance_PostAnalyzer)
+flux_linkage_step = AnalysisStep(SynR_EM_ProblemDefinition, flux_linkage_analysis, Flux_Linkage_PostAnalyzer)

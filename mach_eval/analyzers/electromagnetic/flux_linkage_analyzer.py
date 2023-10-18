@@ -11,7 +11,7 @@ from mach_eval.analyzers.electromagnetic.stator_wdg_res import(
 )
 from mach_cad.tools import jmag as JMAG
 
-class SynR_Inductance_Problem:
+class Flux_Linkage_Problem:
     def __init__(self, machine, operating_point):
         self.machine = machine
         self.operating_point = operating_point
@@ -29,7 +29,7 @@ class SynR_Inductance_Problem:
             raise TypeError("Invalid settings type")
 
 
-class SynR_Inductance_Analyzer:
+class Flux_Linkage_Analyzer:
     def __init__(self, configuration):
         self.config = configuration
 
@@ -90,9 +90,14 @@ class SynR_Inductance_Analyzer:
     
         if not draw_success:
             raise InvalidDesign
+        
+        app = toolJmag.jd
+        
+        self.create_custom_material(
+            app, self.machine_variant.stator_iron_mat["core_material"]
+        )
 
         toolJmag.doc.SaveModel(False)
-        app = toolJmag.jd
         model = app.GetCurrentModel()
 
         # Pre-processing
@@ -103,48 +108,51 @@ class SynR_Inductance_Analyzer:
 
         if not valid_design:
             raise InvalidDesign
+        
+        phi_ang = np.linspace(0,-360,4)
 
-        # Create transient study with two time step sections
-        study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name)
-        self.create_custom_material(
-            app, self.machine_variant.stator_iron_mat["core_material"]
-        )
-        app.SetCurrentStudy(self.study_name)
+        for i in range(len(phi_ang)-1):
 
-        # Mesh study
-        self.mesh_study(app, model, study)
+            # Create transient study with two time step sections
+            self.study_name = self.project_name + "_Ind_SynR"
+            study = self.add_em_study(app, model, self.config.jmag_csv_folder, self.study_name + "_%s" % (i))
+            
+            app.SetCurrentStudy(self.study_name + "_%s" % (i))
 
-        self.breakdown_torque = None
-        self.stator_slot_area = None
+            # Mesh study
+            self.mesh_study(app, model, study)
 
-        study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.drive_freq)
+            self.breakdown_torque = None
+            self.stator_slot_area = None
 
-        # Set current excitation
-        I = self.I_hat
-        phi_0 = self.operating_point.phi_0
-        self.set_currents_sequence(I, 0.0001,
-                phi_0, app, study)
+            study.GetDesignTable().GetEquation("freq").SetExpression("%g" % self.drive_freq)
 
-        # Add time step settings
-        no_of_steps = self.config.no_of_steps
-        no_of_rev = self.config.no_of_rev
-        time_interval = no_of_rev / (self.drive_freq)
-        self.add_time_step_settings(time_interval, no_of_steps, app, study)
+            # Set current excitation
+            I = self.I_hat
+            phi_0 = self.operating_point.phi_0
+            self.set_currents_sequence(I, self.config.time_step, phi_0, app, study, i)
 
-        self.run_study(app, study, clock_time())
+            # Add time step settings
+            no_of_steps = self.config.no_of_steps
+            no_of_rev = self.config.no_of_rev
+            time_interval = no_of_rev / (self.drive_freq)
+            self.add_time_step_settings(time_interval, no_of_steps, app, study)
 
-        toolJmag.save()
-        app.Quit()
+            self.run_study(app, study, clock_time())
+            toolJmag.save()
+            
 
         ####################################################
         # 03 Load FEA output
         ####################################################
 
-        fea_rated_output = self.extract_JMAG_results(
-            self.config.jmag_csv_folder, self.study_name
-        )
+        fea_data = self.extract_JMAG_results(
+            self.config.jmag_csv_folder, self.study_name) 
+        toolJmag.save()
 
-        return fea_rated_output
+        app.Quit()
+
+        return fea_data
 
     @property
     def drive_freq(self):
@@ -693,7 +701,6 @@ class SynR_Inductance_Analyzer:
             )  # specify reference steps for 1/4 period and extend it to whole period
             cond.SetValue("UseFrequencyOrder", 1)
             cond.SetValue("FrequencyOrder", "1-50")  # Harmonics up to 50th orders
-        self.study_name = study_name
 
         return study
 
@@ -757,7 +764,8 @@ class SynR_Inductance_Analyzer:
             
             # Placing current sources
             cs_name = []
-            for i in range(0, 1):
+
+            for i in range(0, 3):
                 cs_name.append("cs_" + ['U', 'V', 'W'][i])
                 study.GetCircuit().CreateComponent("CurrentSource", cs_name[i])
                 study.GetCircuit().CreateInstance(cs_name[i], x + 4 * i, y + 4)
@@ -862,16 +870,33 @@ class SynR_Inductance_Analyzer:
                 condition.RemoveSubCondition("delete")
 
 
-    def set_currents_sequence(self, I, freq, phi_0, app, study):
+    def set_currents_sequence(self, I, freq, phi_0, app, study, i):
         # Setting current values after creating a circuit using "add_mp_circuit" method
         # "freq" variable cannot be used here. So pay extra attention when you 
         # create new case of a different freq.
-        for i in range(0, 1):
+        if i == 0:
+            study.GetCircuit().DeleteInstance(self.cs_name[1],0)
+            study.GetCircuit().DeleteInstance(self.cs_name[2],0)
             func = app.FunctionFactory().Composite()
-            f1 = app.FunctionFactory().Sin(I, freq,
-                - 360 / 3 * i + phi_0 + 90)
+            f1 = app.FunctionFactory().Sin(I, freq, phi_0 + 90)
             func.AddFunction(f1)
             study.GetCircuit().GetComponent(self.cs_name[i]).SetFunction(func)
+        elif i == 1:
+            study.GetCircuit().DeleteInstance(self.cs_name[0],0)
+            study.GetCircuit().DeleteInstance(self.cs_name[2],0)
+            func = app.FunctionFactory().Composite()
+            f1 = app.FunctionFactory().Sin(I, freq, phi_0 + 90)
+            func.AddFunction(f1)
+            study.GetCircuit().GetComponent(self.cs_name[i]).SetFunction(func)
+        elif i == 2:
+            study.GetCircuit().DeleteInstance(self.cs_name[0],0)
+            study.GetCircuit().DeleteInstance(self.cs_name[1],0)
+            func = app.FunctionFactory().Composite()
+            f1 = app.FunctionFactory().Sin(I, freq, phi_0 + 90)
+            func.AddFunction(f1)
+            study.GetCircuit().GetComponent(self.cs_name[i]).SetFunction(func)
+        else:
+            raise Exception("Bug in winding layout detected.")
 
 
     def add_time_step_settings(self, time_interval, no_of_steps, app, study):
@@ -1039,13 +1064,12 @@ class SynR_Inductance_Analyzer:
         return list_region_objects
 
     def extract_JMAG_results(self, path, study_name):
-        fem_coil_flux_path = path + study_name + "_flux_of_fem_coil.csv"
-
-        flux_df = pd.read_csv(fem_coil_flux_path, skiprows=7)
 
         fea_data = {
-            "coil_flux_linkages": flux_df,
-            "current_peak": self.I_hat,
-        }
+                "current_peak": self.I_hat,
+                "time_step": self.config.time_step,
+                "csv_folder": path,
+                "study_name": study_name,
+            }
 
         return fea_data

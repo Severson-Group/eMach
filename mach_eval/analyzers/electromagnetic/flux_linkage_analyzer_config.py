@@ -1,4 +1,4 @@
-class SynR_Inductance_Config:
+class Flux_Linkage_Config:
     def __init__(self, **kwargs) -> None:
         # attributes for the number of rev and steps
         self.no_of_rev = kwargs["no_of_rev"] # number of revolutions
@@ -25,3 +25,4 @@ class SynR_Inductance_Config:
         self.jmag_scheduler = kwargs["jmag_scheduler"] # True if it is desired to schedule jobs instead of solving immediately
         self.jmag_visible = kwargs["jmag_visible"] # JMAG application visible if true
         self.scale_axial_length = kwargs["scale_axial_length"] # True: scale axial length to get the required rated torque
+        self.time_step = kwargs["time_step"] # Time step of rotor rotation
