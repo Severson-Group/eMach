@@ -34,13 +34,13 @@ Use the following procedure to submit a patch:
 A review must be requested from at least 1 person in the following two groups:
 
 Level 1 Reviewers
-1. dmnewman3
-2. wchan29
-3. noguchi-takahiro
+- @dmnewman3
+- @wchan29
+- @noguchi-takahiro
 
 Level 2 Reviewers
-1. npetersen2
-2. Anvar-Khamitov
-3. elsevers
+- @npetersen2
+- @Anvar-Khamitov
+- @elsevers
 
-Each reviewers should adhere to their respective responsibilities outlined in Section 1.4 of the [eMach Contribution Guidelines](https://emach.readthedocs.io/en/latest/contribution.html)
+Reviewers will perform reviews following the instructions in the [eMach Contribution Guidelines](https://emach.readthedocs.io/en/latest/contribution.html)
