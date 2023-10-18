@@ -68,28 +68,42 @@ developers of the new feature, they can open a PR (or simply merge) their user b
 
 Valid branch name examples: ``user/johndoe/motor_tests``, ``user/janestil2/issue_652``, ``feature/regression_tests``, ``feature/tutorial_femm``
 
-Reviewer Checklists
+Reviewer Instructions
 -------------------------------------------
 
-All PRs on GitHub must be reviewed by multiple separate parties prior to being integrated into the main ``develop`` branch of ``eMach``. A 
-minimum of two reviews are required, with more being preferred. When making a PR, the contributor must request a Level 1 and Level 2 reviewer,
-whose responsibilities for reviewing can be seen in the following subsections. A list of the existing Level 1 and Level 2 reviewers can be found
+PRs must be reviewed by official eMach reviewers prior to being merged into the ``develop`` branch. When making a PR, the contributor must identify and request at least one ``Level 1`` reviewer and at least one ``Level 2`` reviewer.
+A list of the existing Level 1 and Level 2 reviewers can be found
 `here <https://github.com/Severson-Group/eMach/blob/develop/CONTRIBUTING.md>`_.
 
-Level 1 Review Requirements
+Instructions for reviewers are now provided. Developers are encouraged to read these instructions to understand how to successfully navigate the review process.
+
+Level 1 Review 
 ++++++++++++++++++++++++++++++++++++++++++++
 
-A Level 1 reviewer should be someone with a minimal-to-adequate understanding of the review material. This reviewer must accomplish the
-following tasks:
+A Level 1 reviewer is responsible for verifying that the code works and that both the code and documentation are compliant with the eMach architecture.
 
-1. Pull/fetch the branch being reviewed onto their device
-2. Confirm that the code runs and produces the expected results
-3. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_ and confirm this in writing in the review summary
-4. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_ and confirm this in writing in the review summary
-5. Edit the grammar and syntax of the language to ensure that it reads clearly (or request the developer revise)
-6. Comment on if the changeset is generally compliant with the eMach architecture
-7. Comment on if this review included a review of whether the physics are correct (it's okay if the reviewer did not, just let everyone know)
-8. Request changes/give approval to pass to a Level 2 reviewer with a written summary
+In conducting the review, the reviewer should perform the following steps:
+
+1. Pull/fetch the branch being reviewed onto their device and confirm that the code runs and produces the expected results
+2. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_ and confirm this in writing in the review summary
+3. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_ and confirm this in writing in the review summary
+4. Edit the grammar and syntax of the language to ensure that it reads clearly (or request the developer revise)
+5. Comment on if the changeset is generally compliant with the eMach architecture
+6. Comment on if this review included a review of whether the physics are correct (it's okay if the reviewer did not, just let everyone know)
+7. Request changes/give approval to pass to a Level 2 reviewer with a written summary
+
+Reviewers are encouraged to use this template:
+
+.. code-block:: markdown
+   
+    Thanks for your PR. I have indicated specific change requests on individual files. Here is my level 1 review summary:
+
+    - Does the code run without error and produce the expected result? [Yes or No]
+    - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
+    - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
+    - Does the grammar or syntax require further revisions? [Yes or No]
+
+
 
 Level 2 Review Requirements
 ++++++++++++++++++++++++++++++++++++++++++++
