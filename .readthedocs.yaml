@@ -7,7 +7,6 @@ build:
   tools:
     python: "3.8"
     
- python:
-   install:
-     - requirements: docs/requirements.txt
-     
+python:
+  install:
+    - requirements: docs/requirements.txt
