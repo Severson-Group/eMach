@@ -5,7 +5,7 @@ import copy
 from mach_eval import AnalysisStep, ProblemDefinition
 from mach_eval.analyzers.electromagnetic import flux_linkage_analyzer as flux_linkage
 from mach_eval.analyzers.electromagnetic.flux_linkage_analyzer_config import Flux_Linkage_Config
-from examples.mach_eval_examples.SynR_eval.flux_linkage_post_analyzer import Flux_Linkage_PostAnalyzer
+from examples.mach_eval_examples.SynR_eval.SynR_inductance_post_analyzer import SynR_Inductance_PostAnalyzer
 
 ############################ Define Electromagnetic Step ###########################
 class SynR_EM_ProblemDefinition(ProblemDefinition):
@@ -47,6 +47,6 @@ configuration = Flux_Linkage_Config(
     time_step = 0.0001
 )
 
-flux_linkage_analysis = flux_linkage.Flux_Linkage_Analyzer(configuration)
+SynR_inductance_analysis = flux_linkage.Flux_Linkage_Analyzer(configuration)
 
-flux_linkage_step = AnalysisStep(SynR_EM_ProblemDefinition, flux_linkage_analysis, Flux_Linkage_PostAnalyzer)
+SynR_inductance_step = AnalysisStep(SynR_EM_ProblemDefinition, SynR_inductance_analysis, SynR_Inductance_PostAnalyzer)

@@ -6,16 +6,14 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../../")
 
 from mach_eval import (MachineEvaluator, MachineDesign)
-from flux_linkage_step import flux_linkage_step
+from SynR_inductance_step import SynR_inductance_step
 from electromagnetic_step import electromagnetic_step
-# from inductance_step import inductance_step
 from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 
 ############################ Create Evaluator #####################
 SynR_evaluator = MachineEvaluator(
     [
-        flux_linkage_step,
-        # inductance_step
+        SynR_inductance_step
     ]
 )
 

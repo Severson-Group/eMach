@@ -9,11 +9,12 @@ class Inductance_Problem:
         torque: numpy array of torque against time or position
     """
 
-    def __init__(self, time, rotor_angle, I_hat, inductances):
+    def __init__(self, time, rotor_angle, I_hat, Uu, Uv):
         self.time = time
         self.rotor_angle = rotor_angle
         self.I_hat = I_hat
-        self.inductances = inductances
+        self.Uu = Uu 
+        self.Uv = Uv
 
 
 class Inductance_Analyzer:
@@ -29,19 +30,20 @@ class Inductance_Analyzer:
         time = problem.time
         rotor_angle = problem.rotor_angle
         I_hat = problem.I_hat
-        inductances = problem.inductances
+        Uu = problem.Uu
+        Uv = problem.Uv
 
-        [Uu_fit, sUu] = self.fit_sin(time, inductances.Uu) # carry out calculations on self inductance
-        [Uv_fit, sUv] = self.fit_sin(time, inductances.Uv) # carry out calculations on mutual inductance
+        [Uu_fit, sUu] = self.fit_sin(time, Uu) # carry out calculations on self inductance
+        [Uv_fit, sUv] = self.fit_sin(time, Uv) # carry out calculations on mutual inductance
 
         fig1, ax1 = plt.subplots()
-        ax1.plot(rotor_angle, inductances.Uu, "-k", label="y", linewidth=2)
+        ax1.plot(rotor_angle, Uu, "-k", label="y", linewidth=2)
         ax1.plot(rotor_angle, Uu_fit["fitfunc"](time), "r-", label="y fit curve", linewidth=2)
         ax1.legend(loc="best")
         plt.savefig("temp1.svg")
 
         fig2, ax2 = plt.subplots()
-        ax2.plot(rotor_angle, inductances.Uv, "-k", label="y", linewidth=2)
+        ax2.plot(rotor_angle, Uv, "-k", label="y", linewidth=2)
         ax2.plot(rotor_angle, Uv_fit["fitfunc"](time), "r-", label="y fit curve", linewidth=2)
         ax2.legend(loc="best")
         plt.savefig("temp2.svg")
@@ -55,7 +57,7 @@ class Inductance_Analyzer:
 
         return Ld, Lq, saliency_ratio
     
-    def fit_sin(t, y):
+    def fit_sin(self, t, y):
             fft_func = np.fft.fftfreq(len(t), (t[1]-t[0])) # define fft function with assumed uniform spacing
             fft_y = abs(np.fft.fft(y)) # carry out fft function for inductance values
             guess_freq = abs(fft_func[np.argmax(fft_y[1:])+1]) # excluding the zero frequency "peak", which can cause problematic fits

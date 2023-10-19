@@ -9,7 +9,7 @@ from mach_eval.analyzers.electromagnetic.inductance_analyzer import (
     Inductance_Analyzer,
 )
 
-class Flux_Linkage_PostAnalyzer:
+class SynR_Inductance_PostAnalyzer:
     
     def get_next_state(results, in_state):
         state_out = copy.deepcopy(in_state)
@@ -31,32 +31,43 @@ class Flux_Linkage_PostAnalyzer:
         
         t = U_linkages[:,0] # define x axis data as time
         rotor_angle = t/time_step
-        inductances = []
-        inductances.Uu = U_linkages[:,1] # define y axis data as self inductance
-        inductances.Uv = U_linkages[:,2] # define y axis data as mutual inductance
-        inductances.Uw = U_linkages[:,3]
-        inductances.Vu = V_linkages[:,1]
-        inductances.Vv = V_linkages[:,2]
-        inductances.Vw = V_linkages[:,3]
-        inductances.Wu = W_linkages[:,1]
-        inductances.Wv = W_linkages[:,2]
-        inductances.Ww = W_linkages[:,3]
+        Uu = U_linkages[:,1] # define y axis data as self inductance
+        Uv = U_linkages[:,2] # define y axis data as mutual inductance
+        Uw = U_linkages[:,3]
+        Vu = V_linkages[:,1]
+        Vv = V_linkages[:,2]
+        Vw = V_linkages[:,3]
+        Wu = W_linkages[:,1]
+        Wv = W_linkages[:,2]
+        Ww = W_linkages[:,3]
 
-        inductance_prob = Inductance_Problem(t, rotor_angle, I_hat, inductances)
+        inductance_prob = Inductance_Problem(t, rotor_angle, I_hat, Uu, Uv)
         inductance_analyzer = Inductance_Analyzer()
         Ld, Lq, saliency_ratio = inductance_analyzer.analyze(inductance_prob)
 
         ############################ Output #################################
-        post_processing = {}
-        post_processing["t"] = t
-        post_processing["rotor_angle"] = rotor_angle
-        post_processing["inductances"] = inductances
-        post_processing["Ld"] = Ld
-        post_processing["Lq"] = Lq
-        post_processing["saliency_ratio"] = saliency_ratio
+        post_processing_fluxes = {}
+        post_processing_fluxes["t"] = t
+        post_processing_fluxes["rotor_angle"] = rotor_angle
+        post_processing_fluxes["Uu"] = Uu
+        post_processing_fluxes["Uv"] = Uv
+        post_processing_fluxes["Uw"] = Uw
+        post_processing_fluxes["Vu"] = Vu
+        post_processing_fluxes["Vv"] = Vv
+        post_processing_fluxes["Vw"] = Vw
+        post_processing_fluxes["Wu"] = Wu
+        post_processing_fluxes["Wv"] = Wv
+        post_processing_fluxes["Ww"] = Ww
 
-        state_out.conditions.flux_linkages = post_processing
+        state_out.conditions.flux_linkages = post_processing_fluxes
 
+        post_processing_inductances = {}
+        post_processing_inductances["Ld"] = Ld
+        post_processing_inductances["Lq"] = Lq
+        post_processing_inductances["saliency_ratio"] = saliency_ratio
+
+        state_out.conditions.inductances = post_processing_inductances
+        
         ############################ Results #################################
         print("\n************************ INDUCTANCE RESULTS ************************")
         print("Ld = ", Ld, " H")
