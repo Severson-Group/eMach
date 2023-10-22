@@ -102,8 +102,9 @@ Reviewers are encouraged to use this template:
     - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
     - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
     - Does the grammar or syntax require further revisions? [Yes or No]
-
-
+    - Comments on if changeset is compliant with eMach architecture:
+    - Comments on if review includes feedback on whether physics are accurate:
+    - Is PR approved to Level 2? [Yes or No]
 
 Level 2 Review Requirements
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -118,6 +119,17 @@ following tasks:
 
 For both Level 1 and Level 2 reviewers, it should be noted that the aforementioned requirements are meant to serve as a template to be followed and 
 with each a summary with comments should be included in the transitions from Level 1 to Level 2 and from Level 2 to merge.
+
+.. code-block:: markdown
+   
+    Thanks for passing on this PR. I have indicated specific change requests on individual files. Here is my level 2 review summary:
+
+    - Does Level 1 reviewer need to revise their PR? [Yes or No]
+    - If yes, please comment on what Level 1 reviewer needs to address: 
+    - Does the code and documentation comply with proper guidelines [Yes or No]
+    - Are the physics of the PR correct and accurate? [Yes or No]
+    - If no, please comment on what further changes are required:
+    - Is PR approved? [Yes or No]
 
 Documentation
 -------------------------------------------
