@@ -19,8 +19,14 @@ links provided on the left to familiarize themselves with the repository.
    
    getting_started/pre_reqs
    getting_started/tutorials/index
-   user_guide
    
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: User Guide
+
+   user_guide/index
+
 .. toctree::
    :hidden:
    :maxdepth: 3
