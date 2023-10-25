@@ -132,9 +132,6 @@ Level 2 reviewers are asked to copy-paste this template into their review:
 	
 For any answers of "No," please provide an explanation.
 
-For both Level 1 and Level 2 reviewers, it should be noted that the aforementioned requirements are meant to serve as a template to be followed and 
-with each a summary with comments should be included in the transitions from Level 1 to Level 2 and from Level 2 to merge.
-
 Documentation
 -------------------------------------------
 
