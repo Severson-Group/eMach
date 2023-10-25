@@ -87,11 +87,11 @@ In conducting the review, the reviewer should perform the following steps:
 1. Pull/fetch the branch being reviewed onto their device and confirm that the code runs and produces the expected results
 2. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_
 3. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_
-4. Closely read of the grammar and syntax of the language to ensure that it reads clearly
+4. Closely read of the grammar and syntax of the language to ensure that it reads clearly; if small edits are needed, consider committing them directly on to the branch
 5. Evaluate if the changeset is generally compliant with the eMach architecture
 6. If the reviewer has the necessary expertise, determine if the physics are correct
 
-Reviewers are asked to copy-paste this template into their review:
+Reviewers are expected to leave feedback directly on files within the changeset and to provide summary review comments. Level 1 reviewers are asked to copy-paste this template into their review:
 
 .. code-block:: markdown
    
@@ -100,35 +100,40 @@ Reviewers are asked to copy-paste this template into their review:
     - Does the code run without error and produce the expected result? [Yes or No]
     - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
     - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
-    - Does the grammar or syntax require further revisions? [Yes or No]
+    - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
     - Does this review consider whether this physics are accurate? [Yes or No]
     - Is PR approved to Level 2? [Yes or No]
 
+For any answers of "No," please provide an explanation.
+
 Level 2 Review Requirements
 ++++++++++++++++++++++++++++++++++++++++++++
 
-A Level 2 reviewer should be someone with a adequte-to-expert understanding of the review material. This reviewer must accomplish the
-following tasks:
+A Level 2 reviewer should be someone with expert understanding of the eMach codebase. This reviewer is expected to consider the following in their review:
 
-1. Review the remarks from the Level 1 reviewer and see if anything from this review requires further investigation
+1. Review the remarks from the Level 1 reviewer and determine if anything from this review requires further investigation
 2. Review whether the approach, code, and documentation is compliant with the eMach architecture
 3. Identify whether the physics are correct (seek outside help as needed, including from the developer)
 4. Request changes/give final approval for merge into ``develop``
 
-For both Level 1 and Level 2 reviewers, it should be noted that the aforementioned requirements are meant to serve as a template to be followed and 
-with each a summary with comments should be included in the transitions from Level 1 to Level 2 and from Level 2 to merge.
+Level 2 reviewers are asked to copy-paste this template into their review:
 
 .. code-block:: markdown
    
-    Thanks for passing on this PR. I have indicated specific change requests on individual files. Here is my level 2 review summary:
+    Level 2 review summary:
+    
+    - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
+    - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
+    - Is the writing, grammar, and syntax correct and clear? [Yes or No]
+    - Is the changeset compliant with the eMach architecture? [Yes or No]
+    - Are the physics accurate? [Yes or No]
+	- Level 1 re-review instructions (if revisions are requested):
+	
+For any answers of "No," please provide an explanation.
 
-    - Does Level 1 reviewer need to revise their PR? [Yes or No]
-    - If yes, please comment on what Level 1 reviewer needs to address: 
-    - Does the code and documentation comply with proper guidelines [Yes or No]
-    - Are the physics of the PR correct and accurate? [Yes or No]
-    - If no, please comment on what further changes are required:
-    - Is PR approved? [Yes or No]
+For both Level 1 and Level 2 reviewers, it should be noted that the aforementioned requirements are meant to serve as a template to be followed and 
+with each a summary with comments should be included in the transitions from Level 1 to Level 2 and from Level 2 to merge.
 
 Documentation
 -------------------------------------------
