@@ -85,25 +85,24 @@ A Level 1 reviewer is responsible for verifying that the code works and that bot
 In conducting the review, the reviewer should perform the following steps:
 
 1. Pull/fetch the branch being reviewed onto their device and confirm that the code runs and produces the expected results
-2. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_ and confirm this in writing in the review summary
-3. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_ and confirm this in writing in the review summary
-4. Edit the grammar and syntax of the language to ensure that it reads clearly (or request the developer revise)
-5. Comment on if the changeset is generally compliant with the eMach architecture
-6. Comment on if this review included a review of whether the physics are correct (it's okay if the reviewer did not, just let everyone know)
-7. Request changes/give approval to pass to a Level 2 reviewer with a written summary
+2. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_
+3. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_
+4. Closely read of the grammar and syntax of the language to ensure that it reads clearly
+5. Evaluate if the changeset is generally compliant with the eMach architecture
+6. If the reviewer has the necessary expertise, determine if the physics are correct
 
-Reviewers are encouraged to use this template:
+Reviewers are asked to copy-paste this template into their review:
 
 .. code-block:: markdown
    
-    Thanks for your PR. I have indicated specific change requests on individual files. Here is my level 1 review summary:
+    Level 1 review summary:
 
     - Does the code run without error and produce the expected result? [Yes or No]
     - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
     - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
     - Does the grammar or syntax require further revisions? [Yes or No]
-    - Comments on if changeset is compliant with eMach architecture:
-    - Comments on if review includes feedback on whether physics are accurate:
+    - Is the changeset compliant with the eMach architecture? [Yes or No]
+    - Does this review consider whether this physics are accurate? [Yes or No]
     - Is PR approved to Level 2? [Yes or No]
 
 Level 2 Review Requirements
