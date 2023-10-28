@@ -11,35 +11,43 @@ Each analyzer within the ``eMach`` codebase must be summarized such that someone
 purpose and structure of the analyzer. The documentation files devoted to each analyzder must contain the following sections:
 
 1. Model Background
-2. User Inputs
-3. User Outputs
+2. Inputs from User
+3. Outputs to User
 
 Model Background
 *******************************************
 
-The ``model_background`` section needs to provide information to explain the motivation, application, and any other knowledge required to understand
-where and why the analyzer is being applied. All relevant background information for each analyzer must be fully explained in this section. This 
+The model background section needs to provide information to explain the motivation, application, and any other knowledge required to understand
+where and how the analyzer is being applied. All relevant background information for each analyzer must be fully explained in this section. This 
 can be in the form of equations, images, explanations, etc. Any assumptions that are made must be fully explained in this section and any 
 publications that were referenced should be included here as well.
 
-User Inputs
+Input from User
 *******************************************
 
-The ``user_inputs`` section of each analyzer needs to divulge to the user what is required as inputs to the analyzer. This should come in the form of 
-organized tables, example code, and any other information that the user must provide to the analyzer. If additional images are required to understand
-the extent of the analyzer, they should be included here. The tables included in this section must document the input variables and should come in the 
-form of 3 columns. The columns should be listed as the `input variables`, the `units` of the input variables, and a short `description` of each input 
-variable. The example code contained in this section is the code that will run with the ``user_inputs`` and that results in the outputs documented 
-in the following section.
+The user inputs section of each analyzer needs to explain to the user what is required as inputs to the analyzer. At minimum, a table must be 
+provided to explain to the user what is needed as inputs. The table must include three columns, organized like the following:
 
-User Outputs
+1. Arguments
+2. Descriptions
+3. Units (if necessary)
+
+If necessary or desired, example code can be included for the user after the table is presented. If additional is required to understand the inputs
+of the analyzer, it needs to also be included in this section.
+
+Output to User
 *******************************************
 
-The ``user_outputs`` section should contain the outputs that will result from running the code documented in the ``user_inputs`` section. This 
-section should contain similar tables, code, and any other post-processing information that will be useful for a proper understanding of the analyzer. 
-Any plots that result from this analyzer should be included in this section as well. The output table should contain the same form as the input table. 
-The code that should be included in this section is any post-processing code needed to calculate the final variables or construct any plots. This code 
-should not be the analyzer code itself, but any code that is used to get from the analyzer outputs to usable data or images. 
+The user outputs section of each analyzer needs to contain the outputs that will result from running the analyzer code given the user inputs described
+in the previous section. The output should be include at minimum a table of the output variables. Generally, the output table should be a table 
+constructed with the following columns:
+
+1. Returns
+2. Descriptions
+3. Units (if necessary)
+
+If any output code or images result from the analyzer, they must be included in this section. If post-processing code is necessary to further understand
+the output of the analyzer, it must be included in this section as well. The analyzer code itself is `not` included at all in the analyzer documentation.
 
 Machine Designs Documentation
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -47,70 +55,70 @@ Machine Designs Documentation
 Each machine within the ``eMach`` codebase must be similarly summarized such that the purpose and structure of how each machine is defined, constructed, 
 and operated can be understood. This is summarized in a form containing the following sections:
 
-1. Machine Background
-2. User Inputs
-3. Creating a Machine Object
-4. Operating Point Inputs
-5. Creating a Machine Operating Point Object
+1. Machine
+    a. Machine Background
+    b. Inputs from User
+    c. Creating a Machine Object
+2. Machine Operating Point
+    a. Inputs from User
+    b. Creating a Machine Operating Point Object
 
 Machine Background
 *******************************************
 
-The ``machine_background`` section needs to provide information to explain the motivation, application, and any other knowledge required to 
-understand where and why the machine is being applied. This can be in the form of equations, images, explanations, etc. Any assumptions that are made 
-must be fully explained in this section and any publications that are referenced should be included here.
+The machine background section needs to provide information to explain the motivation, application, and any other knowledge required to understand
+where and how the machine is being applied. All relevant background information for each machine must be fully explained in this section. This 
+can be in the form of equations, images, explanations, etc. Any assumptions that are made must be fully explained in this section and any 
+publications that were referenced should be included here.
 
-Inputs from User
+Machine Inputs from User
 *******************************************
 
-The ``user_inputs`` section of the machine needs to explain to the user what is required as inputs to the machine. This should come in the form the 
-following four dictionaries/libraries:
+The user inputs section of the machine needs to explain to the user what is required as inputs to the machine. This should come in the form the 
+following four dictionaries/libraries, each contained in their own subsection:
 
 1. Dimensions
 2. Parameters
 3. Materials
 4. Winding
 
-The ``dimensions`` subsection of the ``user_inputs`` must detail any and all dimensions of the stator and rotor configuration. The documentation in 
-this subsection should come in the form of organized tables, example code, and an image of the parameterized cross section(s). If additional information 
-is necessary to understand the extent of the machine dimensions, it should be included here. The tables included in this subsection document the machine 
-dimensions and should follow the form of the previous analyzer ``user_inputs`` and ``user_outputs`` tables. The example code contained in this subsection 
-should be the code that will be used by the machine evaluator file.
+The documentation for each subsection must contain a description/explanation of the details behind how each applies to their respective machine. 
+Additional information for each subsection should come in the form of example code and tables. The example code should mirror code that should
+be placed in the machine evaluation example folders located `here <https://github.com/Severson-Group/eMach/tree/develop/examples/mach_eval_examples>`__. 
+Each table should be laid out with the following column structure:
 
-The ``parameters`` subsection of the ``user_inputs`` needs to divulge to the user the parameters of the machine configuration. Items such as pole pairs, 
-slots, naming conventions, rated conditions, etc. should be included here. The documentation of this subsection should come in the form of organized 
-tables and example code. If additional information is necessary to understand the extent of the machine parameters, it should be included here. The table 
-included in this subsection should follow the form of the previous ``dimensions`` table. The example code contained in this subsection should be the code 
-that will be used by the machine evaluator file.
+1. Keys
+2. Descriptions
+3. Units (if necessary)
 
-The ``materials`` subsection of the ``user_inputs`` must explain the materials used in the machine configuration. The documentation in this subsection 
-should come in the form of tables and example code containing the materials for, at the very least, the stator, rotor, coils, shaft, and air. If additional 
-information is necessary to understand the extent of the materials, it should be included here. The table included in this subsection should follow the 
-form of the previous ``parameters`` table. The example code contained in this subsection should be the code that will be used by the machine evaluator file.
+Specific requirements that must be included in the documentation for the four dictionaries/libraries can be seen here:
 
-The ``winding`` subsection of the ``user_inputs`` should detail the properties of the machine winding configuration. The documentation in this subsection 
-should come in the form of tables, winding diagrams, and example code. If additional information is necessary to understand the extent of the winding, it 
-should be included here. The table included in this subsection should follow the form of the previous ``materials`` table. The example code contained in 
-this subsection should be the code that will be used by the machine evaluator file.
+1. Dimensions section
+    a. Parameterized cross-sections
+4. Winding
+    a. Winding layout/stator diagram
 
 Creating a Machine Object
 *******************************************
 
-All of the ``user_inputs`` libraries/dictionaries must be read and constructed into a callable object. This is done by transforming the ``user_inputs`` 
-into the ``machine`` object that is described in the ``Machine_Design_Code`` section. This section should include example code taking the four 
-``user_input`` libraries/dictionaries and passing them into a singular ``machine`` object for a given machine type.
+All of the user input dictionaries/libraries must be read and constructed into a callable object. This is done by gathering all four 
+dictionaries/libraries into a single ``machine object``, as described `here <https://emach.readthedocs.io/en/latest/code.html#machine>`__. This 
+section must include a sample code block taking the four user inputs and passing them into a singular ``machine`` object.
 
-Operating Point Inputs
+Operating Point Inputs from User
 *******************************************
 
-The ``operating_point_inputs`` section of the ``machine_design`` documentation needs to divulge to the user what is required as inputs to define the 
-``machine_operating_point``. This should come in the form of an organized table. The table must document the input variables that are defined in the 
-code for each different machine type. The table should be in the same form as all of the other tables included in the previous sections and sections. 
-The example code contained in this section should be the code that will be used by the machine evaluator file.
+The user inputs section of the machine operating point needs to explain to the user what is required as inputs to defining a machine operating point. 
+Information required to undetstand all of the inputs defined within the operating point should be included here. This should come in the form of 
+an organized table with the following column layout:
+
+1. Keys
+2. Descriptions
+3. Units (if necessary)
 
 Creating a Machine Operating Point Object
 *******************************************
 
-The ``machine_operating_point`` section of the machine documentation must detail what code is required to define the ``machine_operating_point`` object.
-This should come in the form of organized and commented code. The example code contained in this section should be the code that will be used by the 
-machine evaluator file.
+All of the user inputs must be read and constructed into a callable object. This is done by gathering all of the operating point user inputs
+into a single ``machine operating point`` object, as described `here <https://emach.readthedocs.io/en/latest/code.html#machine-operating-point>`__. 
+This section must include a sample code block taking the operating point inputs and passing them into a singular ``machine_operating_point`` object.

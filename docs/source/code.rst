@@ -8,34 +8,43 @@ section of ``eMach``.
 Analyzer Code
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The code required for each ``analyzer`` within the ``eMach`` repository must be structured to analyze any set of user-defined inputs and produce 
-user-defined outputs. The code structure of each ``analyzer`` should contain each of the following classes:
+The code required for each ``analyzer``  must be structured to analyze any set of user-defined inputs and produce user-defined outputs. The code 
+structure of each ``analyzer`` should contain each of the following classes:
 
-1. DesignProblem Class
-2. DesignAnalyzer Class
+1. Design Problem Class
+2. Design Analyzer Class
 
-DesignProbelm Class
+Design Problem Class
 *******************************************
 
-The ``DesignProblem`` class takes all of the user-defined inputs as its arguments. The output of the ``DesignProblem`` class is a single variable with 
-multiple attributes. The code for each input variable must clearly defined the input variable and add it as an attribute of the `self` variable within 
-each ``DesignProblem`` class. The output of the ``DesignProblem`` class is the single `self` variable with as many attributes as desired. Commented out
-within the class should be explanations of each input variable. This should include the variable name, a brief description of the variable, and the 
-units of that variable. The output of the ``DesignProblem`` class is then used by the ``DesignAnalyzer` class.
+The Design Problem class shall contain an initializer and any definitions required of that initializer that accomplishes the following tasks:
 
-DesignAnalyzer Class
+1. Takes the user inputs as arguments
+    a. Inputs are any and all information required to fully define a ``problem``
+    b. This can include machine dimensions, data arrays, etc.
+2. Comments out explanations of each argument, which should include the following:
+    a. Arguemnt name
+    b. A brief description of how it is used and where it is stored
+    c. Argument units
+
+Design Analyzer Class
 *******************************************
 
-The ``DesignAnalyzer`` class is where all of the data processing required given the problem definition occurs. This class takes the singular output 
-variable from the ``DesignProbelm`` class defined as `problem: XXXProbelm`. The `XXX` term should be the title of the analyzer. Commented out within 
-the ``DesignAnalyzer`` class should be each of it's input arguments and output returns. The commented code should contain the variable named, brief 
-descriptions of the variables, and variable units split between `arguments` and `returns` sections.
+The Design Analyzer class is where the data processing occurs after the problem has been initialized and should accomplish the following tasks:
+
+1. Define an ``analyze`` function
+    a. Argument should be a single problem object
+    b. Return should be raw data that can be post-processed, if neccessary
+2. Comments out explanations of each argument/return, which should include the following:
+    a. Arguemnt/return name
+    b. A brief description of how it is used and where it is stored
+    c. Argument/return units
 
 Machine Designs Code
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The code required for each ``machine_design`` within the ``eMach`` repository must be structured to define both a parameterized ``machine`` and a 
-parameterized ``machine_operating_point``. The code structure of each user-defined machine should contain each of the following code files:
+The code required for each ``machine_design`` must be structured to define a ``machine`` and ``machine_operating_point``. The code structure of 
+each user-defined machine should contain each of the following code files:
 
 1. Machine
 2. Machine Operating Point
@@ -43,19 +52,29 @@ parameterized ``machine_operating_point``. The code structure of each user-defin
 Machine
 *******************************************
 
-The ``machine`` code file shall contain a single class, titled ``XXX_Machine``, that contains several different definitions and properties that 
-accomplish the following tasks:
+The ``machine`` code file shall contain a single class that contains several different definitions and properties. It should fully define a machine
+by accomplishing the following tasks:
 
-1. Initializes the dimensions, parameters, materials, and winding
-2. Defines required inputs from input libraries
-3. Checks if all inputs are present and, if necessary, notifies which ones are missing
-4. Defines all necessary machine properties based on machine inputs
+1. Defines the following dictionaries required by all machines:
+    a. Dimensions
+    b. Parameters
+    c. Materials
+    d. Winding
+2. Checks if required inputs are present and, if necessary, notifies which ones are missing
+3. Initializes ``machine`` object if required inputs are present and valid
+4. Comments out explanations of each argument/return, which should include the following:
+    a. Arguemnt/return name
+    b. Argument/return type
 
 Machine Operating Point
 *******************************************
 
-The ``machine_operating_point`` code file shall contain a single class, titled ``XXX_Machine_Oper_Pt`` that contains several different definitions 
-and properties of the specific operating point that accomplish the following tasks:
+The ``machine_operating_point`` code file shall contain a single class defining a machine operating point by accomplishing the following tasks:
 
-1. Initializes the required operating point inputs
-2. Defines each of the properties that result from the operating point
+1. Initializes the operating point by taking user inputs as arguments
+    a. Inputs are any and all information required to fully define a ``machine_operating_point``
+    b. Defines required properties for initialization 
+2. Comments out explanations of each argument, which should include the following:
+    a. Arguemnt name
+    b. A brief description of how it is used and where it is stored
+    c. Argument units
