@@ -96,8 +96,8 @@ def example():
                                         N_max, mat_dict, mat_failure_dict)
 
     analyzer = SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
-    test = analyzer.analyze(problem)
-    print(test)
+    result = analyzer.analyze(problem)
+    print(result)
 
 if __name__ == '__main__': 
     # Run this script to run the example case
