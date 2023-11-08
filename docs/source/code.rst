@@ -5,40 +5,46 @@ Developers of eMach should read this document to understand expectations of code
 code requirements for ``analyzers`` and ``machine_designs``. Understanding of proper Python coding practices are necessary to contribute to each 
 section of ``eMach``.
 
-Analyzer Code
+Analyzers
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The code required for each ``analyzer``  must be structured to analyze any set of user-defined inputs and produce user-defined outputs. The code 
-structure of each ``analyzer`` should contain each of the following classes:
+Analyzer modules should be located within ``mach_eval/analyzers`` and then placed within the appropriate subdirectory.
 
-1. Design Problem Class
-2. Design Analyzer Class
+An analyzer module may contain multiple analyzers. Each analyzer must consist of the following classes:
 
-Design Problem Class
+1. At least one Problem class  
+2. One Analyzer class
+
+Problem Class
 *******************************************
 
-The Design Problem class shall contain an initializer and any definitions required of that initializer that accomplishes the following tasks:
+The purpose of the problem class is to provide the analyzer class the necessary information to analyze a problem. Aspects to consider:
 
-1. Takes the user inputs as arguments
-    a. Inputs are any and all information required to fully define a ``problem``
-    b. This can include machine dimensions, data arrays, etc.
-2. Comments out explanations of each argument, which should include the following:
-    a. Arguemnt name
-    b. A brief description of how it is used and where it is stored
-    c. Argument units
+1. Naming
+    a. The problem class name should begin similarly to the analyzer class's name, i.e. ``ReallyGreatProblem`` for ``ReallyGreatAnalyzer``.
+2. Code comments on user input
+    a. Provide short description of each argument 
+    b. Specify argument units
+3. Recommended practices
+    a. Provide user data through the problem class initalizer 
+    b. Multiple problem classes can be defined for use with a single analyzer so that users can provide differing formats or conceptualizations of the necessary information (perhaps even requiring some computation within the problem class itself prior to being used in the analyzer).
 
-Design Analyzer Class
+
+
+Analyzer Class
 *******************************************
 
-The Design Analyzer class is where the data processing occurs after the problem has been initialized and should accomplish the following tasks:
+The Analyzer class is where the analysis operation is expected to occur. Aspects to consider:
 
-1. Define an ``analyze`` function
-    a. Argument should be a single problem object
-    b. Return should be raw data that can be post-processed, if neccessary
-2. Comments out explanations of each argument/return, which should include the following:
-    a. Arguemnt/return name
-    b. A brief description of how it is used and where it is stored
-    c. Argument/return units
+1. Required functions:
+    a. Each analyzer must provide an ``analyze(problem p)`` function that takes exactly one argument, a problem object, and returns the analysis results.
+
+2. Optional initializer
+    a. An initializer may be used to configure the analyzer's state in a manner that will be re-used across multiple problems. 
+    b. The developer must have a compelling reason for why this information is not instead provided to the problem object.
+3. Code comments 
+    a. Provide short description of each argument / return value
+    b. Specify argument / return value units
 
 Machine Designs Code
 ++++++++++++++++++++++++++++++++++++++++++++
