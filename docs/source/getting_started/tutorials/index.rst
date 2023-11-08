@@ -31,6 +31,7 @@ their own custom scripts for using its functionalities.
 
 .. toctree::
     :hidden:
+    :numbered:
 
     Rectangle Optimization <rectangle_tutorial/index>
     Analytical Machine Design <analytical_machine_des_tutorial/index>
