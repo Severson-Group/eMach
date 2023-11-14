@@ -6,7 +6,7 @@ os.chdir(os.path.dirname(__file__))
 sys.path.append("../../../")
 
 from mach_eval import (MachineEvaluator, MachineDesign)
-from optimization_vision_step import optimization_vision_step
+from electromagnetic_vision_step import electromagnetic_vision_step
 from electromagnetic_vision_step import electromagnetic_vision_step
 from example_vision_SynR_machine import Example_Vision_SynR_Machine, Vision_Machine_Op_Pt
 
