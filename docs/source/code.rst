@@ -10,10 +10,11 @@ Analyzers
 
 Analyzer modules should be located within ``mach_eval/analyzers`` and then placed within the appropriate subdirectory.
 
-An analyzer module may contain multiple analyzers. Each analyzer must consist of the following classes:
+An analyzer module may contain multiple analyzers if they are interdependent. Each analyzer must consist of the following classes:
 
 1. At least one Problem class  
 2. One Analyzer class
+3. Results class
 
 Problem Class
 *******************************************
@@ -38,10 +39,21 @@ The Analyzer class is where the analysis operation is expected to occur. Aspects
 
 1. Required functions:
     a. Each analyzer must provide an ``analyze(problem p)`` function that takes exactly one argument, a problem object, and returns the analysis results.
-
 2. Optional initializer
     a. An initializer may be used to configure the analyzer's state in a manner that will be re-used across multiple problems. 
     b. The developer must have a compelling reason for why this information is not instead provided to the problem object.
 3. Code comments 
+    a. Provide short description of each argument / return value
+    b. Specify argument / return value units
+
+
+Results Class
+*******************************************
+
+The Results class is where the returns of the analysis operation are brought together into a single return object. Aspects to consider:
+
+1. Required functions:
+    a. Each analyzer must provide an ``results(problem p)`` function that takes any applicable results of the analysis and returns the results as a single output.
+2. Code comments 
     a. Provide short description of each argument / return value
     b. Specify argument / return value units
