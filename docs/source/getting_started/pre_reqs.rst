@@ -117,10 +117,10 @@ examples provided within the ``examples`` folder to confirm everything is workin
 .. note:: Users following approach 1 should ensure the example scripts are being executed from the right Python environment.
 
 
-Using Virtual Environments with Python (optional)
+More Information on Using Virtual Environments with Python (Approach 1)
 ----------------------------------------------------
 
-This optional section has been added for users who wish to be more "Python savvy". This section gives an overview of Python virtual
+This section has been added to help approach 1 users be more "Python savvy". This section gives an overview of Python virtual
 environments and provides necessary links to enable users to work with virtual environments using VS code.
  
 Virtual environments are isolated environments for Python projects. These environments become extremely useful when users start 
