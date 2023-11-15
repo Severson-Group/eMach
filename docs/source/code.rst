@@ -22,13 +22,13 @@ Analyzer Class
 The Analyzer class is where the analysis operation is expected to occur. Aspects to consider:
 
 1. Required functions:
-    a. Each analyzer must provide an ``analyze(problem p)`` function that takes exactly one argument, a problem object, and returns the analysis results.
+    a. Each analyzer must provide an ``analyze(problem p)`` function that takes exactly one argument, a Problem object, and returns a Results object.
 2. Optional initializer
     a. An initializer may be used to configure the analyzer's state in a manner that will be re-used across multiple problems. 
     b. The developer must have a compelling reason for why this information is not instead provided to the problem object.
 3. Code comments 
     a. Provide short description of each argument / return value
-    b. Specify argument / return value units
+    b. When appropriate, indicate sources or context for important physics expressions.
 
 Problem Class
 *******************************************
