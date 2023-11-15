@@ -12,25 +12,9 @@ Analyzer modules should be located within ``mach_eval/analyzers`` and then place
 
 An analyzer module may contain multiple analyzers if they are interdependent. Each analyzer must consist of the following classes:
 
-1. At least one Problem class  
-2. One Analyzer class
+1. One Analyzer class
+2. At least one Problem class  
 3. One Results class
-
-Problem Class
-*******************************************
-
-The purpose of the problem class is to provide the analyzer class the necessary information to analyze a problem. Aspects to consider:
-
-1. Naming
-    a. The problem class name should begin similarly to the analyzer class's name, i.e. ``ReallyGreatProblem`` for ``ReallyGreatAnalyzer``.
-2. Code comments on user input
-    a. Provide short description of each argument 
-    b. Specify argument units
-3. Recommended practices
-    a. Provide user data through the problem class initalizer 
-    b. Multiple problem classes can be defined for use with a single analyzer so that users can provide differing formats or conceptualizations of the necessary information (perhaps even requiring some computation within the problem class itself prior to being used in the analyzer).
-
-
 
 Analyzer Class
 *******************************************
@@ -46,6 +30,19 @@ The Analyzer class is where the analysis operation is expected to occur. Aspects
     a. Provide short description of each argument / return value
     b. Specify argument / return value units
 
+Problem Class
+*******************************************
+
+The purpose of the problem class is to provide the analyzer class the necessary information to analyze a problem. Aspects to consider:
+
+1. Naming
+    a. The problem class name should begin similarly to the analyzer class's name, i.e. ``ReallyGreatProblem`` for ``ReallyGreatAnalyzer``.
+2. Code comments on user input
+    a. Provide short description of each argument 
+    b. Specify argument units
+3. Recommended practices
+    a. Provide user data through the problem class initalizer 
+    b. Multiple problem classes can be defined for use with a single analyzer so that users can provide differing formats or conceptualizations of the necessary information (perhaps even requiring some computation within the problem class itself prior to being used in the analyzer).
 
 Results Class
 *******************************************
