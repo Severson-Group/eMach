@@ -37,12 +37,15 @@ A copy-paste example code block must be included after the table that illustrate
 Output to User
 *******************************************
 
-Describe the return values of the analyzer's ``return`` function. All of the return values should be contained within a single ``results`` object. All variables 
-(i.e., a tuple or object) returned as part of this ``results`` object should be documented in a table specifying the data with the following columns:
+Describe the parameters and functions of the analyzer's results class. This must be done using a table with the following three columns:
 
-1. Name
+1. Property/function name
 2. Description
-3. Units (if necessary)
+3. Units
 
-A copy-paste example code block must be included that completes the example code block provided in ``Input from User`` by calling the ``analyze()`` and ``return()``
+If a row is describing a function, the description column should be used to describe the function's arguments and their units. 
+The ``Units`` column is intended to describe the units of the function's return value. 
+Results classes that have properties/functions that return more complicated objects can make use of multiple tables to effectively describe their functionality.
+
+A copy-paste example code block must be included that completes the example code block provided in ``Input from User`` by calling the ``analyze()`` 
 function and rendering the return values. It is recommended to include post-processing code (such as creating a plot) to further illustrate the use of the output data.
