@@ -47,10 +47,14 @@ The purpose of the problem class is to provide the analyzer class the necessary 
 Results Class
 *******************************************
 
-The Results class is where the returns of the analysis operation are brought together into a single return object. Aspects to consider:
+The purpose of the Results class is to encapsulate the results of the analysis operation as a single object. Aspects to consider:
 
-1. Required functions:
-    a. The results class must provide a single ``results(problem p)`` function that takes any applicable information of the analyzer(s) as arguments and returns the results as a single output object.
-2. Code comments 
-    a. Provide short description of each return value
-    b. Specify return value units
+1. Naming
+    a. The Results class name should begin similarly to the Analyzer class's name, i.e. ``ReallyGreatResult`` for ``ReallyGreatAnalyzer``.
+2. Parameters and functions:
+    a. These are expected to be used to expose the analysis results to the user. 
+    b. At least one parameter or function must be used.
+    c. If functions are used, it is expected that these will return a value in a reasonable amount of computation time (i.e., primary computation should occur in the Analyzer's ``analyze`` function.)
+3. Code comments 
+    a. Provide short description of each argument (for a function) and return value (or parameter)
+    b. Specify argument / return value / parameter units
