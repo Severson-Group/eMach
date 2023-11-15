@@ -128,7 +128,7 @@ Level 2 reviewers are asked to copy-paste this template into their review:
     - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
     - Are the physics accurate? [Yes or No]
-	- Level 1 re-review instructions (if revisions are requested):
+    - Level 1 re-review instructions (if revisions are requested):
 	
 For any answers of "No," please provide an explanation.
 
