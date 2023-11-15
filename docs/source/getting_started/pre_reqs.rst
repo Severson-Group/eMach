@@ -117,10 +117,10 @@ examples provided within the ``examples`` folder to confirm everything is workin
 .. note:: Users following approach 1 should ensure the example scripts are being executed from the right Python environment.
 
 
-Using Virtual Environments with Python (optional)
+More Information on Using Virtual Environments with Python (Approach 1)
 ----------------------------------------------------
 
-This optional section has been added for users who wish to be more "Python savvy". This section gives an overview of Python virtual
+This section has been added to help approach 1 users be more "Python savvy". This section gives an overview of Python virtual
 environments and provides necessary links to enable users to work with virtual environments using VS code.
  
 Virtual environments are isolated environments for Python projects. These environments become extremely useful when users start 
@@ -132,13 +132,11 @@ employed between projects. This `link <https://realpython.com/python-virtual-env
 explaination of Python virtual environments. 
 
 While virtual environments themselves are IDE agnostic, using IDEs such as Visual Studio Code or PyCharm makes it far easier to 
-leverage their potential than using others such as Spyder. This `video <https://www.youtube.com/watch?v=-nh9rCzPJ20>`__ provides a 
-great, easy to understand, step-by-step guide of using VS Code with Python virtual environments. Beginners are adviced to follow 
-this tutorial if they plan on installing ``eMach`` dependecies via approach 1. When you are ready to run your Python script in VS Code,
-make sure to `run in interactive window <https://code.visualstudio.com/docs/python/jupyter-support-py#_using-the-python-interactive-window>`__ 
-to render any graphical elements like graphs or charts. Getting the entire workflow up and running with 
-VS Code can be tricky. If you run into issues with running your scripts from a virtual environment in VS code even after following 
-the above tutorial, try adding the following entries to the ``settings.json`` file.
+leverage their potential than using others such as Spyder. Tips and tricks for using VS Code with virtual environments:
+
+- Beginners should follow this `video <https://www.youtube.com/watch?v=-nh9rCzPJ20>`__ for an easy to understand, step-by-step guide of using VS Code with Python virtual environments. 
+- To render any graphical elements, like graphs or charts, `run in interactive window mode <https://code.visualstudio.com/docs/python/jupyter-support-py#_using-the-python-interactive-window>`__.
+- If you run into issues with running your scripts from a virtual environment even after following the above tutorial, try adding the following entries to the ``settings.json`` file.
 
 .. code-block:: JSON
 
