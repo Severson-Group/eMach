@@ -36,8 +36,8 @@ must be included after the table that illustrates the necessary includes, creati
 Output to User
 *******************************************
 
-Describe the return values of the analyzer's ``return`` function. If there are multiple variables returned (i.e., a tuple or object) provide a table specifying 
-the data with the following columns:
+Describe the return values of the analyzer's ``return`` function. All of the return values should be contained within a single ``results`` object. All variables 
+(i.e., a tuple or object) returned as part of this ``results`` object should be documented in a table specifying the data with the following columns:
 
 1. Name
 2. Description

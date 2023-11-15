@@ -152,7 +152,7 @@ ensure everything is in order, documentation wise, prior to merging changes to `
 Recommended Workflow
 ++++++++++++++++++++++++++++++++++++++++++++
 
-For small changes involving just edits to exisiting documents and such, contributors can simply push the edits directly to ``develop``. 
+For small changes involving just edits to existing documents and such, contributors can simply push the edits directly to ``develop``. 
 For more involved changes, such as adding figures or entirely new files, it is recommended that contributors ensure everything looks
 as expected locally before attempting to merge changes. The steps involved in generating HTML files locally are as follows:
 
@@ -163,7 +163,7 @@ as expected locally before attempting to merge changes. The steps involved in ge
 5. Open up the ``index.html`` file from within ``docs\build\html`` folder and make sure everything is in order
 
 ``eMach`` also supports ``Sphinx`` autodocs feature, by which ``Sphinx`` is able to automatically generate documentation
-from Python docstrings. Modifications to exisiting Python files will be reflected on ``Read the Docs`` by default. However, if new 
+from Python docstrings. Modifications to existing Python files will be reflected on ``Read the Docs`` by default. However, if new 
 Python files whose docstrings should be included on ``Read the Docs`` are created, contributors will have to run a sequence of 
 commands to create the .rst files required to autogenerate the Python docstring HTML file, or manually create / make modifications to 
-exisitng .rst files themselves. For more information, please refer to this `link <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`__.
+existing .rst files themselves. For more information, please refer to this `link <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`__.

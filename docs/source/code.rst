@@ -14,7 +14,7 @@ An analyzer module may contain multiple analyzers if they are interdependent. Ea
 
 1. At least one Problem class  
 2. One Analyzer class
-3. Results class
+3. One Results class
 
 Problem Class
 *******************************************
@@ -53,7 +53,7 @@ Results Class
 The Results class is where the returns of the analysis operation are brought together into a single return object. Aspects to consider:
 
 1. Required functions:
-    a. Each analyzer must provide an ``results(problem p)`` function that takes any applicable results of the analysis and returns the results as a single output.
+    a. The results class must provide a single ``results(problem p)`` function that takes any applicable information of the analyzer(s) as arguments and returns the results as a single output object.
 2. Code comments 
-    a. Provide short description of each argument / return value
-    b. Specify argument / return value units
+    a. Provide short description of each return value
+    b. Specify return value units
