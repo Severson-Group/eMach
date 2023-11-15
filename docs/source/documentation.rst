@@ -37,9 +37,9 @@ A copy-paste example code block must be included after the table that illustrate
 Output to User
 *******************************************
 
-Describe the parameters and functions of the analyzer's results class. This must be done using a table with the following three columns:
+Describe the attributes and functions of the analyzer's results class. This must be done using a table with the following three columns:
 
-1. Property/function name
+1. Attribute/function name
 2. Description
 3. Units
 

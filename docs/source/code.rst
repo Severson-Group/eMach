@@ -51,10 +51,10 @@ The purpose of the Results class is to encapsulate the results of the analysis o
 
 1. Naming
     a. The Results class name should begin similarly to the Analyzer class's name, i.e. ``ReallyGreatResult`` for ``ReallyGreatAnalyzer``.
-2. Parameters and functions:
+2. Attributes and functions:
     a. These are expected to be used to expose the analysis results to the user. 
-    b. At least one parameter or function must be used.
+    b. At least one attribute or function must be used.
     c. If functions are used, it is expected that these will return a value in a reasonable amount of computation time (i.e., primary computation should occur in the Analyzer's ``analyze`` function.)
 3. Code comments 
-    a. Provide short description of each argument (for a function) and return value (or parameter)
-    b. Specify argument / return value / parameter units
+    a. Provide short description of each argument (for a function) and return value (or attribute)
+    b. Specify argument / return value / attribute units
