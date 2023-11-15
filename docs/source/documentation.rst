@@ -26,12 +26,13 @@ Input from User
 
 Detail the required inputs to the problem and analyzer classes. This must include a table with the following three columns:
 
-1. Arguments
-2. Descriptions
-3. Units (if necessary)
+1. Argument
+2. Description
+3. Units
 
-It should be noted that separate tables should be provided for the initializer of the problem class and the analyzer class. A copy-paste example code block 
-must be included after the table that illustrates the necessary includes, creating a problem object, and creating an analyzer object. 
+Separate tables should be provided for the initializer of the problem class and the analyzer class (if the analyzer class has an initializer). 
+
+A copy-paste example code block must be included after the table that illustrates the necessary includes, creating a problem object, and creating an analyzer object. 
 
 Output to User
 *******************************************
