@@ -33,7 +33,7 @@ The Analyzer class is where the analysis operation is expected to occur. Aspects
 Problem Class
 *******************************************
 
-The purpose of the problem class is to provide the analyzer class the necessary information to analyze a problem. Aspects to consider:
+The purpose of the Problem class is to provide the Analyzer class the necessary information to analyze a problem. Aspects to consider:
 
 1. Naming
     a. The problem class name should begin similarly to the analyzer class's name, i.e. ``ReallyGreatProblem`` for ``ReallyGreatAnalyzer``.
