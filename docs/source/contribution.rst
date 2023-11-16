@@ -68,6 +68,69 @@ developers of the new feature, they can open a PR (or simply merge) their user b
 
 Valid branch name examples: ``user/johndoe/motor_tests``, ``user/janestil2/issue_652``, ``feature/regression_tests``, ``feature/tutorial_femm``
 
+Reviewer Instructions
+-------------------------------------------
+
+PRs must be reviewed by official eMach reviewers prior to being merged into the ``develop`` branch. When making a PR, the contributor must identify and request at least one ``Level 1`` reviewer and at least one ``Level 2`` reviewer.
+A list of the existing Level 1 and Level 2 reviewers can be found
+`here <https://github.com/Severson-Group/eMach/blob/develop/CONTRIBUTING.md>`_.
+
+Instructions for reviewers are now provided. Developers are encouraged to read these instructions to understand how to successfully navigate the review process.
+
+Level 1 Review 
+++++++++++++++++++++++++++++++++++++++++++++
+
+A Level 1 reviewer is responsible for verifying that the code works and that both the code and documentation are compliant with the eMach architecture.
+
+In conducting the review, the reviewer should perform the following steps:
+
+1. Pull/fetch the branch being reviewed onto their device and confirm that the code runs and produces the expected results
+2. Ensure the code complies with the code guidelines as described `here <https://emach.readthedocs.io/en/latest/code.html>`_
+3. Ensure the documentation complies with the documentation guidelines as described `here <https://emach.readthedocs.io/en/latest/documentation.html>`_
+4. Closely read of the grammar and syntax of the language to ensure that it reads clearly; if small edits are needed, consider committing them directly on to the branch
+5. Evaluate if the changeset is generally compliant with the eMach architecture
+6. If the reviewer has the necessary expertise, determine if the physics are correct
+
+Reviewers are expected to leave feedback directly on files within the changeset and to provide summary review comments. Level 1 reviewers are asked to copy-paste this template into their review:
+
+.. code-block:: markdown
+   
+    Level 1 review summary:
+
+    - Does the code run without error and produce the expected result? [Yes or No]
+    - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
+    - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
+    - Is the writing, grammar, and syntax correct and clear? [Yes or No]
+    - Is the changeset compliant with the eMach architecture? [Yes or No]
+    - Does this review consider whether this physics are accurate? [Yes or No]
+    - Is PR approved to Level 2? [Yes or No]
+
+For any answers of "No," please provide an explanation.
+
+Level 2 Review Requirements
+++++++++++++++++++++++++++++++++++++++++++++
+
+A Level 2 reviewer should be someone with expert understanding of the eMach codebase. This reviewer is expected to consider the following in their review:
+
+1. Review the remarks from the Level 1 reviewer and determine if anything from this review requires further investigation
+2. Review whether the approach, code, and documentation is compliant with the eMach architecture
+3. Identify whether the physics are correct (seek outside help as needed, including from the developer)
+4. Request changes/give final approval for merge into ``develop``
+
+Level 2 reviewers are asked to copy-paste this template into their review:
+
+.. code-block:: markdown
+   
+    Level 2 review summary:
+    
+    - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
+    - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
+    - Is the writing, grammar, and syntax correct and clear? [Yes or No]
+    - Is the changeset compliant with the eMach architecture? [Yes or No]
+    - Are the physics accurate? [Yes or No]
+    - Level 1 re-review instructions (if revisions are requested):
+	
+For any answers of "No," please provide an explanation.
 
 Documentation
 -------------------------------------------
@@ -89,7 +152,7 @@ ensure everything is in order, documentation wise, prior to merging changes to `
 Recommended Workflow
 ++++++++++++++++++++++++++++++++++++++++++++
 
-For small changes involving just edits to exisiting documents and such, contributors can simply push the edits directly to ``develop``. 
+For small changes involving just edits to existing documents and such, contributors can simply push the edits directly to ``develop``. 
 For more involved changes, such as adding figures or entirely new files, it is recommended that contributors ensure everything looks
 as expected locally before attempting to merge changes. The steps involved in generating HTML files locally are as follows:
 
@@ -100,7 +163,7 @@ as expected locally before attempting to merge changes. The steps involved in ge
 5. Open up the ``index.html`` file from within ``docs\build\html`` folder and make sure everything is in order
 
 ``eMach`` also supports ``Sphinx`` autodocs feature, by which ``Sphinx`` is able to automatically generate documentation
-from Python docstrings. Modifications to exisiting Python files will be reflected on ``Read the Docs`` by default. However, if new 
+from Python docstrings. Modifications to existing Python files will be reflected on ``Read the Docs`` by default. However, if new 
 Python files whose docstrings should be included on ``Read the Docs`` are created, contributors will have to run a sequence of 
 commands to create the .rst files required to autogenerate the Python docstring HTML file, or manually create / make modifications to 
-exisitng .rst files themselves. For more information, please refer to this `link <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`__.
+existing .rst files themselves. For more information, please refer to this `link <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`__.
