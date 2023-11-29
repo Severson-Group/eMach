@@ -237,7 +237,9 @@ class SPM_RotorSpeedLimitAnalyzer:
                 failure_mat = materials[idx]
                 return (True,failure_mat)
             
-        return (False, None)
+        ss_results = SPM_RotorSpeedLimitResults(failure_mat, speed)
+            
+        return ss_results
         
 class SteadyStateStressProblem:
     def __init__(
@@ -360,3 +362,22 @@ class SteadyStateStressAnalyzer:
         mohrs_stress = np.array([sigma_1,sigma_2,sigma_3,tau_max])
         return mohrs_stress
         
+
+class SPM_RotorSpeedLimitResults:
+    def results(
+            self, 
+            failure_mat: dict,
+            speed: float
+            ):
+        """Results class for SPM_RotorSpeedLimitAnalyzer
+    
+        Attributes:
+            failure_mat (dict): material where failure occurs
+            speed (float): speed where failure occurs [RPM]
+
+        Returns:
+            result (SPM_RotorSpeedLimitAnalyzer): SteadyStateStressResults
+        """
+        self.failure_mat = failure_mat
+        self.speed = speed
+        return self
