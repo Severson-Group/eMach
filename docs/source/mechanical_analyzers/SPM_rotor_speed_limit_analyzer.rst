@@ -9,7 +9,7 @@ This analyzer determines the failure speed of a given surface-mounted permanent 
 Model Background
 ****************
 
-This analyzer utilizes the **SPM Rotor Structural Analyzer** to determine the rotor internal stresses at a given range of rotational speeds. For determining 
+This analyzer utilizes the **SPM Rotor Structural Analyzer** to determine the rotor internal stresses at a given range of rotational speeds. For determining the 
 failure point, maximum shear stress theory (MSST) and von Mises failure criterion are used. To provide context, for ductile materials such as rotor shafts and rotor 
 lamianations, von Mises failure criterion is used in evaluating failure. For brittle material, such as adhesives and permanent magnets, MSST failure criterion [#]_ 
 is used.
@@ -23,8 +23,8 @@ instead.
 Input from User
 **********************************
 
-The SPM rotor speed problem class requires the dimensions of the rotor shaft, the rotor material dictionary ``mat_dict``, and the maximum evaluated speed in RPM 
-``N_max``, and material failure dictionary ``mat_failure_dict``. For the required rotor shaft dimensions and rotor material dictionary ``mat_dict``, please refer 
+The SPM rotor speed problem class requires the dimensions of the rotor shaft, the rotor material dictionary ``mat_dict``, the maximum evaluated speed in RPM 
+``N_max``, and the material failure dictionary ``mat_failure_dict``. For the required rotor shaft dimensions and rotor material dictionary ``mat_dict``, please refer 
 to the `Input from User  <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html>`_ section in the **SPM Rotor Structural Analyzer** 
 documentation page.
 
@@ -118,7 +118,7 @@ for the sleeve.
 
 Example with Rotor Sleeve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The following code provide an example of rotor without rotor sleeve.
+The following code provides an example of a rotor without a rotor sleeve:
 
 .. code-block:: python
 
@@ -167,13 +167,14 @@ To analyze a rotor with no sleeve, a simple set of ``d_sl``, ``delta_sl``, and `
 
 Outputs to User
 ***********************************
-To initialize an instance of the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in unit *RPM* and number of rotor 
-nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, the user can call the ``.analyze`` method 
-and input the defined instance of ``SPM_RotorSpeedLimitProblem`` problem class. The script will run through the code at an incremental speed increases (``N_step`` defined by the 
-user) to determine the failure speed and material.
+To initialize an instance of the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in units of *RPM* and 
+number of rotor nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, the user can call the 
+``.analyze`` method and input the defined instance of ``SPM_RotorSpeedLimitProblem`` problem class. The script will run through the code at an incremental speed 
+increases (``N_step`` defined by the user) to determine the failure speed and material.
 
-Since this analyzer only provides an estimate of RPM failure speed, user should consider user a coarse `N_step` value (such as 1000RPM) to speed up the analysis. For the `node` value user can also adjuat accordingly based on their machine rotor size. 
-In addition, user should consider implementating a factor of safety for machine speed limit in their design.
+Since this analyzer only provides an estimate of RPM failure speed, the user should consider user a coarse `N_step` value (such as 1000 RPM) to speed up the analysis. 
+For the `node` value, the user can also adjust accordingly based on their machine rotor size. In addition, the user should consider implementating a factor of safety 
+for the machine speed limit in their design.
 
 Use the following code to run the aforementioned example analysis:
 
@@ -187,7 +188,8 @@ Use the following code to run the aforementioned example analysis:
    print(result.failure_mat)
    print(result.speed)
 
-When a certain material in the rotor reaches the failure criterion, the script will break out of the loop and return an instance of the result class with the follwing attributes:
+When a certain material in the rotor reaches the failure criterion, the script will break out of the loop and return an instance of the results class with the follwing 
+attributes:
 
 .. code-block:: python
 
