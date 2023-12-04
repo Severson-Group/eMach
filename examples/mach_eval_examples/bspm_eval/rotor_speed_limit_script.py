@@ -78,9 +78,9 @@ def example():
         'adhesive_ultimate_strength': 17.9E6,  # Pa
     }
 
-    ######################################################
-    #Setting the machine geometry and operating conditions
-    ######################################################
+    #####################################################################
+    #Setting the machine geometry and operating conditions (NO SLEEVE)
+    #####################################################################
     r_sh = 5E-3 # [m]
     d_m = 2E-3 # [m]
     r_ro = 12.5E-3 # [m]
@@ -88,6 +88,17 @@ def example():
     N_max = 100E3 # [RPM]
     d_sl=0 # [m]
     delta_sl=0 # [m]
+
+#    #####################################################################
+#    #Setting the machine geometry and operating conditions (W/ SLEEVE)
+#    #####################################################################
+#    r_sh = 5E-3 # [m]
+#    d_m = 2E-3 # [m]
+#    r_ro = 12.5E-3 # [m]
+#    deltaT = 0 # [K]
+#    N_max = 100E3 # [RPM]
+#    d_sl=1E-3 # [m]
+#    delta_sl=-2.4E-5 # [m]
 
     ######################################################
     #Creating problem and analyzer class

@@ -367,17 +367,17 @@ class SteadyStateStressAnalyzer:
 class SPM_RotorSpeedLimitResults:
     def __init__(
             self, 
-            failure_mat: dict,
+            failure_mat: str,
             speed: float
             ):
         """Results class for SPM_RotorSpeedLimitAnalyzer
     
         Attributes:
-            failure_mat (dict): material where failure occurs
+            failure_mat (str): material where failure occurs
             speed (float): speed where failure occurs [RPM]
 
         Returns:
-            result (SPM_RotorSpeedLimitAnalyzer): SteadyStateStressResults
+            result (SPM_RotorSpeedLimitResults): SPM_RotorSpeedLimitResults
         """
         self.failure_mat = failure_mat
         self.speed = speed

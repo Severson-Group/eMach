@@ -167,10 +167,13 @@ To analyze a rotor with no sleeve, a simple set of ``d_sl``, ``delta_sl``, and `
 
 Outputs to User
 ***********************************
-To initialize the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in unit *RPM* and number of rotor 
+To initialize an instance of the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in unit *RPM* and number of rotor 
 nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, the user can call the ``.analyze`` method 
-and input the defined ``SPM_RotorSpeedLimitProblem`` problem object. The script will run through the code at an incremental speed increases (``N_step`` defined by the 
+and input the defined instance of ``SPM_RotorSpeedLimitProblem`` problem class. The script will run through the code at an incremental speed increases (``N_step`` defined by the 
 user) to determine the failure speed and material.
+
+Since this analyzer only provides an estimate of RPM failure speed, user should consider user a coarse `N_step` value (such as 1000RPM) to speed up the analysis. For the `node` value user can also adjuat accordingly based on their machine rotor size. 
+In addition, user should consider implementating a factor of safety for machine speed limit in their design.
 
 Use the following code to run the aforementioned example analysis:
 
@@ -181,30 +184,27 @@ Use the following code to run the aforementioned example analysis:
    ######################################################
    analyzer = rsl.SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
    result = analyzer.analyze(problem)
-   print(result)
+   print(result.failure_mat)
+   print(result.speed)
 
-When a certain material in the rotor reaches its failure criterion, the script will break out of the loop and return a tuple containing the following:
-
-.. code-block:: python
-
-   (True, 'material', 'speed')
-
-where ``material`` is the failure material (type: string) and ``speed`` is the failure speed (type: float).
-
-On the other hand, if failure was not found. The script would simply return
+When a certain material in the rotor reaches the failure criterion, the script will break out of the loop and return an instance of the result class with the follwing attributes:
 
 .. code-block:: python
 
-   False
+   failure_mat (str): material where failure occurs
+   speed (float): speed where failure occurs [RPM]
+
+where ``failure_mat`` is the failure material (type: str) and ``speed`` is the failure speed (type: float).
 
 Example with Rotor Sleeve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Running the example case with a rotor sleeve returns the following result:
+Running the example case with a rotor sleeve returns the following:
 
 .. code-block:: python
 
-   False
+   None
+   None
 
 indicating no failure is found in speeds tested below the maximum speed ``N_max`` given by the user.
 
@@ -212,10 +212,11 @@ indicating no failure is found in speeds tested below the maximum speed ``N_max`
 Example with No Rotor Sleeve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Running the example case with no rotor sleeve returns the following result:
+Running the example case with no rotor sleeve returns the following:
 
 .. code-block:: python
 
-   (True, 'Adhesive', 77700.0)
+   'Adhesive'
+   77700.0
 
 indicating a failure with the adhesive at 77700 RPM.
