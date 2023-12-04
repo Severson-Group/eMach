@@ -137,11 +137,13 @@ class SPM_RotorSpeedLimitAnalyzer:
                 break
 
         if failure_mat is None:
-            # if no failure, return "False"
-            return False
+            # if no failure is found, return "None" for both 
+            # failure material and speed
+            return SPM_RotorSpeedLimitResults(None, None)
         else:
-            # if failure is found, return "True", failure material and speed
-            return (True, failure_mat, speed)
+            # if failure is found, return result class with 
+            # failure material and speed
+            return SPM_RotorSpeedLimitResults(failure_mat, speed)
         
     def check_if_fail(self, speed):
         """ Check if rotor material failure occured for a given rotational speed
@@ -236,10 +238,9 @@ class SPM_RotorSpeedLimitAnalyzer:
             if pct >= pct_max:
                 failure_mat = materials[idx]
                 return (True,failure_mat)
-            
-        ss_results = SPM_RotorSpeedLimitResults(failure_mat, speed)
-            
-        return ss_results
+        
+        # return False and None if no failure is found
+        return (False, None)
         
 class SteadyStateStressProblem:
     def __init__(
@@ -364,7 +365,7 @@ class SteadyStateStressAnalyzer:
         
 
 class SPM_RotorSpeedLimitResults:
-    def results(
+    def __init__(
             self, 
             failure_mat: dict,
             speed: float
@@ -380,4 +381,3 @@ class SPM_RotorSpeedLimitResults:
         """
         self.failure_mat = failure_mat
         self.speed = speed
-        return self
