@@ -164,9 +164,6 @@ To analyze a rotor with no sleeve, a simple set of ``d_sl``, ``delta_sl``, and `
                                         N_max, mat_dict, mat_failure_dict)
 
 
-
-Outputs to User
-***********************************
 To initialize an instance of the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in units of *RPM* and 
 number of rotor nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, the user can call the 
 ``.analyze`` method and input the defined instance of ``SPM_RotorSpeedLimitProblem`` problem class. The script will run through the code at an incremental speed 
@@ -188,15 +185,19 @@ Use the following code to run the aforementioned example analysis:
    print(result.failure_mat)
    print(result.speed)
 
-When a certain material in the rotor reaches the failure criterion, the script will break out of the loop and return an instance of the results class with the follwing 
-attributes:
 
-.. code-block:: python
+Output to User
+***********************************
 
-   failure_mat (str): material where failure occurs
-   speed (float): speed where failure occurs [RPM]
+The attributes of the results class can be summarized in the table below:
 
-where ``failure_mat`` is the failure material (type: str) and ``speed`` is the failure speed (type: float).
+.. csv-table::  results of SPM rotor speed limit analyzer
+   :file: results_SPM_rotor_speed_limit_analyzer.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+When a certain material in the rotor reaches the failure criterion, the script will break out of the loop and return an instance of the results class with the attributes
+diagrammed in the table above. Within the results class, ``failure_mat`` is the failure material (type: str) and ``speed`` is the failure speed (type: float).
 
 Example with Rotor Sleeve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
