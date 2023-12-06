@@ -139,6 +139,11 @@ The following code provides an example of a rotor without a rotor sleeve:
    problem = rsl.SPM_RotorSpeedLimitProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, 
                                         N_max, mat_dict, mat_failure_dict)
 
+   ######################################################
+   #Creating analyzer class
+   ######################################################
+   analyzer = rsl.SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
+
 
 Example with No Rotor Sleeve
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -163,6 +168,11 @@ To analyze a rotor with no sleeve, a simple set of ``d_sl``, ``delta_sl``, and `
    problem = rsl.SPM_RotorSpeedLimitProblem(r_sh, d_m, r_ro, d_sl, delta_sl, deltaT, 
                                         N_max, mat_dict, mat_failure_dict)
 
+   ######################################################
+   #Creating analyzer class
+   ######################################################
+   analyzer = rsl.SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
+
 
 To initialize an instance of the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in units of *RPM* and 
 number of rotor nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, the user can call the 
@@ -173,21 +183,17 @@ Since this analyzer only provides an estimate of RPM failure speed, the user sho
 For the `node` value, the user can also adjust accordingly based on their machine rotor size. In addition, the user should consider implementating a factor of safety 
 for the machine speed limit in their design.
 
+Output to User
+***********************************
+
 Use the following code to run the aforementioned example analysis:
 
 .. code-block:: python
 
-   ######################################################
-   #Creating analyzer class
-   ######################################################
-   analyzer = rsl.SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
    result = analyzer.analyze(problem)
    print(result.failure_mat)
    print(result.speed)
 
-
-Output to User
-***********************************
 
 The attributes of the results class can be summarized in the table below:
 
