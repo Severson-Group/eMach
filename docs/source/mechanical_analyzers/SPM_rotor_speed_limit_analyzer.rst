@@ -17,8 +17,7 @@ is used.
 Detailed descriptions of the **SPM Rotor Structural Analyzer** can be found on the analyzer page 
 `here <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html#inputs-from-user>`_.
 
-.. [#]  Ideally, for brittle materials, Mohr–Coulomb theory should be used in determining failure. However, due to the lack of material data avaliable, MSST is used 
-instead.
+.. [#]  Ideally, for brittle materials, Mohr–Coulomb theory should be used in determining failure. However, due to the lack of material data avaliable, MSST is used instead.
 
 Input from User
 **********************************
@@ -29,11 +28,21 @@ to the `Input from User  <https://emach.readthedocs.io/en/latest/mechanical_anal
 documentation page.
 
 For the material failure strength dictionary ``mat_failure_dict``, the following key value pairs are needed. Notice that ductile materials require yield strength 
-while brittle materials require ultimate strength for failure criterion.
+while brittle materials require ultimate strength for failure criterion. The main table containing the necessary input variables can be seen in the inputs section of 
+the **SPM Rotor Structural Analyzer**, found `here <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html#inputs-from-user>`_. The 
+additional parameters necessary for the yield and ultimate strengths can be found in the table below:
 
 .. _mat-failure-dict:
 .. csv-table:: ``mat_failure_dict`` input to SPM rotor speed limit problem
    :file: inputs_mat_failure_dict_rotor_speed_limit.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+Additionally, inputs are required for the analyzer, which can be found in this table below:
+
+.. _mat-failure-dict:
+.. csv-table:: input to SPM rotor speed limit analyzer
+   :file: inputs_rotor_speed_limit_analyzer.csv
    :widths: 70, 70, 30
    :header-rows: 1
 
@@ -186,6 +195,13 @@ for the machine speed limit in their design.
 Output to User
 ***********************************
 
+The attributes of the results class can be summarized in the table below:
+
+.. csv-table::  results of SPM rotor speed limit analyzer
+   :file: results_SPM_rotor_speed_limit_analyzer.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
 Use the following code to run the aforementioned example analysis:
 
 .. code-block:: python
@@ -193,14 +209,6 @@ Use the following code to run the aforementioned example analysis:
    result = analyzer.analyze(problem)
    print(result.failure_mat)
    print(result.speed)
-
-
-The attributes of the results class can be summarized in the table below:
-
-.. csv-table::  results of SPM rotor speed limit analyzer
-   :file: results_SPM_rotor_speed_limit_analyzer.csv
-   :widths: 70, 70, 30
-   :header-rows: 1
 
 When a certain material in the rotor reaches the failure criterion, the script will break out of the loop and return an instance of the results class with the attributes
 diagrammed in the table above. Within the results class, ``failure_mat`` is the failure material (type: str) and ``speed`` is the failure speed (type: float).

@@ -1,4 +1,4 @@
-Variable/key_value name,Description,Units
+Argument,Description,Units
 core_yield_strength,Rotor iron core yield strength,Pa
 magnet_ultimate_strength,Magnet ultimate strength,Pa
 sleeve_ultimate_strength,Sleeve ultimate strength,Pa
