@@ -4,15 +4,16 @@
 SPM Rotor Speed Analyzer
 ##############################
 
-This analyzer determines the failure speed of a given surface-mounted permanent magnet (SPM) rotor design.  
+This analyzer determines the failure speed of a surface-mounted permanent magnet (SPM) rotor design.  
 
 Model Background
 ****************
 
-This analyzer utilizes the **SPM Rotor Structural Analyzer** to determine the rotor internal stresses at a given range of rotational speeds. For determining the 
-failure point, maximum shear stress theory (MSST) and von Mises failure criterion are used. To provide context, for ductile materials such as rotor shafts and rotor 
-lamianations, von Mises failure criterion is used in evaluating failure. For brittle material, such as adhesives and permanent magnets, MSST failure criterion [#]_ 
-is used.
+This analyzer utilizes the **SPM Rotor Structural Analyzer** to calculate the rotor's internal stresses over a specified range of rotational speeds. From this, the analyzer determines whether 
+the rotor will fail structurally using either maximum shear stress theory (MSST) or von Mises failure criterion based on the rotor material as follows:
+
+* von Mises is used for ductile materials, such as rotor shafts and rotor laminations
+* MSST is used for brittle materials [#]_ , such as adhesives and permanent magnets.
 
 Detailed descriptions of the **SPM Rotor Structural Analyzer** can be found on the analyzer page 
 `here <https://emach.readthedocs.io/en/latest/mechanical_analyzers/SPM_structural_analyzer.html#inputs-from-user>`_.
@@ -47,8 +48,8 @@ Additionally, the user must provide information to this analyzer's initializer, 
    :header-rows: 1
 
 
-The analyzer runs through the code at incremental speed increases (``N_step``) to determine the failure speed and material. Since this analyzer only provides an estimate of RPM failure speed, the user is advised to use a coarse `N_step` value (such as 1000 RPM) to speed up the analysis. 
-For the `node` value, the user can also adjust accordingly based on their machine rotor size. In addition, the user should consider implementating a factor of safety 
+The analyzer runs through the code at incremental speed increases (``N_step``) to determine the failure speed and material. Since this analyzer only provides an estimate of RPM failure speed, the user is advised to use a coarse ``N_step`` value (such as 1000 RPM) to speed up the analysis. 
+For the ``node`` value, the user can also adjust accordingly based on their machine rotor size. In addition, the user should consider implementating a factor of safety 
 for the machine speed limit in their design.
 
 The following code demonstrates how to initialize the ``SPM_RotorSpeedLimitProblem`` class. The values used by the ``mat_dict`` are representative of typical values 
