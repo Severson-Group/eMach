@@ -1,5 +1,5 @@
 
-*eMach* Contribution Guidelines
+Contribution Guidelines
 ==========================================
 
 This guide is intended to provide guidelines for contributors to *eMach*. All contributors are expected to follow these 
