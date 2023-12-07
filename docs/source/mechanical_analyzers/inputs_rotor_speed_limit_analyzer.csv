@@ -1,3 +1,3 @@
 Argument,Description,Units
-N_step,evaluation step size,RPM
-node,numer of nodes to evaluate,
+N_step,Evaluation step size,RPM
+node,Number of nodes to evaluate stress at,

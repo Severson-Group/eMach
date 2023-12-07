@@ -38,7 +38,7 @@ additional parameters necessary for the yield and ultimate strengths can be foun
    :widths: 70, 70, 30
    :header-rows: 1
 
-Additionally, inputs are required for the analyzer, which can be found in this table below:
+Additionally, the user must provide information to this analyzer's initializer, as indicated in the table below:
 
 .. _mat-failure-dict:
 .. csv-table:: input to SPM rotor speed limit analyzer
@@ -46,6 +46,10 @@ Additionally, inputs are required for the analyzer, which can be found in this t
    :widths: 70, 70, 30
    :header-rows: 1
 
+
+The analyzer runs through the code at incremental speed increases (``N_step``) to determine the failure speed and material. Since this analyzer only provides an estimate of RPM failure speed, the user is advised to use a coarse `N_step` value (such as 1000 RPM) to speed up the analysis. 
+For the `node` value, the user can also adjust accordingly based on their machine rotor size. In addition, the user should consider implementating a factor of safety 
+for the machine speed limit in their design.
 
 The following code demonstrates how to initialize the ``SPM_RotorSpeedLimitProblem`` class. The values used by the ``mat_dict`` are representative of typical values 
 used by this analyzer. This assumes 1045 carbon steel for the rotor shaft, M19 29-gauge laminated steel for the rotor core, N40 neodymium magnets, and carbon fiber 
@@ -182,15 +186,6 @@ To analyze a rotor with no sleeve, a simple set of ``d_sl``, ``delta_sl``, and `
    ######################################################
    analyzer = rsl.SPM_RotorSpeedLimitAnalyzer(N_step=100,node=1000)
 
-
-To initialize an instance of the analyzer class ``SPM_RotorSpeedLimitAnalyzer``, the user must specify the RPM evaluation step size ``N_step`` in units of *RPM* and 
-number of rotor nodes ``node`` (for evaluating rotor stress) when defining the analyzer object. Once the analyzer class has been defined, the user can call the 
-``.analyze`` method and input the defined instance of ``SPM_RotorSpeedLimitProblem`` problem class. The script will run through the code at an incremental speed 
-increases (``N_step`` defined by the user) to determine the failure speed and material.
-
-Since this analyzer only provides an estimate of RPM failure speed, the user should consider user a coarse `N_step` value (such as 1000 RPM) to speed up the analysis. 
-For the `node` value, the user can also adjust accordingly based on their machine rotor size. In addition, the user should consider implementating a factor of safety 
-for the machine speed limit in their design.
 
 Output to User
 ***********************************
