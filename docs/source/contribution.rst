@@ -98,7 +98,7 @@ Reviewers are expected to leave feedback directly on files within the changeset 
     Level 1 review summary:
 
     - Does the code run without error and produce the expected result? [Yes or No]
-    - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
+    - Does the code comply with the [code guidelines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
     - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
     - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
@@ -123,7 +123,7 @@ Level 2 reviewers are asked to copy-paste this template into their review:
    
     Level 2 review summary:
     
-    - Does the code comply with the [code guidlines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
+    - Does the code comply with the [code guidelines](https://emach.readthedocs.io/en/latest/code.html)? [Yes or No]
     - Does the code documentation comply with the [documentation guidelines](https://emach.readthedocs.io/en/latest/documentation.html)? [Yes or No]
     - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
