@@ -15,3 +15,4 @@ This page contains links to analyzers in eMach which aid in evaluating the mecha
     Inner Rotor Stator Thermal <inner_rotor_stator_thermal_analyzer>
     SPM Rotor Structural <SPM_structural_analyzer>
     SPM Sleeve <SPM_sleeve_analyzer>
+    SPM Rotor Speed <SPM_rotor_speed_limit_analyzer>
