@@ -107,3 +107,9 @@ Use the following code to run the example analysis:
     result = analyzer.solve()
     print(result.omega_n)
 
+Running the example case returns the following:
+.. code-block:: python
+
+   18908.922312969735
+
+Indicating the shaft design has an estimated critical speed of 18908.92 [rad/s], or 180,566 [RPM].
