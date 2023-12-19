@@ -1,0 +1,4 @@
+Argument,Description,Units
+r_sh,Shaft Radius,m
+L,Length of shaft,m
+material,Shaft material dictionary,

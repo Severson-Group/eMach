@@ -1,0 +1,109 @@
+.. _rotor_critical_speed_analyzer:
+
+
+Rotor Critical Speed Analyzer
+##############################
+This analyzer determines the first critical speed (first bending mode natural frequency) of a given cylindrical shaft.
+
+Model Background
+****************
+When designing high-speed machines, one cruical design aspect the designer must consider is the critical speed of the rotor. 
+Under rotation, if the rotating frequency matches or near its critical speed (resonance frequency/natural frequency), the rotor would undergo high amplitude vibration. 
+These high amplitude of vibration could cause permanent damage to the rotor, even machine. Hence, as a designer it is cruical to determine if your rotor design can operate at your targeted operating speed.
+
+One method to estimate the critical speed of a rotor is by modeling it as an Euler-bernoulli beam. By doing so, analytical equations can be used to estimate where crtical speed would occur for a given shaft design. 
+The equation [1]_ used to estimate critical speed is shown below. 
+
+.. math::
+
+   \omega_n = \beta_{fi} \sqrt{\frac{EI}{\rho AL^4}} 
+
+where `E` is the Young's Modulus of the shaft material, `I` is the area moment of inertia of the shaft, `A` is the cross-sectional area of the shaft and `L` is the length of the shaft.
+Note,  :math:`\beta_{fi}` is the numerical constant determined based on the boundary condition of the shaft under rotation. 
+For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta_{fi}=4.7`. For other boundary conditions, see section 8.5.4 Figure 8.15 of [1].
+
+Limitation
+****************
+* This analyzer assumes the cylindrical shaft as an Euler-Bernoulli beam.
+* This analyzer assumes a uniform area across the entire shaft length `L`.
+* This analyzer only considers the rotor shaft itself and not the attached components (ex. sleeve, magnets, etc.)
+* This analyzer should only be applied for slender shafts, length to diameter ratio should be greater than 10, `L/D` > 10. [2]_
+
+Additional Notes
+****************
+i. If bearings are considered, the system should be considered as a 'Support-Supported' system. Though, result would still deviate by up to 30%, as the bearing stiffness are not considered. [2]
+ii. It is recommended that for a more accurate result, user should perform FEA modal analysis for the entire rotor assembly with lumper-mass model approach to get a conservative estimate.
+
+.. [1]  S. Rao, Mechnical Vibrations, 5th edit, Pearson, 2011.
+.. [2]  Silva, T. A. N., and N. M. M. Maia. "Modelling a rotating shaft as an elastically restrained Bernoulli-Euler beam." Experimental Techniques 37 (2013): 6-13.
+
+Input from User
+**********************************
+In order to define the problem class, user must specify the geometry of the shaft, as well as material properties for the material they intended to use. 
+
+.. _input-dict:
+.. csv-table:: Input for rotor critical speed problem
+   :file: inputs_rotor_critical_speed_analyzer.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+For the material dictionary, the following key value pairs are needed. 
+
+.. _mat-dict:
+.. csv-table:: ``material`` dictionary for rotor critical speed problem
+   :file: inputs_mat_dict_rotor_critical_speed_analyzer.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+Example Code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The following example code demonstrates how to initialize instances of class object `RotorCriticalSpeedProblem` and `RotorCriticalSpeedAnalyzer`. 
+Matierial properties for `S45C` medium carbon steel are used for the following example.
+
+.. code-block:: python
+
+   import eMach.mach_eval.analyzers.mechanical.rotor_critical_speed as rcs
+
+    ######################################################
+    # Create the required Shaft Material Dictionary
+    ######################################################
+    mat_dict = { 
+        # Material: S45C Steel
+        'youngs_modulus':206E9, #Pa
+        'density':7870, # kg/m3
+        }
+
+The following code then specify the shaft geometry and numerical constant `beta_fi`.
+
+.. code-block:: python
+
+    ######################################################
+    # Define rotor shaft geometry and numeric constants
+    ######################################################
+    r_sh = 9E-3         # shaft radius
+    length = 164E-3     # shaft length
+    beta_fi = 4.7       # free-free boundary condition numerical constant
+
+    ######################################################
+    # Define rotor critical speed problem and create instance of problem analyzer
+    ######################################################
+    problem = RotorCritcalSpeedProblem(r_sh,length,beta_fi,mat_dict)
+    analyzer = RotorCritcalSpeedAnalyzer(problem)
+
+Output to User
+***********************************
+
+The attributes of the results class can be summarized in the table below:
+
+.. csv-table::  results of rotor critical speed analyzer
+   :file: results_rotor_critical_speed_analyzer.csv
+   :widths: 70, 70, 30
+   :header-rows: 1
+
+Use the following code to run the example analysis:
+
+.. code-block:: python
+
+    result = analyzer.solve()
+    print(result.omega_n)
+
