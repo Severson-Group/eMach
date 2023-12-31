@@ -18,13 +18,19 @@ os.chdir(os.path.dirname(__file__))
 # add the directory immediately above this file's directory to path for module import
 #sys.path.append("../../..")
 
-class BSPMMachineConstantAnalyzer():
+class BSPMMachineConstantProblem:
+    def __init__(
+            self
+            ) -> None:
+        pass
+
+class BSPMMachineConstantAnalyzer:
     """Analyzer for determining machine constants of BSPM in JMAG. 
     
     Attributes:
         project_name (str): .jproj JMAG file to evaluate.
     """
-    def __init__(self, project_name:str) -> None:
+    def __init__(self, project_name:str) -> 'BSPMMachineConstantAnalyzer':
         self.project_name = project_name
 
         # open .jproj file and obtain initial model and study properties
