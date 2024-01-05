@@ -1,0 +1,7 @@
+Arguments, Type, Description
+machine, 'BSPM_machine', object of type BSPM_machine describing a bearingless spm machine
+operating_point,'BSPM_Machine_Oper_Pt', object of type BSPM_Machine_Oper_Pt describing BSPM machine operating point
+solve_Kf,bool, 
+solve_Kt,bool,
+solve_Kphi,bool,
+solve_Kdelta,bool,

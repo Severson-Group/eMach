@@ -1,12 +1,44 @@
 BSPM Machine Constants Analyzer
 ########################################################################
 
-This analyzer determines the machine constants (:math:`K_t, K_f, K_\delta` and :math:`K_\Phi`) of a given BSPM machine design.
+This analyzer determines the machine constants (:math:`k_t, k_f, k_\delta` and :math:`k_\Phi`) of a given BSPM machine design.
 
 Model Background
 ****************
 
 This analyzer utilizes scripts within eMach to generate `BSPM_Machine` and `BSPM_Machine_Oper_Pt` objects for performing machine constant analysis.
+
+Torque Contant :math:`k_t`
+------------------------------------
+The machine torque constant :math:`k_t` can be expressed using the following equaiton,
+
+.. math::
+
+   \tau = k_t i_q
+
+where 𝜏 is the torque and :math:`i_q` is the injected torque current.
+
+Suspension Force :math:`k_f` & Displacement Stiffness Constant :math:`k_\delta`
+--------------------------------------------------------------------------------------------------
+The suspension force constant :math:`k_f` and displacement stiffness constant :math:`k_\delta` can be expressed using the following equaiton,
+
+.. math::
+
+   \vec{F} = k_f \vec{i_s}+k_\delta \vec{\delta}
+
+where 𝛿 is the displacement of the rotor from magnetic center, :math:`F_c` is the force created by current :math:`\vec{i_s}`, 
+:math:`k_f` is the force constant and :math:`k_\delta` is the displacement stiffness constant
+
+
+Back-EMF Constant :math:`k_\Phi`
+------------------------------------
+The machine back-EMF constant :math:`k_\Phi` can be expressed using the following equaiton,
+
+.. math::
+
+   \vec{v_m} = k_\Phi\omega
+
+where, 𝜔 is angular velocity in rad/s and :math:`\vec{v_m}` is the RMS value of the induced phase voltage. (???)
 
 
 
@@ -15,6 +47,11 @@ Input from User
 
 In order to define the problem class, user must specify the geometry as well as the operating point of the BSPM machine.
 For defining the `BSPM_Machine` and `BSPM_Machine_Oper_Pt` objects, user can refer to :doc:`../machines/bspm/index.rst`
+
+.. csv-table::  results of bspm machine constant analyzer
+   :file: input_bspm_mach_constants_analyzer.csv
+   :widths: 20, 20, 70
+   :header-rows: 1
 
 .. code-block:: python
 
@@ -192,8 +229,13 @@ Running the example case returns the following:
 
 .. code-block:: python
 
+    1.8019710307171688
+    0.0203730830815381
+    6935.763575553156
+    0.00456017028983404
 
-The results indicate that the example BSPM machine design has suspension force constant of xxx [N/A], 
-torque constant of xxx [N-m/A_pk], displacement stiffness constant of xxx [N/m] and back-EMF constant of xxx [V_rms/rad/s].
+
+The results indicate that the example BSPM machine design has suspension force constant of 1.802 [N/A], 
+torque constant of 0.0204 [N-m/A_pk], displacement stiffness constant of 6935.76 [N/m] and back-EMF constant of 0.00456 [V_rms/rad/s].
 
    
