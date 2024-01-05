@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import win32com.client
-from ..electrical_analysis.JMAG import JMAG
 from .....machines.bspm import BSPM_Machine, BSPM_Machine_Oper_Pt
 from ...bspm.jmag_2d_config import JMAG_2D_Config
 from ...bspm.jmag_2d import BSPM_EM_Analyzer
-from typing import Tuple
+from typing import Tuple, Union
+from dataclasses import dataclass
 ###########################################################################
 from functools import cached_property, lru_cache
 # @lru_cache decoractor saves the return value of the method, 
@@ -32,8 +32,8 @@ class BSPMMachineConstantProblem:
             operating_point: BSPM_Machine_Oper_Pt,
             solve_Kf: bool = True,
             solve_Kt: bool = True,
-            solve_Kdelta: bool = True,
             solve_Kphi: bool = True,
+            solve_Kdelta: bool = True,
             ) -> 'BSPMMachineConstantProblem':
         """BSPMMachineConstantProblem Class
 
@@ -51,6 +51,8 @@ class BSPMMachineConstantProblem:
         self.machine = machine
         self.operating_point = operating_point
         self.solve_Kf = solve_Kf
+        self.solve_Kt = solve_Kt
+        self.solve_Kphi = solve_Kphi
         self.solve_Kdelta = solve_Kdelta
         self._validate_attr()
         
@@ -69,74 +71,111 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
     def __init__(
             self,
             configuration: JMAG_2D_Config,
-            **kwargs
+            Kf_Kt_step: int = 10,
+            Kdelta_coords: list = [[x, y] for x in np.linspace(-0.3,0.3,3) 
+                                   for y in np.linspace(-0.3,0.3,3)],
+            Kphi_step: int = 10,
             ): 
         self.configuration = configuration
         super().__init__(self.configuration)
+        self.Kf_Kt_step = Kf_Kt_step
+        self.Kdelta_coords = Kdelta_coords
+        self.Kphi_step = Kphi_step
 
-        ############# Simulation Steps #############
-        # Unless kwargs are provided, analyzer will use default values
-        # kwargs.get(key, default_val)
-        self.Iq_step = kwargs.get('Iq_step',10)
+    def __getstate__(self):
+        """Magic method for pickling"""
+        # Remove problematic objects to avoid pickling error
+        odict = self.__dict__.copy()
+        del_key_list = ['toolJd','init_model','init_study','init_properties']
+        for key in del_key_list:
+            del odict[key]
+        return odict
 
-        coord = []
-        for x in np.linspace(-0.3,0.3,3):
-            for y in np.linspace(-0.3,0.3,3):
-                coord.append([x,y])
-        self.Kdelta_coordinates = kwargs.get('Kdelta_coord',coord)
-        self.Kphi_speed = np.linspace(0,160000,11)
+    def __setstate__(self, state):
+        """Magic method for unpickling"""
+        self.__dict__ = state
 
     def analyze(self, problem: BSPMMachineConstantProblem):
+        """Analyze BSPMMachineConstantProblem
 
+        Args:
+            problem (BSPMMachineConstantProblem): BSPMMachineConstantProblem
+
+        Returns:
+            BSPMMachineConstantResult: Result class of BSPMMachineConstantProblem
+        """
+        
         self.problem = problem
         self.machine = problem.machine
+        self.machine_op_pt = problem.operating_point
         self._validate_attr()
 
         # Run initial analysis to build the model 
+        # super().analyze == BSPM_EM_Analyzer.analyzer
+        print('==============================================================')
         print('Performing initial run...')
         super().analyze(self.problem)
         print('Initial run complete...')
     
         # open .jproj file and obtain initial model and study properties
+        print('==============================================================')
         print(f'Re-opening {self.project_name}.jproj')
         self.toolJd = self._open_JMAG_file()
-
         (self.init_model,
          self.init_study,
          self.init_study_name,
          self.init_properties) = self._get_init_study(self.toolJd)
+        
+        return BSPMMachineConstantResult(
+            self.Kf,self.Kt,self.Kdelta,self.Kphi)
 
-           
     @cached_property
-    def Kf(self)->float:
-        "Machine Force Constant"
-        Is_list, force = self.Kf_data
-        Kf,_ = np.polyfit(Is_list,force,deg=1)
-        return Kf 
+    def Kf(self)-> Union[float, None]:
+        "Machine Force Constant [N/A]"
+        if self.problem.solve_Kf:
+            Is_list, force = self.Kf_data
+            Kf,_ = np.polyfit(Is_list,force,deg=1)
+            return Kf   
+        else:
+            return None
+        
+    @cached_property
+    def Kt(self)->Union[float, None]:
+        "Machine Torque Constant [N-m/A_pk]"
+        if self.problem.solve_Kt:
+            Iq_list, torque = self.Kt_data
+            Kt,_ = np.polyfit(Iq_list,torque,deg=1)
+            return Kt
+        else:
+            return None
     
     @cached_property
-    def Kt(self)->float:
-        "Machine Torque Constant"
-        Iq_list, torque = self.Kt_data
-        Kt,_ = np.polyfit(Iq_list,torque,deg=1)
-        return Kt
-    
+    def Kdelta(self)->Union[float, None]:
+        "Machine Displacement Constant [N/m]"
+        if self.problem.solve_Kdelta:
+            disp,force = self.Kdelta_data
+            Kdelta,_ = np.polyfit(disp,force,deg=1)
+            return Kdelta
+        else:
+            return None
+        
     @cached_property
-    def Kdelta(self)->float:
-        "Machine Displacement Constant"
-        disp,force = self.Kdelta_data
-        Kdelta,_ = np.polyfit(disp,force,deg=1)
-        return Kdelta
-    
-    @cached_property
-    def Kphi(self)->float:
-        "Machine Back-EMF Constant"
-        speed, bemf = self.Kphi_data
-        Kphi,_ = np.polyfit(speed,bemf,deg=1)
-        return Kphi
+    def Kphi(self)->Union[float, None]:
+        "Machine Back-EMF Constant [V_rms/rad/s]"
+        if self.problem.solve_Kphi:
+            speed, bemf = self.Kphi_data
+            Kphi,_ = np.polyfit(speed,bemf,deg=1)
+            return Kphi
+        else:
+            return None
 
     @cached_property
     def Kf_data(self)->Tuple[list,list]:
+        """Data used in evaluating machine force constant Kf
+
+        Returns:
+            Tuple[list,list]: (suspension currents [A], force values [N])
+        """
         # run simulations and extract data from JMAG
         _,Is_list,_,force_df_list = self.run_Kf_Kt_simulations()
 
@@ -155,6 +194,11 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
     
     @cached_property
     def Kt_data(self)->Tuple[list,list]:
+        """Data used in evaluating machine torque constant Kt
+
+        Returns:
+            Tuple[list,list]: (torque currents [A], torque values [N-m])
+        """
         # run simulations and extract data from JMAG
         Iq_list, _, torque_df_list, _ = self.run_Kf_Kt_simulations()
 
@@ -170,10 +214,14 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
 
         return Iq_list, torque
     
-    
     @cached_property
     def Kdelta_data(self)->list:
-        """Analyze force and displacement data"""
+        """Data used in evaluating machine displacement constant Kdelta
+
+        Returns:
+            Tuple[list,list]: (displacment magnitudes [m], force values [N])
+        """
+        # run simulations and extract data from JMAG
         force_df_list = self.run_Kdelta_simulations()
 
         force = []
@@ -184,7 +232,7 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
             force_ana = ProcessForceDataAnalyzer()
             _,_,f_abs_avg,_,_ = force_ana.analyze(force_prob)
             force.append(f_abs_avg)
-        disp = [np.linalg.norm(coord) for coord in self.Kdelta_coordinates]
+        disp = [np.linalg.norm(coord)/1000 for coord in self.Kdelta_coords]
 
         # combine and sort force and displacement data and unzip into 
         # two seperate list after sorting
@@ -193,7 +241,11 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
     
     @cached_property
     def Kphi_data(self):
-        """Analyze back-EMF data from Kphi simulations"""
+        """Data used in evaluating machine back-emf constant Kphi
+
+        Returns:
+            Tuple[list,list]: (speed values [rad/s], back-emf voltage [V_rms])
+        """
         bemf_df_list = self.run_Kphi_simulations()
         
         bemf = []
@@ -202,22 +254,28 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
             if len(phase_voltage) == 0:
                 rms_voltage = 0
             else:
-                rms_voltage = np.sqrt(sum(np.square(phase_voltage)) / len(phase_voltage))
+                rms_voltage = np.sqrt(
+                    sum(np.square(phase_voltage)) / len(phase_voltage))
             bemf.append(rms_voltage)
 
-        return self.Kphi_speed, bemf
+        return self.Kphi_speed*(2*np.pi/60), bemf
+    
+    @cached_property
+    def Kphi_speed(self):
+        return np.linspace(0,self.machine_op_pt.speed,self.Kphi_step)
     
     @lru_cache
     def run_Kf_Kt_simulations(self)->Tuple[list, list, list, list]:
-        """_summary_
-
+        """Script to perform Kf and Kt simulations in JMAG.
+        
         Returns:
-            Tuple[list, list, list, list]: _description_
+            Tuple[list, list, list, list]: (torque currents [A], 
+            suspension currents [A], torque_df_list, force_df_list)
         """
 
         # define torque and suspension current for simulation
         Iq_list = np.linspace(
-            0,np.sqrt(2)*self.machine.Rated_current,self.Iq_step)
+            0,np.sqrt(2)*self.machine.Rated_current,self.Kf_Kt_step)
         Is_list = np.sqrt(2)*self.machine.Rated_current - Iq_list
 
         force_df_list = []
@@ -254,11 +312,6 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
     @lru_cache
     def run_Kdelta_simulations(self)->list:
         """Script to perform Kdelta simulations in JMAG.
-        
-        When called, script will either use default list of coordinates or 
-        user-defined kwargs `Kdelta_coord` if provided.
-
-        Must follow the following format
 
         Returns:
             list: list of pd.Dataframes containing force results from simulations
@@ -268,7 +321,7 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
         print('Running Kdelta simulations ......')
 
         force_df_list = []
-        for coord in tqdm(self.Kdelta_coordinates):
+        for coord in tqdm(self.Kdelta_coords):
 
             study_name = f'{self.init_study_name}_Kdelta_X{coord[0]}_Y{coord[1]}'
             study_name = study_name.replace(".", "_")
@@ -278,9 +331,9 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
                 self.init_study_name,
                 study_name,
                 True)
+            present_study = self.toolJd.GetCurrentStudy()
             
             # set rotor displacment 
-            present_study = self.toolJd.GetCurrentStudy()
             present_study.GetCondition(0).SetValue("UseEccentricity", 1)
             present_study.GetCondition(0).SetXYZPoint(
                 "PartOffset",coord[0],coord[1],0)
@@ -289,8 +342,13 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
            
             # obtain handle to circuit for present study
             circuit = present_study.GetCircuit()
-            self._set_circuit_current_value(
-                circuit,ampT=0,ampS=0, freq=0)
+            function1 = self.toolJd.FunctionFactory().Constant(0)
+            circuit.GetComponent("CS_t-1").SetFunction(function1)
+            circuit.GetComponent("CS_t-2").SetFunction(function1)
+            circuit.GetComponent("CS_t-3").SetFunction(function1)
+            circuit.GetComponent("CS_s-1").SetFunction(function1)
+            circuit.GetComponent("CS_s-2").SetFunction(function1)
+            circuit.GetComponent("CS_s-3").SetFunction(function1)
             present_study.RunAllCases()
 
             # extract FEA results from CSV
@@ -301,13 +359,11 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
         return force_df_list
     
     @lru_cache
-    def run_Kphi_simulations(self):
+    def run_Kphi_simulations(self)->list:
         """Script to run Kdelta simulations in JMAG 
-        
-        Script uses default list of coordinates or user-defined kwargs `Kdelta_speed`
 
         Returns:
-            _type_: _description_
+            list: list of pd.Dataframes containing voltage results from simulations
         """
             
         print('==============================================================')
@@ -328,8 +384,13 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
 
             # obtain handle to circuit for present study
             circuit = present_study.GetCircuit()
-            self._set_circuit_current_value(
-                circuit,ampT=0,ampS=0,freq=0)
+            function1 = self.toolJd.FunctionFactory().Constant(0)
+            circuit.GetComponent("CS_t-1").SetFunction(function1)
+            circuit.GetComponent("CS_t-2").SetFunction(function1)
+            circuit.GetComponent("CS_t-3").SetFunction(function1)
+            circuit.GetComponent("CS_s-1").SetFunction(function1)
+            circuit.GetComponent("CS_s-2").SetFunction(function1)
+            circuit.GetComponent("CS_s-3").SetFunction(function1)
             present_study.RunAllCases()
 
             # extract FEA results from CSV
@@ -372,12 +433,14 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
             func.AddFunction(f1)
             func.AddFunction(f2)
             circuit.GetComponent(source).SetFunction(func)
-    
+
     def _extract_csv_results(self, study_name, type:str):
         """Extract JMAG output from .csv file"""
         csv_type_dict = {'Force':'_force.csv',
                          'Torque':'_torque.csv',
-                         'Flux':'_flux_of_fem_coil.csv'}
+                         'Flux':'_flux_of_fem_coil.csv',
+                         'Voltage':'_circuit_voltage.csv'
+                         }
         path = self.configuration.jmag_csv_folder + study_name + csv_type_dict[type]
         df = pd.read_csv(path, skiprows=6)
         return df
@@ -409,9 +472,11 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
             raise TypeError(
                 'Invalid configuration type, must be JMAG_2D_Config.'
                 )
+        
+@dataclass
+class BSPMMachineConstantResult:
+    Kf: float
+    Kt: float
+    Kdelta: float
+    Kphi: float
 
-class BSPMMachineConstantAnalyzer3D(BSPMMachineConstantAnalyzer):
-    def __init__(self, 
-                 problem: BSPMMachineConstantProblem, 
-                 configuration: JMAG_2D_Config):
-        super().__init__(problem, configuration)
