@@ -7,12 +7,12 @@ This analyzer determines the first critical speed (first bending mode natural fr
 
 Model Background
 ****************
-When designing high-speed machines, one cruical design aspect the designer must consider is the critical speed of the rotor. 
-Under rotation, if the rotating frequency matches or near its critical speed (resonance frequency/natural frequency), the rotor would undergo high amplitude vibration. 
-These high amplitude of vibration could cause permanent damage to the rotor, even machine. Hence, as a designer it is cruical to determine if your rotor design can operate at your targeted operating speed.
+When designing high-speed machines, one crucial design aspect the designer must consider is the critical speed of the rotor. Under rotation, if the rotating frequency 
+matches or is near its critical speed (resonance frequency/natural frequency), the rotor would undergo high amplitude vibration. These high amplitudes of vibration 
+could cause permanent damage to the rotor and the machine. Hence, as a designer it is crucial to determine if the rotor design can operate at a targeted operating speed.
 
-One method to estimate the critical speed of a rotor is by modeling it as an Euler-bernoulli beam. By doing so, analytical equations can be used to estimate where crtical speed would occur for a given shaft design. 
-The equation [1]_ used to estimate critical speed is shown below. 
+One method to estimate the critical speed of a rotor is by modeling it as an Euler-Bernoulli beam. By doing so, analytical equations can be used to estimate where 
+critical speed would occur for a given shaft design. The equation [1]_ used to estimate critical speed is shown below:
 
 .. math::
 
@@ -30,23 +30,26 @@ For a rotor shaft levitated in a bearingless machine, the boundary conditiion is
    Figure 1. Value of :math:`\beta_{fi}` under various boundary conditions, taken from Figure 8.15 of [1]
 
 Limitation
-****************
+~~~~~~~~~~~~~~~~
 * This analyzer assumes the cylindrical shaft as an Euler-Bernoulli beam.
 * This analyzer assumes a uniform area across the entire shaft length `L`.
 * This analyzer only considers the rotor shaft itself and not the attached components (ex. sleeve, magnets, etc.)
 * This analyzer should only be applied for slender shafts, length to diameter ratio should be greater than 10, `L/D` > 10. [2]_
 
 Additional Notes
-****************
-i. If bearings are considered, the system should be considered as a 'Support-Supported' system. Though, result would still deviate by up to 30%, as the bearing stiffness are not considered. [2]
-ii. It is recommended that for a more accurate result, user should perform FEA modal analysis for the entire rotor assembly with lumper-mass model approach to get a conservative estimate.
+~~~~~~~~~~~~~~~~
+i. If bearings are considered, the system should be considered as a 'Support-Supported' system. Though, result would still deviate by up to 30%, as the bearing 
+stiffness are not considered. [2]
+ii. It is recommended that for a more accurate result, the user should perform an FEA modal analysis for the entire rotor assembly with lumper-mass model approach 
+to get a conservative estimate.
 
 .. [1]  S. Rao, Mechnical Vibrations, 5th edit, Pearson, 2011.
 .. [2]  Silva, T. A. N., and N. M. M. Maia. "Modelling a rotating shaft as an elastically restrained Bernoulli-Euler beam." Experimental Techniques 37 (2013): 6-13.
 
 Input from User
 **********************************
-In order to define the problem class, user must specify the geometry of the shaft, as well as material properties for the material they intended to use. 
+In order to define the problem class, user must specify the geometry of the shaft, as well as the material properties for the material they intended to use. The inputs 
+for the analyzer are summarized in the following tables:
 
 .. _input-dict:
 .. csv-table:: Input for rotor critical speed problem
@@ -54,7 +57,7 @@ In order to define the problem class, user must specify the geometry of the shaf
    :widths: 70, 70, 30
    :header-rows: 1
 
-For the material dictionary, the following key value pairs are needed. 
+For the material dictionary, the following key value pairs are needed: 
 
 .. _mat-dict:
 .. csv-table:: ``material`` dictionary for rotor critical speed problem
@@ -64,8 +67,8 @@ For the material dictionary, the following key value pairs are needed.
 
 Example Code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The following example code demonstrates how to initialize instances of class object `RotorCriticalSpeedProblem` and `RotorCriticalSpeedAnalyzer`. 
-Matierial properties for `S45C` medium carbon steel are used for the following example.
+The following example code set demonstrates how to initialize instances of class object `RotorCriticalSpeedProblem` and `RotorCriticalSpeedAnalyzer`. 
+Matierial properties for `S45C` medium carbon steel are used for the following example. The first code block initializes the material dictionary:
 
 .. code-block:: python
 
@@ -80,7 +83,7 @@ Matierial properties for `S45C` medium carbon steel are used for the following e
         'density':7870, # kg/m3
         }
 
-The following code then specify the shaft geometry and numerical constant `beta_fi`.
+The following code then specifies the shaft geometry and numerical constant :math:`\beta_{fi}`.
 
 .. code-block:: python
 
@@ -94,6 +97,11 @@ The following code then specify the shaft geometry and numerical constant `beta_
     ######################################################
     # Define rotor critical speed problem and create instance of problem analyzer
     ######################################################
+
+This last code block creates a problem and analyzer object for this analyzer:
+
+.. code-block:: python 
+
     problem = RotorCritcalSpeedProblem(r_sh,length,beta_fi,mat_dict)
     analyzer = RotorCritcalSpeedAnalyzer(problem)
 
@@ -115,8 +123,9 @@ Use the following code to run the example analysis:
     print(result.omega_n)
 
 Running the example case returns the following:
+
 .. code-block:: python
 
    18908.922312969735
 
-Indicating the shaft design has an estimated critical speed of 18908.92 [rad/s], or 180,566 [RPM].
+This results indicates that the shaft design has an estimated critical speed of 18908.92 [rad/s], or 180,566 [RPM].
