@@ -20,7 +20,14 @@ The equation [1]_ used to estimate critical speed is shown below.
 
 where `E` is the Young's Modulus of the shaft material, `I` is the area moment of inertia of the shaft, `A` is the cross-sectional area of the shaft and `L` is the length of the shaft.
 Note,  :math:`\beta_{fi}` is the numerical constant determined based on the boundary condition of the shaft under rotation. 
-For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta_{fi}=4.7`. For other boundary conditions, see section 8.5.4 Figure 8.15 of [1].
+For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta_{fi}=4.7`. For other boundary conditions, see Figure 1 below .
+
+.. figure:: ./Images/BoundaryConditionCriticalSpeed.png
+   :alt: BoundaryConditionTable_Rao 
+   :align: center
+   :width: 700
+
+   Figure 1. Value of :math:`\beta_{fi}` under various boundary conditions, taken from Figure 8.15 of [1]
 
 Limitation
 ****************
