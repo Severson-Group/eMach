@@ -1,12 +1,18 @@
 import numpy as np 
 import pandas as pd
-from tqdm import tqdm
 import win32com.client
 from .....machines.bspm import BSPM_Machine, BSPM_Machine_Oper_Pt
 from ...bspm.jmag_2d_config import JMAG_2D_Config
 from ...bspm.jmag_2d import BSPM_EM_Analyzer
 from typing import Tuple, Union
 from dataclasses import dataclass
+
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(iterator, *args, **kwargs):
+        return iterator
+    
 ###########################################################################
 from functools import cached_property, lru_cache
 # @lru_cache decoractor saves the return value of the method, 
@@ -131,7 +137,7 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
 
     @cached_property
     def Kf(self)-> Union[float, None]:
-        "Machine Force Constant [N/A]"
+        "Machine Suspension Force Constant [N/A]"
         if self.problem.solve_Kf:
             Is_list, force = self.Kf_data
             Kf,_ = np.polyfit(Is_list,force,deg=1)
@@ -151,7 +157,7 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
     
     @cached_property
     def Kdelta(self)->Union[float, None]:
-        "Machine Displacement Constant [N/m]"
+        "Machine Displacement Stiffness Constant [N/m]"
         if self.problem.solve_Kdelta:
             disp,force = self.Kdelta_data
             Kdelta,_ = np.polyfit(disp,force,deg=1)

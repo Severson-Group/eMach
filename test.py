@@ -44,7 +44,7 @@ bspm_dimensions = {
     "r_sh": 8.9e-3,         #[m]**  8.9e-3  
     "l_st": 25e-3,          #[m]
     "d_sl": 1e-3,           #[m]
-    "delta_sl": 0.00011 #9.63e-5,    #[m] 
+    "delta_sl": 9.63e-5,    #[m] 
 }
 
 bspm_parameters = {
@@ -119,9 +119,9 @@ bp4_op_pt = BSPM_Machine_Oper_Pt(
 #########################################################
 jmag_config = JMAG_2D_Config(
     no_of_rev_1TS=1,
-    no_of_rev_2TS=1,
+    no_of_rev_2TS=2,
     no_of_steps_per_rev_1TS=36,
-    no_of_steps_per_rev_2TS=720,
+    no_of_steps_per_rev_2TS=360,
     mesh_size=2e-3,
     magnet_mesh_size=1e-3,
     airgap_mesh_radial_div=5,
@@ -151,9 +151,7 @@ coord.append([0,0.4])
 
 analyzer = bmc.BSPMMachineConstantAnalyzer(
     jmag_config,
-    Kf_Kt_step=11,
-    Kdelta_coords=coord,
-    Kphi_step=11)
+)
 
 result = analyzer.analyze(problem)
 print(result.Kt)
