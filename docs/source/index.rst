@@ -59,8 +59,8 @@ links provided on the left to familiarize themselves with the repository.
    contribution
    code
    documentation
+   maintainer
    
-
 .. toctree::
    :hidden:
    :maxdepth: 2
