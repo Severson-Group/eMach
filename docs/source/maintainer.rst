@@ -10,8 +10,8 @@ This guide is intended to describe the protocol adopted for the *eMach* code dev
 Branches in git
 -------------------------------------------
 
-.. figure:: images/emach-git-branch-flow.SVG
-   :alt: Trial1 
+.. figure:: images/emach-git-branch-flow.svg
+   :alt: Git branch flow
    :align: center
    :scale: 80 %
 
