@@ -43,6 +43,22 @@ A so-called release branch refers to a labeled major and minor release, but unsp
 The naming pattern is: ``vA.B.x`` where ``A`` and ``B`` are numbers and ``x`` denotes any bug fix number.
 For example, the initial release branch is called ``v1.0.x``.
 
+Release Planner
+-------------------------------------------
+
+eMach uses a `GitHub Project Board <https://github.com/orgs/Severson-Group/projects/26/views/1>`_ to track and schedule issues 
+(bug fixes and features) for release. All new issues are automatically added to the project board with a status of ``Backlog``. 
+The eMach development team triages these issues to either ``Future Feature`` or ``Future Bug Fix``. When a PR implements
+code to address any issue, the developer (with help from reviewers) update the issue's status to the upcoming version of eMach 
+that they believe the issue belongs in. This has implications for when (and into which branch) the PR should be merged. 
+
+Guidelines for scheduling issues into releases are as follows:
+1. Issues triaged as ``Future Bug Fix`` should correspond to Bug Fix releases
+2. ``Future Feature`` issues are either Minor or Major releases, depending on if the code is backwards compatible.
+3. Website changes that consist of correcting type-o's or existing code are belong in a Bug Fix release while 
+changes that affect the workflow of contributing to eMach belong in a Minor or Major release.
+4. It is preferred to do timely releases (with only 1 or 2 issues) than to do infrequent, large releases.
+
 Procedure 
 ++++++++++++++++++++++++++++++++++++++++++++
 
