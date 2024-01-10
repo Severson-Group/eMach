@@ -59,9 +59,24 @@ Guidelines for scheduling issues into releases are as follows:
 3. Website changes that consist of correcting type-o's or existing code are belong in a Bug Fix release while changes that affect the workflow of contributing to eMach belong in a Minor or Major release.
 4. It is preferred to do timely releases (with only 1 or 2 issues) than to do infrequent, large releases.
 
+.. _change-log:
 Change Log 
 ------------------------------------------
+A ``./CHANGELOG.md`` file is maintained to document incremental changes in each release of the project. 
 
+Each entry in the change log should have a markdown heading of the version number (``VA.B.x``) followed by
+a bullet list of changes in the style of commit messages based on the issues that are being released. The
+overarching principle is that the list should be understandable and useful to the people who develop the 
+code.
+
+The following rules should be used to draft this message:
+
+1. Keep each bullet brief
+2. Always start each bullet with a verb. Use the same verbs as much as possible. ``Fix`` and ``Add`` should be the most common. ``Rename``, ``Remove``, and ``Extend`` are also acceptable.
+3. Sort the bullets by the first word. Always list ``Fix`` first, then ``Add``.
+4. Ideally, each of the bullets corresponds to an issue/PR. However, often this leads to too repetitive of a list. It is more important that the list be brief, so consolidate issues into a single bullet as makes sense.
+
+See the `AMDC Firmware Project Repository <https://github.com/Severson-Group/AMDC-Firmware/blob/v1.1.x/CHANGELOG.md>`_ for examples of effective changelog entries.
 
 
 Procedure 
@@ -75,8 +90,8 @@ The procedure for creating a new release is mostly common for all three types (m
 2. Ensure development has stablized on the ``develop`` branch
 3. Ensure thorough testing of the latest ``develop`` branch code
 4. Review the issues scheduled for this release on the `eMach Release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_. Any issues that are not completed should be rescheduled to a future release
-5. Create a label corresponding to the release (i.e. ``v1.0.1``) and assign this to all issues being released 
-6. Create a final commit to ``develop`` where the ``./CHANGELOG.md`` file is updated with documentation about the new release (instructions below)
+5. Create a label corresponding to the release (``vA.B.x``) and assign this to all issues being released 
+6. Create and merge PR as the final commit to ``develop`` that updates the ``./CHANGELOG.md`` file with documentation about the new release. See :ref:`change-log` for instructions on drafting this. The PR should be named ``Add changelog notes for vA.B.x release``
 7. Depending on which type of release, follow steps in either :ref:`bug-fix` or :ref:`major-minor`
 8. Follow the steps in :ref:`tag-and-release`
 
