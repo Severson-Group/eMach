@@ -137,6 +137,7 @@ Level 2 reviewers are asked to copy-paste this template into their review:
     - Are the physics accurate? [Yes or No]
     - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues bing closed? [If yes, briefly explain why]
     - Level 1 re-review instructions (if revisions are requested):
+    - When your PR is approved, **remember to merge via `Squash and Merge`**. Please ask if you are unsure of how to do this.
 	
 For any answers of "No," please provide an explanation.
 
