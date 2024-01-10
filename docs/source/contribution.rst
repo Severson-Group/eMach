@@ -50,14 +50,14 @@ Git/GitHub Usage
 -------------------------------------------
 
 All code development should occur within the Git version control environment. When code is ready to be contributed back 
-to eMach, users should open a Pull Request (PR) on GitHub which explains their contribution.
+to eMach, developers should open a Pull Request (PR) on GitHub which explains their contribution. 
 
 The branch naming conventions are as follows:
 
 - **User branch:** ``user/my_user_name/foo_bar`` -- "private" development sandbox per user
 - **Feature branch:** ``feature/foo_bar`` -- shared feature development
 
-**Hint:** Most development will occur in user branches! If multiple users are working on an eMach feature concurrently, use a feature branch.
+**Hint:** Most development will occur in user branches! If multiple developers are working on an eMach feature concurrently, use a feature branch.
 
 Contributors can expect that their user branches will not be commited to by other users---this is "private" space. On the other hand,
 feature branches are "public" space and should be treated as such---at any time, another developer can commit new code onto the branch.
