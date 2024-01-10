@@ -94,6 +94,7 @@ The procedure for creating a new release is mostly common for all three types (m
 6. Create and merge PR as the final commit to ``develop`` that updates the ``./CHANGELOG.md`` file with documentation about the new release. See :ref:`change-log` for instructions on drafting this. The PR should be named ``Add changelog notes for vA.B.x release``
 7. Depending on which type of release, follow steps in either :ref:`bug-fix` or :ref:`major-minor`
 8. Follow the steps in :ref:`tag-and-release`
+9. For minor or major releases, add a release version to ReadTheDocs by navigating to ``Versions`` and clicking ``Activate`` on ``VA.B.x``.
 
 .. _bug-fix:
 Bug Fix
@@ -125,7 +126,7 @@ Tag and Release
 After following the above steps, the release branch(es) will hold the latest stable code release.
 Users which checkout the release branch will have access to the code.
 
-To complete the release, git tag(s) need to be created and GitHub release(s) need to be created.
+Git tag(s) need to be created and GitHub release(s) need to be created.
 
 1. Create git tag(s) pointing to the merge commit(s) on the release branch(es). If the new code was only merged to one release branch, only one tag will be created. However, if a bug fix was merged to multiple release branches, then the appropriate version number should be used to tag each merge commit.
-2. For each new git tag, create a GitHub Release with the same name as the tag and include a description of the changes per the changelog contents.
+2. For each new git tag, create a GitHub Release with the same name as the tag and include a description of the changes that is identical to the changelog contents.
