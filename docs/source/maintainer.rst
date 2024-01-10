@@ -53,14 +53,19 @@ code to address any issue, the developer (with help from reviewers) update the i
 that they believe the issue belongs in. This has implications for when (and into which branch) the PR should be merged. 
 
 Guidelines for scheduling issues into releases are as follows:
+
 1. Issues triaged as ``Future Bug Fix`` should correspond to Bug Fix releases
 2. ``Future Feature`` issues are either Minor or Major releases, depending on if the code is backwards compatible.
-3. Website changes that consist of correcting type-o's or existing code are belong in a Bug Fix release while 
-changes that affect the workflow of contributing to eMach belong in a Minor or Major release.
+3. Website changes that consist of correcting type-o's or existing code are belong in a Bug Fix release while changes that affect the workflow of contributing to eMach belong in a Minor or Major release.
 4. It is preferred to do timely releases (with only 1 or 2 issues) than to do infrequent, large releases.
 
+Change Log 
+------------------------------------------
+
+
+
 Procedure 
-++++++++++++++++++++++++++++++++++++++++++++
+-------------------------------------------
 
 .. tip:: Refer to the diagram above for a graphical representation of how the git branching should work.
 
@@ -69,11 +74,13 @@ The procedure for creating a new release is mostly common for all three types (m
 1. Update code via topic branches which are based on ``develop`` and merge updates into ``develop``
 2. Ensure development has stablized on the ``develop`` branch
 3. Ensure thorough testing of the latest ``develop`` branch code
-4. Create a final commit to ``develop`` where the ``./CHANGELOG.md`` file is updated with documentation about the new release
+4. Review the issues scheduled for this release on the `eMach Release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_. Any issues that are not completed should be rescheduled to a future release
+5. Create a label corresponding to the release (i.e. ``v1.0.1``) and assign this to all issues being released 
+6. Create a final commit to ``develop`` where the ``./CHANGELOG.md`` file is updated with documentation about the new release (instructions below)
+7. Depending on which type of release, follow steps in either :ref:`bug-fix` or :ref:`major-minor`
+8. Follow the steps in :ref:`tag-and-release`
 
-Now, depending on which type of release, the procedure differs:
-
-
+.. _bug-fix:
 Bug Fix
 ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -88,6 +95,7 @@ Occasionally, a bug might need to be fixed in a previous release branch, but doe
 In this case, do not change ``develop`` -- simply fix the bug where it needs to be fixed.
 This is depicted in the above diagram as the ``hotfix1`` branch.
 
+.. _major-minor:
 Minor or Major
 ++++++++++++++++++++++++++++++++++++++++++++
 For a new minor or major release, a new release branch needs to be created.
@@ -96,8 +104,9 @@ For a new minor or major release, a new release branch needs to be created.
 2. Update GitHub's default repo branch to be the latest release branch which was just created
 3. Update the documentation website to reflect the minor or major breaking changes
 
+.. _tag-and-release:
 Tag and Release
--------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++
 After following the above steps, the release branch(es) will hold the latest stable code release.
 Users which checkout the release branch will have access to the code.
 
