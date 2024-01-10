@@ -51,9 +51,9 @@ Git/GitHub Usage
 
 All code development should occur within the Git version control environment. When code is ready to be contributed back 
 to eMach, developers should open a Pull Request (PR) on GitHub which explains their contribution. The PR should be 
-closing at least one issue (if a PR is partially completing an issue, developers are asked to break the issue up into
-multiple issues). The developer should schedule each issue being closed onto the appropriate release by updating the 
-issue status on the `eMach release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_.
+closing at least one issue. PRs should not partially complete issues, and developers may need to break issues up into
+multiple issues to ensure that this is true. The developer should schedule each issue being closed onto the appropriate 
+release by updating the issue status on the `eMach release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_.
 
 The branch naming conventions are as follows:
 
