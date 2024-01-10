@@ -94,7 +94,7 @@ The procedure for creating a new release is mostly common for all three types (m
 6. Create and merge PR as the final commit to ``develop`` that updates the ``./CHANGELOG.md`` file with documentation about the new release. See :ref:`change-log` for instructions on drafting this. The PR should be named ``Add changelog notes for vA.B.x release``
 7. Depending on which type of release, follow steps in either :ref:`bug-fix` or :ref:`major-minor`
 8. Follow the steps in :ref:`tag-and-release`
-9. For minor or major releases, add a release version to ReadTheDocs by navigating to ``Versions`` and clicking ``Activate`` on ``VA.B.x``.
+9. For minor or major releases, add a release version to ReadTheDocs by navigating to ``Versions`` and clicking ``Activate`` on the newly created tag ``VA.B.0``.
 
 .. _bug-fix:
 Bug Fix
