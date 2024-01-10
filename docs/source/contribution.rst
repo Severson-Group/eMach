@@ -53,7 +53,7 @@ All code development should occur within the Git version control environment. Wh
 to eMach, developers should open a Pull Request (PR) on GitHub which explains their contribution. The PR should be 
 closing at least one issue. PRs should not partially complete issues, and developers may need to break issues up into
 multiple issues to ensure that this is true. The developer should schedule each issue being closed onto the appropriate 
-release by updating the issue status on the `eMach release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_.
+release by updating the issue status on the `eMach Release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_.
 
 The branch naming conventions are as follows:
 
@@ -93,6 +93,7 @@ In conducting the review, the reviewer should perform the following steps:
 4. Closely read of the grammar and syntax of the language to ensure that it reads clearly; if small edits are needed, consider committing them directly on to the branch
 5. Evaluate if the changeset is generally compliant with the eMach architecture
 6. If the reviewer has the necessary expertise, determine if the physics are correct
+7. Confirm that the PR is closing one or more issues and that the issues are scheduled correctly onto the `eMach Release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_.
 
 Reviewers are expected to leave feedback directly on files within the changeset and to provide summary review comments. Level 1 reviewers are asked to copy-paste this template into their review:
 
@@ -106,6 +107,8 @@ Reviewers are expected to leave feedback directly on files within the changeset 
     - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
     - Does this review consider whether this physics are accurate? [Yes or No]
+    - Are the correct issues being closed (and are there no partially completed issues)? [Yes, or if No: either fix this or give the developer instructions to fix]
+    - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues bing closed? [If yes, briefly explain why]
     - Is PR approved to Level 2? [Yes or No]
 
 For any answers of "No," please provide an explanation.
@@ -119,6 +122,7 @@ A Level 2 reviewer should be someone with expert understanding of the eMach code
 2. Review whether the approach, code, and documentation is compliant with the eMach architecture
 3. Identify whether the physics are correct (seek outside help as needed, including from the developer)
 4. Request changes/give final approval for merge into ``develop``
+5. Finalize the release schedule for the issues being closed on the `eMach Release Planner <https://github.com/orgs/Severson-Group/projects/26/views/1>`_.
 
 Level 2 reviewers are asked to copy-paste this template into their review:
 
@@ -131,6 +135,7 @@ Level 2 reviewers are asked to copy-paste this template into their review:
     - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
     - Are the physics accurate? [Yes or No]
+    - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues bing closed? [If yes, briefly explain why]
     - Level 1 re-review instructions (if revisions are requested):
 	
 For any answers of "No," please provide an explanation.
