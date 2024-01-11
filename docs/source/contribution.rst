@@ -135,7 +135,7 @@ Level 2 reviewers are asked to copy-paste this template into their review:
     - Is the writing, grammar, and syntax correct and clear? [Yes or No]
     - Is the changeset compliant with the eMach architecture? [Yes or No]
     - Are the physics accurate? [Yes or No]
-    - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues bing closed? [If yes, briefly explain why]
+    - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues being closed? [If yes, briefly explain why]
     - Level 1 re-review instructions (if revisions are requested):
     - When your PR is approved, **remember to merge via `Squash and Merge`**. Please ask if you are unsure of how to do this.
 	
