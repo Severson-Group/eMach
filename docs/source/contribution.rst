@@ -108,7 +108,7 @@ Reviewers are expected to leave feedback directly on files within the changeset 
     - Is the changeset compliant with the eMach architecture? [Yes or No]
     - Does this review consider whether this physics are accurate? [Yes or No]
     - Are the correct issues being closed (and are there no partially completed issues)? [Yes, or if No: either fix this or give the developer instructions to fix]
-    - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues bing closed? [If yes, briefly explain why]
+    - Did the reviewer change [the release schedule](https://github.com/orgs/Severson-Group/projects/26/views/1) for the issues being closed? [If yes, briefly explain why]
     - Is PR approved to Level 2? [Yes or No]
 
 For any answers of "No," please provide an explanation.
