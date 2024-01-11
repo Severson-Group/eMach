@@ -56,7 +56,7 @@ Guidelines for scheduling issues into releases are as follows:
 
 1. Issues triaged as ``Future Bug Fix`` should correspond to Bug Fix releases
 2. ``Future Feature`` issues are either Minor or Major releases, depending on if the code is backwards compatible.
-3. Website changes that consist of correcting type-o's or existing code are belong in a Bug Fix release while changes that affect the workflow of contributing to eMach belong in a Minor or Major release.
+3. Website changes that consist of correcting type-o's or existing code belong in a Bug Fix release while changes that affect the workflow of contributing to eMach belong in a Minor or Major release.
 4. It is preferred to do timely releases (with only 1 or 2 issues) than to do infrequent, large releases.
 
 .. _change-log:
