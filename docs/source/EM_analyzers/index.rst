@@ -13,6 +13,7 @@ This section provides documentation for the electromagnetic analyzers supported 
     force_vector_data
     stator_wdg_res
     bspm_jmag2d_analyzer
+    bspm_mach_constants_analyzer
     winding_factors
 
 
