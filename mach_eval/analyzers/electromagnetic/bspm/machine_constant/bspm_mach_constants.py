@@ -172,6 +172,7 @@ class BSPMMachineConstantAnalyzer(BSPM_EM_Analyzer):
             speed, bemf = self.Kphi_data
             Kphi,_ = np.polyfit(speed,bemf,deg=1)
             return Kphi
+        # AC
         else:
             return None
 
