@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(__file__))
 
 from mach_eval.analyzers.electromagnetic.bspm import jmag_2d as em
 from mach_eval.analyzers.electromagnetic.bspm.jmag_2d_config import JMAG_2D_Config
-from bpsm_em_post_analyzer import BSPM_EM_PostAnalyzer
+from bspm_em_post_analyzer import BSPM_EM_PostAnalyzer
 from mach_eval import AnalysisStep, ProblemDefinition
 
 

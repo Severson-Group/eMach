@@ -19,8 +19,14 @@ links provided on the left to familiarize themselves with the repository.
    
    getting_started/pre_reqs
    getting_started/tutorials/index
-   user_guide
    
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: User Guide
+
+   user_guide/index
+
 .. toctree::
    :hidden:
    :maxdepth: 3
@@ -35,6 +41,7 @@ links provided on the left to familiarize themselves with the repository.
    :caption: Machine Designs
 
    machines/bspm/index
+   machines/SynR/index
 
 ..
    Please!! Do not remove/modify the following INSERT comment. This allows a script to insert additional rst content into the index file.
@@ -45,13 +52,15 @@ links provided on the left to familiarize themselves with the repository.
 
 .. toctree::
    :hidden:
-   :maxdepth: 1
+   :maxdepth: 2
+   :numbered:
    :caption: Guidelines
 
    contribution
+   code
+   documentation
+   maintainer
    
-   
-
 .. toctree::
    :hidden:
    :maxdepth: 2

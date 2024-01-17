@@ -1,0 +1,6 @@
+Arguments,Value,Units
+l_coil,0.496,meters
+l_ew,0.198,meters
+R_coil,0.035,Ohms
+R_ew,0.014,Ohms
+R_wdg,0.14,Ohms

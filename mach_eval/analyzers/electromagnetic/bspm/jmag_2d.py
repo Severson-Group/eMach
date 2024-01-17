@@ -146,19 +146,40 @@ class BSPM_EM_Analyzer:
     @property
     def R_coil(self):
         a_wire = (self.machine_variant.s_slot * self.machine_variant.Kcu) / (
-            2 * self.machine_variant.Z_q
+            self.machine_variant.no_of_layers * self.machine_variant.Z_q
         )
-        return (self.l_coil * self.machine_variant.Z_q * self.machine_variant.Q / 6) / (
+        return (self.l_coil * self.machine_variant.Z_q) / (
             self.machine_variant.coil_mat["copper_elec_conductivity"] * a_wire
         )
 
     @property
+    def R_wdg(self):
+        return (self.R_coil * self.z_C)
+
+    @property
+    def m(self):
+        m = len(self.machine_variant.coil_groups)
+        return m
+
+    @property
+    def z_C(self):
+        if self.machine_variant.no_of_layers == 1:
+            z_C = self.machine_variant.Q / (2 * self.m)
+        elif self.machine_variant.no_of_layers == 2:
+            z_C = self.machine_variant.Q / (self.m)
+        else:
+            raise InvalidDesign(message="The number of winding layers must be 1 or 2")
+            
+        return z_C
+
+    @property
     def copper_loss(self):
-        return (
-            self.machine_variant.Q
-            * ((self.current_trms / 2) ** 2 + self.current_srms**2)
-            * self.R_coil
+        copper_loss_per_phase = (
+            ((self.current_trms / 2) ** 2 + self.current_srms ** 2) * self.R_wdg
         )
+
+        copper_loss = self.m * copper_loss_per_phase
+        return copper_loss
 
     def draw_machine(self, toolJd):
         ####################################################
@@ -903,7 +924,7 @@ class BSPM_EM_Analyzer:
         circuit(
             self.machine_variant.p,
             self.machine_variant.Z_q,
-            Rs=self.R_coil,
+            Rs=self.R_wdg,
             ampT=current_tpeak,
             ampS=current_speak,
             freq=self.excitation_freq,
