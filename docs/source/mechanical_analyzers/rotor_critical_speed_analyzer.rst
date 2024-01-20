@@ -12,14 +12,14 @@ matches or is near its critical speed (resonance frequency/natural frequency), t
 could cause permanent damage to the rotor and the machine. Hence, as a designer it is crucial to determine if the rotor design can operate at a targeted operating speed.
 
 One method to estimate the critical speed of a rotor is by modeling it as an Euler-Bernoulli beam. By doing so, analytical equations can be used to estimate where 
-critical speed would occur for a given shaft design. The equation [1]_ used to estimate critical speed is shown below:
+the critical speed would occur for a given shaft design. The equation [1]_ used to estimate the critical speed is shown below:
 
 .. math::
 
    \omega_n = \beta_{fi} \sqrt{\frac{EI}{\rho AL^4}} 
 
 where `E` is the Young's Modulus of the shaft material, `I` is the area moment of inertia of the shaft, `A` is the cross-sectional area of the shaft and `L` is the length of the shaft.
-Note,  :math:`\beta_{fi}` is the numerical constant determined based on the boundary condition of the shaft under rotation. 
+Note,  :math:`\beta_{fi}` is a numerical constant determined based on the boundary condition of the shaft under rotation. 
 For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta_{fi}=4.7`. For other boundary conditions, see Figure 1 below .
 
 .. figure:: ./Images/BoundaryConditionCriticalSpeed.png
@@ -29,27 +29,24 @@ For a rotor shaft levitated in a bearingless machine, the boundary conditiion is
 
    Figure 1. Value of :math:`\beta_{fi}` under various boundary conditions, taken from Figure 8.15 of [1]
 
-Limitation
+Limitations
 ~~~~~~~~~~~~~~~~
 * This analyzer assumes the cylindrical shaft as an Euler-Bernoulli beam.
 * This analyzer assumes a uniform area across the entire shaft length `L`.
 * This analyzer only considers the rotor shaft itself and not the attached components (ex. sleeve, magnets, etc.)
-* This analyzer should only be applied for slender shafts, length to diameter ratio should be greater than 10, `L/D` > 10. [2]_
+* This analyzer should only be applied to slender shafts, where the length to diameter ratio is greater than 10, `L/D` > 10 [2]_.
 
 Additional Notes
 ~~~~~~~~~~~~~~~~
-i. If bearings are considered, the system should be considered as a 'Support-Supported' system. Though, result would still deviate by up to 30%, as the bearing 
-stiffness are not considered. [2]
-ii. It is recommended that for a more accurate result, the user should perform an FEA modal analysis for the entire rotor assembly with lumper-mass model approach 
-to get a conservative estimate.
+* If bearings are considered, the system should be considered as a 'Support-Supported' system. Though, the result may deviate by up to 30%, as the bearing stiffness is not considered [2]_.
+* It is recommended that for a more accurate result, the user should perform an FEA modal analysis for the entire rotor assembly using a lumped-mass model approach to get a conservative estimate.
 
 .. [1]  S. Rao, Mechnical Vibrations, 5th edit, Pearson, 2011.
 .. [2]  Silva, T. A. N., and N. M. M. Maia. "Modelling a rotating shaft as an elastically restrained Bernoulli-Euler beam." Experimental Techniques 37 (2013): 6-13.
 
 Input from User
 **********************************
-In order to define the problem class, user must specify the geometry of the shaft, as well as the material properties for the material they intended to use. The inputs 
-for the analyzer are summarized in the following tables:
+In order to define the problem class, the user must specify the geometry of the shaft as well as the material properties for the material they intended to use. The inputs are summarized in the following tables:
 
 .. _input-dict:
 .. csv-table:: Input for rotor critical speed problem
@@ -67,8 +64,8 @@ For the material dictionary, the following key value pairs are needed:
 
 Example Code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The following example code set demonstrates how to initialize instances of class object `RotorCriticalSpeedProblem` and `RotorCriticalSpeedAnalyzer`. 
-Matierial properties for `S45C` medium carbon steel are used for the following example. The first code block initializes the material dictionary:
+The following example demonstrates how to initialize instances of ``RotorCriticalSpeedProblem`` and ``RotorCriticalSpeedAnalyzer``. 
+Material properties for ``S45C`` medium carbon steel are used. The first code block initializes the material dictionary:
 
 .. code-block:: python
 
