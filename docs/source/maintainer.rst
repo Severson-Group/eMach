@@ -6,7 +6,7 @@ This guide is intended to describe the protocol adopted for the *eMach* code dev
 
 .. tip:: Read about semantic versioning on the main `semver.org <https://semver.org/>`_ website. This greatly helps to explain the concepts below.
 
-
+.. _branches-in-git:
 Branches in git
 -------------------------------------------
 
