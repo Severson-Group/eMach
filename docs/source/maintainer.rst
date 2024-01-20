@@ -49,7 +49,7 @@ Release Planner
 eMach uses a `GitHub Project Board <https://github.com/orgs/Severson-Group/projects/26/views/1>`_ to track and schedule issues 
 (bug fixes and features) for release. All new issues are automatically added to the project board with a status of ``Backlog``. 
 The eMach development team triages these issues to either ``Future Feature`` or ``Future Bug Fix``. When a PR implements
-code to address any issue, the developer (with help from reviewers) update the issue's status to the upcoming version of eMach 
+code to address any issue, the developer (with help from reviewers) updates the issue's status to the upcoming version of eMach 
 that they believe the issue belongs in. This has implications for when (and into which branch) the PR should be merged. 
 
 Guidelines for scheduling issues into releases are as follows:
