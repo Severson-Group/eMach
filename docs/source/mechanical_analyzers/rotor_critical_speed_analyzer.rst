@@ -91,14 +91,13 @@ The following code then specifies the shaft geometry and numerical constant :mat
     length = 164E-3     # shaft length
     beta_fi = 4.7       # free-free boundary condition numerical constant
 
+This last code block creates a problem and analyzer object for this analyzer:
+
+.. code-block:: python
+
     ######################################################
     # Define rotor critical speed problem and create instance of problem analyzer
     ######################################################
-
-This last code block creates a problem and analyzer object for this analyzer:
-
-.. code-block:: python 
-
     problem = RotorCritcalSpeedProblem(r_sh,length,beta_fi,mat_dict)
     analyzer = RotorCritcalSpeedAnalyzer(problem)
 
