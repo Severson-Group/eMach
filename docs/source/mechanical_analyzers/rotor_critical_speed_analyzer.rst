@@ -22,12 +22,12 @@ where `E` is the Young's Modulus of the shaft material, `I` is the area moment o
 Note,  :math:`\beta l` is a numerical constant determined based on the boundary condition of the shaft under rotation. 
 For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta l=4.7`. For other boundary conditions, see Figure 1 below .
 
-.. figure:: ./Images/BoundaryConditionCriticalSpeed.png
+.. figure:: ./Images/BoundaryConditionCriticalSpeed.svg
    :alt: BoundaryConditionTable_Rao 
    :align: center
-   :width: 700
+   :width: 500
 
-   Figure 1. Value of :math:`\beta l ` under various boundary conditions, taken from Figure 8.15 of [1]
+   Figure 1. Value of :math:`\beta l` under various boundary conditions, adopted from Figure 8.15 of [1]
 
 Limitations
 ~~~~~~~~~~~~~~~~
@@ -89,7 +89,7 @@ The following code then specifies the shaft geometry and numerical constant :mat
     ######################################################
     r_sh = 9E-3         # shaft radius
     length = 164E-3     # shaft length
-    beta_fi = 4.7       # free-free boundary condition numerical constant
+    beta_l = 4.7       # free-free boundary condition numerical constant
 
 This last code block creates a problem and analyzer object for this analyzer:
 
@@ -98,7 +98,7 @@ This last code block creates a problem and analyzer object for this analyzer:
     ######################################################
     # Define rotor critical speed problem and create instance of problem analyzer
     ######################################################
-    problem = RotorCritcalSpeedProblem(r_sh,length,beta_fi,mat_dict)
+    problem = RotorCritcalSpeedProblem(r_sh,length,beta_l,mat_dict)
     analyzer = RotorCritcalSpeedAnalyzer(problem)
 
 Output to User
@@ -108,7 +108,7 @@ The attributes of the results class can be summarized in the table below:
 
 .. csv-table::  results of rotor critical speed analyzer
    :file: results_rotor_critical_speed_analyzer.csv
-   :widths: 70, 70, 30
+   :widths: 40, 100, 30
    :header-rows: 1
 
 Use the following code to run the example analysis:
