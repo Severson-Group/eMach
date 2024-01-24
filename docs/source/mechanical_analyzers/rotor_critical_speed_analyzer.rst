@@ -20,7 +20,11 @@ the critical speed would occur for a given shaft design. The equation [1]_ used 
 
 where `E` is the Young's Modulus of the shaft material, `I` is the area moment of inertia of the shaft, `A` is the cross-sectional area of the shaft and `L` is the length of the shaft.
 Note,  :math:`\beta l` is a numerical constant determined based on the boundary condition of the shaft under rotation. 
-For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta l=4.7`. For other boundary conditions, see Figure 1 below .
+For a rotor shaft levitated in a bearingless machine, the boundary conditiion is typically considered as free-free, which has a numerical value of :math:`\beta l=4.7` for first critical speed. For other boundary conditions, see Figure 1 below.
+
+
+Note, the numerical subscript in :math:`\beta` in figure below denotes the n-th resonance frequency/critical speed. (i.e. :math:`\beta_3l` means 3rd critical speed.) For the purpose of designing a rotor shaft, it is recommended to stay below (or even better, 20 to 30% away)
+the first critical speed. 
 
 .. figure:: ./Images/BoundaryConditionCriticalSpeed.svg
    :alt: BoundaryConditionTable_Rao 
