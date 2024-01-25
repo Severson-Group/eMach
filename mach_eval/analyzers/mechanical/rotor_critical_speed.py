@@ -8,7 +8,7 @@ class RotorCritcalSpeedProblem:
             self, 
             r_sh:float,
             L:float,
-            beta_fi:float,
+            beta_l:float,
             material:dict,
             ) -> 'RotorCritcalSpeedProblem':
         
@@ -17,7 +17,7 @@ class RotorCritcalSpeedProblem:
         Args:
             r_sh (float): shaft radius, in unit [m]
             L (float): shaft length, in unit [m] 
-            beta_fi (float): boundary condition numerical constant
+            beta_l (float): boundary condition numerical constant
             material (dict): material dictionary
 
         Notes:
@@ -32,7 +32,7 @@ class RotorCritcalSpeedProblem:
         """
         self.r_sh = r_sh
         self.L = L
-        self.beta_fi = beta_fi
+        self.beta_l = beta_l
         self.material = material
 
     @cached_property
@@ -71,7 +71,7 @@ class RotorCritcalSpeedAnalyzer:
     @property
     def omega_n(self):
         """Estimated critical speed [rad/s]"""
-        return self.problem.beta_fi**2*np.sqrt(
+        return self.problem.beta_l**2*np.sqrt(
             self.material['youngs_modulus']*self.problem.I_sh/
             (self.material['density']*self.problem.A_sh*self.problem.L**4))
     
