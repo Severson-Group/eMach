@@ -110,7 +110,7 @@ Output to User
 
 This analyzer returns a ``RotorCritcalSpeedResult`` object containing the following attributes:
 
-.. csv-table::  results of rotor critical speed analyzer
+.. csv-table::  Results of rotor critical speed analyzer
    :file: results_rotor_critical_speed_analyzer.csv
    :widths: 40, 100, 30
    :header-rows: 1
