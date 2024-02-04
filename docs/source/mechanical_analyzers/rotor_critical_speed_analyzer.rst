@@ -108,7 +108,7 @@ This last code block creates a problem and analyzer object for this analyzer:
 Output to User
 ***********************************
 
-The attributes of the results class can be summarized in the table below:
+This analyzer returns a ``RotorCritcalSpeedResult`` object containing the following attributes:
 
 .. csv-table::  results of rotor critical speed analyzer
    :file: results_rotor_critical_speed_analyzer.csv
