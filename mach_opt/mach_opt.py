@@ -9,6 +9,7 @@ from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
 import numpy as np
 import pickle
+import multiprocessing as mp
 
 __all__ = [
     "DesignOptimizationMOEAD",
@@ -32,13 +33,13 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size, filepath=None):
+    def run_optimization(self, pop, gen_size, filepath=None, pg_neighbors=20):
         algo = pg.algorithm(
             pg.moead(
                 gen=1,
                 weight_generation="grid",
                 decomposition="tchebycheff",
-                neighbours=20,
+                neighbours=pg_neighbors,
                 CR=1,
                 F=0.5,
                 eta_m=20,
@@ -108,6 +109,16 @@ class DesignProblem:
 
         dh.save_designer(designer)
 
+    @staticmethod
+    def evaluate_design_func(evaluator, design, queue: mp.Queue):
+        # Run the evaluator (this is slow and might crash!)
+        full_results = evaluator.evaluate(design)
+
+        # Give the result to the caller process
+        ret = queue.get()
+        ret["full_results"] = full_results
+        queue.put(ret)
+
     def fitness(self, x: "tuple") -> "tuple":
         """Calculates the fitness or objectives of each design based on evaluation results.
 
@@ -125,7 +136,38 @@ class DesignProblem:
         """
         try:
             design = self.__designer.create_design(x)
-            full_results = self.__evaluator.evaluate(design)
+
+            ###############################################
+            # Evaluate the design
+            ###############################################
+
+            USE_CRASH_SAFE_EVAL_METHOD = True
+            if not USE_CRASH_SAFE_EVAL_METHOD:
+                full_results = self.__evaluator.evaluate(design)
+            else:
+                # Make a new process to evaluate the design
+                queue = mp.Queue()
+                ret = {}
+                queue.put(ret)
+                p = mp.Process(
+                    target=self.evaluate_design_func,
+                    args=(
+                        self.__evaluator,
+                        design,
+                        queue,
+                    ),
+                )
+                p.start()
+                p.join()
+
+                if p.exitcode != 0:
+                    raise InvalidDesign("Evaluation crashed")
+
+                ret = queue.get()
+                full_results = ret["full_results"]
+
+            ###############################################
+
             objs = self.__design_space.get_objectives(full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
             # print('The fitness values are', objs)
