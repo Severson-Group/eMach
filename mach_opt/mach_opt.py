@@ -96,11 +96,13 @@ class DesignProblem:
         design_space: "DesignSpace",
         dh: "DataHandler",
         invalid_design_objs=None,
+        crash_safe_evaluation=False,
     ):
         self.__designer = designer
         self.__evaluator = evaluator
         self.__design_space = design_space
         self.__dh = dh
+        self.__crash_safe_evaluation = crash_safe_evaluation
 
         if invalid_design_objs is None:
             self.__invalid_design_objs = 1e4 * np.ones([1, self.get_nobj()])
@@ -154,8 +156,7 @@ class DesignProblem:
             # Evaluate the design
             ###############################################
 
-            USE_CRASH_SAFE_EVAL_METHOD = True
-            if not USE_CRASH_SAFE_EVAL_METHOD:
+            if not self.__crash_safe_evaluation:
                 full_results = self.__evaluator.evaluate(design)
             else:
                 # Make a new process to evaluate the design
@@ -179,10 +180,10 @@ class DesignProblem:
                         if p.exitcode is not None:
                             # Child process (evaluation) is done
                             if p.exitcode != 0:
-                                if p.exitcode == 2:
+                                if p.exitcode not in [1, 2]:
                                     # Unknown error during design evaluation
-                                    # (NOT InvalidDesign)
-                                    # Breakpoint here catches JMAG crash
+                                    # (NOT InvalidDesign or Exception)
+                                    # Breakpoint here can catch JMAG crash
                                     pass
 
                                 # It was not successful
