@@ -9,6 +9,8 @@ from typing import Protocol, runtime_checkable, Any
 from abc import abstractmethod, ABC
 import numpy as np
 import pickle
+import time
+import sys
 import multiprocessing as mp
 
 __all__ = [
@@ -111,13 +113,24 @@ class DesignProblem:
 
     @staticmethod
     def evaluate_design_func(evaluator, design, queue: mp.Queue):
-        # Run the evaluator (this is slow and might crash!)
-        full_results = evaluator.evaluate(design)
+        try:
+            # Run the evaluator (this is slow and might crash!)
+            full_results = evaluator.evaluate(design)
+        except InvalidDesign:
+            # Tell caller this design is invalid with code 1
+            sys.exit(1)
+        except Exception:
+            # Some other failure... tell caller with code 2
+            sys.exit(2)
+
+        # Tell parent we are done
+        queue.put(True)
 
         # Give the result to the caller process
-        ret = queue.get()
-        ret["full_results"] = full_results
-        queue.put(ret)
+        queue.put(full_results)
+
+        # Code of 0 means this eval was a success
+        sys.exit(0)
 
     def fitness(self, x: "tuple") -> "tuple":
         """Calculates the fitness or objectives of each design based on evaluation results.
@@ -147,8 +160,6 @@ class DesignProblem:
             else:
                 # Make a new process to evaluate the design
                 queue = mp.Queue()
-                ret = {}
-                queue.put(ret)
                 p = mp.Process(
                     target=self.evaluate_design_func,
                     args=(
@@ -158,15 +169,36 @@ class DesignProblem:
                     ),
                 )
                 p.start()
+
+                # Wait for evalulation to complete, or it to crash
+                is_done = False
+                while not is_done:
+                    if queue.empty():
+                        time.sleep(0.1)
+
+                        if p.exitcode is not None:
+                            # Child process (evaluation) is done
+                            if p.exitcode != 0:
+                                if p.exitcode == 2:
+                                    # Unknown error during design evaluation
+                                    # (NOT InvalidDesign)
+                                    # Breakpoint here catches JMAG crash
+                                    pass
+
+                                # It was not successful
+                                raise InvalidDesign("Bad design (code %d)" % p.exitcode)
+                    else:
+                        is_done = queue.get()
+
+                # We know the child process will put the results
+                # into the queue right NOW, so pull them out to
+                # trigger the queue's buffer to flush......see:
+                # https://stackoverflow.com/questions/26025486/#comment40796894_26041762
+                full_results = queue.get()
+
+                # The process should be done by now,
+                # but make sure by joining it here
                 p.join()
-
-                if p.exitcode != 0:
-                    raise InvalidDesign("Evaluation crashed")
-
-                ret = queue.get()
-                full_results = ret["full_results"]
-
-            ###############################################
 
             objs = self.__design_space.get_objectives(full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
