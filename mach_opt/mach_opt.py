@@ -201,6 +201,10 @@ class DesignProblem:
                 # but make sure by joining it here
                 p.join()
 
+            # Apply transform to full_results (if needed)
+            if self.__dh.full_results_transform is not None:
+                full_results = self.__dh.full_results_transform(full_results)
+
             objs = self.__design_space.get_objectives(full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
             # print('The fitness values are', objs)
@@ -293,10 +297,6 @@ class DataHandler():
             objs: Fitness values corresponding to a design
         """
 
-        # Apply transform to full_results (if needed)
-        if self.full_results_transform is not None:
-            full_results = self.full_results_transform(full_results)
-        
         # Assign relevant data to OptiData class attributes
         opti_data = OptiData(x=x, design=design, full_results=full_results, objs=objs)
 
