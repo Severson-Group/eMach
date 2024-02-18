@@ -313,6 +313,8 @@ class DataHandler():
                     yield pickle.load(f)  # use generator
                 except EOFError:
                     break
+                except pickle.UnpicklingError:
+                    break
 
     def save_designer(self, designer):
         """ Save designer used in optimization"""
