@@ -2,6 +2,7 @@ import copy
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize
+import pandas as pd
 
 class Inductance_Problem:
     """Problem class for torque data processing
@@ -9,15 +10,15 @@ class Inductance_Problem:
         torque: numpy array of torque against time or position
     """
 
-    def __init__(self, time, rotor_angle, I_hat, Uu, Uv):
-        self.time = time
-        self.rotor_angle = rotor_angle
+    def __init__(self, I_hat, jmag_csv_folder, study_name, time_step):
         self.I_hat = I_hat
-        self.Uu = Uu 
-        self.Uv = Uv
+        self.jmag_csv_folder = jmag_csv_folder 
+        self.study_name = study_name
+        self.time_step = time_step
 
 
 class Inductance_Analyzer:
+
     def analyze(self, problem: Inductance_Problem):
         """Calcuates average torque and torque ripple
 
@@ -27,35 +28,49 @@ class Inductance_Analyzer:
             torque_avg: Average torque calculated from provided data
             torque_ripple: Torque ripple calculated from provided data
         """
-        time = problem.time
-        rotor_angle = problem.rotor_angle
+        path = problem.jmag_csv_folder
+        study_name = problem.study_name
         I_hat = problem.I_hat
-        Uu = problem.Uu
-        Uv = problem.Uv
+        time_step = problem.time_step
 
+        U_linkages = pd.read_csv(path + study_name + "_0_flux_of_fem_coil.csv", skiprows=7)
+        V_linkages = pd.read_csv(path + study_name + "_1_flux_of_fem_coil.csv", skiprows=7)
+        W_linkages = pd.read_csv(path + study_name + "_2_flux_of_fem_coil.csv", skiprows=7)
+
+        U_linkages = U_linkages.to_numpy() # change csv format to readable array
+        V_linkages = V_linkages.to_numpy() # change csv format to readable array
+        W_linkages = W_linkages.to_numpy() # change csv format to readable array
+        
+        time = U_linkages[:,0] # define x axis data as time
+        rotor_angle = time/time_step
+        Uu = U_linkages[:,1] # define y axis data as self inductance
+        Uv = U_linkages[:,2] # define y axis data as mutual inductance
+        Uw = U_linkages[:,3]
+        Vu = V_linkages[:,1]
+        Vv = V_linkages[:,2]
+        Vw = V_linkages[:,3]
+        Wu = W_linkages[:,1]
+        Wv = W_linkages[:,2]
+        Ww = W_linkages[:,3]
+        
         [Uu_fit, sUu] = self.fit_sin(time, Uu) # carry out calculations on self inductance
         [Uv_fit, sUv] = self.fit_sin(time, Uv) # carry out calculations on mutual inductance
 
-        fig1, ax1 = plt.subplots()
-        ax1.plot(rotor_angle, Uu, "-k", label="y", linewidth=2)
-        ax1.plot(rotor_angle, Uu_fit["fitfunc"](time), "r-", label="y fit curve", linewidth=2)
-        ax1.legend(loc="best")
-        plt.savefig("temp1.svg")
+        #fig1, ax1 = plt.subplots()
+        #ax1.plot(rotor_angle, Uu, "-k", label="y", linewidth=2)
+        #ax1.plot(rotor_angle, Uu_fit["fitfunc"](time), "r-", label="y fit curve", linewidth=2)
+        #ax1.legend(loc="best")
+        #plt.savefig("temp1.svg")
 
-        fig2, ax2 = plt.subplots()
-        ax2.plot(rotor_angle, Uv, "-k", label="y", linewidth=2)
-        ax2.plot(rotor_angle, Uv_fit["fitfunc"](time), "r-", label="y fit curve", linewidth=2)
-        ax2.legend(loc="best")
-        plt.savefig("temp2.svg")
+        #fig2, ax2 = plt.subplots()
+        #ax2.plot(rotor_angle, Uv, "-k", label="y", linewidth=2)
+        #ax2.plot(rotor_angle, Uv_fit["fitfunc"](time), "r-", label="y fit curve", linewidth=2)
+        #ax2.legend(loc="best")
+        #plt.savefig("temp2.svg")
 
-        Lzero = -2*sUv.x[3]/I_hat; # calculate L0 based on equations in publication
-        Lg = sUv.x[0]/I_hat # calculate Lg based on equations in publication
-        Lls = (sUu.x[3] + 2*sUv.x[3])/I_hat # calculate Lls based on equations in publication
-        Ld = Lls + 3/2*(Lzero - Lg) # calculate Ld based on equations in publication
-        Lq = Lls + 3/2*(Lzero + Lg) # calculate Lq based on equations in publication
-        saliency_ratio = Ld/Lq # calculate saliency ratio
+        data = self.extract_results(I_hat, sUu, sUv, path, study_name) 
 
-        return Ld, Lq, saliency_ratio
+        return data
     
     def fit_sin(self, t, y):
             fft_func = np.fft.fftfreq(len(t), (t[1]-t[0])) # define fft function with assumed uniform spacing
@@ -79,3 +94,20 @@ class Inductance_Analyzer:
             
             sUx = scipy.optimize.minimize(fun=sumfunc, x0=np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset])) # calculate matching curve fit values with minimum error
             return [{"amp": A, "omega": w, "phase": p, "offset": c, "fitfunc": fitfunc}, sUx]
+    
+    def extract_results(self, I_hat, sUu, sUv, path, study_name):
+
+        Lzero = -2*sUv.x[3]/I_hat; # calculate L0 based on equations in publication
+        Lg = sUv.x[0]/I_hat # calculate Lg based on equations in publication
+        Lls = (sUu.x[3] + 2*sUv.x[3])/I_hat # calculate Lls based on equations in publication
+        Ld = Lls + 3/2*(Lzero - Lg) # calculate Ld based on equations in publication
+        Lq = Lls + 3/2*(Lzero + Lg) # calculate Lq based on equations in publication
+
+        data = {
+                "Ld": Ld,
+                "Lq": Lq,
+                "csv_folder": path,
+                "study_name": study_name,
+            }
+
+        return data

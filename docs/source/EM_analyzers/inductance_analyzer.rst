@@ -57,47 +57,16 @@ This analyzer is used in the same way as the ``SynR_JMAG_2D_FEA_Analyzer``. The 
 in the tables below:
 
 .. csv-table:: `MachineDesign Input`
-   :file: input_SynR_jmag2d_analyzer.csv
-   :widths: 70, 70
+   :file: input_SynR_inductance_analyzer.csv
+   :widths: 70, 70, 30
    :header-rows: 1
 
-.. csv-table:: `SynR_induction_analyzer Initialization`
-   :file: init_SynR_jmag2d_analyzer.csv
-   :widths: 70, 70
-   :header-rows: 1
+Example Code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The example code initializing the machine design for the optimized SynR design provided in the example found in the ``SynR Design`` section of 
-``MACHINE DESIGNS`` is also identical, along with the ``example_SynR_machine`` file in the ``SynR_eval`` folder within the ``mach_eval_examples``
-folder in the ``examples`` folder of ``eMach``. This example code is used exactly the same, where the step within the ``SynR_evaluator`` file
-should be changed to the ``inductance_step``, which is also contained in the aforementinoed folder. The objective of this file is to call the 
-example machine (in this case the ``example_SynR_machine.py`` that was just created in the ``SynR_eval`` folder) and create a machine design 
-object. 
-
-.. code-block:: python
-
-    import os
-    import sys
-    from time import time as clock_time
-
-    os.chdir(os.path.dirname(__file__))
-
-    from eMach.mach_eval import (MachineEvaluator, MachineDesign)
-    from eMach.examples.mach_eval_examples.SynR_eval.inductance_step import inductance_step
-    from eMach.examples.mach_eval_examples.SynR_eval.example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
-
-    ############################ Create Evaluator ########################
-    SynR_evaluator = MachineEvaluator(
-        [
-            inductance_step
-        ]
-    )
-
-    design_variant = MachineDesign(Example_SynR_Machine, Machine_Op_Pt)
-
-    results = SynR_evaluator.evaluate(design_variant)
-
-Example code defining the inductance step is provided below. This code defines the analyzer problem class (input to the analyzer), 
-initializes the analyzer class with an explanation of the required configurations, and calls the post-analyzer class.
+Example code defining the flux linkage step is provided below. This code defines the analyzer problem class (input to the analyzer), 
+initializes the analyzer class with an explanation of the required configurations, and calls the post-analyzer class. It should be noted
+that the example below is used in conjunction with the ``flux_linkage`` analyzer:
 
 .. code-block:: python
 
@@ -106,12 +75,10 @@ initializes the analyzer class with an explanation of the required configuration
     import copy
 
     from mach_eval import AnalysisStep, ProblemDefinition
-    from mach_eval.analyzers.electromagnetic.SynR import SynR_inductance_analyzer as SynR_inductance
-    from mach_eval.analyzers.electromagnetic.SynR.SynR_inductance_config import SynR_Inductance_Config
-    from examples.mach_eval_examples.SynR_eval.SynR_inductance_post_analyzer import SynR_Inductance_PostAnalyzer
+    from mach_eval.analyzers.electromagnetic import inductance_analyzer as inductance
 
-    ############################ Define Inductance Step ###########################
-    class SynR_Inductance_ProblemDefinition(ProblemDefinition):
+    ############################ Define Electromagnetic Step ###########################
+    class SynR_Ind_ProblemDefinition(ProblemDefinition):
         """Converts a State into a problem"""
 
         def __init__(self):
@@ -119,43 +86,34 @@ initializes the analyzer class with an explanation of the required configuration
 
         def get_problem(state):
 
-            problem = SynR_inductance.SynR_Inductance_Problem(
-                state.design.machine, state.design.settings)
+            problem = inductance.Inductance_Problem(
+                state.conditions.I_hat, state.conditions.path, state.conditions.study_name, state.conditions.time_step)
             return problem
 
-    # initialize inductance analyzer class with FEA configuration
-    configuration = SynR_Inductance_Config(
-        no_of_rev = 1,
-        no_of_steps = 72,
+    class SynR_Inductance_PostAnalyzer:
+        
+        def get_next_state(results, in_state):
+            state_out = copy.deepcopy(in_state)
 
-        mesh_size=3, # mm
-        mesh_size_rotor=1.5, # mm
-        airgap_mesh_radial_div=4,
-        airgap_mesh_circum_div=720,
-        mesh_air_region_scale=1.05,
+            state_out.conditions.Ld = results["Ld"]
+            state_out.conditions.Lq = results["Lq"]
+            state_out.conditions.saliency_ratio = results["Ld"]/results["Lq"]
 
-        only_table_results=False,
-        csv_results=("FEMCoilFlux"),
-        del_results_after_calc=False,
-        run_folder=os.path.dirname(__file__) + "/run_data/",
-        jmag_csv_folder=os.path.dirname(__file__) + "/run_data/jmag_csv/",
+            print("\n************************ INDUCTANCE RESULTS ************************")
+            print("Ld = ", state_out.conditions.Ld, " H")
+            print("Lq = ", state_out.conditions.Lq, " H")
+            print("Saliency Ratio = ", state_out.conditions.saliency_ratio)
+            print("*************************************************************************\n")
 
-        max_nonlinear_iterations=50,
-        multiple_cpus=True,
-        num_cpus=4,
-        jmag_scheduler=False,
-        jmag_visible=True,
-        scale_axial_length = True,
-    )
+            return state_out
 
-    SynR_inductance_analysis = SynR_inductance.SynR_Inductance_Analyzer(configuration)
-
-    inductance_step = AnalysisStep(SynR_Inductance_ProblemDefinition, SynR_inductance_analysis, SynR_Inductance_PostAnalyzer)
+It should be noted that this code should be contained as an analysis step in the main folder of the eMach repository. It must be contained 
+within the same folder as the code below in order for the code below to run.
 
 Output to User
 **********************************
 
-The ``SynR_inductance_analyzer`` returns a dictionary holding the results obtained from the transient analysis of the machine. The elements 
+The ``SynR_flux_linkage_analyzer`` returns a directory holding the results obtained from the transient analysis of the machine. The elements 
 of this dictionary and their descriptions are provided below:
 
 .. csv-table:: `SynR_inductance_analyzer Output`
@@ -163,98 +121,42 @@ of this dictionary and their descriptions are provided below:
    :widths: 70, 70
    :header-rows: 1
 
-As mentioned, the post analyzer is necessary to extract and compute the analyzer's computations and to interpret the results. The post analyzer 
-contains the following code and lies also in the ``eMach\examples\mach_eval_examples\SynR_eval`` folder. The code contained in the post analyzer, 
-in this case to find inductance quantities the saliency ratio, can be seen here:
+The following code should be used to run the example analysis:
 
 .. code-block:: python
 
-    import copy
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import scipy.optimize
+    import os
+    import sys
+    from time import time as clock_time
 
-    class SynR_Inductance_PostAnalyzer:
-        
-        def get_next_state(results, in_state):
-            state_out = copy.deepcopy(in_state)
+    os.chdir(os.path.dirname(__file__))
+    sys.path.append("../../../")
 
-            ############################ Extract required info ###########################
-            inductances = results["coil_inductances"]
-            I_hat = results["current_peak"]
+    from mach_eval import (MachineEvaluator, MachineDesign)
+    from SynR_flux_linkage_step import SynR_flux_linkage_step
+    from SynR_inductance_step import SynR_inductance_step
+    from example_SynR_machine import Example_SynR_Machine, Machine_Op_Pt
 
-            ############################ post processing ###########################
-            data = inductances.to_numpy() # change csv format to readable array
-            
-            t = data[:,0] # define x axis data as time
-            Uu = data[:,1] # define y axis data as self inductance
-            Uv = data[:,2] # define y axis data as mutual inductance
+    ############################ Create Evaluator #####################
+    SynR_evaluator = MachineEvaluator(
+        [
+            SynR_flux_linkage_step,
+            SynR_inductance_step
+        ]
+    )
 
-            # curve fit inductance values and calculate curve
-            def fit_sin(t, y):
-                fft_func = np.fft.fftfreq(len(t), (t[1]-t[0])) # define fft function with assumed uniform spacing
-                fft_y = abs(np.fft.fft(y)) # carry out fft function for inductance values
-                guess_freq = abs(fft_func[np.argmax(fft_y[1:])+1]) # excluding the zero frequency "peak", which can cause problematic fits
-                guess_amp = np.std(y) # guess amplitude based on one standard deviation
-                guess_offset = np.mean(y) # guess y offset based on average of magnitude
-                guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset]) # arrage in array
-                
-                # define sin function 
-                def sinfunc(t, A, w, p, c):  
-                    return A * np.sin(w*t + p) + c
-                
-                popt, pcov = scipy.optimize.curve_fit(sinfunc, t, y, p0=guess) # calculate sin function fit
-                A, w, p, c = popt # assign appropriate variables
-                fitfunc = lambda t: A * np.sin(w*t + p) + c # define fit function for curve fit
-                
-                # define function used to calculate least square
-                def sumfunc(x):
-                    return sum((sinfunc(t, x[0], x[1], x[2], x[3]) - y)**2)
-                
-                sUx = scipy.optimize.minimize(fun=sumfunc, x0=np.array([guess_amp, 2.*np.pi*guess_freq, 0, guess_offset])) # calculate matching curve fit values with minimum error
-                return [{"amp": A, "omega": w, "phase": p, "offset": c, "fitfunc": fitfunc}, sUx]
+    design_variant = MachineDesign(Example_SynR_Machine, Machine_Op_Pt)
 
-            [Uu_fit, sUu] = fit_sin(t, Uu) # carry out calculations on self inductance
-            [Uv_fit, sUv] = fit_sin(t, Uv) # carry out calculations on mutual inductance
-            
-            fig1, ax1 = plt.subplots()
-            ax1.plot(t, Uu, "-k", label="y", linewidth=2)
-            ax1.plot(t, Uu_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
-            ax1.legend(loc="best")
-            plt.savefig("temp1.svg")
+    tic = clock_time()
+    results = SynR_evaluator.evaluate(design_variant)
+    toc = clock_time()
 
-            fig2, ax2 = plt.subplots()
-            ax2.plot(t, Uv, "-k", label="y", linewidth=2)
-            ax2.plot(t, Uv_fit["fitfunc"](t), "r-", label="y fit curve", linewidth=2)
-            ax2.legend(loc="best")
-            plt.savefig("temp2.svg")
-
-            Lzero = -2*sUv.x[3]/I_hat; # calculate L0 based on equations in publication
-            Lg = sUv.x[0]/I_hat # calculate Lg based on equations in publication
-            Lls = (sUu.x[3] + 2*sUv.x[3])/I_hat # calculate Lls based on equations in publication
-            Ld = Lls + 3/2*(Lzero - Lg) # calculate Ld based on equations in publication
-            Lq = Lls + 3/2*(Lzero + Lg) # calculate Lq based on equations in publication
-            saliency_ratio = Ld/Lq # calculate saliency ratio
-
-            ############################ Output #################################
-            post_processing = {}
-            post_processing["Ld"] = Ld
-            post_processing["Lq"] = Lq
-            post_processing["saliency_ratio"] = saliency_ratio
-
-            state_out.conditions.inductance = post_processing
-
-            print("\n************************ INDUCTANCE RESULTS ************************")
-            print("Ld = ", Ld, " H")
-            print("Lq = ", Lq, " H")
-            print("Saliency Ratio = ", saliency_ratio)
-            print("*************************************************************************\n")
-
-            return state_out
+    print("Time spent on SynR evaluation is %g min." % ((toc- tic)/60))
 
 All example SynR evaluation scripts, including the one used for this analyzer, can be found in ``eMach\examples\mach_eval_examples\SynR_eval``,
 where the post-analyzer script uses FEA results and calculates machine performance metrics, including torque density, power density, efficiency,
 and torque ripple. This analyzer can be run by simply running the ``SynR_evaluator`` file in the aforementioned folder using the ``inductance_step``.
+
 This example should produce the following results:
 
 .. csv-table:: `SynR_inductance_analyzer Results`
