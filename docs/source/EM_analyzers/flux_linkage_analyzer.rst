@@ -1,7 +1,7 @@
 Flux Linkage Analyzer
 ########################################################################
 
-This analyzer enables the flux linkage evaluation of an electric machine after running 2D FEA simulations using JMAG.
+This analyzer enables the flux linkage evaluation of a **3-phase** electric machine after running 2D FEA simulations using JMAG.
 
 Model Background
 ****************
@@ -155,11 +155,12 @@ All example SynR evaluation scripts, including the one used for this analyzer, c
 where the post-analyzer script uses FEA results and calculates machine performance metrics, including torque density, power density, efficiency,
 and torque ripple. This analyzer can be run by simply running the ``SynR_evaluator`` file in the aforementioned folder using the ``flux_linkage_step``.
 
-This example should produce the following results:
+This example, contained in the aforementioned ``SynR_eval`` folder, should produce the following results:
 
 .. csv-table:: `SynR_flux_linkage_analyzer Results`
    :file: results_SynR_flux_linkage_analyzer.csv
    :widths: 70, 70, 30
    :header-rows: 1
 
-Within the ``resuls_folder`` there should be a total of 6 csv files that contains the information requested in the ``_step`` file.
+One should expect the csv_folder location to differ depending on where the desired destination is.Within the ``resuls_folder`` there should be a 
+total of 6 csv files that contains the information requested in the ``_step`` file.

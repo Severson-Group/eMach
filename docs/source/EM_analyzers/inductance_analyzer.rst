@@ -1,7 +1,7 @@
 Inductance/Saliency Analyzer
 ########################################################################
 
-This analyzer enables the inductance evaluation of an electric machine using raw data from 2D FEA simulations using JMAG.
+This analyzer enables the inductance evaluation of a **3-phase** electric machine using raw data from 2D FEA simulations using JMAG.
 
 Model Background
 ****************
