@@ -1,12 +1,29 @@
 Flux Linkage Analyzer
 ########################################################################
 
-This analyzer enables the flux_linkage evaluation of an electric machine after running 2D FEA simulations using JMAG.
+This analyzer enables the flux linkage evaluation of an electric machine after running 2D FEA simulations using JMAG.
 
 Model Background
 ****************
 
+The flux linkage of a coil is defined as the amount of flux linking together for a multi-coil arrangment with electric current flowing 
+through them. The flux linkage of a coil within an electric machine comes from all coils present in the machine and has a profound 
+impact on the machine characteristics. Calculating coil flux linkages over time can lead to inductance calculations for an electric 
+machine, which are also important for characterizing that machine. The flux linkage is an important parameter for inductance calculations
+as can be seen in the following equation:
 
+.. math::
+
+    L = \lambda I \\
+
+where :math:`\lambda` is the flux linkage, :math:`L` is the inductance, and :math:`I` is the coil current.
+
+The code is structured such that the ``flux_linkage_analyzer`` contains the code for setting up and running the JMAG simulations based on 
+1) the machine inputs and conditions of the user and 2) the conditions required of the machine to be able to calculate the 
+necessary parameters. In the case of this machine, DC excitement of the U-phase is required with both the V- and W-phases being open. 
+
+This analyzer calculates the self and mutual flux linkages of each coil using JMAG's transient solver. It models a synchronous
+reluctance machine under synchronous operation. The following information document will provide a description of the analyzer inputs and outputs.
 
 Input from User
 *********************************
