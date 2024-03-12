@@ -307,12 +307,20 @@ class DataHandler():
     def load_from_archive(self):
         """ Load data from Pickle optimization archive """
 
-        with open(self.archive_filepath, 'rb') as f:
-            while 1:
+        with open(self.archive_filepath, "rb") as f:
+            while True:
                 try:
-                    yield pickle.load(f)  # use generator
+                    # Use generator: each yield returns
+                    # a single design from the archive
+                    yield pickle.load(f)
                 except EOFError:
+                    # After we read and return the
+                    # full archive, stop and return
                     break
+                except pickle.UnpicklingError:
+                    # If there is an issue with the archive file,
+                    # this occurs so it can keep trying
+                    continue
 
     def save_designer(self, designer):
         """ Save designer used in optimization"""
