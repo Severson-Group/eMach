@@ -201,6 +201,10 @@ class DesignProblem:
                 # but make sure by joining it here
                 p.join()
 
+            # Apply transform to full_results (if needed)
+            if self.__dh.full_results_transform is not None:
+                full_results = self.__dh.full_results_transform(full_results)
+
             objs = self.__design_space.get_objectives(full_results)
             self.__dh.save_to_archive(x, design, full_results, objs)
             # print('The fitness values are', objs)
@@ -278,9 +282,10 @@ class DesignSpace(Protocol):
 class DataHandler():
     """ Parent class for data handlers"""
 
-    def __init__(self, archive_filepath, designer_filepath):
+    def __init__(self, archive_filepath, designer_filepath, full_results_transform=None):
         self.archive_filepath = archive_filepath
         self.designer_filepath = designer_filepath
+        self.full_results_transform = full_results_transform
 
     def save_to_archive(self, x, design, full_results, objs):
         """ Save machine evaluation data to optimization archive using Pickle
@@ -291,9 +296,11 @@ class DataHandler():
             full_results: Input, output, and results corresponding to each step of an evaluator
             objs: Fitness values corresponding to a design
         """
-        # assign relevant data to OptiData class attributes
+
+        # Assign relevant data to OptiData class attributes
         opti_data = OptiData(x=x, design=design, full_results=full_results, objs=objs)
-        # write to pkl file. 'ab' indicates binary append
+
+        # Write to pkl file. 'ab' indicates binary append
         with open(self.archive_filepath, 'ab') as archive:
             pickle.dump(opti_data, archive, -1)
 
