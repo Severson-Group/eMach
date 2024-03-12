@@ -11,6 +11,7 @@ import numpy as np
 import pickle
 import time
 import sys
+import pathlib
 import multiprocessing as mp
 
 __all__ = [
@@ -35,7 +36,14 @@ class DesignOptimizationMOEAD:
         pop = pg.population(self.prob, size=pop_size)
         return pop
 
-    def run_optimization(self, pop, gen_size, filepath=None, pg_neighbors=20):
+    def run_optimization(
+        self,
+        pop,
+        gen_size,
+        pop_filepath: pathlib.Path,
+        pop_fitness_filepath: pathlib.Path,
+        pg_neighbors=20,
+    ):
         algo = pg.algorithm(
             pg.moead(
                 gen=1,
@@ -50,27 +58,61 @@ class DesignOptimizationMOEAD:
                 preserve_diversity=True,
             )
         )
+
         for _ in range(0, gen_size):
             print("This is iteration", _)
+
+            # Evolve population
             pop = algo.evolve(pop)
+
+            # Save state
             print("Saving current generation")
-            self.save_pop(filepath, pop)
+            self.save_pop(pop_filepath, pop)
+            self.save_pop_fitness(pop_fitness_filepath, pop)
+
         return pop
 
-    #  methods to save and load latest generation for resuming optimization
     def save_pop(self, filepath, pop):
         df = pd.DataFrame(pop.get_x())
         df.to_csv(filepath)
 
-    def load_pop(self, filepath, pop_size):
+    def save_pop_fitness(self, filepath, pop):
+        df = pd.DataFrame(pop.get_f())
+        df.to_csv(filepath)
+
+    def load_pop(
+        self,
+        pop_filepath: pathlib.Path,
+        pop_fitness_filepath: pathlib.Path,
+        pop_size: int,
+        print_to_console=False,
+    ):
         try:
-            df = pd.read_csv(filepath, index_col=0)
+            df_x = pd.read_csv(pop_filepath, index_col=0)
         except FileNotFoundError:
             return None
+
+        try:
+            df_fit = pd.read_csv(pop_fitness_filepath, index_col=0)
+        except FileNotFoundError:
+            print("NO FITNESS VALUES FOUND FOR POPULATION...")
+            print("NOW COMPUTING FITNESS DURING POPULATION LOAD...")
+            df_fit = None
+
         pop = pg.population(self.prob)
+
         for i in range(pop_size):
-            print(df.iloc[i])
-            pop.push_back(df.iloc[i])
+            x = df_x.iloc[i]
+
+            if print_to_console:
+                print(x)
+
+            if df_fit is not None:
+                f = df_fit.iloc[i]
+                pop.push_back(x, f=f)
+            else:
+                pop.push_back(x)
+
         return pop
 
 
