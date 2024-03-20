@@ -29,13 +29,13 @@ class JMAG(object):  # < ToolBase & DrawerBase & MakerExtrudeBase & MakerRevolve
 
         self.config = configuration
 
-    def open(self, expected_project_file_path, version):
+    def open(self, expected_project_file_path, jmag_version=None):
         if self.app is None:
-            if version is None:
-                app = win32com.client.Dispatch("designer.Application.211")
+            if jmag_version is None:
+                app = win32com.client.Dispatch("designer.Application")
             else:
-                version = version.translate(str.maketrans('', '', string.punctuation))
-                app = win32com.client.Dispatch("designer.Application.%s" % version)
+                jmag_version = jmag_version.translate(str.maketrans('', '', string.punctuation))
+                app = win32com.client.Dispatch("designer.Application.%s" % jmag_version)
             if self.config.jmag_visible == True:
                 app.Show()
             else:

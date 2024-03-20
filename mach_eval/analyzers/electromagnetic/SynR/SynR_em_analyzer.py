@@ -82,7 +82,7 @@ class SynR_EM_Analyzer:
         if attempts > 1:
             self.project_name = self.project_name + "_attempts_%d" % (attempts)
 
-        toolJmag = JMAG.JmagDesigner()
+        toolJmag = JMAG.JmagDesigner(self.config.jmag_version)
 
         toolJmag.visible = self.config.jmag_visible
         toolJmag.open(comp_filepath=expected_project_file, length_unit="DimMillimeter", study_type="Transient2D")
