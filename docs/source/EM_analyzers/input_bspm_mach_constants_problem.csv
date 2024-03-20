@@ -1,0 +1,7 @@
+Arguments, Type, Description
+machine, ``BSPM_machine``, instance of ``BSPM_machine``
+operating_point,``BSPM_Machine_Oper_Pt``, instance of ``BSPM_Machine_Oper_Pt``
+solve_Kf,bool (default - *True*), boolean input to check whether to solve Kf value or not 
+solve_Kt,bool (default - *True*),boolean input to check whether to solve Kt value or not 
+solve_Kphi,bool (default - *True*),boolean input to check whether to solve Kphi value or not 
+solve_Kdelta,bool (default - *True*),boolean input to check whether to solve Kdelta value or not 
