@@ -53,7 +53,7 @@ class BSPM_EM_Analyzer:
         from .electrical_analysis.JMAG import JMAG
 
         toolJd = JMAG(self.config)
-        app, attempts = toolJd.open(expected_project_file)
+        app, attempts = toolJd.open(expected_project_file, self.config.jmag_version)
         if attempts > 1:
             self.project_name = self.project_name + "attempts_%d" % (attempts)
 
