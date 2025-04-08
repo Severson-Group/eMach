@@ -14,8 +14,9 @@ dependencies:
   - sphinx_rtd_theme
   
   # to use pip packages, follow syntax below
-  # - pip
-  # - pip:
+  - pip
+  - pip:
+    - pyfemm==0.1.1
   #    - sphinx-rtd-theme
   
 
