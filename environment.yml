@@ -16,7 +16,7 @@ dependencies:
   # to use pip packages, follow syntax below
   - pip
   - pip:
-    - pyfemm==0.1.1
+    - pyfemm==0.1.3
   #    - sphinx-rtd-theme
   
 
