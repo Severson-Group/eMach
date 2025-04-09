@@ -2,6 +2,11 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.3.0
+
+- Add mach_cad ability to move solid parts
+- Add pyfemm to conda environment
+
 ## v1.2.1
 
 - Fix ReadTheDocs build
