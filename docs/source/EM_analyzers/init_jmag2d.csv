@@ -1,2 +1,2 @@
 Arguments,Description
-config,"object of type JMAG_2D_Config describing time step, mesh setting etc."
+config,"object of type JMAG_2D_Config specifying time step, mesh settings, whether to model magnet/shaft eddy currents"
