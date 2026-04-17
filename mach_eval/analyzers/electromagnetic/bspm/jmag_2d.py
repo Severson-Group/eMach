@@ -618,8 +618,8 @@ class BSPM_EM_Analyzer:
 
         study.GetMeshControl().SetValue("MeshType", 1)  # make sure this has been exe'd:
         # study.GetCondition(u"RotCon").AddSet(model.GetSetList().GetSet(u"Motion_Region"), 0)
-        study.GetMeshControl().SetValue(u"AutoGapDivision", 0)  # this is new line
-        study.GetMeshControl().SetValue(u"AutoDivision", 0)  # this is new line
+        study.GetMeshControl().SetValue(u"AutoGapDivision", 0)  # this is new line April-17-2026
+        study.GetMeshControl().SetValue(u"AutoDivision", 0)  # this is new line April-17-2026
         study.GetMeshControl().SetValue(
             "RadialDivision", self.config.airgap_mesh_radial_div
         )  # for air region near which motion occurs
