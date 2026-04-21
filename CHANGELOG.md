@@ -2,6 +2,12 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.3.1
+
+- Fix BSPM analyzer mesh division settings
+- Fix BSPM analyzer doc to match v1.2.0 feature
+- Fix ubuntu runner for eMachPrivate docs
+
 ## v1.3.0
 
 - Add mach_cad ability to move solid parts
